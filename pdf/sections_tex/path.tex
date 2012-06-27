@@ -1,0 +1,216 @@
+\section{Path}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\end{Highlighting}
+\end{Shaded}
+
+This module contains utilities for handling and transforming file paths.
+Almost all these methods perform only string transformations. The file
+system is not consulted to check whether paths are valid.
+
+Use \texttt{require('path')} to use this module. The following methods
+are provided:
+
+\subsection{path.normalize(p)}
+
+Normalize a string path, taking care of \texttt{'..'} and \texttt{'.'}
+parts.
+
+When multiple slashes are found, they're replaced by a single one; when
+the path contains a trailing slash, it is preserved. On windows
+backslashes are used.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{normalize}\NormalTok{(}\CharTok{'/foo/bar//baz/asdf/quux/..'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'/foo/bar/baz/asdf'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.join({[}path1{]}, {[}path2{]}, {[}\ldots{}{]})}
+
+Join all arguments together and normalize the resulting path. Non-string
+arguments are ignored.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\CharTok{'/foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz/asdf'}\NormalTok{, }\CharTok{'quux'}\NormalTok{, }\CharTok{'..'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'/foo/bar/baz/asdf'}
+
+\KeywordTok{path}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\CharTok{'foo'}\NormalTok{, \{\}, }\CharTok{'bar'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'foo/bar'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.resolve({[}from \ldots{}{]}, to)}
+
+Resolves \texttt{to} to an absolute path.
+
+If \texttt{to} isn't already absolute \texttt{from} arguments are
+prepended in right to left order, until an absolute path is found. If
+after using all \texttt{from} paths still no absolute path is found, the
+current working directory is used as well. The resulting path is
+normalized, and trailing slashes are removed unless the path gets
+resolved to the root directory. Non-string arguments are ignored.
+
+Another way to think of it is as a sequence of \texttt{cd} commands in a
+shell.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'foo/bar'}\NormalTok{, }\CharTok{'/tmp/file/'}\NormalTok{, }\CharTok{'..'}\NormalTok{, }\CharTok{'a/../subfile'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Is similar to:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cd foo/bar}
+\NormalTok{cd /tmp/file/}
+\NormalTok{cd ..}
+\FunctionTok{cd} \NormalTok{a/../subfile}
+\NormalTok{pwd}
+\end{Highlighting}
+\end{Shaded}
+
+The difference is that the different paths don't need to exist and may
+also be files.
+
+Examples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'/foo/bar'}\NormalTok{, }\CharTok{'./baz'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'/foo/bar/baz'}
+
+\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'/foo/bar'}\NormalTok{, }\CharTok{'/tmp/file/'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'/tmp/file'}
+
+\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'wwwroot'}\NormalTok{, }\CharTok{'static_files/png/'}\NormalTok{, }\CharTok{'../gif/image.gif'}\NormalTok{)}
+\CommentTok{// if currently in /home/myself/node, it returns}
+\CharTok{'/home/myself/node/wwwroot/static_files/gif/image.gif'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.relative(from, to)}
+
+Solve the relative path from \texttt{from} to \texttt{to}.
+
+At times we have two absolute paths, and we need to derive the relative
+path from one to the other. This is actually the reverse transform of
+\texttt{path.resolve}, which means we see that:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(from, }\KeywordTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(from, to)) == }\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(to)}
+\end{Highlighting}
+\end{Shaded}
+
+Examples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(}\CharTok{'C:\textbackslash{}\textbackslash{}orandea\textbackslash{}\textbackslash{}test\textbackslash{}\textbackslash{}aaa'}\NormalTok{, }\CharTok{'C:\textbackslash{}\textbackslash{}orandea\textbackslash{}\textbackslash{}impl\textbackslash{}\textbackslash{}bbb'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'..\textbackslash{}\textbackslash{}..\textbackslash{}\textbackslash{}impl\textbackslash{}\textbackslash{}bbb'}
+
+\KeywordTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(}\CharTok{'/data/orandea/test/aaa'}\NormalTok{, }\CharTok{'/data/orandea/impl/bbb'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'../../impl/bbb'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.dirname(p)}
+
+Return the directory name of a path. Similar to the Unix
+\texttt{dirname} command.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{dirname}\NormalTok{(}\CharTok{'/foo/bar/baz/asdf/quux'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'/foo/bar/baz/asdf'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.basename(p, {[}ext{]})}
+
+Return the last portion of a path. Similar to the Unix \texttt{basename}
+command.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{basename}\NormalTok{(}\CharTok{'/foo/bar/baz/asdf/quux.html'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'quux.html'}
+
+\KeywordTok{path}\NormalTok{.}\FunctionTok{basename}\NormalTok{(}\CharTok{'/foo/bar/baz/asdf/quux.html'}\NormalTok{, }\CharTok{'.html'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'quux'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.extname(p)}
+
+Return the extension of the path, from the last '.' to end of string in
+the last portion of the path. If there is no '.' in the last portion of
+the path or the first character of it is '.', then it returns an empty
+string. Examples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\CharTok{'index.html'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'.html'}
+
+\KeywordTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\CharTok{'index.'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'.'}
+
+\KeywordTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\CharTok{'index'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{''}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.sep}
+
+The platform-specific file separator.
+\texttt{'\textbackslash{}\textbackslash{}'} or \texttt{'/'}.
+
+An example on linux:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CharTok{'foo/bar/baz'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{sep}\NormalTok{)}
+\CommentTok{// returns}
+\NormalTok{[}\CharTok{'foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz'}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+An example on windows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CharTok{'foo\textbackslash{}\textbackslash{}bar\textbackslash{}\textbackslash{}baz'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{sep}\NormalTok{)}
+\CommentTok{// returns}
+\NormalTok{[}\CharTok{'foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz'}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+

@@ -1,0 +1,153 @@
+\section{os}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
+\end{Highlighting}
+\end{Shaded}
+
+Provides a few basic operating-system related utility functions.
+
+Use \texttt{require('os')} to access this module.
+
+\subsection{os.tmpDir()}
+
+Returns the operating system's default directory for temp files.
+
+\subsection{os.hostname()}
+
+Returns the hostname of the operating system.
+
+\subsection{os.type()}
+
+Returns the operating system name.
+
+\subsection{os.platform()}
+
+Returns the operating system platform.
+
+\subsection{os.arch()}
+
+Returns the operating system CPU architecture.
+
+\subsection{os.release()}
+
+Returns the operating system release.
+
+\subsection{os.uptime()}
+
+Returns the system uptime in seconds.
+
+\subsection{os.loadavg()}
+
+Returns an array containing the 1, 5, and 15 minute load averages.
+
+\subsection{os.totalmem()}
+
+Returns the total amount of system memory in bytes.
+
+\subsection{os.freemem()}
+
+Returns the amount of free system memory in bytes.
+
+\subsection{os.cpus()}
+
+Returns an array of objects containing information about each CPU/core
+installed: model, speed (in MHz), and times (an object containing the
+number of CPU ticks spent in: user, nice, sys, idle, and irq).
+
+Example inspection of os.cpus:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{[ \{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{252020}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{0}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{30340}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070356870}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{306960}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{0}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{26980}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1071569080}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{248450}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{0}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{21750}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070919370}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{256880}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{0}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{19430}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070905480}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{20} \NormalTok{\} \},}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{511580}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{20}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{40900}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070842510}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{291660}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{0}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{34360}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070888000}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{10} \NormalTok{\} \},}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{308260}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{0}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{55410}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1071129970}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{880} \NormalTok{\} \},}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+    \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
+    \DataTypeTok{times}\NormalTok{:}
+     \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{266450}\NormalTok{,}
+       \DataTypeTok{nice}\NormalTok{: }\DecValTok{1480}\NormalTok{,}
+       \DataTypeTok{sys}\NormalTok{: }\DecValTok{34920}\NormalTok{,}
+       \DataTypeTok{idle}\NormalTok{: }\DecValTok{1072572010}\NormalTok{,}
+       \DataTypeTok{irq}\NormalTok{: }\DecValTok{30} \NormalTok{\} \} ]}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{os.networkInterfaces()}
+
+Get a list of network interfaces:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\{ }\DataTypeTok{lo0}\NormalTok{: }
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'::1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\} ],}
+  \DataTypeTok{en1}\NormalTok{: }
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::cabc:c8ff:feef:f996'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{,}
+       \DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.0.1.123'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
+  \DataTypeTok{vmnet1}\NormalTok{: [ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.99.99.254'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
+  \DataTypeTok{vmnet8}\NormalTok{: [ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.88.88.1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
+  \DataTypeTok{ppp0}\NormalTok{: [ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.2.0.231'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ] \}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{os.EOL}
+
+A constant defining the appropriate End-of-line marker for the operating
+system.

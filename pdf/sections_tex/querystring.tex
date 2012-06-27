@@ -1,0 +1,58 @@
+\section{Query String}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\end{Highlighting}
+\end{Shaded}
+
+This module provides utilities for dealing with query strings. It
+provides the following methods:
+
+\subsection{querystring.stringify(obj, {[}sep{]}, {[}eq{]})}
+
+Serialize an object to a query string. Optionally override the default
+separator (\texttt{'\&'}) and assignment (\texttt{'='}) characters.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{querystring}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(\{ }\DataTypeTok{foo}\NormalTok{: }\CharTok{'bar'}\NormalTok{, }\DataTypeTok{baz}\NormalTok{: [}\CharTok{'qux'}\NormalTok{, }\CharTok{'quux'}\NormalTok{], }\DataTypeTok{corge}\NormalTok{: }\CharTok{''} \NormalTok{\})}
+\CommentTok{// returns}
+\CharTok{'foo=bar&baz=qux&baz=quux&corge='}
+
+\KeywordTok{querystring}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(\{}\DataTypeTok{foo}\NormalTok{: }\CharTok{'bar'}\NormalTok{, }\DataTypeTok{baz}\NormalTok{: }\CharTok{'qux'}\NormalTok{\}, }\CharTok{';'}\NormalTok{, }\CharTok{':'}\NormalTok{)}
+\CommentTok{// returns}
+\CharTok{'foo:bar;baz:qux'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{querystring.parse(str, {[}sep{]}, {[}eq{]}, {[}options{]})}
+
+Deserialize a query string to an object. Optionally override the default
+separator (\texttt{'\&'}) and assignment (\texttt{'='}) characters.
+
+Options object may contain \texttt{maxKeys} property (equal to 1000 by
+default), it'll be used to limit processed keys. Set it to 0 to remove
+key count limitation.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{querystring}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\CharTok{'foo=bar&baz=qux&baz=quux&corge'}\NormalTok{)}
+\CommentTok{// returns}
+\NormalTok{\{ }\DataTypeTok{foo}\NormalTok{: }\CharTok{'bar'}\NormalTok{, }\DataTypeTok{baz}\NormalTok{: [}\CharTok{'qux'}\NormalTok{, }\CharTok{'quux'}\NormalTok{], }\DataTypeTok{corge}\NormalTok{: }\CharTok{''} \NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{querystring.escape}
+
+The escape function used by \texttt{querystring.stringify}, provided so
+that it could be overridden if necessary.
+
+\subsection{querystring.unescape}
+
+The unescape function used by \texttt{querystring.parse}, provided so
+that it could be overridden if necessary.

@@ -1,0 +1,248 @@
+\section{REPL}
+
+A Read-Eval-Print-Loop (REPL) is available both as a standalone program
+and easily includable in other programs. The REPL provides a way to
+interactively run JavaScript and see the results. It can be used for
+debugging, testing, or just trying things out.
+
+By executing \texttt{node} without any arguments from the command-line
+you will be dropped into the REPL. It has simplistic emacs line-editing.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{mjr}\NormalTok{:~$ node}
+\NormalTok{Type }\CharTok{'.help'} \KeywordTok{for} \KeywordTok{options}\NormalTok{.}
+\NormalTok{> a = [ }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{];}
+\NormalTok{[ }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3} \NormalTok{]}
+\NormalTok{> }\KeywordTok{a}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function} \NormalTok{(v) \{}
+\NormalTok{...   }\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(v);}
+\NormalTok{...   \});}
+\DecValTok{1}
+\DecValTok{2}
+\DecValTok{3}
+\end{Highlighting}
+\end{Shaded}
+
+For advanced line-editors, start node with the environmental variable
+\texttt{NODE\_NO\_READLINE=1}. This will start the main and debugger
+REPL in canonical terminal settings which will allow you to use with
+\texttt{rlwrap}.
+
+For example, you could add this to your bashrc file:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{alias node=}\StringTok{"env NODE_NO_READLINE=1 rlwrap node"}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{repl.start(options)}
+
+Returns and starts a \texttt{REPLServer} instance. Accepts an
+``options'' Object that takes the following values:
+
+\begin{itemize}
+\item
+  \texttt{prompt} - the prompt and \texttt{stream} for all I/O. Defaults
+  to \texttt{\textgreater{}}.
+\item
+  \texttt{input} - the readable stream to listen to. Defaults to
+  \texttt{process.stdin}.
+\item
+  \texttt{output} - the writable stream to write readline data to.
+  Defaults to \texttt{process.stdout}.
+\item
+  \texttt{terminal} - pass \texttt{true} if the \texttt{stream} should
+  be treated like a TTY, and have ANSI/VT100 escape codes written to it.
+  Defaults to checking \texttt{isTTY} on the \texttt{output} stream upon
+  instantiation.
+\item
+  \texttt{eval} - function that will be used to eval each given line.
+  Defaults to an async wrapper for \texttt{eval()}. See below for an
+  example of a custom \texttt{eval}.
+\item
+  \texttt{useColors} - a boolean which specifies whether or not the
+  \texttt{writer} function should output colors. If a different
+  \texttt{writer} function is set then this does nothing. Defaults to
+  the repl's \texttt{terminal} value.
+\item
+  \texttt{useGlobal} - if set to \texttt{true}, then the repl will use
+  the \texttt{global} object, instead of running scripts in a separate
+  context. Defaults to \texttt{false}.
+\item
+  \texttt{ignoreUndefined} - if set to \texttt{true}, then the repl will
+  not output the return value of command if it's \texttt{undefined}.
+  Defaults to \texttt{false}.
+\item
+  \texttt{writer} - the function to invoke for each command that gets
+  evaluated which returns the formatting (including coloring) to
+  display. Defaults to \texttt{util.inspect}.
+\end{itemize}
+
+You can use your own \texttt{eval} function if it has following
+signature:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \NormalTok{eval(cmd, context, filename, callback) \{}
+  \NormalTok{callback(null, result);}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Multiple REPLs may be started against the same running instance of node.
+Each will share the same global object but will have unique I/O.
+
+Here is an example that starts a REPL on stdin, a Unix socket, and a TCP
+socket:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{net = require(}\StringTok{"net"}\NormalTok{),}
+    \NormalTok{repl = require(}\StringTok{"repl"}\NormalTok{);}
+
+\NormalTok{connections = }\DecValTok{0}\NormalTok{;}
+
+\KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
+  \DataTypeTok{prompt}\NormalTok{: }\StringTok{"node via stdin> "}\NormalTok{,}
+  \DataTypeTok{input}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
+  \DataTypeTok{output}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}
+\NormalTok{\});}
+
+\KeywordTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(socket) \{}
+  \NormalTok{connections += }\DecValTok{1}\NormalTok{;}
+  \KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
+    \DataTypeTok{prompt}\NormalTok{: }\StringTok{"node via Unix socket> "}\NormalTok{,}
+    \DataTypeTok{input}\NormalTok{: socket,}
+    \DataTypeTok{output}\NormalTok{: socket}
+  \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+  \NormalTok{\})}
+\NormalTok{\}).}\FunctionTok{listen}\NormalTok{(}\StringTok{"/tmp/node-repl-sock"}\NormalTok{);}
+
+\KeywordTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(socket) \{}
+  \NormalTok{connections += }\DecValTok{1}\NormalTok{;}
+  \KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
+    \DataTypeTok{prompt}\NormalTok{: }\StringTok{"node via TCP socket> "}\NormalTok{,}
+    \DataTypeTok{input}\NormalTok{: socket,}
+    \DataTypeTok{output}\NormalTok{: socket}
+  \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+  \NormalTok{\});}
+\NormalTok{\}).}\FunctionTok{listen}\NormalTok{(}\DecValTok{5001}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+Running this program from the command line will start a REPL on stdin.
+Other REPL clients may connect through the Unix socket or TCP socket.
+\texttt{telnet} is useful for connecting to TCP sockets, and
+\texttt{socat} can be used to connect to both Unix and TCP sockets.
+
+By starting a REPL from a Unix socket-based server instead of stdin, you
+can connect to a long-running node process without restarting it.
+
+For an example of running a ``full-featured'' (\texttt{terminal}) REPL
+over a \texttt{net.Server} and \texttt{net.Socket} instance, see:
+https://gist.github.com/2209310
+
+For an example of running a REPL instance over \texttt{curl(1)}, see:
+https://gist.github.com/2053342
+
+\subsubsection{Event: `exit'}
+
+\texttt{function () \{\}}
+
+Emitted when the user exits the REPL in any of the defined ways. Namely,
+typing \texttt{.exit} at the repl, pressing Ctrl+C twice to signal
+SIGINT, or pressing Ctrl+D to signal ``end'' on the \texttt{input}
+stream.
+
+Example of listening for \texttt{exit}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{r}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Got "exit" event from repl!'}\NormalTok{);}
+  \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{();}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{REPL Features}
+
+Inside the REPL, Control+D will exit. Multi-line expressions can be
+input. Tab completion is supported for both global and local variables.
+
+The special variable \texttt{\_} (underscore) contains the result of the
+last expression.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{> [ }\StringTok{"a"}\NormalTok{, }\StringTok{"b"}\NormalTok{, }\StringTok{"c"} \NormalTok{]}
+\NormalTok{[ }\CharTok{'a'}\NormalTok{, }\CharTok{'b'}\NormalTok{, }\CharTok{'c'} \NormalTok{]}
+\NormalTok{> }\KeywordTok{_}\NormalTok{.}\FunctionTok{length}
+\NormalTok{3}
+\NormalTok{> _ += }\DecValTok{1}
+\DecValTok{4}
+\end{Highlighting}
+\end{Shaded}
+
+The REPL provides access to any variables in the global scope. You can
+expose a variable to the REPL explicitly by assigning it to the
+\texttt{context} object associated with each \texttt{REPLServer}. For
+example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// repl_test.js}
+\KeywordTok{var} \NormalTok{repl = require(}\StringTok{"repl"}\NormalTok{),}
+    \NormalTok{msg = }\StringTok{"message"}\NormalTok{;}
+
+\KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{().}\FunctionTok{context}\NormalTok{.}\FunctionTok{m} \NormalTok{= msg;}
+\end{Highlighting}
+\end{Shaded}
+
+Things in the \texttt{context} object appear as local within the REPL:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{mjr}\NormalTok{:~$ node }\KeywordTok{repl_test}\NormalTok{.}\FunctionTok{js}
+\NormalTok{> m}
+\CharTok{'message'}
+\end{Highlighting}
+\end{Shaded}
+
+There are a few special REPL commands:
+
+\begin{itemize}
+\item
+  \texttt{.break} - While inputting a multi-line expression, sometimes
+  you get lost or just don't care about completing it. \texttt{.break}
+  will start over.
+\item
+  \texttt{.clear} - Resets the \texttt{context} object to an empty
+  object and clears any multi-line expression.
+\item
+  \texttt{.exit} - Close the I/O stream, which will cause the REPL to
+  exit.
+\item
+  \texttt{.help} - Show this list of special commands.
+\item
+  \texttt{.save} - Save the current REPL session to a file
+  \textgreater{}.save ./file/to/save.js
+\item
+  \texttt{.load} - Load a file into the current REPL session.
+  \textgreater{}.load ./file/to/load.js
+\end{itemize}
+
+The following key combinations in the REPL have these special effects:
+
+\begin{itemize}
+\item
+  \texttt{\textless{}ctrl\textgreater{}C} - Similar to the
+  \texttt{.break} keyword. Terminates the current command. Press twice
+  on a blank line to forcibly exit.
+\item
+  \texttt{\textless{}ctrl\textgreater{}D} - Similar to the
+  \texttt{.exit} keyword.
+\end{itemize}

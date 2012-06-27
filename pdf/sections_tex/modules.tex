@@ -1,0 +1,543 @@
+\section{Modules}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{5} \NormalTok{- Locked}
+\end{Highlighting}
+\end{Shaded}
+
+Node has a simple module loading system. In Node, files and modules are
+in one-to-one correspondence. As an example, \texttt{foo.js} loads the
+module \texttt{circle.js} in the same directory.
+
+The contents of \texttt{foo.js}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{circle = require(}\CharTok{'./circle.js'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\CharTok{'The area of a circle of radius 4 is '}
+           \NormalTok{+ }\KeywordTok{circle}\NormalTok{.}\FunctionTok{area}\NormalTok{(}\DecValTok{4}\NormalTok{));}
+\end{Highlighting}
+\end{Shaded}
+
+The contents of \texttt{circle.js}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \KeywordTok{PI} \NormalTok{= }\KeywordTok{Math}\NormalTok{.}\FunctionTok{PI}\NormalTok{;}
+
+\KeywordTok{exports}\NormalTok{.}\FunctionTok{area} \NormalTok{= }\KeywordTok{function} \NormalTok{(r) \{}
+  \KeywordTok{return} \KeywordTok{PI} \NormalTok{* r * r;}
+\NormalTok{\};}
+
+\KeywordTok{exports}\NormalTok{.}\FunctionTok{circumference} \NormalTok{= }\KeywordTok{function} \NormalTok{(r) \{}
+  \KeywordTok{return} \DecValTok{2} \NormalTok{* }\KeywordTok{PI} \NormalTok{* r;}
+\NormalTok{\};}
+\end{Highlighting}
+\end{Shaded}
+
+The module \texttt{circle.js} has exported the functions \texttt{area()}
+and \texttt{circumference()}. To export an object, add to the special
+\texttt{exports} object.
+
+Variables local to the module will be private. In this example the
+variable \texttt{PI} is private to \texttt{circle.js}.
+
+The module system is implemented in the \texttt{require("module")}
+module.
+
+\subsection{Cycles}
+
+When there are circular \texttt{require()} calls, a module might not be
+done being executed when it is returned.
+
+Consider this situation:
+
+\texttt{a.js}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'a starting'}\NormalTok{);}
+\KeywordTok{exports}\NormalTok{.}\FunctionTok{done} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+\KeywordTok{var} \NormalTok{b = require(}\CharTok{'./b.js'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'in a, b.done = %j'}\NormalTok{, }\KeywordTok{b}\NormalTok{.}\FunctionTok{done}\NormalTok{);}
+\KeywordTok{exports}\NormalTok{.}\FunctionTok{done} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'a done'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{b.js}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'b starting'}\NormalTok{);}
+\KeywordTok{exports}\NormalTok{.}\FunctionTok{done} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+\KeywordTok{var} \NormalTok{a = require(}\CharTok{'./a.js'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'in b, a.done = %j'}\NormalTok{, }\KeywordTok{a}\NormalTok{.}\FunctionTok{done}\NormalTok{);}
+\KeywordTok{exports}\NormalTok{.}\FunctionTok{done} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'b done'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{main.js}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'main starting'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{a = require(}\CharTok{'./a.js'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{b = require(}\CharTok{'./b.js'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'in main, a.done=%j, b.done=%j'}\NormalTok{, }\KeywordTok{a}\NormalTok{.}\FunctionTok{done}\NormalTok{, }\KeywordTok{b}\NormalTok{.}\FunctionTok{done}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+When \texttt{main.js} loads \texttt{a.js}, then \texttt{a.js} in turn
+loads \texttt{b.js}. At that point, \texttt{b.js} tries to load
+\texttt{a.js}. In order to prevent an infinite loop an
+\textbf{unfinished copy} of the \texttt{a.js} exports object is returned
+to the \texttt{b.js} module. \texttt{b.js} then finishes loading, and
+its exports object is provided to the \texttt{a.js} module.
+
+By the time \texttt{main.js} has loaded both modules, they're both
+finished. The output of this program would thus be:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ node }\KeywordTok{main}\NormalTok{.}\FunctionTok{js}
+\FunctionTok{main} \NormalTok{starting}
+\NormalTok{a starting}
+\NormalTok{b starting}
+\KeywordTok{in} \NormalTok{b, }\KeywordTok{a}\NormalTok{.}\FunctionTok{done} \NormalTok{= }\KeywordTok{false}
+\NormalTok{b done}
+\KeywordTok{in} \NormalTok{a, }\KeywordTok{b}\NormalTok{.}\FunctionTok{done} \NormalTok{= }\KeywordTok{true}
+\NormalTok{a done}
+\KeywordTok{in} \NormalTok{main, }\KeywordTok{a}\NormalTok{.}\FunctionTok{done}\NormalTok{=}\KeywordTok{true}\NormalTok{, }\KeywordTok{b}\NormalTok{.}\FunctionTok{done}\NormalTok{=}\KeywordTok{true}
+\end{Highlighting}
+\end{Shaded}
+
+If you have cyclic module dependencies in your program, make sure to
+plan accordingly.
+
+\subsection{Core Modules}
+
+Node has several modules compiled into the binary. These modules are
+described in greater detail elsewhere in this documentation.
+
+The core modules are defined in node's source in the \texttt{lib/}
+folder.
+
+Core modules are always preferentially loaded if their identifier is
+passed to \texttt{require()}. For instance, \texttt{require('http')}
+will always return the built in HTTP module, even if there is a file by
+that name.
+
+\subsection{File Modules}
+
+If the exact filename is not found, then node will attempt to load the
+required filename with the added extension of \texttt{.js},
+\texttt{.json}, and then \texttt{.node}.
+
+\texttt{.js} files are interpreted as JavaScript text files, and
+\texttt{.json} files are parsed as JSON text files. \texttt{.node} files
+are interpreted as compiled addon modules loaded with \texttt{dlopen}.
+
+A module prefixed with \texttt{'/'} is an absolute path to the file. For
+example, \texttt{require('/home/marco/foo.js')} will load the file at
+\texttt{/home/marco/foo.js}.
+
+A module prefixed with \texttt{'./'} is relative to the file calling
+\texttt{require()}. That is, \texttt{circle.js} must be in the same
+directory as \texttt{foo.js} for \texttt{require('./circle')} to find
+it.
+
+Without a leading `/' or './' to indicate a file, the module is either a
+``core module'' or is loaded from a \texttt{node\_modules} folder.
+
+If the given path does not exist, \texttt{require()} will throw an Error
+with its \texttt{code} property set to \texttt{'MODULE\_NOT\_FOUND'}.
+
+\subsection{Loading from \texttt{node\_modules} Folders}
+
+If the module identifier passed to \texttt{require()} is not a native
+module, and does not begin with \texttt{'/'}, \texttt{'../'}, or
+\texttt{'./'}, then node starts at the parent directory of the current
+module, and adds \texttt{/node\_modules}, and attempts to load the
+module from that location.
+
+If it is not found there, then it moves to the parent directory, and so
+on, until the root of the tree is reached.
+
+For example, if the file at \texttt{'/home/ry/projects/foo.js'} called
+\texttt{require('bar.js')}, then node would look in the following
+locations, in this order:
+
+\begin{itemize}
+\item
+  \texttt{/home/ry/projects/node\_modules/bar.js}
+\item
+  \texttt{/home/ry/node\_modules/bar.js}
+\item
+  \texttt{/home/node\_modules/bar.js}
+\item
+  \texttt{/node\_modules/bar.js}
+\end{itemize}
+
+This allows programs to localize their dependencies, so that they do not
+clash.
+
+\subsection{Folders as Modules}
+
+It is convenient to organize programs and libraries into self-contained
+directories, and then provide a single entry point to that library.
+There are three ways in which a folder may be passed to
+\texttt{require()} as an argument.
+
+The first is to create a \texttt{package.json} file in the root of the
+folder, which specifies a \texttt{main} module. An example package.json
+file might look like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\{ }\StringTok{"name"} \NormalTok{: }\StringTok{"some-library"}\NormalTok{,}
+  \StringTok{"main"} \NormalTok{: }\StringTok{"./lib/some-library.js"} \NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+If this was in a folder at \texttt{./some-library}, then
+\texttt{require('./some-library')} would attempt to load
+\texttt{./some-library/lib/some-library.js}.
+
+This is the extent of Node's awareness of package.json files.
+
+If there is no package.json file present in the directory, then node
+will attempt to load an \texttt{index.js} or \texttt{index.node} file
+out of that directory. For example, if there was no package.json file in
+the above example, then \texttt{require('./some-library')} would attempt
+to load:
+
+\begin{itemize}
+\item
+  \texttt{./some-library/index.js}
+\item
+  \texttt{./some-library/index.node}
+\end{itemize}
+
+\subsection{Caching}
+
+Modules are cached after the first time they are loaded. This means
+(among other things) that every call to \texttt{require('foo')} will get
+exactly the same object returned, if it would resolve to the same file.
+
+Multiple calls to \texttt{require('foo')} may not cause the module code
+to be executed multiple times. This is an important feature. With it,
+``partially done'' objects can be returned, thus allowing transitive
+dependencies to be loaded even when they would cause cycles.
+
+If you want to have a module execute code multiple times, then export a
+function, and call that function.
+
+\subsubsection{Module Caching Caveats}
+
+Modules are cached based on their resolved filename. Since modules may
+resolve to a different filename based on the location of the calling
+module (loading from \texttt{node\_modules} folders), it is not a
+\emph{guarantee} that \texttt{require('foo')} will always return the
+exact same object, if it would resolve to different files.
+
+\subsection{The \texttt{module} Object}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+In each module, the \texttt{module} free variable is a reference to the
+object representing the current module. In particular
+\texttt{module.exports} is the same as the \texttt{exports} object.
+\texttt{module} isn't actually a global but rather local to each module.
+
+\subsubsection{module.exports}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+The \texttt{exports} object is created by the Module system. Sometimes
+this is not acceptable, many want their module to be an instance of some
+class. To do this assign the desired export object to
+\texttt{module.exports}. For example suppose we were making a module
+called \texttt{a.js}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{EventEmitter = require(}\CharTok{'events'}\NormalTok{).}\FunctionTok{EventEmitter}\NormalTok{;}
+
+\KeywordTok{module}\NormalTok{.}\FunctionTok{exports} \NormalTok{= }\KeywordTok{new} \NormalTok{EventEmitter();}
+
+\CommentTok{// Do some work, and after some time emit}
+\CommentTok{// the 'ready' event from the module itself.}
+\NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{module.exports}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'ready'}\NormalTok{);}
+\NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+Then in another file we could do
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{a = require(}\CharTok{'./a'}\NormalTok{);}
+\KeywordTok{a}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'ready'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'module a is ready'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+Note that assignment to \texttt{module.exports} must be done
+immediately. It cannot be done in any callbacks. This does not work:
+
+x.js:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{module}\NormalTok{.}\FunctionTok{exports} \NormalTok{= \{ }\DataTypeTok{a}\NormalTok{: }\StringTok{"hello"} \NormalTok{\};}
+\NormalTok{\}, }\DecValTok{0}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+y.js:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{x = require(}\CharTok{'./x'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{x}\NormalTok{.}\FunctionTok{a}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{module.require(id)}
+
+\begin{itemize}
+\item
+  \texttt{id} \{String\}
+\item
+  Return: \{Object\} \texttt{exports} from the resolved module
+\end{itemize}
+
+The \texttt{module.require} method provides a way to load a module as if
+\texttt{require()} was called from the original module.
+
+Note that in order to do this, you must get a reference to the
+\texttt{module} object. Since \texttt{require()} returns the
+\texttt{exports}, and the \texttt{module} is typically \emph{only}
+available within a specific module's code, it must be explicitly
+exported in order to be used.
+
+\subsubsection{module.id}
+
+\begin{itemize}
+\item
+  \{String\}
+\end{itemize}
+
+The identifier for the module. Typically this is the fully resolved
+filename.
+
+\subsubsection{module.filename}
+
+\begin{itemize}
+\item
+  \{String\}
+\end{itemize}
+
+The fully resolved filename to the module.
+
+\subsubsection{module.loaded}
+
+\begin{itemize}
+\item
+  \{Boolean\}
+\end{itemize}
+
+Whether or not the module is done loading, or is in the process of
+loading.
+
+\subsubsection{module.parent}
+
+\begin{itemize}
+\item
+  \{Module Object\}
+\end{itemize}
+
+The module that required this one.
+
+\subsubsection{module.children}
+
+\begin{itemize}
+\item
+  \{Array\}
+\end{itemize}
+
+The module objects required by this one.
+
+\subsection{All Together\ldots{}}
+
+To get the exact filename that will be loaded when \texttt{require()} is
+called, use the \texttt{require.resolve()} function.
+
+Putting together all of the above, here is the high-level algorithm in
+pseudocode of what require.resolve does:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{require(X) from module at path Y}
+\DecValTok{1}\NormalTok{. If X is a core module,}
+   \KeywordTok{a}\NormalTok{. }\KeywordTok{return} \NormalTok{the core module}
+   \KeywordTok{b}\NormalTok{. STOP}
+\DecValTok{2}\NormalTok{. If X begins }\KeywordTok{with} \CharTok{'./'} \NormalTok{or }\CharTok{'/'} \NormalTok{or }\CharTok{'../'}
+   \KeywordTok{a}\NormalTok{. LOAD_AS_FILE(Y + X)}
+   \KeywordTok{b}\NormalTok{. LOAD_AS_DIRECTORY(Y + X)}
+\DecValTok{3}\NormalTok{. LOAD_NODE_MODULES(X, dirname(Y))}
+\DecValTok{4}\NormalTok{. THROW }\StringTok{"not found"}
+
+\NormalTok{LOAD_AS_FILE(X)}
+\DecValTok{1}\NormalTok{. If X is a file, load X as JavaScript }\KeywordTok{text}\NormalTok{.  STOP}
+\DecValTok{2}\NormalTok{. If }\KeywordTok{X}\NormalTok{.}\FunctionTok{js} \NormalTok{is a file, load }\KeywordTok{X}\NormalTok{.}\FunctionTok{js} \NormalTok{as JavaScript }\KeywordTok{text}\NormalTok{.  STOP}
+\DecValTok{3}\NormalTok{. If }\KeywordTok{X}\NormalTok{.}\FunctionTok{node} \NormalTok{is a file, load }\KeywordTok{X}\NormalTok{.}\FunctionTok{node} \NormalTok{as binary }\KeywordTok{addon}\NormalTok{.  STOP}
+
+\NormalTok{LOAD_AS_DIRECTORY(X)}
+\DecValTok{1}\NormalTok{. If X/}\KeywordTok{package}\NormalTok{.}\FunctionTok{json} \NormalTok{is a file,}
+   \KeywordTok{a}\NormalTok{. Parse X/}\KeywordTok{package}\NormalTok{.}\FunctionTok{json}\NormalTok{, and look }\KeywordTok{for} \StringTok{"main"} \KeywordTok{field}\NormalTok{.}
+   \KeywordTok{b}\NormalTok{. let M = X + (json main field)}
+   \KeywordTok{c}\NormalTok{. LOAD_AS_FILE(M)}
+\DecValTok{2}\NormalTok{. If X/}\KeywordTok{index}\NormalTok{.}\FunctionTok{js} \NormalTok{is a file, load X/}\KeywordTok{index}\NormalTok{.}\FunctionTok{js} \NormalTok{as JavaScript }\KeywordTok{text}\NormalTok{.  STOP}
+\DecValTok{3}\NormalTok{. If X/}\KeywordTok{index}\NormalTok{.}\FunctionTok{node} \NormalTok{is a file, load X/}\KeywordTok{index}\NormalTok{.}\FunctionTok{node} \NormalTok{as binary }\KeywordTok{addon}\NormalTok{.  STOP}
+
+\NormalTok{LOAD_NODE_MODULES(X, START)}
+\DecValTok{1}\NormalTok{. let DIRS=NODE_MODULES_PATHS(START)}
+\DecValTok{2}\NormalTok{. }\KeywordTok{for} \NormalTok{each DIR }\KeywordTok{in} \DataTypeTok{DIRS}\NormalTok{:}
+   \KeywordTok{a}\NormalTok{. LOAD_AS_FILE(DIR/X)}
+   \KeywordTok{b}\NormalTok{. LOAD_AS_DIRECTORY(DIR/X)}
+
+\NormalTok{NODE_MODULES_PATHS(START)}
+\DecValTok{1}\NormalTok{. let PARTS = path split(START)}
+\DecValTok{2}\NormalTok{. let ROOT = index of first instance of }\StringTok{"node_modules"} \KeywordTok{in} \NormalTok{PARTS, or }\DecValTok{0}
+\DecValTok{3}\NormalTok{. let I = count of PARTS - }\DecValTok{1}
+\DecValTok{4}\NormalTok{. let DIRS = []}
+\DecValTok{5}\NormalTok{. }\KeywordTok{while} \NormalTok{I > ROOT,}
+   \KeywordTok{a}\NormalTok{. }\KeywordTok{if} \NormalTok{PARTS[I] = }\StringTok{"node_modules"} \NormalTok{CONTINUE}
+   \KeywordTok{c}\NormalTok{. DIR = path join(PARTS[}\DecValTok{0} \NormalTok{.. I] + }\StringTok{"node_modules"}\NormalTok{)}
+   \KeywordTok{b}\NormalTok{. DIRS = DIRS + DIR}
+   \KeywordTok{c}\NormalTok{. let I = I - }\DecValTok{1}
+\DecValTok{6}\NormalTok{. }\KeywordTok{return} \NormalTok{DIRS}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Loading from the global folders}
+
+If the \texttt{NODE\_PATH} environment variable is set to a
+colon-delimited list of absolute paths, then node will search those
+paths for modules if they are not found elsewhere. (Note: On Windows,
+\texttt{NODE\_PATH} is delimited by semicolons instead of colons.)
+
+Additionally, node will search in the following locations:
+
+\begin{itemize}
+\item
+  1: \texttt{\$HOME/.node\_modules}
+\item
+  2: \texttt{\$HOME/.node\_libraries}
+\item
+  3: \texttt{\$PREFIX/lib/node}
+\end{itemize}
+
+Where \texttt{\$HOME} is the user's home directory, and
+\texttt{\$PREFIX} is node's configured \texttt{node\_prefix}.
+
+These are mostly for historic reasons. You are highly encouraged to
+place your dependencies locally in \texttt{node\_modules} folders. They
+will be loaded faster, and more reliably.
+
+\subsection{Accessing the main module}
+
+When a file is run directly from Node, \texttt{require.main} is set to
+its \texttt{module}. That means that you can determine whether a file
+has been run directly by testing
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{require}\NormalTok{.}\FunctionTok{main} \NormalTok{=== module}
+\end{Highlighting}
+\end{Shaded}
+
+For a file \texttt{foo.js}, this will be \texttt{true} if run via
+\texttt{node foo.js}, but \texttt{false} if run by
+\texttt{require('./foo')}.
+
+Because \texttt{module} provides a \texttt{filename} property (normally
+equivalent to \texttt{\_\_filename}), the entry point of the current
+application can be obtained by checking \texttt{require.main.filename}.
+
+\subsection{Addenda: Package Manager Tips}
+
+The semantics of Node's \texttt{require()} function were designed to be
+general enough to support a number of sane directory structures. Package
+manager programs such as \texttt{dpkg}, \texttt{rpm}, and \texttt{npm}
+will hopefully find it possible to build native packages from Node
+modules without modification.
+
+Below we give a suggested directory structure that could work:
+
+Let's say that we wanted to have the folder at
+\texttt{/usr/lib/node/\textless{}some-package\textgreater{}/\textless{}some-version\textgreater{}}
+hold the contents of a specific version of a package.
+
+Packages can depend on one another. In order to install package
+\texttt{foo}, you may have to install a specific version of package
+\texttt{bar}. The \texttt{bar} package may itself have dependencies, and
+in some cases, these dependencies may even collide or form cycles.
+
+Since Node looks up the \texttt{realpath} of any modules it loads (that
+is, resolves symlinks), and then looks for their dependencies in the
+\texttt{node\_modules} folders as described above, this situation is
+very simple to resolve with the following architecture:
+
+\begin{itemize}
+\item
+  \texttt{/usr/lib/node/foo/1.2.3/} - Contents of the \texttt{foo}
+  package, version 1.2.3.
+\item
+  \texttt{/usr/lib/node/bar/4.3.2/} - Contents of the \texttt{bar}
+  package that \texttt{foo} depends on.
+\item
+  \texttt{/usr/lib/node/foo/1.2.3/node\_modules/bar} - Symbolic link to
+  \texttt{/usr/lib/node/bar/4.3.2/}.
+\item
+  \texttt{/usr/lib/node/bar/4.3.2/node\_modules/*} - Symbolic links to
+  the packages that \texttt{bar} depends on.
+\end{itemize}
+
+Thus, even if a cycle is encountered, or if there are dependency
+conflicts, every module will be able to get a version of its dependency
+that it can use.
+
+When the code in the \texttt{foo} package does \texttt{require('bar')},
+it will get the version that is symlinked into
+\texttt{/usr/lib/node/foo/1.2.3/node\_modules/bar}. Then, when the code
+in the \texttt{bar} package calls \texttt{require('quux')}, it'll get
+the version that is symlinked into
+\texttt{/usr/lib/node/bar/4.3.2/node\_modules/quux}.
+
+Furthermore, to make the module lookup process even more optimal, rather
+than putting packages directly in \texttt{/usr/lib/node}, we could put
+them in
+\texttt{/usr/lib/node\_modules/\textless{}name\textgreater{}/\textless{}version\textgreater{}}.
+Then node will not bother looking for missing dependencies in
+\texttt{/usr/node\_modules} or \texttt{/node\_modules}.
+
+In order to make modules available to the node REPL, it might be useful
+to also add the \texttt{/usr/lib/node\_modules} folder to the
+\texttt{\$NODE\_PATH} environment variable. Since the module lookups
+using \texttt{node\_modules} folders are all relative, and based on the
+real path of the files making the calls to \texttt{require()}, the
+packages themselves can be anywhere.

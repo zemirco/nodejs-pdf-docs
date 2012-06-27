@@ -1,0 +1,187 @@
+\section{Global Objects}
+
+These objects are available in all modules. Some of these objects aren't
+actually in the global scope but in the module scope - this will be
+noted.
+
+\subsection{global}
+
+\begin{itemize}
+\item
+  \{Object\} The global namespace object.
+\end{itemize}
+
+In browsers, the top-level scope is the global scope. That means that in
+browsers if you're in the global scope \texttt{var something} will
+define a global variable. In Node this is different. The top-level scope
+is not the global scope; \texttt{var something} inside a Node module
+will be local to that module.
+
+\subsection{process}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+The process object. See the
+\href{process.html\#process\_process}{process object} section.
+
+\subsection{console}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+Used to print to stdout and stderr. See the \href{stdio.html}{stdio}
+section.
+
+\subsection{Class: Buffer}
+
+\begin{itemize}
+\item
+  \{Function\}
+\end{itemize}
+
+Used to handle binary data. See the \href{buffer.html}{buffer section}
+
+\subsection{require()}
+
+\begin{itemize}
+\item
+  \{Function\}
+\end{itemize}
+
+To require modules. See the
+\href{modules.html\#modules\_modules}{Modules} section. \texttt{require}
+isn't actually a global but rather local to each module.
+
+\subsubsection{require.resolve()}
+
+Use the internal \texttt{require()} machinery to look up the location of
+a module, but rather than loading the module, just return the resolved
+filename.
+
+\subsubsection{require.cache}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+Modules are cached in this object when they are required. By deleting a
+key value from this object, the next \texttt{require} will reload the
+module.
+
+\subsubsection{require.extensions}
+
+\begin{itemize}
+\item
+  \{Array\}
+\end{itemize}
+
+Instruct \texttt{require} on how to handle certain file extensions.
+
+Process files with the extension \texttt{.sjs} as \texttt{.js}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{require}\NormalTok{.}\FunctionTok{extensions}\NormalTok{[}\CharTok{'.sjs'}\NormalTok{] = }\KeywordTok{require}\NormalTok{.}\FunctionTok{extensions}\NormalTok{[}\CharTok{'.js'}\NormalTok{];}
+\end{Highlighting}
+\end{Shaded}
+
+Write your own extension handler:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{require}\NormalTok{.}\FunctionTok{extensions}\NormalTok{[}\CharTok{'.sjs'}\NormalTok{] = }\KeywordTok{function}\NormalTok{(module, filename) \{}
+  \KeywordTok{var} \NormalTok{content = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{readFileSync}\NormalTok{(filename, }\CharTok{'utf8'}\NormalTok{);}
+  \CommentTok{// Parse the file content and give to module.exports}
+  \KeywordTok{module}\NormalTok{.}\FunctionTok{exports} \NormalTok{= content;}
+\NormalTok{\};}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{\_\_filename}
+
+\begin{itemize}
+\item
+  \{String\}
+\end{itemize}
+
+The filename of the code being executed. This is the resolved absolute
+path of this code file. For a main program this is not necessarily the
+same filename used in the command line. The value inside a module is the
+path to that module file.
+
+Example: running \texttt{node example.js} from \texttt{/Users/mjr}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(__filename);}
+\CommentTok{// /Users/mjr/example.js}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{\_\_filename} isn't actually a global but rather local to each
+module.
+
+\subsection{\_\_dirname}
+
+\begin{itemize}
+\item
+  \{String\}
+\end{itemize}
+
+The name of the directory that the currently executing script resides
+in.
+
+Example: running \texttt{node example.js} from \texttt{/Users/mjr}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(__dirname);}
+\CommentTok{// /Users/mjr}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{\_\_dirname} isn't actually a global but rather local to each
+module.
+
+\subsection{module}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+A reference to the current module. In particular \texttt{module.exports}
+is the same as the \texttt{exports} object. \texttt{module} isn't
+actually a global but rather local to each module.
+
+See the \href{modules.html}{module system documentation} for more
+information.
+
+\subsection{exports}
+
+An object which is shared between all instances of the current module
+and made accessible through \texttt{require()}. \texttt{exports} is the
+same as the \texttt{module.exports} object. \texttt{exports} isn't
+actually a global but rather local to each module.
+
+See the \href{modules.html}{module system documentation} for more
+information.
+
+See the \href{modules.html}{module section} for more information.
+
+\subsection{setTimeout(cb, ms)}
+
+\subsection{clearTimeout(t)}
+
+\subsection{setInterval(cb, ms)}
+
+\subsection{clearInterval(t)}
+
+The timer functions are global variables. See the
+\href{timers.html}{timers} section.

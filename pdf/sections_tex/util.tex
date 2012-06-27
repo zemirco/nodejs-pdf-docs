@@ -1,0 +1,248 @@
+\section{util}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{5} \NormalTok{- Locked}
+\end{Highlighting}
+\end{Shaded}
+
+These functions are in the module \texttt{'util'}. Use
+\texttt{require('util')} to access them.
+
+\subsection{util.format(format, {[}\ldots{}{]})}
+
+Returns a formatted string using the first argument as a
+\texttt{printf}-like format.
+
+The first argument is a string that contains zero or more
+\emph{placeholders}. Each placeholder is replaced with the converted
+value from its corresponding argument. Supported placeholders are:
+
+\begin{itemize}
+\item
+  \texttt{\%s} - String.
+\item
+  \texttt{\%d} - Number (both integer and float).
+\item
+  \texttt{\%j} - JSON.
+\item
+  \texttt{\%\%} - single percent sign (\texttt{'\%'}). This does not
+  consume an argument.
+\end{itemize}
+
+If the placeholder does not have a corresponding argument, the
+placeholder is not replaced.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\CharTok{'%s:%s'}\NormalTok{, }\CharTok{'foo'}\NormalTok{); }\CommentTok{// 'foo:%s'}
+\end{Highlighting}
+\end{Shaded}
+
+If there are more arguments than placeholders, the extra arguments are
+converted to strings with \texttt{util.inspect()} and these strings are
+concatenated, delimited by a space.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\CharTok{'%s:%s'}\NormalTok{, }\CharTok{'foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz'}\NormalTok{); }\CommentTok{// 'foo:bar baz'}
+\end{Highlighting}
+\end{Shaded}
+
+If the first argument is not a format string then \texttt{util.format()}
+returns a string that is the concatenation of all its arguments
+separated by spaces. Each argument is converted to a string with
+\texttt{util.inspect()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{); }\CommentTok{// '1 2 3'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.debug(string)}
+
+A synchronous output function. Will block the process and output
+\texttt{string} immediately to \texttt{stderr}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{require(}\CharTok{'util'}\NormalTok{).}\FunctionTok{debug}\NormalTok{(}\CharTok{'message on stderr'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.error({[}\ldots{}{]})}
+
+Same as \texttt{util.debug()} except this will output all arguments
+immediately to \texttt{stderr}.
+
+\subsection{util.puts({[}\ldots{}{]})}
+
+A synchronous output function. Will block the process and output all
+arguments to \texttt{stdout} with newlines after each argument.
+
+\subsection{util.print({[}\ldots{}{]})}
+
+A synchronous output function. Will block the process, cast each
+argument to a string then output to \texttt{stdout}. Does not place
+newlines after each argument.
+
+\subsection{util.log(string)}
+
+Output with timestamp on \texttt{stdout}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{require(}\CharTok{'util'}\NormalTok{).}\FunctionTok{log}\NormalTok{(}\CharTok{'Timestamped message.'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.inspect(object, {[}showHidden{]}, {[}depth{]},
+{[}colors{]})}
+
+Return a string representation of \texttt{object}, which is useful for
+debugging.
+
+If \texttt{showHidden} is \texttt{true}, then the object's
+non-enumerable properties will be shown too. Defaults to \texttt{false}.
+
+If \texttt{depth} is provided, it tells \texttt{inspect} how many times
+to recurse while formatting the object. This is useful for inspecting
+large complicated objects.
+
+The default is to only recurse twice. To make it recurse indefinitely,
+pass in \texttt{null} for \texttt{depth}.
+
+If \texttt{colors} is \texttt{true}, the output will be styled with ANSI
+color codes. Defaults to \texttt{false}.
+
+Example of inspecting all properties of the \texttt{util} object:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(util, }\KeywordTok{true}\NormalTok{, null));}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.isArray(object)}
+
+Returns \texttt{true} if the given ``object'' is an \texttt{Array}.
+\texttt{false} otherwise.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{([])}
+  \CommentTok{// true}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{(}\KeywordTok{new} \KeywordTok{Array}\NormalTok{)}
+  \CommentTok{// true}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{(\{\})}
+  \CommentTok{// false}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.isRegExp(object)}
+
+Returns \texttt{true} if the given ``object'' is a \texttt{RegExp}.
+\texttt{false} otherwise.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(}\OtherTok{/}\FloatTok{some regexp}\OtherTok{/}\NormalTok{)}
+  \CommentTok{// true}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(}\KeywordTok{new} \KeywordTok{RegExp}\NormalTok{(}\CharTok{'another regexp'}\NormalTok{))}
+  \CommentTok{// true}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(\{\})}
+  \CommentTok{// false}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.isDate(object)}
+
+Returns \texttt{true} if the given ``object'' is a \texttt{Date}.
+\texttt{false} otherwise.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(}\KeywordTok{new} \KeywordTok{Date}\NormalTok{())}
+  \CommentTok{// true}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(}\KeywordTok{Date}\NormalTok{())}
+  \CommentTok{// false (without 'new' returns a String)}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(\{\})}
+  \CommentTok{// false}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.isError(object)}
+
+Returns \texttt{true} if the given ``object'' is an \texttt{Error}.
+\texttt{false} otherwise.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(}\KeywordTok{new} \NormalTok{Error())}
+  \CommentTok{// true}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(}\KeywordTok{new} \NormalTok{TypeError())}
+  \CommentTok{// true}
+\KeywordTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(\{ }\DataTypeTok{name}\NormalTok{: }\CharTok{'Error'}\NormalTok{, }\DataTypeTok{message}\NormalTok{: }\CharTok{'an error occurred'} \NormalTok{\})}
+  \CommentTok{// false}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{util.pump(readableStream, writableStream, {[}callback{]})}
+
+Experimental
+
+Read the data from \texttt{readableStream} and send it to the
+\texttt{writableStream}. When \texttt{writableStream.write(data)}
+returns \texttt{false} \texttt{readableStream} will be paused until the
+\texttt{drain} event occurs on the \texttt{writableStream}.
+\texttt{callback} gets an error as its only argument and is called when
+\texttt{writableStream} is closed or when an error occurs.
+
+\subsection{util.inherits(constructor, superConstructor)}
+
+Inherit the prototype methods from one
+\href{https://developer.mozilla.org/en/JavaScript/Reference/Global\_Objects/Object/constructor}{constructor}
+into another. The prototype of \texttt{constructor} will be set to a new
+object created from \texttt{superConstructor}.
+
+As an additional convenience, \texttt{superConstructor} will be
+accessible through the \texttt{constructor.super\_} property.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\StringTok{"util"}\NormalTok{);}
+\KeywordTok{var} \NormalTok{events = require(}\StringTok{"events"}\NormalTok{);}
+
+\KeywordTok{function} \NormalTok{MyStream() \{}
+    \KeywordTok{events.EventEmitter}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{);}
+\NormalTok{\}}
+
+\KeywordTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(MyStream, }\KeywordTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{);}
+
+\KeywordTok{MyStream.prototype}\NormalTok{.}\FunctionTok{write} \NormalTok{= }\KeywordTok{function}\NormalTok{(data) \{}
+    \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{"data"}\NormalTok{, data);}
+\NormalTok{\}}
+
+\KeywordTok{var} \NormalTok{stream = }\KeywordTok{new} \NormalTok{MyStream();}
+
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(stream instanceof }\KeywordTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{); }\CommentTok{// true}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{MyStream}\NormalTok{.}\FunctionTok{super}\NormalTok{_ === }\KeywordTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{); }\CommentTok{// true}
+
+\KeywordTok{stream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"data"}\NormalTok{, }\KeywordTok{function}\NormalTok{(data) \{}
+    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Received data: "'} \NormalTok{+ data + }\CharTok{'"'}\NormalTok{);}
+\NormalTok{\})}
+\KeywordTok{stream}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"It works!"}\NormalTok{); }\CommentTok{// Received data: "It works!"}
+\end{Highlighting}
+\end{Shaded}
+

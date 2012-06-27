@@ -1,0 +1,195 @@
+\section{DNS}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\end{Highlighting}
+\end{Shaded}
+
+Use \texttt{require('dns')} to access this module. All methods in the
+dns module use C-Ares except for \texttt{dns.lookup} which uses
+\texttt{getaddrinfo(3)} in a thread pool. C-Ares is much faster than
+\texttt{getaddrinfo} but the system resolver is more constant with how
+other programs operate. When a user does
+\texttt{net.connect(80, 'google.com')} or
+\texttt{http.get(\{ host: 'google.com' \})} the \texttt{dns.lookup}
+method is used. Users who need to do a large number of look ups quickly
+should use the methods that go through C-Ares.
+
+Here is an example which resolves \texttt{'www.google.com'} then reverse
+resolves the IP addresses which are returned.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{dns = require(}\CharTok{'dns'}\NormalTok{);}
+
+\KeywordTok{dns}\NormalTok{.}\FunctionTok{resolve4}\NormalTok{(}\CharTok{'www.google.com'}\NormalTok{, }\KeywordTok{function} \NormalTok{(err, addresses) \{}
+  \KeywordTok{if} \NormalTok{(err) }\KeywordTok{throw} \NormalTok{err;}
+
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'addresses: '} \NormalTok{+ }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(addresses));}
+
+  \KeywordTok{addresses}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function} \NormalTok{(a) \{}
+    \KeywordTok{dns}\NormalTok{.}\FunctionTok{reverse}\NormalTok{(a, }\KeywordTok{function} \NormalTok{(err, domains) \{}
+      \KeywordTok{if} \NormalTok{(err) \{}
+        \KeywordTok{throw} \NormalTok{err;}
+      \NormalTok{\}}
+
+      \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'reverse for '} \NormalTok{+ a + }\CharTok{': '} \NormalTok{+ }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(domains));}
+    \NormalTok{\});}
+  \NormalTok{\});}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{dns.lookup(domain, {[}family{]}, callback)}
+
+Resolves a domain (e.g. \texttt{'google.com'}) into the first found A
+(IPv4) or AAAA (IPv6) record. The \texttt{family} can be the integer
+\texttt{4} or \texttt{6}. Defaults to \texttt{null} that indicates both
+Ip v4 and v6 address family.
+
+The callback has arguments \texttt{(err, address, family)}. The
+\texttt{address} argument is a string representation of a IP v4 or v6
+address. The \texttt{family} argument is either the integer 4 or 6 and
+denotes the family of \texttt{address} (not necessarily the value
+initially passed to \texttt{lookup}).
+
+On error, \texttt{err} is an \texttt{Error} object, where
+\texttt{err.code} is the error code. Keep in mind that \texttt{err.code}
+will be set to \texttt{'ENOENT'} not only when the domain does not exist
+but also when the lookup fails in other ways such as no available file
+descriptors.
+
+\subsection{dns.resolve(domain, {[}rrtype{]}, callback)}
+
+Resolves a domain (e.g. \texttt{'google.com'}) into an array of the
+record types specified by rrtype. Valid rrtypes are \texttt{'A'} (IPV4
+addresses, default), \texttt{'AAAA'} (IPV6 addresses), \texttt{'MX'}
+(mail exchange records), \texttt{'TXT'} (text records), \texttt{'SRV'}
+(SRV records), \texttt{'PTR'} (used for reverse IP lookups),
+\texttt{'NS'} (name server records) and \texttt{'CNAME'} (canonical name
+records).
+
+The callback has arguments \texttt{(err, addresses)}. The type of each
+item in \texttt{addresses} is determined by the record type, and
+described in the documentation for the corresponding lookup methods
+below.
+
+On error, \texttt{err} is an \texttt{Error} object, where
+\texttt{err.code} is one of the error codes listed below.
+
+\subsection{dns.resolve4(domain, callback)}
+
+The same as \texttt{dns.resolve()}, but only for IPv4 queries
+(\texttt{A} records). \texttt{addresses} is an array of IPv4 addresses
+(e.g. \texttt{{[}'74.125.79.104', '74.125.79.105', '74.125.79.106'{]}}).
+
+\subsection{dns.resolve6(domain, callback)}
+
+The same as \texttt{dns.resolve4()} except for IPv6 queries (an
+\texttt{AAAA} query).
+
+\subsection{dns.resolveMx(domain, callback)}
+
+The same as \texttt{dns.resolve()}, but only for mail exchange queries
+(\texttt{MX} records).
+
+\texttt{addresses} is an array of MX records, each with a priority and
+an exchange attribute (e.g.
+\texttt{{[}\{'priority': 10, 'exchange': 'mx.example.com'\},...{]}}).
+
+\subsection{dns.resolveTxt(domain, callback)}
+
+The same as \texttt{dns.resolve()}, but only for text queries
+(\texttt{TXT} records). \texttt{addresses} is an array of the text
+records available for \texttt{domain} (e.g.,
+\texttt{{[}'v=spf1 ip4:0.0.0.0 \textasciitilde{}all'{]}}).
+
+\subsection{dns.resolveSrv(domain, callback)}
+
+The same as \texttt{dns.resolve()}, but only for service records
+(\texttt{SRV} records). \texttt{addresses} is an array of the SRV
+records available for \texttt{domain}. Properties of SRV records are
+priority, weight, port, and name (e.g.,
+\texttt{{[}\{'priority': 10, \{'weight': 5, 'port': 21223, 'name': 'service.example.com'\}, ...{]}}).
+
+\subsection{dns.resolveNs(domain, callback)}
+
+The same as \texttt{dns.resolve()}, but only for name server records
+(\texttt{NS} records). \texttt{addresses} is an array of the name server
+records available for \texttt{domain} (e.g.,
+\texttt{{[}'ns1.example.com', 'ns2.example.com'{]}}).
+
+\subsection{dns.resolveCname(domain, callback)}
+
+The same as \texttt{dns.resolve()}, but only for canonical name records
+(\texttt{CNAME} records). \texttt{addresses} is an array of the
+canonical name records available for \texttt{domain} (e.g.,
+\texttt{{[}'bar.example.com'{]}}).
+
+\subsection{dns.reverse(ip, callback)}
+
+Reverse resolves an ip address to an array of domain names.
+
+The callback has arguments \texttt{(err, domains)}.
+
+On error, \texttt{err} is an \texttt{Error} object, where
+\texttt{err.code} is one of the error codes listed below.
+
+\subsection{Error codes}
+
+Each DNS query can return one of the following error codes:
+
+\begin{itemize}
+\item
+  \texttt{dns.NODATA}: DNS server returned answer with no data.
+\item
+  \texttt{dns.FORMERR}: DNS server claims query was misformatted.
+\item
+  \texttt{dns.SERVFAIL}: DNS server returned general failure.
+\item
+  \texttt{dns.NOTFOUND}: Domain name not found.
+\item
+  \texttt{dns.NOTIMP}: DNS server does not implement requested
+  operation.
+\item
+  \texttt{dns.REFUSED}: DNS server refused query.
+\item
+  \texttt{dns.BADQUERY}: Misformatted DNS query.
+\item
+  \texttt{dns.BADNAME}: Misformatted domain name.
+\item
+  \texttt{dns.BADFAMILY}: Unsupported address family.
+\item
+  \texttt{dns.BADRESP}: Misformatted DNS reply.
+\item
+  \texttt{dns.CONNREFUSED}: Could not contact DNS servers.
+\item
+  \texttt{dns.TIMEOUT}: Timeout while contacting DNS servers.
+\item
+  \texttt{dns.EOF}: End of file.
+\item
+  \texttt{dns.FILE}: Error reading file.
+\item
+  \texttt{dns.NOMEM}: Out of memory.
+\item
+  \texttt{dns.DESTRUCTION}: Channel is being destroyed.
+\item
+  \texttt{dns.BADSTR}: Misformatted string.
+\item
+  \texttt{dns.BADFLAGS}: Illegal flags specified.
+\item
+  \texttt{dns.NONAME}: Given hostname is not numeric.
+\item
+  \texttt{dns.BADHINTS}: Illegal hints flags specified.
+\item
+  \texttt{dns.NOTINITIALIZED}: c-ares library initialization not yet
+  performed.
+\item
+  \texttt{dns.LOADIPHLPAPI}: Error loading iphlpapi.dll.
+\item
+  \texttt{dns.ADDRGETNETWORKPARAMS}: Could not find GetNetworkParams
+  function.
+\item
+  \texttt{dns.CANCELLED}: DNS query cancelled.
+\end{itemize}

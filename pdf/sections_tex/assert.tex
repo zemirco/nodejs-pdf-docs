@@ -1,0 +1,107 @@
+\section{Assert}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{5} \NormalTok{- Locked}
+\end{Highlighting}
+\end{Shaded}
+
+This module is used for writing unit tests for your applications, you
+can access it with \texttt{require('assert')}.
+
+\subsection{assert.fail(actual, expected, message, operator)}
+
+Throws an exception that displays the values for \texttt{actual} and
+\texttt{expected} separated by the provided operator.
+
+\subsection{assert(value, message), assert.ok(value, {[}message{]})}
+
+Tests if value is truthy, it is equivalent to
+\texttt{assert.equal(true, !!value, message);}
+
+\subsection{assert.equal(actual, expected, {[}message{]})}
+
+Tests shallow, coercive equality with the equal comparison operator (
+\texttt{==} ).
+
+\subsection{assert.notEqual(actual, expected, {[}message{]})}
+
+Tests shallow, coercive non-equality with the not equal comparison
+operator ( \texttt{!=} ).
+
+\subsection{assert.deepEqual(actual, expected, {[}message{]})}
+
+Tests for deep equality.
+
+\subsection{assert.notDeepEqual(actual, expected, {[}message{]})}
+
+Tests for any deep inequality.
+
+\subsection{assert.strictEqual(actual, expected, {[}message{]})}
+
+Tests strict equality, as determined by the strict equality operator (
+\texttt{===} )
+
+\subsection{assert.notStrictEqual(actual, expected, {[}message{]})}
+
+Tests strict non-equality, as determined by the strict not equal
+operator ( \texttt{!==} )
+
+\subsection{assert.throws(block, {[}error{]}, {[}message{]})}
+
+Expects \texttt{block} to throw an error. \texttt{error} can be
+constructor, regexp or validation function.
+
+Validate instanceof using constructor:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{assert}\NormalTok{.}\FunctionTok{throws}\NormalTok{(}
+  \KeywordTok{function}\NormalTok{() \{}
+    \KeywordTok{throw} \KeywordTok{new} \NormalTok{Error(}\StringTok{"Wrong value"}\NormalTok{);}
+  \NormalTok{\},}
+  \NormalTok{Error}
+\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+Validate error message using RegExp:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{assert}\NormalTok{.}\FunctionTok{throws}\NormalTok{(}
+  \KeywordTok{function}\NormalTok{() \{}
+    \KeywordTok{throw} \KeywordTok{new} \NormalTok{Error(}\StringTok{"Wrong value"}\NormalTok{);}
+  \NormalTok{\},}
+  \NormalTok{/value/}
+\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+Custom error validation:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{assert}\NormalTok{.}\FunctionTok{throws}\NormalTok{(}
+  \KeywordTok{function}\NormalTok{() \{}
+    \KeywordTok{throw} \KeywordTok{new} \NormalTok{Error(}\StringTok{"Wrong value"}\NormalTok{);}
+  \NormalTok{\},}
+  \KeywordTok{function}\NormalTok{(err) \{}
+    \KeywordTok{if} \NormalTok{( (err instanceof Error) && /value/.}\FunctionTok{test}\NormalTok{(err) ) \{}
+      \KeywordTok{return} \KeywordTok{true}\NormalTok{;}
+    \NormalTok{\}}
+  \NormalTok{\},}
+  \StringTok{"unexpected error"}
+\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{assert.doesNotThrow(block, {[}error{]}, {[}message{]})}
+
+Expects \texttt{block} not to throw an error, see assert.throws for
+details.
+
+\subsection{assert.ifError(value)}
+
+Tests if value is not a false value, throws if it is a true value.
+Useful when testing the first argument, \texttt{error} in callbacks.

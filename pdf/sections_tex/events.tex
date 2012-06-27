@@ -1,0 +1,137 @@
+\section{Events}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
+\end{Highlighting}
+\end{Shaded}
+
+Many objects in Node emit events: a \texttt{net.Server} emits an event
+each time a peer connects to it, a \texttt{fs.readStream} emits an event
+when the file is opened. All objects which emit events are instances of
+\texttt{events.EventEmitter}. You can access this module by doing:
+\texttt{require("events");}
+
+Typically, event names are represented by a camel-cased string, however,
+there aren't any strict restrictions on that, as any string will be
+accepted.
+
+Functions can then be attached to objects, to be executed when an event
+is emitted. These functions are called \emph{listeners}.
+
+\subsection{Class: events.EventEmitter}
+
+To access the EventEmitter class,
+\texttt{require('events').EventEmitter}.
+
+When an \texttt{EventEmitter} instance experiences an error, the typical
+action is to emit an \texttt{'error'} event. Error events are treated as
+a special case in node. If there is no listener for it, then the default
+action is to print a stack trace and exit the program.
+
+All EventEmitters emit the event \texttt{'newListener'} when new
+listeners are added.
+
+\subsubsection{emitter.addListener(event, listener)}
+
+\subsubsection{emitter.on(event, listener)}
+
+Adds a listener to the end of the listeners array for the specified
+event.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'someone connected!'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{emitter.once(event, listener)}
+
+Adds a \textbf{one time} listener for the event. This listener is
+invoked only the next time the event is fired, after which it is
+removed.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{server}\NormalTok{.}\FunctionTok{once}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Ah, we have our first user!'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{emitter.removeListener(event, listener)}
+
+Remove a listener from the listener array for the specified event.
+\textbf{Caution}: changes array indices in the listener array behind the
+listener.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{callback = }\KeywordTok{function}\NormalTok{(stream) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'someone connected!'}\NormalTok{);}
+\NormalTok{\};}
+\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, callback);}
+\CommentTok{// ...}
+\KeywordTok{server}\NormalTok{.}\FunctionTok{removeListener}\NormalTok{(}\CharTok{'connection'}\NormalTok{, callback);}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{emitter.removeAllListeners({[}event{]})}
+
+Removes all listeners, or those of the specified event.
+
+Note that this will \textbf{invalidate} any arrays that have previously
+been returned by \texttt{emitter.listeners(event)}.
+
+\subsubsection{emitter.setMaxListeners(n)}
+
+By default EventEmitters will print a warning if more than 10 listeners
+are added for a particular event. This is a useful default which helps
+finding memory leaks. Obviously not all Emitters should be limited to
+10. This function allows that to be increased. Set to zero for
+unlimited.
+
+\subsubsection{emitter.listeners(event)}
+
+Returns an array of listeners for the specified event.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'someone connected!'}\NormalTok{);}
+\NormalTok{\});}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(}\KeywordTok{server}\NormalTok{.}\FunctionTok{listeners}\NormalTok{(}\CharTok{'connection'}\NormalTok{))); }\CommentTok{// [ [Function] ]}
+\end{Highlighting}
+\end{Shaded}
+
+This array \textbf{may} be a mutable reference to the same underlying
+list of listeners that is used by the event subsystem. However, certain
+actions (specifically, removeAllListeners) will invalidate this
+reference.
+
+If you would like to get a copy of the listeners at a specific point in
+time that is guaranteed not to change, make a copy, for example by doing
+\texttt{emitter.listeners(event).slice(0)}.
+
+In a future release of node, this behavior \textbf{may} change to always
+return a copy, for consistency. In your programs, please do not rely on
+being able to modify the EventEmitter listeners using array methods.
+Always use the `on' method to add new listeners.
+
+\subsubsection{emitter.emit(event, {[}arg1{]}, {[}arg2{]},
+{[}\ldots{}{]})}
+
+Execute each of the listeners in order with the supplied arguments.
+
+\subsubsection{Event: `newListener'}
+
+\begin{itemize}
+\item
+  \texttt{event} \{String\} The event name
+\item
+  \texttt{listener} \{Function\} The event handler function
+\end{itemize}
+
+This event is emitted any time someone adds a new listener.

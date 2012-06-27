@@ -1,0 +1,261 @@
+\section{Executing JavaScript}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- }\KeywordTok{Unstable}\NormalTok{. See Caveats, }\KeywordTok{below}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
+
+You can access this module with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+JavaScript code can be compiled and run immediately or compiled, saved,
+and run later.
+
+\subsection{Caveats}
+
+The \texttt{vm} module has many known issues and edge cases. If you run
+into issues or unexpected behavior, please consult
+\href{https://github.com/joyent/node/issues/search?q=vm}{the open issues
+on GitHub}. Some of the biggest problems are described below.
+
+\subsubsection{Sandboxes}
+
+The \texttt{sandbox} argument to \texttt{vm.runInNewContext} and
+\texttt{vm.createContext}, along with the \texttt{initSandbox} argument
+to \texttt{vm.createContext}, do not behave as one might normally expect
+and their behavior varies between different versions of Node.
+
+The key issue to be aware of is that V8 provides no way to directly
+control the global object used within a context. As a result, while
+properties of your \texttt{sandbox} object will be available in the
+context, any properties from the \texttt{prototype}s of the
+\texttt{sandbox} may not be available. Furthermore, the \texttt{this}
+expression within the global scope of the context evaluates to the empty
+object (\texttt{\{\}}) instead of to your sandbox.
+
+Your sandbox's properties are also not shared directly with the script.
+Instead, the properties of the sandbox are copied into the context at
+the beginning of execution, and then after execution, the properties are
+copied back out in an attempt to propagate any changes.
+
+\subsubsection{Globals}
+
+Properties of the global object, like \texttt{Array} and
+\texttt{String}, have different values inside of a context. This means
+that common expressions like \texttt{{[}{]} instanceof Array} or
+\texttt{Object.getPrototypeOf({[}{]}) === Array.prototype} may not
+produce expected results when used inside of scripts evaluated via the
+\texttt{vm} module.
+
+Some of these problems have known workarounds listed in the issues for
+\texttt{vm} on GitHub. for example, \texttt{Array.isArray} works around
+the example problem with \texttt{Array}.
+
+\subsection{vm.runInThisContext(code, {[}filename{]})}
+
+\texttt{vm.runInThisContext()} compiles \texttt{code}, runs it and
+returns the result. Running code does not have access to local scope.
+\texttt{filename} is optional, it's used only in stack traces.
+
+Example of using \texttt{vm.runInThisContext} and \texttt{eval} to run
+the same code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{localVar = }\DecValTok{123}\NormalTok{,}
+    \NormalTok{usingscript, evaled,}
+    \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+
+\NormalTok{usingscript = }\KeywordTok{vm}\NormalTok{.}\FunctionTok{runInThisContext}\NormalTok{(}\CharTok{'localVar = 1;'}\NormalTok{,}
+  \CharTok{'myfile.vm'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'localVar: '} \NormalTok{+ localVar + }\CharTok{', usingscript: '} \NormalTok{+}
+  \NormalTok{usingscript);}
+\NormalTok{evaled = eval(}\CharTok{'localVar = 1;'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'localVar: '} \NormalTok{+ localVar + }\CharTok{', evaled: '} \NormalTok{+}
+  \NormalTok{evaled);}
+
+\CommentTok{// localVar: 123, usingscript: 1}
+\CommentTok{// localVar: 1, evaled: 1}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{vm.runInThisContext} does not have access to the local scope, so
+\texttt{localVar} is unchanged. \texttt{eval} does have access to the
+local scope, so \texttt{localVar} is changed.
+
+In case of syntax error in \texttt{code}, \texttt{vm.runInThisContext}
+emits the syntax error to stderr and throws an exception.
+
+\subsection{vm.runInNewContext(code, {[}sandbox{]}, {[}filename{]})}
+
+\texttt{vm.runInNewContext} compiles \texttt{code}, then runs it in
+\texttt{sandbox} and returns the result. Running code does not have
+access to local scope. The object \texttt{sandbox} will be used as the
+global object for \texttt{code}. \texttt{sandbox} and \texttt{filename}
+are optional, \texttt{filename} is only used in stack traces.
+
+Example: compile and execute code that increments a global variable and
+sets a new one. These globals are contained in the sandbox.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{),}
+    \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{),}
+    \NormalTok{sandbox = \{}
+      \DataTypeTok{animal}\NormalTok{: }\CharTok{'cat'}\NormalTok{,}
+      \DataTypeTok{count}\NormalTok{: }\DecValTok{2}
+    \NormalTok{\};}
+
+\KeywordTok{vm}\NormalTok{.}\FunctionTok{runInNewContext}\NormalTok{(}\CharTok{'count += 1; name = "kitty"'}\NormalTok{, sandbox, }\CharTok{'myfile.vm'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
+
+\CommentTok{// \{ animal: 'cat', count: 3, name: 'kitty' \}}
+\end{Highlighting}
+\end{Shaded}
+
+Note that running untrusted code is a tricky business requiring great
+care. To prevent accidental global variable leakage,
+\texttt{vm.runInNewContext} is quite useful, but safely running
+untrusted code requires a separate process.
+
+In case of syntax error in \texttt{code}, \texttt{vm.runInNewContext}
+emits the syntax error to stderr and throws an exception.
+
+\subsection{vm.runInContext(code, context, {[}filename{]})}
+
+\texttt{vm.runInContext} compiles \texttt{code}, then runs it in
+\texttt{context} and returns the result. A (V8) context comprises a
+global object, together with a set of built-in objects and functions.
+Running code does not have access to local scope and the global object
+held within \texttt{context} will be used as the global object for
+\texttt{code}. \texttt{filename} is optional, it's used only in stack
+traces.
+
+Example: compile and execute code in a existing context.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{),}
+    \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{),}
+    \NormalTok{initSandbox = \{}
+      \DataTypeTok{animal}\NormalTok{: }\CharTok{'cat'}\NormalTok{,}
+      \DataTypeTok{count}\NormalTok{: }\DecValTok{2}
+    \NormalTok{\},}
+    \NormalTok{context = }\KeywordTok{vm}\NormalTok{.}\FunctionTok{createContext}\NormalTok{(initSandbox);}
+
+\KeywordTok{vm}\NormalTok{.}\FunctionTok{runInContext}\NormalTok{(}\CharTok{'count += 1; name = "CATT"'}\NormalTok{, context, }\CharTok{'myfile.vm'}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(context));}
+
+\CommentTok{// \{ animal: 'cat', count: 3, name: 'CATT' \}}
+\end{Highlighting}
+\end{Shaded}
+
+Note that \texttt{createContext} will perform a shallow clone of the
+supplied sandbox object in order to initialize the global object of the
+freshly constructed context.
+
+Note that running untrusted code is a tricky business requiring great
+care. To prevent accidental global variable leakage,
+\texttt{vm.runInContext} is quite useful, but safely running untrusted
+code requires a separate process.
+
+In case of syntax error in \texttt{code}, \texttt{vm.runInContext} emits
+the syntax error to stderr and throws an exception.
+
+\subsection{vm.createContext({[}initSandbox{]})}
+
+\texttt{vm.createContext} creates a new context which is suitable for
+use as the 2nd argument of a subsequent call to
+\texttt{vm.runInContext}. A (V8) context comprises a global object
+together with a set of build-in objects and functions. The optional
+argument \texttt{initSandbox} will be shallow-copied to seed the initial
+contents of the global object used by the context.
+
+\subsection{vm.createScript(code, {[}filename{]})}
+
+\texttt{createScript} compiles \texttt{code} but does not run it.
+Instead, it returns a \texttt{vm.Script} object representing this
+compiled code. This script can be run later many times using methods
+below. The returned script is not bound to any global object. It is
+bound before each run, just for that run. \texttt{filename} is optional,
+it's only used in stack traces.
+
+In case of syntax error in \texttt{code}, \texttt{createScript} prints
+the syntax error to stderr and throws an exception.
+
+\subsection{Class: Script}
+
+A class for running scripts. Returned by vm.createScript.
+
+\subsubsection{script.runInThisContext()}
+
+Similar to \texttt{vm.runInThisContext} but a method of a precompiled
+\texttt{Script} object. \texttt{script.runInThisContext} runs the code
+of \texttt{script} and returns the result. Running code does not have
+access to local scope, but does have access to the \texttt{global}
+object (v8: in actual context).
+
+Example of using \texttt{script.runInThisContext} to compile code once
+and run it multiple times:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+
+\NormalTok{globalVar = }\DecValTok{0}\NormalTok{;}
+
+\KeywordTok{var} \NormalTok{script = }\KeywordTok{vm}\NormalTok{.}\FunctionTok{createScript}\NormalTok{(}\CharTok{'globalVar += 1'}\NormalTok{, }\CharTok{'myfile.vm'}\NormalTok{);}
+
+\KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{1000} \NormalTok{; i += }\DecValTok{1}\NormalTok{) \{}
+  \KeywordTok{script}\NormalTok{.}\FunctionTok{runInThisContext}\NormalTok{();}
+\NormalTok{\}}
+
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(globalVar);}
+
+\CommentTok{// 1000}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{script.runInNewContext({[}sandbox{]})}
+
+Similar to \texttt{vm.runInNewContext} a method of a precompiled
+\texttt{Script} object. \texttt{script.runInNewContext} runs the code of
+\texttt{script} with \texttt{sandbox} as the global object and returns
+the result. Running code does not have access to local scope.
+\texttt{sandbox} is optional.
+
+Example: compile code that increments a global variable and sets one,
+then execute this code multiple times. These globals are contained in
+the sandbox.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{),}
+    \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{),}
+    \NormalTok{sandbox = \{}
+      \DataTypeTok{animal}\NormalTok{: }\CharTok{'cat'}\NormalTok{,}
+      \DataTypeTok{count}\NormalTok{: }\DecValTok{2}
+    \NormalTok{\};}
+
+\KeywordTok{var} \NormalTok{script = }\KeywordTok{vm}\NormalTok{.}\FunctionTok{createScript}\NormalTok{(}\CharTok{'count += 1; name = "kitty"'}\NormalTok{, }\CharTok{'myfile.vm'}\NormalTok{);}
+
+\KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{10} \NormalTok{; i += }\DecValTok{1}\NormalTok{) \{}
+  \KeywordTok{script}\NormalTok{.}\FunctionTok{runInNewContext}\NormalTok{(sandbox);}
+\NormalTok{\}}
+
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
+
+\CommentTok{// \{ animal: 'cat', count: 12, name: 'kitty' \}}
+\end{Highlighting}
+\end{Shaded}
+
+Note that running untrusted code is a tricky business requiring great
+care. To prevent accidental global variable leakage,
+\texttt{script.runInNewContext} is quite useful, but safely running
+untrusted code requires a separate process.

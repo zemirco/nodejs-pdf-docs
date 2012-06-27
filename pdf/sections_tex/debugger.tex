@@ -1,0 +1,189 @@
+\section{Debugger}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\end{Highlighting}
+\end{Shaded}
+
+V8 comes with an extensive debugger which is accessible out-of-process
+via a simple
+\href{http://code.google.com/p/v8/wiki/DebuggerProtocol}{TCP protocol}.
+Node has a built-in client for this debugger. To use this, start Node
+with the \texttt{debug} argument; a prompt will appear:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{% node debug }\KeywordTok{myscript}\NormalTok{.}\FunctionTok{js}
+\NormalTok{< debugger listening on port }\DecValTok{5858}
+\KeywordTok{connecting..}\NormalTok{. ok}
+\KeywordTok{break} \KeywordTok{in} \NormalTok{/home/indutny/Code/git/indutny/}\DataTypeTok{myscript.js}\NormalTok{:}\DecValTok{1}
+  \DecValTok{1} \NormalTok{x = }\DecValTok{5}\NormalTok{;}
+  \DecValTok{2} \NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+  \DecValTok{3}   \NormalTok{debugger;}
+\NormalTok{debug>}
+\end{Highlighting}
+\end{Shaded}
+
+Node's debugger client doesn't support the full range of commands, but
+simple step and inspection is possible. By putting the statement
+\texttt{debugger;} into the source code of your script, you will enable
+a breakpoint.
+
+For example, suppose \texttt{myscript.js} looked like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// myscript.js}
+\NormalTok{x = }\DecValTok{5}\NormalTok{;}
+\NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+  \NormalTok{debugger;}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"world"}\NormalTok{);}
+\NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"hello"}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+Then once the debugger is run, it will break on line 4.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{% node debug }\KeywordTok{myscript}\NormalTok{.}\FunctionTok{js}
+\NormalTok{< debugger listening on port }\DecValTok{5858}
+\KeywordTok{connecting..}\NormalTok{. ok}
+\KeywordTok{break} \KeywordTok{in} \NormalTok{/home/indutny/Code/git/indutny/}\DataTypeTok{myscript.js}\NormalTok{:}\DecValTok{1}
+  \DecValTok{1} \NormalTok{x = }\DecValTok{5}\NormalTok{;}
+  \DecValTok{2} \NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+  \DecValTok{3}   \NormalTok{debugger;}
+\NormalTok{debug> cont}
+\NormalTok{< hello}
+\KeywordTok{break} \KeywordTok{in} \NormalTok{/home/indutny/Code/git/indutny/}\DataTypeTok{myscript.js}\NormalTok{:}\DecValTok{3}
+  \DecValTok{1} \NormalTok{x = }\DecValTok{5}\NormalTok{;}
+  \DecValTok{2} \NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+  \DecValTok{3}   \NormalTok{debugger;}
+  \DecValTok{4}   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"world"}\NormalTok{);}
+  \DecValTok{5} \NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
+\NormalTok{debug> next}
+\KeywordTok{break} \KeywordTok{in} \NormalTok{/home/indutny/Code/git/indutny/}\DataTypeTok{myscript.js}\NormalTok{:}\DecValTok{4}
+  \DecValTok{2} \NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+  \DecValTok{3}   \NormalTok{debugger;}
+  \DecValTok{4}   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"world"}\NormalTok{);}
+  \DecValTok{5} \NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
+  \DecValTok{6} \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"hello"}\NormalTok{);}
+\NormalTok{debug> repl}
+\NormalTok{Press Ctrl + C to leave debug repl}
+\NormalTok{> x}
+\DecValTok{5}
+\NormalTok{> }\DecValTok{2+2}
+\DecValTok{4}
+\NormalTok{debug> next}
+\NormalTok{< world}
+\KeywordTok{break} \KeywordTok{in} \NormalTok{/home/indutny/Code/git/indutny/}\DataTypeTok{myscript.js}\NormalTok{:}\DecValTok{5}
+  \DecValTok{3}   \NormalTok{debugger;}
+  \DecValTok{4}   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"world"}\NormalTok{);}
+  \DecValTok{5} \NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
+  \DecValTok{6} \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"hello"}\NormalTok{);}
+  \DecValTok{7}
+\NormalTok{debug> quit}
+\NormalTok{%}
+\end{Highlighting}
+\end{Shaded}
+
+The \texttt{repl} command allows you to evaluate code remotely. The
+\texttt{next} command steps over to the next line. There are a few other
+commands available and more to come. Type \texttt{help} to see others.
+
+\subsection{Watchers}
+
+You can watch expression and variable values while debugging your code.
+On every breakpoint each expression from the watchers list will be
+evaluated in the current context and displayed just before the
+breakpoint's source code listing.
+
+To start watching an expression, type \texttt{watch("my\_expression")}.
+\texttt{watchers} prints the active watchers. To remove a watcher, type
+\texttt{unwatch("my\_expression")}.
+
+\subsection{Commands reference}
+
+\subsubsection{Stepping}
+
+\begin{itemize}
+\item
+  \texttt{cont}, \texttt{c} - Continue execution
+\item
+  \texttt{next}, \texttt{n} - Step next
+\item
+  \texttt{step}, \texttt{s} - Step in
+\item
+  \texttt{out}, \texttt{o} - Step out
+\item
+  \texttt{pause} - Pause running code (like pause button in Developer
+  TOols)
+\end{itemize}
+
+\subsubsection{Breakpoints}
+
+\begin{itemize}
+\item
+  \texttt{setBreakpoint()}, \texttt{sb()} - Set breakpoint on current
+  line
+\item
+  \texttt{setBreakpoint(line)}, \texttt{sb(line)} - Set breakpoint on
+  specific line
+\item
+  \texttt{setBreakpoint('fn()')}, \texttt{sb(...)} - Set breakpoint on a
+  first statement in functions body
+\item
+  \texttt{setBreakpoint('script.js', 1)}, \texttt{sb(...)} - Set
+  breakpoint on first line of script.js
+\item
+  \texttt{clearBreakpoint}, \texttt{cb(...)} - Clear breakpoint
+\end{itemize}
+
+\subsubsection{Info}
+
+\begin{itemize}
+\item
+  \texttt{backtrace}, \texttt{bt} - Print backtrace of current execution
+  frame
+\item
+  \texttt{list(5)} - List scripts source code with 5 line context (5
+  lines before and after)
+\item
+  \texttt{watch(expr)} - Add expression to watch list
+\item
+  \texttt{unwatch(expr)} - Remove expression from watch list
+\item
+  \texttt{watchers} - List all watchers and their values (automatically
+  listed on each breakpoint)
+\item
+  \texttt{repl} - Open debugger's repl for evaluation in debugging
+  script's context
+\end{itemize}
+
+\subsubsection{Execution control}
+
+\begin{itemize}
+\item
+  \texttt{run} - Run script (automatically runs on debugger's start)
+\item
+  \texttt{restart} - Restart script
+\item
+  \texttt{kill} - Kill script
+\end{itemize}
+
+\subsubsection{Various}
+
+\begin{itemize}
+\item
+  \texttt{scripts} - List all loaded scripts
+\item
+  \texttt{version} - Display v8's version
+\end{itemize}
+
+\subsection{Advanced Usage}
+
+The V8 debugger can be enabled and accessed either by starting Node with
+the \texttt{-{}-debug} command-line flag or by signaling an existing
+Node process with \texttt{SIGUSR1}.

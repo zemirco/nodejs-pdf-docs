@@ -1,0 +1,38 @@
+\section{Timers}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{5} \NormalTok{- Locked}
+\end{Highlighting}
+\end{Shaded}
+
+All of the timer functions are globals. You do not need to
+\texttt{require()} this module in order to use them.
+
+\subsection{setTimeout(callback, delay, {[}arg{]}, {[}\ldots{}{]})}
+
+To schedule execution of a one-time \texttt{callback} after
+\texttt{delay} milliseconds. Returns a \texttt{timeoutId} for possible
+use with \texttt{clearTimeout()}. Optionally you can also pass arguments
+to the callback.
+
+It is important to note that your callback will probably not be called
+in exactly \texttt{delay} milliseconds - Node.js makes no guarantees
+about the exact timing of when the callback will fire, nor of the
+ordering things will fire in. The callback will be called as close as
+possible to the time specified.
+
+\subsection{clearTimeout(timeoutId)}
+
+Prevents a timeout from triggering.
+
+\subsection{setInterval(callback, delay, {[}arg{]}, {[}\ldots{}{]})}
+
+To schedule the repeated execution of \texttt{callback} every
+\texttt{delay} milliseconds. Returns a \texttt{intervalId} for possible
+use with \texttt{clearInterval()}. Optionally you can also pass
+arguments to the callback.
+
+\subsection{clearInterval(intervalId)}
+
+Stops a interval from triggering.

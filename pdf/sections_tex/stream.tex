@@ -1,0 +1,206 @@
+\section{Stream}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable}
+\end{Highlighting}
+\end{Shaded}
+
+A stream is an abstract interface implemented by various objects in
+Node. For example a request to an HTTP server is a stream, as is stdout.
+Streams are readable, writable, or both. All streams are instances of
+\href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}
+
+You can load up the Stream base class by doing
+\texttt{require('stream')}.
+
+\subsection{Readable Stream}
+
+A \texttt{Readable Stream} has the following methods, members, and
+events.
+
+\subsubsection{Event: `data'}
+
+\texttt{function (data) \{ \}}
+
+The \texttt{'data'} event emits either a \texttt{Buffer} (by default) or
+a string if \texttt{setEncoding()} was used.
+
+Note that the \textbf{data will be lost} if there is no listener when a
+\texttt{Readable Stream} emits a \texttt{'data'} event.
+
+\subsubsection{Event: `end'}
+
+\texttt{function () \{ \}}
+
+Emitted when the stream has received an EOF (FIN in TCP terminology).
+Indicates that no more \texttt{'data'} events will happen. If the stream
+is also writable, it may be possible to continue writing.
+
+\subsubsection{Event: `error'}
+
+\texttt{function (exception) \{ \}}
+
+Emitted if there was an error receiving data.
+
+\subsubsection{Event: `close'}
+
+\texttt{function () \{ \}}
+
+Emitted when the underlying resource (for example, the backing file
+descriptor) has been closed. Not all streams will emit this.
+
+\subsubsection{stream.readable}
+
+A boolean that is \texttt{true} by default, but turns \texttt{false}
+after an \texttt{'error'} occurred, the stream came to an
+\texttt{'end'}, or \texttt{destroy()} was called.
+
+\subsubsection{stream.setEncoding({[}encoding{]})}
+
+Makes the \texttt{'data'} event emit a string instead of a
+\texttt{Buffer}. \texttt{encoding} can be \texttt{'utf8'},
+\texttt{'utf16le'} (\texttt{'ucs2'}), \texttt{'ascii'}, or
+\texttt{'hex'}. Defaults to \texttt{'utf8'}.
+
+\subsubsection{stream.pause()}
+
+Issues an advisory signal to the underlying communication layer,
+requesting that no further data be sent until \texttt{resume()} is
+called.
+
+Note that, due to the advisory nature, certain streams will not be
+paused immediately, and so \texttt{'data'} events may be emitted for
+some indeterminate period of time even after \texttt{pause()} is called.
+You may wish to buffer such \texttt{'data'} events.
+
+\subsubsection{stream.resume()}
+
+Resumes the incoming \texttt{'data'} events after a \texttt{pause()}.
+
+\subsubsection{stream.destroy()}
+
+Closes the underlying file descriptor. Stream will not emit any more
+events.
+
+\subsubsection{stream.pipe(destination, {[}options{]})}
+
+This is a \texttt{Stream.prototype} method available on all
+\texttt{Stream}s.
+
+Connects this read stream to \texttt{destination} WriteStream. Incoming
+data on this stream gets written to \texttt{destination}. The
+destination and source streams are kept in sync by pausing and resuming
+as necessary.
+
+This function returns the \texttt{destination} stream.
+
+Emulating the Unix \texttt{cat} command:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+By default \texttt{end()} is called on the destination when the source
+stream emits \texttt{end}, so that \texttt{destination} is no longer
+writable. Pass \texttt{\{ end: false \}} as \texttt{options} to keep the
+destination stream open.
+
+This keeps \texttt{process.stdout} open so that ``Goodbye'' can be
+written at the end.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
+
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{, \{ }\DataTypeTok{end}\NormalTok{: }\KeywordTok{false} \NormalTok{\});}
+
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"end"}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"Goodbye}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Writable Stream}
+
+A \texttt{Writable Stream} has the following methods, members, and
+events.
+
+\subsubsection{Event: `drain'}
+
+\texttt{function () \{ \}}
+
+After a \texttt{write()} method returned \texttt{false}, this event is
+emitted to indicate that it is safe to write again.
+
+\subsubsection{Event: `error'}
+
+\texttt{function (exception) \{ \}}
+
+Emitted on error with the exception \texttt{exception}.
+
+\subsubsection{Event: `close'}
+
+\texttt{function () \{ \}}
+
+Emitted when the underlying file descriptor has been closed.
+
+\subsubsection{Event: `pipe'}
+
+\texttt{function (src) \{ \}}
+
+Emitted when the stream is passed to a readable stream's pipe method.
+
+\subsubsection{stream.writable}
+
+A boolean that is \texttt{true} by default, but turns \texttt{false}
+after an \texttt{'error'} occurred or \texttt{end()} /
+\texttt{destroy()} was called.
+
+\subsubsection{stream.write(string, {[}encoding{]}, {[}fd{]})}
+
+Writes \texttt{string} with the given \texttt{encoding} to the stream.
+Returns \texttt{true} if the string has been flushed to the kernel
+buffer. Returns \texttt{false} to indicate that the kernel buffer is
+full, and the data will be sent out in the future. The \texttt{'drain'}
+event will indicate when the kernel buffer is empty again. The
+\texttt{encoding} defaults to \texttt{'utf8'}.
+
+If the optional \texttt{fd} parameter is specified, it is interpreted as
+an integral file descriptor to be sent over the stream. This is only
+supported for UNIX streams, and is silently ignored otherwise. When
+writing a file descriptor in this manner, closing the descriptor before
+the stream drains risks sending an invalid (closed) FD.
+
+\subsubsection{stream.write(buffer)}
+
+Same as the above except with a raw buffer.
+
+\subsubsection{stream.end()}
+
+Terminates the stream with EOF or FIN. This call will allow queued write
+data to be sent before closing the stream.
+
+\subsubsection{stream.end(string, encoding)}
+
+Sends \texttt{string} with the given \texttt{encoding} and terminates
+the stream with EOF or FIN. This is useful to reduce the number of
+packets sent.
+
+\subsubsection{stream.end(buffer)}
+
+Same as above but with a \texttt{buffer}.
+
+\subsubsection{stream.destroy()}
+
+Closes the underlying file descriptor. Stream will not emit any more
+events. Any queued write data will not be sent.
+
+\subsubsection{stream.destroySoon()}
+
+After the write queue is drained, close the file descriptor.
+\texttt{destroySoon()} can still destroy straight away, as long as there
+is no data left in the queue for writes.

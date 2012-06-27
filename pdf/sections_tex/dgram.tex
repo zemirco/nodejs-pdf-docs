@@ -1,0 +1,287 @@
+\section{UDP / Datagram Sockets}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\end{Highlighting}
+\end{Shaded}
+
+Datagram sockets are available through \texttt{require('dgram')}.
+
+\subsection{dgram.createSocket(type, {[}callback{]})}
+
+\begin{itemize}
+\item
+  \texttt{type} String. Either `udp4' or `udp6'
+\item
+  \texttt{callback} Function. Attached as a listener to \texttt{message}
+  events. Optional
+\item
+  Returns: Socket object
+\end{itemize}
+
+Creates a datagram Socket of the specified types. Valid types are
+\texttt{udp4} and \texttt{udp6}.
+
+Takes an optional callback which is added as a listener for
+\texttt{message} events.
+
+Call \texttt{socket.bind} if you want to receive datagrams.
+\texttt{socket.bind()} will bind to the ``all interfaces'' address on a
+random port (it does the right thing for both \texttt{udp4} and
+\texttt{udp6} sockets). You can then retrieve the address and port with
+\texttt{socket.address().address} and \texttt{socket.address().port}.
+
+\subsection{Class: Socket}
+
+The dgram Socket class encapsulates the datagram functionality. It
+should be created via \texttt{dgram.createSocket(type, {[}callback{]})}.
+
+\subsubsection{Event: `message'}
+
+\begin{itemize}
+\item
+  \texttt{msg} Buffer object. The message
+\item
+  \texttt{rinfo} Object. Remote address information
+\end{itemize}
+
+Emitted when a new datagram is available on a socket. \texttt{msg} is a
+\texttt{Buffer} and \texttt{rinfo} is an object with the sender's
+address information and the number of bytes in the datagram.
+
+\subsubsection{Event: `listening'}
+
+Emitted when a socket starts listening for datagrams. This happens as
+soon as UDP sockets are created.
+
+\subsubsection{Event: `close'}
+
+Emitted when a socket is closed with \texttt{close()}. No new
+\texttt{message} events will be emitted on this socket.
+
+\subsubsection{Event: `error'}
+
+\begin{itemize}
+\item
+  \texttt{exception} Error object
+\end{itemize}
+
+Emitted when an error occurs.
+
+\subsubsection{dgram.send(buf, offset, length, port, address,
+{[}callback{]})}
+
+\begin{itemize}
+\item
+  \texttt{buf} Buffer object. Message to be sent
+\item
+  \texttt{offset} Integer. Offset in the buffer where the message
+  starts.
+\item
+  \texttt{length} Integer. Number of bytes in the message.
+\item
+  \texttt{port} Integer. destination port
+\item
+  \texttt{address} String. destination IP
+\item
+  \texttt{callback} Function. Callback when message is done being
+  delivered. Optional.
+\end{itemize}
+
+For UDP sockets, the destination port and IP address must be specified.
+A string may be supplied for the \texttt{address} parameter, and it will
+be resolved with DNS. An optional callback may be specified to detect
+any DNS errors and when \texttt{buf} may be re-used. Note that DNS
+lookups will delay the time that a send takes place, at least until the
+next tick. The only way to know for sure that a send has taken place is
+to use the callback.
+
+If the socket has not been previously bound with a call to
+\texttt{bind}, it's assigned a random port number and bound to the ``all
+interfaces'' address (0.0.0.0 for \texttt{udp4} sockets, ::0 for
+\texttt{udp6} sockets).
+
+Example of sending a UDP packet to a random port on \texttt{localhost};
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{dgram = require(}\CharTok{'dgram'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{message = }\KeywordTok{new} \NormalTok{Buffer(}\StringTok{"Some bytes"}\NormalTok{);}
+\KeywordTok{var} \NormalTok{client = }\KeywordTok{dgram}\NormalTok{.}\FunctionTok{createSocket}\NormalTok{(}\StringTok{"udp4"}\NormalTok{);}
+\KeywordTok{client}\NormalTok{.}\FunctionTok{send}\NormalTok{(message, }\DecValTok{0}\NormalTok{, }\KeywordTok{message}\NormalTok{.}\FunctionTok{length}\NormalTok{, }\DecValTok{41234}\NormalTok{, }\StringTok{"localhost"}\NormalTok{, }\KeywordTok{function}\NormalTok{(err, bytes) \{}
+  \KeywordTok{client}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{A Note about UDP datagram size}
+
+The maximum size of an \texttt{IPv4/v6} datagram depends on the
+\texttt{MTU} (\emph{Maximum Transmission Unit}) and on the
+\texttt{Payload Length} field size.
+
+\begin{itemize}
+\item
+  The \texttt{Payload Length} field is \texttt{16 bits} wide, which
+  means that a normal payload cannot be larger than 64K octets including
+  internet header and data (65,507 bytes = 65,535 − 8 bytes UDP header −
+  20 bytes IP header); this is generally true for loopback interfaces,
+  but such long datagrams are impractical for most hosts and networks.
+\item
+  The \texttt{MTU} is the largest size a given link layer technology can
+  support for datagrams. For any link, \texttt{IPv4} mandates a minimum
+  \texttt{MTU} of \texttt{68} octets, while the recommended \texttt{MTU}
+  for IPv4 is \texttt{576} (typically recommended as the \texttt{MTU}
+  for dial-up type applications), whether they arrive whole or in
+  fragments.
+\end{itemize}
+
+For \texttt{IPv6}, the minimum \texttt{MTU} is \texttt{1280} octets,
+however, the mandatory minimum fragment reassembly buffer size is
+\texttt{1500} octets. The value of \texttt{68} octets is very small,
+since most current link layer technologies have a minimum \texttt{MTU}
+of \texttt{1500} (like Ethernet).
+
+Note that it's impossible to know in advance the MTU of each link
+through which a packet might travel, and that generally sending a
+datagram greater than the (receiver) \texttt{MTU} won't work (the packet
+gets silently dropped, without informing the source that the data did
+not reach its intended recipient).
+
+\subsubsection{dgram.bind(port, {[}address{]})}
+
+\begin{itemize}
+\item
+  \texttt{port} Integer
+\item
+  \texttt{address} String, Optional
+\end{itemize}
+
+For UDP sockets, listen for datagrams on a named \texttt{port} and
+optional \texttt{address}. If \texttt{address} is not specified, the OS
+will try to listen on all addresses.
+
+Example of a UDP server listening on port 41234:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{dgram = require(}\StringTok{"dgram"}\NormalTok{);}
+
+\KeywordTok{var} \NormalTok{server = }\KeywordTok{dgram}\NormalTok{.}\FunctionTok{createSocket}\NormalTok{(}\StringTok{"udp4"}\NormalTok{);}
+
+\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"message"}\NormalTok{, }\KeywordTok{function} \NormalTok{(msg, rinfo) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"server got: "} \NormalTok{+ msg + }\StringTok{" from "} \NormalTok{+}
+    \KeywordTok{rinfo}\NormalTok{.}\FunctionTok{address} \NormalTok{+ }\StringTok{":"} \NormalTok{+ }\KeywordTok{rinfo}\NormalTok{.}\FunctionTok{port}\NormalTok{);}
+\NormalTok{\});}
+
+\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"listening"}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
+  \KeywordTok{var} \NormalTok{address = }\KeywordTok{server}\NormalTok{.}\FunctionTok{address}\NormalTok{();}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"server listening "} \NormalTok{+}
+      \KeywordTok{address}\NormalTok{.}\FunctionTok{address} \NormalTok{+ }\StringTok{":"} \NormalTok{+ }\KeywordTok{address}\NormalTok{.}\FunctionTok{port}\NormalTok{);}
+\NormalTok{\});}
+
+\KeywordTok{server}\NormalTok{.}\FunctionTok{bind}\NormalTok{(}\DecValTok{41234}\NormalTok{);}
+\CommentTok{// server listening 0.0.0.0:41234}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{dgram.close()}
+
+Close the underlying socket and stop listening for data on it.
+
+\subsubsection{dgram.address()}
+
+Returns an object containing the address information for a socket. For
+UDP sockets, this object will contain \texttt{address} , \texttt{family}
+and \texttt{port}.
+
+\subsubsection{dgram.setBroadcast(flag)}
+
+\begin{itemize}
+\item
+  \texttt{flag} Boolean
+\end{itemize}
+
+Sets or clears the \texttt{SO\_BROADCAST} socket option. When this
+option is set, UDP packets may be sent to a local interface's broadcast
+address.
+
+\subsubsection{dgram.setTTL(ttl)}
+
+\begin{itemize}
+\item
+  \texttt{ttl} Integer
+\end{itemize}
+
+Sets the \texttt{IP\_TTL} socket option. TTL stands for ``Time to
+Live,'' but in this context it specifies the number of IP hops that a
+packet is allowed to go through. Each router or gateway that forwards a
+packet decrements the TTL. If the TTL is decremented to 0 by a router,
+it will not be forwarded. Changing TTL values is typically done for
+network probes or when multicasting.
+
+The argument to \texttt{setTTL()} is a number of hops between 1 and 255.
+The default on most systems is 64.
+
+\subsubsection{dgram.setMulticastTTL(ttl)}
+
+\begin{itemize}
+\item
+  \texttt{ttl} Integer
+\end{itemize}
+
+Sets the \texttt{IP\_MULTICAST\_TTL} socket option. TTL stands for
+``Time to Live,'' but in this context it specifies the number of IP hops
+that a packet is allowed to go through, specifically for multicast
+traffic. Each router or gateway that forwards a packet decrements the
+TTL. If the TTL is decremented to 0 by a router, it will not be
+forwarded.
+
+The argument to \texttt{setMulticastTTL()} is a number of hops between 0
+and 255. The default on most systems is 1.
+
+\subsubsection{dgram.setMulticastLoopback(flag)}
+
+\begin{itemize}
+\item
+  \texttt{flag} Boolean
+\end{itemize}
+
+Sets or clears the \texttt{IP\_MULTICAST\_LOOP} socket option. When this
+option is set, multicast packets will also be received on the local
+interface.
+
+\subsubsection{dgram.addMembership(multicastAddress,
+{[}multicastInterface{]})}
+
+\begin{itemize}
+\item
+  \texttt{multicastAddress} String
+\item
+  \texttt{multicastInterface} String, Optional
+\end{itemize}
+
+Tells the kernel to join a multicast group with
+\texttt{IP\_ADD\_MEMBERSHIP} socket option.
+
+If \texttt{multicastInterface} is not specified, the OS will try to add
+membership to all valid interfaces.
+
+\subsubsection{dgram.dropMembership(multicastAddress,
+{[}multicastInterface{]})}
+
+\begin{itemize}
+\item
+  \texttt{multicastAddress} String
+\item
+  \texttt{multicastInterface} String, Optional
+\end{itemize}
+
+Opposite of \texttt{addMembership} - tells the kernel to leave a
+multicast group with \texttt{IP\_DROP\_MEMBERSHIP} socket option. This
+is automatically called by the kernel when the socket is closed or
+process terminates, so most apps will never need to call this.
+
+If \texttt{multicastInterface} is not specified, the OS will try to drop
+membership to all valid interfaces.

@@ -1,0 +1,411 @@
+\section{Zlib}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\end{Highlighting}
+\end{Shaded}
+
+You can access this module with:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{zlib = require(}\CharTok{'zlib'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+This provides bindings to Gzip/Gunzip, Deflate/Inflate, and
+DeflateRaw/InflateRaw classes. Each class takes the same options, and is
+a readable/writable Stream.
+
+\subsection{Examples}
+
+Compressing or decompressing a file can be done by piping an
+fs.ReadStream into a zlib stream, then into an fs.WriteStream.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{gzip = }\KeywordTok{zlib}\NormalTok{.}\FunctionTok{createGzip}\NormalTok{();}
+\KeywordTok{var} \NormalTok{fs = require(}\CharTok{'fs'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{inp = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createReadStream}\NormalTok{(}\CharTok{'input.txt'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{out = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\CharTok{'input.txt.gz'}\NormalTok{);}
+
+\KeywordTok{inp}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(gzip).}\FunctionTok{pipe}\NormalTok{(out);}
+\end{Highlighting}
+\end{Shaded}
+
+Compressing or decompressing data in one step can be done by using the
+convenience methods.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{input = }\CharTok{'.................................'}\NormalTok{;}
+\KeywordTok{zlib}\NormalTok{.}\FunctionTok{deflate}\NormalTok{(input, }\KeywordTok{function}\NormalTok{(err, buffer) \{}
+  \KeywordTok{if} \NormalTok{(!err) \{}
+    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buffer}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\CharTok{'base64'}\NormalTok{));}
+  \NormalTok{\}}
+\NormalTok{\});}
+
+\KeywordTok{var} \NormalTok{buffer = }\KeywordTok{new} \NormalTok{Buffer(}\CharTok{'eJzT0yMAAGTvBe8='}\NormalTok{, }\CharTok{'base64'}\NormalTok{);}
+\KeywordTok{zlib}\NormalTok{.}\FunctionTok{unzip}\NormalTok{(buffer, }\KeywordTok{function}\NormalTok{(err, buffer) \{}
+  \KeywordTok{if} \NormalTok{(!err) \{}
+    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buffer}\NormalTok{.}\FunctionTok{toString}\NormalTok{());}
+  \NormalTok{\}}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+To use this module in an HTTP client or server, use the
+\href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html\#sec14.3}{accept-encoding}
+on requests, and the
+\href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html\#sec14.11}{content-encoding}
+header on responses.
+
+\textbf{Note: these examples are drastically simplified to show the
+basic concept.} Zlib encoding can be expensive, and the results ought to
+be cached. See \hyperref[zlib_memory_usage_tuning]{Memory Usage
+Tuning} below for more information on the speed/memory/compression
+tradeoffs involved in zlib usage.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// client request example}
+\KeywordTok{var} \NormalTok{zlib = require(}\CharTok{'zlib'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{http = require(}\CharTok{'http'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{fs = require(}\CharTok{'fs'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{request = }\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(\{ }\DataTypeTok{host}\NormalTok{: }\CharTok{'izs.me'}\NormalTok{,}
+                         \DataTypeTok{path}\NormalTok{: }\CharTok{'/'}\NormalTok{,}
+                         \DataTypeTok{port}\NormalTok{: }\DecValTok{80}\NormalTok{,}
+                         \DataTypeTok{headers}\NormalTok{: \{ }\CharTok{'accept-encoding'}\NormalTok{: }\CharTok{'gzip,deflate'} \NormalTok{\} \});}
+\KeywordTok{request}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'response'}\NormalTok{, }\KeywordTok{function}\NormalTok{(response) \{}
+  \KeywordTok{var} \NormalTok{output = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\CharTok{'izs.me_index.html'}\NormalTok{);}
+
+  \KeywordTok{switch} \NormalTok{(}\KeywordTok{response}\NormalTok{.}\FunctionTok{headers}\NormalTok{[}\CharTok{'content-encoding'}\NormalTok{]) \{}
+    \CommentTok{// or, just use zlib.createUnzip() to handle both cases}
+    \KeywordTok{case} \CharTok{'gzip'}\NormalTok{:}
+      \KeywordTok{response}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{zlib}\NormalTok{.}\FunctionTok{createGunzip}\NormalTok{()).}\FunctionTok{pipe}\NormalTok{(output);}
+      \KeywordTok{break}\NormalTok{;}
+    \KeywordTok{case} \CharTok{'deflate'}\NormalTok{:}
+      \KeywordTok{response}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{zlib}\NormalTok{.}\FunctionTok{createInflate}\NormalTok{()).}\FunctionTok{pipe}\NormalTok{(output);}
+      \KeywordTok{break}\NormalTok{;}
+    \DataTypeTok{default}\NormalTok{:}
+      \KeywordTok{response}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(output);}
+      \KeywordTok{break}\NormalTok{;}
+  \NormalTok{\}}
+\NormalTok{\});}
+
+\CommentTok{// server example}
+\CommentTok{// Running a gzip operation on every request is quite expensive.}
+\CommentTok{// It would be much more efficient to cache the compressed buffer.}
+\KeywordTok{var} \NormalTok{zlib = require(}\CharTok{'zlib'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{http = require(}\CharTok{'http'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{fs = require(}\CharTok{'fs'}\NormalTok{);}
+\KeywordTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(request, response) \{}
+  \KeywordTok{var} \NormalTok{raw = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createReadStream}\NormalTok{(}\CharTok{'index.html'}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{acceptEncoding = }\KeywordTok{request}\NormalTok{.}\FunctionTok{headers}\NormalTok{[}\CharTok{'accept-encoding'}\NormalTok{];}
+  \KeywordTok{if} \NormalTok{(!acceptEncoding) \{}
+    \NormalTok{acceptEncoding = }\CharTok{''}\NormalTok{;}
+  \NormalTok{\}}
+
+  \CommentTok{// Note: this is not a conformant accept-encoding parser.}
+  \CommentTok{// See http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3}
+  \KeywordTok{if} \NormalTok{(}\KeywordTok{acceptEncoding}\NormalTok{.}\FunctionTok{match}\NormalTok{(}\OtherTok{/}\FloatTok{\textbackslash{}b}\OtherTok{deflate}\FloatTok{\textbackslash{}b}\OtherTok{/}\NormalTok{)) \{}
+    \KeywordTok{response}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{ }\CharTok{'content-encoding'}\NormalTok{: }\CharTok{'deflate'} \NormalTok{\});}
+    \KeywordTok{raw}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{zlib}\NormalTok{.}\FunctionTok{createDeflate}\NormalTok{()).}\FunctionTok{pipe}\NormalTok{(response);}
+  \NormalTok{\} }\KeywordTok{else} \KeywordTok{if} \NormalTok{(}\KeywordTok{acceptEncoding}\NormalTok{.}\FunctionTok{match}\NormalTok{(}\OtherTok{/}\FloatTok{\textbackslash{}b}\OtherTok{gzip}\FloatTok{\textbackslash{}b}\OtherTok{/}\NormalTok{)) \{}
+    \KeywordTok{response}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{ }\CharTok{'content-encoding'}\NormalTok{: }\CharTok{'gzip'} \NormalTok{\});}
+    \KeywordTok{raw}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{zlib}\NormalTok{.}\FunctionTok{createGzip}\NormalTok{()).}\FunctionTok{pipe}\NormalTok{(response);}
+  \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
+    \KeywordTok{response}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{\});}
+    \KeywordTok{raw}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(response);}
+  \NormalTok{\}}
+\NormalTok{\}).}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{zlib.createGzip({[}options{]})}
+
+Returns a new \hyperref[zlib_class_zlib_gzip]{Gzip} object with an
+\hyperref[zlib_options]{options}.
+
+\subsection{zlib.createGunzip({[}options{]})}
+
+Returns a new \hyperref[zlib_class_zlib_gunzip]{Gunzip} object with
+an \hyperref[zlib_options]{options}.
+
+\subsection{zlib.createDeflate({[}options{]})}
+
+Returns a new \hyperref[zlib_class_zlib_deflate]{Deflate} object with
+an \hyperref[zlib_options]{options}.
+
+\subsection{zlib.createInflate({[}options{]})}
+
+Returns a new \hyperref[zlib_class_zlib_inflate]{Inflate} object with
+an \hyperref[zlib_options]{options}.
+
+\subsection{zlib.createDeflateRaw({[}options{]})}
+
+Returns a new \hyperref[zlib_class_zlib_deflateraw]{DeflateRaw}
+object with an \hyperref[zlib_options]{options}.
+
+\subsection{zlib.createInflateRaw({[}options{]})}
+
+Returns a new \hyperref[zlib_class_zlib_inflateraw]{InflateRaw}
+object with an \hyperref[zlib_options]{options}.
+
+\subsection{zlib.createUnzip({[}options{]})}
+
+Returns a new \hyperref[zlib_class_zlib_unzip]{Unzip} object with an
+\hyperref[zlib_options]{options}.
+
+\subsection{Class: zlib.Gzip}
+
+Compress data using gzip.
+
+\subsection{Class: zlib.Gunzip}
+
+Decompress a gzip stream.
+
+\subsection{Class: zlib.Deflate}
+
+Compress data using deflate.
+
+\subsection{Class: zlib.Inflate}
+
+Decompress a deflate stream.
+
+\subsection{Class: zlib.DeflateRaw}
+
+Compress data using deflate, and do not append a zlib header.
+
+\subsection{Class: zlib.InflateRaw}
+
+Decompress a raw deflate stream.
+
+\subsection{Class: zlib.Unzip}
+
+Decompress either a Gzip- or Deflate-compressed stream by auto-detecting
+the header.
+
+\subsection{Convenience Methods}
+
+All of these take a string or buffer as the first argument, and call the
+supplied callback with \texttt{callback(error, result)}. The
+compression/decompression engine is created using the default settings
+in all convenience methods. To supply different options, use the zlib
+classes directly.
+
+\subsection{zlib.deflate(buf, callback)}
+
+Compress a string with Deflate.
+
+\subsection{zlib.deflateRaw(buf, callback)}
+
+Compress a string with DeflateRaw.
+
+\subsection{zlib.gzip(buf, callback)}
+
+Compress a string with Gzip.
+
+\subsection{zlib.gunzip(buf, callback)}
+
+Decompress a raw Buffer with Gunzip.
+
+\subsection{zlib.inflate(buf, callback)}
+
+Decompress a raw Buffer with Inflate.
+
+\subsection{zlib.inflateRaw(buf, callback)}
+
+Decompress a raw Buffer with InflateRaw.
+
+\subsection{zlib.unzip(buf, callback)}
+
+Decompress a raw Buffer with Unzip.
+
+\subsection{Options}
+
+Each class takes an options object. All options are optional. (The
+convenience methods use the default settings for all options.)
+
+Note that some options are only relevant when compressing, and are
+ignored by the decompression classes.
+
+\begin{itemize}
+\item
+  chunkSize (default: 16*1024)
+\item
+  windowBits
+\item
+  level (compression only)
+\item
+  memLevel (compression only)
+\item
+  strategy (compression only)
+\item
+  dictionary (deflate/inflate only, empty dictionary by default)
+\end{itemize}
+
+See the description of \texttt{deflateInit2} and \texttt{inflateInit2}
+at \url{http://zlib.net/manual.html#Advanced} for more information on
+these.
+
+\subsection{Memory Usage Tuning}
+
+From \texttt{zlib/zconf.h}, modified to node's usage:
+
+The memory requirements for deflate are (in bytes):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(}\DecValTok{1} \NormalTok{<< (windowBits}\DecValTok{+2}\NormalTok{)) +  (}\DecValTok{1} \NormalTok{<< (memLevel}\DecValTok{+9}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+that is: 128K for windowBits=15 + 128K for memLevel = 8 (default values)
+plus a few kilobytes for small objects.
+
+For example, if you want to reduce the default memory requirements from
+256K to 128K, set the options to:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\{ }\DataTypeTok{windowBits}\NormalTok{: }\DecValTok{14}\NormalTok{, }\DataTypeTok{memLevel}\NormalTok{: }\DecValTok{7} \NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Of course this will generally degrade compression (there's no free
+lunch).
+
+The memory requirements for inflate are (in bytes)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DecValTok{1} \NormalTok{<< windowBits}
+\end{Highlighting}
+\end{Shaded}
+
+that is, 32K for windowBits=15 (default value) plus a few kilobytes for
+small objects.
+
+This is in addition to a single internal output slab buffer of size
+\texttt{chunkSize}, which defaults to 16K.
+
+The speed of zlib compression is affected most dramatically by the
+\texttt{level} setting. A higher level will result in better
+compression, but will take longer to complete. A lower level will result
+in less compression, but will be much faster.
+
+In general, greater memory usage options will mean that node has to make
+fewer calls to zlib, since it'll be able to process more data in a
+single \texttt{write} operation. So, this is another factor that affects
+the speed, at the cost of memory usage.
+
+\subsection{Constants}
+
+All of the constants defined in zlib.h are also defined on
+\texttt{require('zlib')}. In the normal course of operations, you will
+not need to ever set any of these. They are documented here so that
+their presence is not surprising. This section is taken almost directly
+from the \href{http://zlib.net/manual.html\#Constants}{zlib
+documentation}. See \url{http://zlib.net/manual.html#Constants} for more
+details.
+
+Allowed flush values.
+
+\begin{itemize}
+\item
+  \texttt{zlib.Z\_NO\_FLUSH}
+\item
+  \texttt{zlib.Z\_PARTIAL\_FLUSH}
+\item
+  \texttt{zlib.Z\_SYNC\_FLUSH}
+\item
+  \texttt{zlib.Z\_FULL\_FLUSH}
+\item
+  \texttt{zlib.Z\_FINISH}
+\item
+  \texttt{zlib.Z\_BLOCK}
+\item
+  \texttt{zlib.Z\_TREES}
+\end{itemize}
+
+Return codes for the compression/decompression functions. Negative
+values are errors, positive values are used for special but normal
+events.
+
+\begin{itemize}
+\item
+  \texttt{zlib.Z\_OK}
+\item
+  \texttt{zlib.Z\_STREAM\_END}
+\item
+  \texttt{zlib.Z\_NEED\_DICT}
+\item
+  \texttt{zlib.Z\_ERRNO}
+\item
+  \texttt{zlib.Z\_STREAM\_ERROR}
+\item
+  \texttt{zlib.Z\_DATA\_ERROR}
+\item
+  \texttt{zlib.Z\_MEM\_ERROR}
+\item
+  \texttt{zlib.Z\_BUF\_ERROR}
+\item
+  \texttt{zlib.Z\_VERSION\_ERROR}
+\end{itemize}
+
+Compression levels.
+
+\begin{itemize}
+\item
+  \texttt{zlib.Z\_NO\_COMPRESSION}
+\item
+  \texttt{zlib.Z\_BEST\_SPEED}
+\item
+  \texttt{zlib.Z\_BEST\_COMPRESSION}
+\item
+  \texttt{zlib.Z\_DEFAULT\_COMPRESSION}
+\end{itemize}
+
+Compression strategy.
+
+\begin{itemize}
+\item
+  \texttt{zlib.Z\_FILTERED}
+\item
+  \texttt{zlib.Z\_HUFFMAN\_ONLY}
+\item
+  \texttt{zlib.Z\_RLE}
+\item
+  \texttt{zlib.Z\_FIXED}
+\item
+  \texttt{zlib.Z\_DEFAULT\_STRATEGY}
+\end{itemize}
+
+Possible values of the data\_type field.
+
+\begin{itemize}
+\item
+  \texttt{zlib.Z\_BINARY}
+\item
+  \texttt{zlib.Z\_TEXT}
+\item
+  \texttt{zlib.Z\_ASCII}
+\item
+  \texttt{zlib.Z\_UNKNOWN}
+\end{itemize}
+
+The deflate compression method (the only one supported in this version).
+
+\begin{itemize}
+\item
+  \texttt{zlib.Z\_DEFLATED}
+\end{itemize}
+
+For initializing zalloc, zfree, opaque.
+
+\begin{itemize}
+\item
+  \texttt{zlib.Z\_NULL}
+\end{itemize}

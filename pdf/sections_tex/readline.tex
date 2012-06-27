@@ -1,0 +1,361 @@
+\section{Readline}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable}
+\end{Highlighting}
+\end{Shaded}
+
+To use this module, do \texttt{require('readline')}. Readline allows
+reading of a stream (such as \texttt{process.stdin}) on a line-by-line
+basis.
+
+Note that once you've invoked this module, your node program will not
+terminate until you've closed the interface. Here's how to allow your
+program to gracefully exit:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{readline = require(}\CharTok{'readline'}\NormalTok{);}
+
+\KeywordTok{var} \NormalTok{rl = }\KeywordTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(\{}
+  \DataTypeTok{input}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
+  \DataTypeTok{output}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}
+\NormalTok{\});}
+
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\StringTok{"What do you think of node.js? "}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
+  \CommentTok{// TODO: Log the answer in a database}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Thank you for your valuable feedback:"}\NormalTok{, answer);}
+
+  \KeywordTok{rl}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{readline.createInterface(options)}
+
+Creates a readline \texttt{Interface} instance. Accepts an ``options''
+Object that takes the following values:
+
+\begin{itemize}
+\item
+  \texttt{input} - the readable stream to listen to (Required).
+\item
+  \texttt{output} - the writable stream to write readline data to
+  (Required).
+\item
+  \texttt{completer} - an optional function that is used for Tab
+  autocompletion. See below for an example of using this.
+\item
+  \texttt{terminal} - pass \texttt{true} if the \texttt{input} and
+  \texttt{output} streams should be treated like a TTY, and have
+  ANSI/VT100 escape codes written to it. Defaults to checking
+  \texttt{isTTY} on the \texttt{output} stream upon instantiation.
+\end{itemize}
+
+The \texttt{completer} function is given a the current line entered by
+the user, and is supposed to return an Array with 2 entries:
+
+\begin{enumerate}
+\item
+  An Array with matching entries for the completion.
+\item
+  The substring that was used for the matching.
+\end{enumerate}
+
+Which ends up looking something like:
+\texttt{{[}{[}substr1, substr2, ...{]}, originalsubstring{]}}.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \NormalTok{completer(line) \{}
+  \KeywordTok{var} \NormalTok{completions = }\CharTok{'.help .error .exit .quit .q'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\CharTok{' '}\NormalTok{)}
+  \KeywordTok{var} \NormalTok{hits = }\KeywordTok{completions}\NormalTok{.}\FunctionTok{filter}\NormalTok{(}\KeywordTok{function}\NormalTok{(c) \{ }\KeywordTok{return} \KeywordTok{c}\NormalTok{.}\FunctionTok{indexOf}\NormalTok{(line) == }\DecValTok{0} \NormalTok{\})}
+  \CommentTok{// show all completions if none found}
+  \KeywordTok{return} \NormalTok{[}\KeywordTok{hits}\NormalTok{.}\FunctionTok{length} \NormalTok{? }\DataTypeTok{hits }\NormalTok{: completions, line]}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Also \texttt{completer} can be run in async mode if it accepts two
+arguments:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \NormalTok{completer(linePartial, callback) \{}
+  \NormalTok{callback(null, [[}\CharTok{'123'}\NormalTok{], linePartial]);}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{createInterface} is commonly used with \texttt{process.stdin}
+and \texttt{process.stdout} in order to accept user input:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{readline = require(}\CharTok{'readline'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{rl = }\KeywordTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(\{}
+  \DataTypeTok{input}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
+  \DataTypeTok{output}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+Once you have a readline instance, you most commonly listen for the
+\texttt{"line"} event.
+
+If \texttt{terminal} is \texttt{true} for this instance then the
+\texttt{output} stream will get the best compatibility if it defines an
+\texttt{output.columns} property, and fires a \texttt{"resize"} event on
+the \texttt{output} if/when the columns ever change
+(\texttt{process.stdout} does this automatically when it is a TTY).
+
+\subsection{Class: Interface}
+
+The class that represents a readline interface with an input and output
+stream.
+
+\subsubsection{rl.setPrompt(prompt, length)}
+
+Sets the prompt, for example when you run \texttt{node} on the command
+line, you see \texttt{\textgreater{}}, which is node's prompt.
+
+\subsubsection{rl.prompt({[}preserveCursor{]})}
+
+Readies readline for input from the user, putting the current
+\texttt{setPrompt} options on a new line, giving the user a new spot to
+write. Set \texttt{preserveCursor} to \texttt{true} to prevent the
+cursor placement being reset to \texttt{0}.
+
+This will also resume the \texttt{input} stream used with
+\texttt{createInterface} if it has been paused.
+
+\subsubsection{rl.question(query, callback)}
+
+Prepends the prompt with \texttt{query} and invokes \texttt{callback}
+with the user's response. Displays the query to the user, and then
+invokes \texttt{callback} with the user's response after it has been
+typed.
+
+This will also resume the \texttt{input} stream used with
+\texttt{createInterface} if it has been paused.
+
+Example usage:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{interface}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\CharTok{'What is your favorite food?'}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Oh, so your favorite food is '} \NormalTok{+ answer);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{rl.pause()}
+
+Pauses the readline \texttt{input} stream, allowing it to be resumed
+later if needed.
+
+\subsubsection{rl.resume()}
+
+Resumes the readline \texttt{input} stream.
+
+\subsubsection{rl.close()}
+
+Closes the \texttt{Interface} instance, relinquishing control on the
+\texttt{input} and \texttt{output} streams. The ``close'' event will
+also be emitted.
+
+\subsubsection{rl.write(data, {[}key{]})}
+
+Writes \texttt{data} to \texttt{output} stream. \texttt{key} is an
+object literal to represent a key sequence; available if the terminal is
+a TTY.
+
+This will also resume the \texttt{input} stream if it has been paused.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'Delete me!'}\NormalTok{);}
+\CommentTok{// Simulate ctrl+u to delete the line written previously}
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{write}\NormalTok{(null, \{}\DataTypeTok{ctrl}\NormalTok{: }\KeywordTok{true}\NormalTok{, }\DataTypeTok{name}\NormalTok{: }\CharTok{'u'}\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Events}
+
+\subsubsection{Event: `line'}
+
+\texttt{function (line) \{\}}
+
+Emitted whenever the \texttt{input} stream receives a
+\texttt{\textbackslash{}n}, usually received when the user hits enter,
+or return. This is a good hook to listen for user input.
+
+Example of listening for \texttt{line}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'line'}\NormalTok{, }\KeywordTok{function} \NormalTok{(cmd) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'You just typed: '}\NormalTok{+cmd);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Event: `pause'}
+
+\texttt{function () \{\}}
+
+Emitted whenever the \texttt{input} stream is paused.
+
+Also emitted whenever the \texttt{input} stream is not paused and
+receives the \texttt{SIGCONT} event. (See events \texttt{SIGTSTP} and
+\texttt{SIGCONT})
+
+Example of listening for \texttt{pause}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'pause'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Readline paused.'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Event: `resume'}
+
+\texttt{function () \{\}}
+
+Emitted whenever the \texttt{input} stream is resumed.
+
+Example of listening for \texttt{resume}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'resume'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Readline resumed.'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Event: `close'}
+
+\texttt{function () \{\}}
+
+Emitted when \texttt{close()} is called.
+
+Also emitted when the \texttt{input} stream receives its ``end'' event.
+The \texttt{Interface} instance should be considered ``finished'' once
+this is emitted. For example, when the \texttt{input} stream receives
+\texttt{\^{}D}, respectively known as \texttt{EOT}.
+
+This event is also called if there is no \texttt{SIGINT} event listener
+present when the \texttt{input} stream receives a \texttt{\^{}C},
+respectively known as \texttt{SIGINT}.
+
+\subsubsection{Event: `SIGINT'}
+
+\texttt{function () \{\}}
+
+Emitted whenever the \texttt{input} stream receives a \texttt{\^{}C},
+respectively known as \texttt{SIGINT}. If there is no \texttt{SIGINT}
+event listener present when the \texttt{input} stream receives a
+\texttt{SIGINT}, \texttt{pause} will be triggered.
+
+Example of listening for \texttt{SIGINT}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGINT'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{rl}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\CharTok{'Are you sure you want to exit?'}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
+    \KeywordTok{if} \NormalTok{(}\KeywordTok{answer}\NormalTok{.}\FunctionTok{match}\NormalTok{(}\OtherTok{/}\FloatTok{^}\OtherTok{y}\FloatTok{(}\OtherTok{es}\FloatTok{)?$}\OtherTok{/i}\NormalTok{)) }\KeywordTok{rl}\NormalTok{.}\FunctionTok{pause}\NormalTok{();}
+  \NormalTok{\});}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Event: `SIGTSTP'}
+
+\texttt{function () \{\}}
+
+\textbf{This does not work on Windows.}
+
+Emitted whenever the \texttt{input} stream receives a \texttt{\^{}Z},
+respectively known as \texttt{SIGTSTP}. If there is no \texttt{SIGTSTP}
+event listener present when the \texttt{input} stream receives a
+\texttt{SIGTSTP}, the program will be sent to the background.
+
+When the program is resumed with \texttt{fg}, the \texttt{pause} and
+\texttt{SIGCONT} events will be emitted. You can use either to resume
+the stream.
+
+The \texttt{pause} and \texttt{SIGCONT} events will not be triggered if
+the stream was paused before the program was sent to the background.
+
+Example of listening for \texttt{SIGTSTP}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGTSTP'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \CommentTok{// This will override SIGTSTP and prevent the program from going to the}
+  \CommentTok{// background.}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Caught SIGTSTP.'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Event: `SIGCONT'}
+
+\texttt{function () \{\}}
+
+\textbf{This does not work on Windows.}
+
+Emitted whenever the \texttt{input} stream is sent to the background
+with \texttt{\^{}Z}, respectively known as \texttt{SIGTSTP}, and then
+continued with \texttt{fg(1)}. This event only emits if the stream was
+not paused before sending the program to the background.
+
+Example of listening for \texttt{SIGCONT}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGCONT'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \CommentTok{// `prompt` will automatically resume the stream}
+  \KeywordTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Example: Tiny CLI}
+
+Here's an example of how to use all these together to craft a tiny
+command line interface:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{readline = require(}\CharTok{'readline'}\NormalTok{),}
+    \NormalTok{rl = }\KeywordTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{, }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
+
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{setPrompt}\NormalTok{(}\CharTok{'OHAI> '}\NormalTok{);}
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
+
+\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'line'}\NormalTok{, }\KeywordTok{function}\NormalTok{(line) \{}
+  \KeywordTok{switch}\NormalTok{(}\KeywordTok{line}\NormalTok{.}\FunctionTok{trim}\NormalTok{()) \{}
+    \KeywordTok{case} \CharTok{'hello'}\NormalTok{:}
+      \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'world!'}\NormalTok{);}
+      \KeywordTok{break}\NormalTok{;}
+    \DataTypeTok{default}\NormalTok{:}
+      \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Say what? I might have heard `'} \NormalTok{+ }\KeywordTok{line}\NormalTok{.}\FunctionTok{trim}\NormalTok{() + }\CharTok{'`'}\NormalTok{);}
+      \KeywordTok{break}\NormalTok{;}
+  \NormalTok{\}}
+  \KeywordTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
+\NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Have a great day!'}\NormalTok{);}
+  \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
