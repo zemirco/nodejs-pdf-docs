@@ -450,7 +450,7 @@ The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
 following:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as
@@ -539,7 +539,7 @@ to a file:
      \NormalTok{err = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{openSync}\NormalTok{(}\CharTok{'./out.log'}\NormalTok{, }\CharTok{'a'}\NormalTok{);}
 
  \KeywordTok{var} \NormalTok{child = spawn(}\CharTok{'prg'}\NormalTok{, [], \{}
-   \DataTypeTok{detached}\NormalTok{: }\CharTok{'true'}\NormalTok{,}
+   \DataTypeTok{detached}\NormalTok{: }\KeywordTok{true}\NormalTok{,}
    \DataTypeTok{stdio}\NormalTok{: [ }\CharTok{'ignore'}\NormalTok{, out, err ]}
  \NormalTok{\});}
 
