@@ -15,7 +15,7 @@ wrapper. It contains methods for creating both servers and clients
 
 Creates a new TCP server. The \texttt{connectionListener} argument is
 automatically set as a listener for the
-\hyperref[net\_event\_connection]{`connection'} event.
+\hyperref[net_event_connection]{`connection'} event.
 
 \texttt{options} is an object with the following defaults:
 
@@ -30,7 +30,7 @@ If \texttt{allowHalfOpen} is \texttt{true}, then the socket won't
 automatically send a FIN packet when the other end of the socket sends a
 FIN packet. The socket becomes non-readable, but still writable. You
 should call the \texttt{end()} method explicitly. See
-\hyperref[net\_event\_end]{`end'} event for more information.
+\hyperref[net_event_end]{`end'} event for more information.
 
 Here is an example of a echo server which listens for connections on
 port 8124:
@@ -83,7 +83,7 @@ Use \texttt{nc} to connect to a UNIX domain socket server:
 
 Constructs a new socket object and opens the socket to the given
 location. When the socket is established, the
-\hyperref[net\_event\_connect]{`connect'} event will be emitted.
+\hyperref[net_event_connect]{`connect'} event will be emitted.
 
 For TCP sockets, \texttt{options} argument should be an object which
 specifies:
@@ -114,11 +114,11 @@ Common options are:
   \texttt{allowHalfOpen}: if \texttt{true}, the socket won't
   automatically send a FIN packet when the other end of the socket sends
   a FIN packet. Defaults to \texttt{false}. See
-  \hyperref[net\_event\_end]{`end'} event for more information.
+  \hyperref[net_event_end]{`end'} event for more information.
 \end{itemize}
 
 The \texttt{connectListener} parameter will be added as an listener for
-the \hyperref[net\_event\_connect]{`connect'} event.
+the \hyperref[net_event_connect]{`connect'} event.
 
 Here is an example of a client of echo server as described previously:
 
@@ -157,7 +157,7 @@ just be changed to
 Creates a TCP connection to \texttt{port} on \texttt{host}. If
 \texttt{host} is omitted, \texttt{'localhost'} will be assumed. The
 \texttt{connectListener} parameter will be added as an listener for the
-\hyperref[net\_event\_connect]{`connect'} event.
+\hyperref[net_event_connect]{`connect'} event.
 
 \subsection{net.connect(path, {[}connectListener{]})}
 
@@ -165,7 +165,7 @@ Creates a TCP connection to \texttt{port} on \texttt{host}. If
 
 Creates unix socket connection to \texttt{path}. The
 \texttt{connectListener} parameter will be added as an listener for the
-\hyperref[net\_event\_connect]{`connect'} event.
+\hyperref[net_event_connect]{`connect'} event.
 
 \subsection{Class: net.Server}
 
@@ -186,9 +186,9 @@ as \texttt{tcp\_max\_syn\_backlog} and \texttt{somaxconn} on linux. The
 default value of this parameter is 511 (not 512).
 
 This function is asynchronous. When the server has been bound,
-\hyperref[net\_event\_listening]{`listening'} event will be emitted. The
+\hyperref[net_event_listening]{`listening'} event will be emitted. The
 last parameter \texttt{listeningListener} will be added as an listener
-for the \hyperref[net\_event\_listening]{`listening'} event.
+for the \hyperref[net_event_listening]{`listening'} event.
 
 One issue some users run into is getting \texttt{EADDRINUSE} errors.
 This means that another server is already running on the requested port.
@@ -217,9 +217,9 @@ Start a UNIX socket server listening for connections on the given
 \texttt{path}.
 
 This function is asynchronous. When the server has been bound,
-\hyperref[net\_event\_listening]{`listening'} event will be emitted. The
+\hyperref[net_event_listening]{`listening'} event will be emitted. The
 last parameter \texttt{listeningListener} will be added as an listener
-for the \hyperref[net\_event\_listening]{`listening'} event.
+for the \hyperref[net_event_listening]{`listening'} event.
 
 \subsubsection{server.listen(handle, {[}listeningListener{]})}
 
@@ -241,9 +241,9 @@ already been bound to a port or domain socket.
 Listening on a file descriptor is not supported on Windows.
 
 This function is asynchronous. When the server has been bound,
-\hyperref[event\_listening\_]{`listening'} event will be emitted. the
+\hyperref[event_listening_]{`listening'} event will be emitted. the
 last parameter \texttt{listeningListener} will be added as an listener
-for the \hyperref[event\_listening\_]{`listening'} event.
+for the \hyperref[event_listening_]{`listening'} event.
 
 \subsubsection{server.close({[}cb{]})}
 
@@ -375,13 +375,13 @@ or if a Socket is closed and you want to reuse it to connect to another
 server.
 
 This function is asynchronous. When the
-\hyperref[net\_event\_connect]{`connect'} event is emitted the socket is
+\hyperref[net_event_connect]{`connect'} event is emitted the socket is
 established. If there is a problem connecting, the \texttt{'connect'}
 event will not be emitted, the \texttt{'error'} event will be emitted
 with the exception.
 
 The \texttt{connectListener} parameter will be added as an listener for
-the \hyperref[net\_event\_connect]{`connect'} event.
+the \hyperref[net_event_connect]{`connect'} event.
 
 \subsubsection{socket.bufferSize}
 
