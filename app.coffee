@@ -24,6 +24,7 @@ toc = [
 	"os"
 	"path"
 	"process"
+	"punycode"
 	"querystring"
 	"readline"
 	"repl"
