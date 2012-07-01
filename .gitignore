@@ -5,3 +5,4 @@ node_modules
 *.out
 *.synctex.gz
 *.toc
+.tm_properties
