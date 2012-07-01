@@ -1,7 +1,0 @@
-# Node.js v0.8.1 Manual & Documentation
-
-### PDF created by Mirco Zeiss
-
-### Content by node.js and its creators
-
-### July 1, 2012
