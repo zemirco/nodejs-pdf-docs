@@ -40,8 +40,13 @@ toc = [
 	"vm"
 	"zlib"
 	]
-
+  
+toc_markdown = []
 for section in toc
-	exec "pandoc markdown/#{section}.markdown -t epub -o epub/#{section}.epub", (err, stdout, stderr) ->
-		if err
-			console.log err
+  toc_markdown.push("#{section}.markdown")
+  
+toc_md_string = toc_markdown.join " "
+
+exec "pandoc -S -o nodejs-manual.epub epub/title.markdown #{toc_md_string}", (err, stdout, stderr) ->
+  if err
+    console.log err
