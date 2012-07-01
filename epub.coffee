@@ -47,6 +47,6 @@ for section in toc
   
 toc_md_string = toc_markdown.join " "
 
-exec "pandoc -S --epub-metadata=epub/metadata.xml --epub-cover-image=epub/logo.jpg -o epub/nodejs-manual.epub epub/title.markdown #{toc_md_string}", (err, stdout, stderr) ->
+exec "pandoc -S --epub-metadata=epub/metadata.xml -o epub/nodejs-manual.epub epub/title.markdown #{toc_md_string}", (err, stdout, stderr) ->
   if err
     console.log err
