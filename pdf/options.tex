@@ -7,10 +7,10 @@
 % custom header and footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\lhead{}					% remove subsections
-\rhead{\leftmark}			% remove italic font shape
-\cfoot{}					% remove old page number
-\rfoot{\thepage}			% page number bottom right
+\lhead{}					        % remove subsections
+\rhead{\leftmark}			    % remove italic font shape
+\cfoot{}					        % remove old page number
+\rfoot{\thepage}			    % page number bottom right
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0.2pt}
 
@@ -57,16 +57,16 @@
 \newcommand{\ErrorTok}[1]{\textbf{{#1}}}
 \newcommand{\NormalTok}[1]{{#1}}
 \ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
+  \usepackage[setpagesize=false,    % page size defined by xetex
+              unicode=false,        % unicode breaks when used with xetex
               xetex]{hyperref}
 \else
   \usepackage[unicode=true]{hyperref}
 \fi
 \hypersetup{breaklinks=true,
             bookmarks=true,
-            pdfauthor={},
-            pdftitle={},
+            pdfauthor={Mirco Zeiss},
+            pdftitle={Node.js Manual & Documentation},
             colorlinks=true,
             urlcolor=blue,
             linkcolor=red,
