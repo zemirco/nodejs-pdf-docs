@@ -145,4 +145,3 @@ Each DNS query can return one of the following error codes:
 - `dns.LOADIPHLPAPI`: Error loading iphlpapi.dll.
 - `dns.ADDRGETNETWORKPARAMS`: Could not find GetNetworkParams function.
 - `dns.CANCELLED`: DNS query cancelled.
-
