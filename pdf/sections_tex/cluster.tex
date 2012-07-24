@@ -26,7 +26,7 @@ that all share server ports.
   \NormalTok{\}}
 
   \KeywordTok{cluster}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{(worker, code, signal) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'worker '} \NormalTok{+ }\KeywordTok{worker}\NormalTok{.}\FunctionTok{pid} \NormalTok{+ }\CharTok{' died'}\NormalTok{);}
+    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'worker '} \NormalTok{+ }\KeywordTok{worker.process}\NormalTok{.}\FunctionTok{pid} \NormalTok{+ }\CharTok{' died'}\NormalTok{);}
   \NormalTok{\});}
 \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
   \CommentTok{// Workers can share any TCP connection}
@@ -70,7 +70,7 @@ create one, and pass the handle to the child.
 
 This causes potentially surprising behavior in three edge cases:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{server.listen(\{fd: 7\})} Because the message is passed to the
   master, file descriptor 7 \textbf{in the parent} will be listened on,
@@ -270,7 +270,7 @@ again.
 \begin{Highlighting}[]
 \KeywordTok{cluster}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{(worker, code, signal) \{}
   \KeywordTok{var} \NormalTok{exitCode = }\KeywordTok{worker.process}\NormalTok{.}\FunctionTok{exitCode}\NormalTok{;}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'worker '} \NormalTok{+ }\KeywordTok{worker}\NormalTok{.}\FunctionTok{pid} \NormalTok{+ }\CharTok{' died ('}\NormalTok{+exitCode+}\CharTok{'). restarting...'}\NormalTok{);}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'worker '} \NormalTok{+ }\KeywordTok{worker.process}\NormalTok{.}\FunctionTok{pid} \NormalTok{+ }\CharTok{' died ('}\NormalTok{+exitCode+}\CharTok{'). restarting...'}\NormalTok{);}
   \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
 \NormalTok{\});}
 \end{Highlighting}
@@ -333,25 +333,6 @@ Example:
 
 Spawn a new worker process. This can only be called from the master
 process.
-
-\subsection{cluster.settings}
-
-\begin{itemize}
-\item
-  \{Object\}
-\item
-  \texttt{exec} \{String\} file path to worker file. Default:
-  \texttt{\_\_filename}
-\item
-  \texttt{args} \{Array\} string arguments passed to worker.
-  (Default=\texttt{process.argv.slice(2)})
-\item
-  \texttt{silent} \{Boolean\} whether or not to send output to parent's
-  stdio. (Default=\texttt{false})
-\end{itemize}
-
-All settings set by the \texttt{.setupMaster} is stored in this settings
-object. This object is not supposed to be change or set manually.
 
 \subsection{cluster.disconnect({[}callback{]})}
 

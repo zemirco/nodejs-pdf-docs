@@ -177,11 +177,38 @@ See the \href{modules.html}{module section} for more information.
 
 \subsection{setTimeout(cb, ms)}
 
+Run callback \texttt{cb} after \emph{at least} \texttt{ms} milliseconds.
+The actual delay depends on external factors like OS timer granularity
+and system load.
+
+The timeout must be in the range of 1-2,147,483,647 inclusive. If the
+value is outside that range, it's changed to 1 millisecond. Broadly
+speaking, a timer cannot span more than 24.8 days.
+
+Returns an opaque value that represents the timer.
+
 \subsection{clearTimeout(t)}
+
+Stop a timer that was previously created with \texttt{setTimeout()}. The
+callback will not execute.
 
 \subsection{setInterval(cb, ms)}
 
+Run callback \texttt{cb} repeatedly every \texttt{ms} milliseconds. Note
+that the actual interval may vary, depending on external factors like OS
+timer granularity and system load. It's never less than \texttt{ms} but
+it may be longer.
+
+The interval must be in the range of 1-2,147,483,647 inclusive. If the
+value is outside that range, it's changed to 1 millisecond. Broadly
+speaking, a timer cannot span more than 24.8 days.
+
+Returns an opaque value that represents the timer.
+
 \subsection{clearInterval(t)}
+
+Stop a timer that was previously created with \texttt{setInterval()}.
+The callback will not execute.
 
 The timer functions are global variables. See the
 \href{timers.html}{timers} section.

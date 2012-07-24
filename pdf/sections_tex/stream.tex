@@ -80,8 +80,11 @@ Resumes the incoming \texttt{'data'} events after a \texttt{pause()}.
 
 \subsubsection{stream.destroy()}
 
-Closes the underlying file descriptor. Stream will not emit any more
-events.
+Closes the underlying file descriptor. Stream is no longer
+\texttt{writable} nor \texttt{readable}. The stream will not emit any
+more `data', or `end' events. Any queued write data will not be sent.
+The stream should emit `close' event once its resources have been
+disposed of.
 
 \subsubsection{stream.pipe(destination, {[}options{]})}
 
@@ -99,8 +102,7 @@ Emulating the Unix \texttt{cat} command:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
-\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{(); }\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -119,8 +121,7 @@ written at the end.
 \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{, \{ }\DataTypeTok{end}\NormalTok{: }\KeywordTok{false} \NormalTok{\});}
 
 \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"end"}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"Goodbye}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{);}
-\NormalTok{\});}
+\KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"Goodbye}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{); \});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -196,8 +197,11 @@ Same as above but with a \texttt{buffer}.
 
 \subsubsection{stream.destroy()}
 
-Closes the underlying file descriptor. Stream will not emit any more
-events. Any queued write data will not be sent.
+Closes the underlying file descriptor. Stream is no longer
+\texttt{writable} nor \texttt{readable}. The stream will not emit any
+more `data', or `end' events. Any queued write data will not be sent.
+The stream should emit `close' event once its resources have been
+disposed of.
 
 \subsubsection{stream.destroySoon()}
 
