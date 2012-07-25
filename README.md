@@ -1,19 +1,44 @@
-# node.js v0.8.3 manual & documentation printable pdf file
+# Node.js Manual & Documentation (.pdf, .mobi, .epub)
+
+It all started with my desire to have a nicely formatted version of the node.js manual & documentation
+as a printable pdf with a cover, table of content, indented code blocks and so on. Then came requests for a .mobi (Kindle)
+file and an .epub (iOS, Android and more) file.
+
+Of course the whole creation and conversion process is written in node.js.
 
 ## How to use
 
-Go to the pdf folder and download all.pdf. Print it and ready!
+Just check out the different folders or download directly:
 
-## Customizing
+- [pdf](https://github.com/zeMirco/nodejs-pdf-docs/blob/master/pdf/all.pdf?raw=true)
+- [epub](https://github.com/zeMirco/nodejs-pdf-docs/blob/master/epub/nodejs-manual.epub?raw=true)
+- [mobi](https://github.com/zeMirco/nodejs-pdf-docs/blob/master/mobi/nodejs-manual.mobi?raw=true)
+
+## Create your own files
+
+You need to have [pandoc](http://johnmacfarlane.net/pandoc/) installed on your system. All the markdown files from the
+[node repository](https://github.com/joyent/node) should be placed inside the markdown folder.
+
+### Create .pdf
+
+1. Use `coffee app.coffee` to create the tex files
+2. Manually edit the few files as shown in all.tex
+3. Create the pdf with pdfLaTeX
+
+#### Customizing
 
 Use options.tex and run latex to customize your own manual.
 
-## Create pdf from scratch
+### Create .epub
 
-1. Copy all markdown files into the markdown folder
-2. Use `coffee app.coffee` to create the tex files
-3. Manually edit the few files as shown in all.tex
-4. Create the pdf with pdfLaTeX
+1. Run `coffee epub.coffee` to create the file
+
+### Create .mobi
+
+The .mobi version is created from the .epub file which gives better results compared to converting the .pdf file.
+
+1. Download `kindlegen` from this repository or directly from [Amazon](http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000234621)
+2. Run `coffee mobi.coffee` to create the file. The file is located inside the epub folder
 
 ## License
 
