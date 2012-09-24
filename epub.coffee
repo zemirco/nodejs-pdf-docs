@@ -38,7 +38,6 @@ toc = [
 	"os"
 	"debugger"
 	"cluster"  
-	"appendix_1"
 	]
   
 toc_markdown = []
