@@ -3,7 +3,6 @@ exec = require("child_process").exec
 
 toc = [
 	"addons"
-	"appendix_1"
 	"assert"
 	"buffer"
 	"child_process"
