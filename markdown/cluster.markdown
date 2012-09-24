@@ -222,8 +222,8 @@ call `.setupMaster()` with no arguments.
   * `silent` {Boolean} whether or not to send output to parent's stdio.
     (Default=`false`)
 
-The `setupMaster` is used to change the default 'fork' behavior. It takes
-one option object argument.
+`setupMaster` is used to change the default 'fork' behavior. The new settings
+are effective immediately and permanently, they cannot be changed later on.
 
 Example:
 
@@ -252,12 +252,29 @@ die graceful if no other event is waiting.
 
 The method takes an optional callback argument which will be called when finished.
 
+## cluster.worker
+
+* {Object}
+
+A reference to the current worker object. Not available in the master process.
+
+    var cluster = require('cluster');
+
+    if (cluster.isMaster) {
+      console.log('I am master');
+      cluster.fork();
+      cluster.fork();
+    } else if (cluster.isWorker) {
+      console.log('I am worker #' + cluster.worker.id);
+    }
+
 ## cluster.workers
 
 * {Object}
 
-In the cluster all living worker objects are stored in this object by there
-`id` as the key. This makes it easy to loop through all living workers.
+A hash that stores the active worker objects, keyed by `id` field. Makes it
+easy to loop through all the workers. It is only available in the master
+process.
 
     // Go through all workers
     function eachWorker(callback) {
@@ -357,11 +374,11 @@ the worker finally die.
 
 Because there might be long living connections, it is useful to implement a timeout.
 This example ask the worker to disconnect and after 2 seconds it will destroy the
-server. An alternative wound be to execute `worker.destroy()` after 2 seconds, but
+server. An alternative would be to execute `worker.destroy()` after 2 seconds, but
 that would normally not allow the worker to do any cleanup if needed.
 
     if (cluster.isMaster) {
-      var worker = cluser.fork();
+      var worker = cluster.fork();
       var timeout;
 
       worker.on('listening', function(address) {
