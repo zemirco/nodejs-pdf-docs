@@ -229,9 +229,9 @@ thrown will be routed to the domain's \texttt{error} event.
 \KeywordTok{var} \NormalTok{d = }\KeywordTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
 
 \KeywordTok{function} \NormalTok{readSomeFile(filename, cb) \{}
-  \KeywordTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\KeywordTok{d}\NormalTok{.}\FunctionTok{bind}\NormalTok{(}\KeywordTok{function}\NormalTok{(er, data) \{}
+  \KeywordTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\CharTok{'utf8'}\NormalTok{, }\KeywordTok{d}\NormalTok{.}\FunctionTok{bind}\NormalTok{(}\KeywordTok{function}\NormalTok{(er, data) \{}
     \CommentTok{// if this throws, it will also be passed to the domain}
-    \KeywordTok{return} \NormalTok{cb(er, }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(data));}
+    \KeywordTok{return} \NormalTok{cb(er, data ? }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(data) : null);}
   \NormalTok{\}));}
 \NormalTok{\}}
 
@@ -266,7 +266,7 @@ replaced with a single error handler in a single place.
 \KeywordTok{var} \NormalTok{d = }\KeywordTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
 
 \KeywordTok{function} \NormalTok{readSomeFile(filename, cb) \{}
-  \KeywordTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\KeywordTok{d}\NormalTok{.}\FunctionTok{intercept}\NormalTok{(}\KeywordTok{function}\NormalTok{(data) \{}
+  \KeywordTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\CharTok{'utf8'}\NormalTok{, }\KeywordTok{d}\NormalTok{.}\FunctionTok{intercept}\NormalTok{(}\KeywordTok{function}\NormalTok{(data) \{}
     \CommentTok{// note, the first argument is never passed to the}
     \CommentTok{// callback since it is assumed to be the 'Error' argument}
     \CommentTok{// and thus intercepted by the domain.}

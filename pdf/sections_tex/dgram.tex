@@ -285,3 +285,17 @@ process terminates, so most apps will never need to call this.
 
 If \texttt{multicastInterface} is not specified, the OS will try to drop
 membership to all valid interfaces.
+
+\subsubsection{dgram.unref()}
+
+Calling \texttt{unref} on a socket will allow the program to exit if
+this is the only active socket in the event system. If the socket is
+already \texttt{unref}d calling \texttt{unref} again will have no
+effect.
+
+\subsubsection{dgram.ref()}
+
+Opposite of \texttt{unref}, calling \texttt{ref} on a previously
+\texttt{unref}d socket will \emph{not} let the program exit if it's the
+only socket left (the default behavior). If the socket is \texttt{ref}d
+calling \texttt{ref} again will have no effect.

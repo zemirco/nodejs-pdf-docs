@@ -90,14 +90,23 @@ given to the completion callback.
 
 Synchronous rename(2).
 
-\subsection{fs.truncate(fd, len, {[}callback{]})}
+\subsection{fs.ftruncate(fd, len, {[}callback{]})}
 
 Asynchronous ftruncate(2). No arguments other than a possible exception
 are given to the completion callback.
 
-\subsection{fs.truncateSync(fd, len)}
+\subsection{fs.ftruncateSync(fd, len)}
 
 Synchronous ftruncate(2).
+
+\subsection{fs.truncate(path, len, {[}callback{]})}
+
+Asynchronous truncate(2). No arguments other than a possible exception
+are given to the completion callback.
+
+\subsection{fs.truncateSync(path, len)}
+
+Synchronous truncate(2).
 
 \subsection{fs.chown(path, uid, gid, {[}callback{]})}
 
@@ -159,8 +168,8 @@ Synchronous lchmod(2).
 
 Asynchronous stat(2). The callback gets two arguments
 \texttt{(err, stats)} where \texttt{stats} is a
-\hyperref[fs_class_fs_stats]{fs.Stats} object. See the
-\hyperref[fs_class_fs_stats]{fs.Stats} section below for more
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} object. See the
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} section below for more
 information.
 
 \subsection{fs.lstat(path, {[}callback{]})}
@@ -509,7 +518,7 @@ The synchronous version of \texttt{fs.appendFile}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- }\KeywordTok{Unstable}\NormalTok{.  Use }\KeywordTok{fs}\NormalTok{.}\FunctionTok{watch} \NormalTok{instead, }\KeywordTok{if} \KeywordTok{available}\NormalTok{.}
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- }\KeywordTok{Unstable}\NormalTok{.  Use }\KeywordTok{fs}\NormalTok{.}\FunctionTok{watch} \NormalTok{instead, }\KeywordTok{if} \KeywordTok{possible}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
@@ -561,13 +570,13 @@ watched is a no-op, not an error.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- }\KeywordTok{Unstable}\NormalTok{.  Not available on all }\KeywordTok{platforms}\NormalTok{.}
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- }\KeywordTok{Unstable}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
 Watch for changes on \texttt{filename}, where \texttt{filename} is
 either a file or a directory. The returned object is a
-\hyperref[fs_class_fs_fswatcher]{fs.FSWatcher}.
+\hyperref[fs\_class\_fs\_fswatcher]{fs.FSWatcher}.
 
 The second argument is optional. The \texttt{options} if provided should
 be an object containing a boolean member \texttt{persistent}, which
@@ -602,9 +611,12 @@ to be notified of filesystem changes.
 \end{itemize}
 
 If the underlying functionality is not available for some reason, then
-\texttt{fs.watch} will not be able to function. You can still use
-\texttt{fs.watchFile}, which uses stat polling, but it is slower and
-less reliable.
+\texttt{fs.watch} will not be able to function. For example, watching
+files or directories on network file systems (NFS, SMB, etc.) often
+doesn't work reliably or at all.
+
+You can still use \texttt{fs.watchFile}, which uses stat polling, but it
+is slower and less reliable.
 
 \paragraph{Filename Argument}
 
@@ -805,7 +817,7 @@ Stop watching for changes on the given \texttt{fs.FSWatcher}.
 
 Emitted when something changes in a watched directory or file. See more
 details in
-\hyperref[fs_fs_watch_filename_options_listener]{fs.watch}.
+\hyperref[fs\_fs\_watch\_filename\_options\_listener]{fs.watch}.
 
 \subsubsection{Event: `error'}
 

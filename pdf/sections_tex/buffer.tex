@@ -85,6 +85,16 @@ Allocates a new buffer using an \texttt{array} of octets.
 Allocates a new buffer containing the given \texttt{str}.
 \texttt{encoding} defaults to \texttt{'utf8'}.
 
+\subsubsection{Class Method: Buffer.isEncoding(encoding)}
+
+\begin{itemize}
+\item
+  \texttt{encoding} \{String\} The encoding string to test
+\end{itemize}
+
+Returns true if the \texttt{encoding} is a valid encoding argument, or
+false otherwise.
+
 \subsubsection{buf.write(string, {[}offset{]}, {[}length{]},
 {[}encoding{]})}
 
@@ -138,6 +148,29 @@ Decodes and returns a string from buffer data encoded with
 (defaults to \texttt{buffer.length}).
 
 See \texttt{buffer.write()} example, above.
+
+\subsubsection{buf.toJSON()}
+
+Returns a JSON-representation of the Buffer instance, which is identical
+to the output for JSON Arrays. \texttt{JSON.stringify} implicitly calls
+this function when stringifying a Buffer instance.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\CharTok{'test'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{json = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(buf);}
+
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(json);}
+\CommentTok{// '[116,101,115,116]'}
+
+\KeywordTok{var} \NormalTok{copy = }\KeywordTok{new} \NormalTok{Buffer(}\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(json));}
+
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(copy);}
+\CommentTok{// <Buffer 74 65 73 74>}
+\end{Highlighting}
+\end{Shaded}
 
 \subsubsection{buf{[}index{]}}
 

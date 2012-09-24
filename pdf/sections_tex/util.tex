@@ -114,7 +114,8 @@ The default is to only recurse twice. To make it recurse indefinitely,
 pass in \texttt{null} for \texttt{depth}.
 
 If \texttt{colors} is \texttt{true}, the output will be styled with ANSI
-color codes. Defaults to \texttt{false}.
+color codes. Defaults to \texttt{false}. Colors are customizable, see
+below.
 
 Example of inspecting all properties of the \texttt{util} object:
 
@@ -125,6 +126,26 @@ Example of inspecting all properties of the \texttt{util} object:
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(util, }\KeywordTok{true}\NormalTok{, null));}
 \end{Highlighting}
 \end{Shaded}
+
+\subsubsection{Customizing \texttt{util.inspect} colors}
+
+Color output (if enabled) of \texttt{util.inspect} is customizable
+globally via \texttt{util.inspect.styles} and
+\texttt{util.inspect.colors} objects.
+
+\texttt{util.inspect.styles} is a map assigning each style a color from
+\texttt{util.inspect.colors}. Highlighted styles and their default
+values are: * \texttt{number} (yellow) * \texttt{boolean} (yellow) *
+\texttt{string} (green) * \texttt{date} (magenta) * \texttt{regexp}
+(red) * \texttt{null} (bold) * \texttt{undefined} (grey) *
+\texttt{special} - only function at this time (cyan) * \texttt{name}
+(intentionally no styling)
+
+Predefined color codes are: \texttt{white}, \texttt{grey},
+\texttt{black}, \texttt{blue}, \texttt{cyan}, \texttt{green},
+\texttt{magenta}, \texttt{red} and \texttt{yellow}. There are also
+\texttt{bold}, \texttt{italic}, \texttt{underline} and \texttt{inverse}
+codes.
 
 \subsection{util.isArray(object)}
 
@@ -200,7 +221,11 @@ Returns \texttt{true} if the given ``object'' is an \texttt{Error}.
 
 \subsection{util.pump(readableStream, writableStream, {[}callback{]})}
 
-Experimental
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{readableStream}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writableStream)}
+\end{Highlighting}
+\end{Shaded}
 
 Read the data from \texttt{readableStream} and send it to the
 \texttt{writableStream}. When \texttt{writableStream.write(data)}

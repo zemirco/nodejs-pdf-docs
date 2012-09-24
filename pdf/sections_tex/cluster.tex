@@ -70,7 +70,7 @@ create one, and pass the handle to the child.
 
 This causes potentially surprising behavior in three edge cases:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{server.listen(\{fd: 7\})} Because the message is passed to the
   master, file descriptor 7 \textbf{in the parent} will be listened on,
@@ -304,8 +304,9 @@ arguments.
   stdio. (Default=\texttt{false})
 \end{itemize}
 
-The \texttt{setupMaster} is used to change the default `fork' behavior.
-It takes one option object argument.
+\texttt{setupMaster} is used to change the default `fork' behavior. The
+new settings are effective immediately and permanently, they cannot be
+changed later on.
 
 Example:
 
@@ -350,6 +351,30 @@ waiting.
 The method takes an optional callback argument which will be called when
 finished.
 
+\subsection{cluster.worker}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+A reference to the current worker object. Not available in the master
+process.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{cluster = require(}\CharTok{'cluster'}\NormalTok{);}
+
+\KeywordTok{if} \NormalTok{(}\KeywordTok{cluster}\NormalTok{.}\FunctionTok{isMaster}\NormalTok{) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'I am master'}\NormalTok{);}
+  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+\NormalTok{\} }\KeywordTok{else} \KeywordTok{if} \NormalTok{(}\KeywordTok{cluster}\NormalTok{.}\FunctionTok{isWorker}\NormalTok{) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'I am worker #'} \NormalTok{+ }\KeywordTok{cluster.worker}\NormalTok{.}\FunctionTok{id}\NormalTok{);}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
 \subsection{cluster.workers}
 
 \begin{itemize}
@@ -357,9 +382,9 @@ finished.
   \{Object\}
 \end{itemize}
 
-In the cluster all living worker objects are stored in this object by
-there \texttt{id} as the key. This makes it easy to loop through all
-living workers.
+A hash that stores the active worker objects, keyed by \texttt{id}
+field. Makes it easy to loop through all the workers. It is only
+available in the master process.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -490,14 +515,14 @@ is emitted when the worker finally die.
 
 Because there might be long living connections, it is useful to
 implement a timeout. This example ask the worker to disconnect and after
-2 seconds it will destroy the server. An alternative wound be to execute
+2 seconds it will destroy the server. An alternative would be to execute
 \texttt{worker.destroy()} after 2 seconds, but that would normally not
 allow the worker to do any cleanup if needed.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{if} \NormalTok{(}\KeywordTok{cluster}\NormalTok{.}\FunctionTok{isMaster}\NormalTok{) \{}
-  \KeywordTok{var} \NormalTok{worker = }\KeywordTok{cluser}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+  \KeywordTok{var} \NormalTok{worker = }\KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
   \KeywordTok{var} \NormalTok{timeout;}
 
   \KeywordTok{worker}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'listening'}\NormalTok{, }\KeywordTok{function}\NormalTok{(address) \{}

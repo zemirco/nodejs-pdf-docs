@@ -30,7 +30,8 @@ a special case in node. If there is no listener for it, then the default
 action is to print a stack trace and exit the program.
 
 All EventEmitters emit the event \texttt{'newListener'} when new
-listeners are added.
+listeners are added and \texttt{'removeListener'} when a listener is
+removed.
 
 \subsubsection{emitter.addListener(event, listener)}
 
@@ -82,9 +83,6 @@ listener.
 
 Removes all listeners, or those of the specified event.
 
-Note that this will \textbf{invalidate} any arrays that have previously
-been returned by \texttt{emitter.listeners(event)}.
-
 \subsubsection{emitter.setMaxListeners(n)}
 
 By default EventEmitters will print a warning if more than 10 listeners
@@ -105,20 +103,6 @@ Returns an array of listeners for the specified event.
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(}\KeywordTok{server}\NormalTok{.}\FunctionTok{listeners}\NormalTok{(}\CharTok{'connection'}\NormalTok{))); }\CommentTok{// [ [Function] ]}
 \end{Highlighting}
 \end{Shaded}
-
-This array \textbf{may} be a mutable reference to the same underlying
-list of listeners that is used by the event subsystem. However, certain
-actions (specifically, removeAllListeners) will invalidate this
-reference.
-
-If you would like to get a copy of the listeners at a specific point in
-time that is guaranteed not to change, make a copy, for example by doing
-\texttt{emitter.listeners(event).slice(0)}.
-
-In a future release of node, this behavior \textbf{may} change to always
-return a copy, for consistency. In your programs, please do not rely on
-being able to modify the EventEmitter listeners using array methods.
-Always use the `on' method to add new listeners.
 
 \subsubsection{emitter.emit(event, {[}arg1{]}, {[}arg2{]},
 {[}\ldots{}{]})}

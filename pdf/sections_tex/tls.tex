@@ -73,7 +73,7 @@ denial-of-service attacks.
 
 To mitigate this, renegotiations are limited to three times every 10
 minutes. An error is emitted on the
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} instance
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream} instance
 when the threshold is exceeded. The limits are configurable:
 
 \begin{itemize}
@@ -106,9 +106,9 @@ handshake extensions allowing you:
 
 \subsection{tls.createServer(options, {[}secureConnectionListener{]})}
 
-Creates a new \hyperref[tls_class_tls_server]{tls.Server}. The
+Creates a new \hyperref[tls\_class\_tls\_server]{tls.Server}. The
 \texttt{connectionListener} argument is automatically set as a listener
-for the \hyperref[tls_event_secureconnection]{secureConnection} event.
+for the \hyperref[tls\_event\_secureconnection]{secureConnection} event.
 The \texttt{options} object has these possibilities:
 
 \begin{itemize}
@@ -135,23 +135,37 @@ The \texttt{options} object has these possibilities:
   (Certificate Revocation List)
 \item
   \texttt{ciphers}: A string describing the ciphers to use or exclude.
-  Consult
-  \url{http://www.openssl.org/docs/apps/ciphers.html#CIPHER_LIST_FORMAT}
-  for details on the format. To mitigate {[}BEAST attacks{]}
-  (http://blog.ivanristic.com/2011/10/mitigating-the-beast-attack-on-tls.html),
-  it is recommended that you use this option in conjunction with the
-  \texttt{honorCipherOrder} option described below to prioritize the RC4
-  algorithm, since it is a non-CBC cipher. A recommended cipher list
-  follows:
-  \texttt{ECDHE-RSA-AES256-SHA:AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM}
+
+  To mitigate
+  \href{http://blog.ivanristic.com/2011/10/mitigating-the-beast-attack-on-tls.html}{BEAST
+  attacks} it is recommended that you use this option in conjunction
+  with the \texttt{honorCipherOrder} option described below to
+  prioritize the non-CBC cipher.
+
+  Defaults to
+  \texttt{ECDHE-RSA-AES128-SHA256:AES128-GCM-SHA256:RC4:HIGH:!MD5:!aNULL:!EDH}.
+  Consult the
+  \href{http://www.openssl.org/docs/apps/ciphers.html\#CIPHER\_LIST\_FORMAT}{OpenSSL
+  cipher list format documentation} for details on the format.
+
+  \texttt{ECDHE-RSA-AES128-SHA256} and \texttt{AES128-GCM-SHA256} are
+  used when node.js is linked against OpenSSL 1.0.1 or newer and the
+  client speaks TLS 1.2, RC4 is used as a secure fallback.
+
+  \textbf{NOTE}: Previous revisions of this section suggested
+  \texttt{AES256-SHA} as an acceptable cipher. Unfortunately,
+  \texttt{AES256-SHA} is a CBC cipher and therefore susceptible to BEAST
+  attacks. Do \emph{not} use it.
 \item
   \texttt{honorCipherOrder} : When choosing a cipher, use the server's
-  preferences instead of the client preferences. Note that if SSLv2 is
-  used, the server will send its list of preferences to the client, and
-  the client chooses the cipher. Although, this option is disabled by
-  default, it is \emph{recommended} that you use this option in
-  conjunction with the \texttt{ciphers} option to mitigate BEAST
-  attacks.
+  preferences instead of the client preferences.
+
+  Note that if SSLv2 is used, the server will send its list of
+  preferences to the client, and the client chooses the cipher.
+
+  Although, this option is disabled by default, it is \emph{recommended}
+  that you use this option in conjunction with the \texttt{ciphers}
+  option to mitigate BEAST attacks.
 \item
   \texttt{requestCert}: If \texttt{true} the server will request a
   certificate from clients that connect and attempt to verify that
@@ -286,7 +300,7 @@ specifies:
 \item
   \texttt{rejectUnauthorized}: If \texttt{true}, the server certificate
   is verified against the list of supplied CAs. An \texttt{'error'}
-  event is emitted if verification fails. Default: \texttt{false}.
+  event is emitted if verification fails. Default: \texttt{true}.
 \item
   \texttt{NPNProtocols}: An array of string or \texttt{Buffer}
   containing supported NPN protocols. \texttt{Buffer} should have
@@ -299,10 +313,10 @@ specifies:
 \end{itemize}
 
 The \texttt{secureConnectListener} parameter will be added as a listener
-for the \hyperref[tls_event_secureconnect]{`secureConnect'} event.
+for the \hyperref[tls\_event\_secureconnect]{`secureConnect'} event.
 
 \texttt{tls.connect()} returns a
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} object.
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream} object.
 
 Here is an example of a client of echo server as described previously:
 
@@ -417,7 +431,7 @@ encrypted connections using TLS or SSL.
 
 This event is emitted after a new connection has been successfully
 handshaked. The argument is a instance of
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream}. It has all
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream}. It has all
 the common stream methods and events.
 
 \texttt{cleartextStream.authorized} is a boolean value which indicates
@@ -437,6 +451,24 @@ requested with SNI.
 
 When a client connection emits an `error' event before secure connection
 is established - it will be forwarded here.
+
+\subsubsection{Event: `newSession'}
+
+\texttt{function (sessionId, sessionData) \{ \}}
+
+Emitted on creation of TLS session. May be used to store sessions in
+external storage.
+
+\subsubsection{Event: `resumeSession'}
+
+\texttt{function (sessionId, callback) \{ \}}
+
+Emitted when client wants to resume previous TLS session. Event listener
+may perform lookup in external storage using given \texttt{sessionId},
+and invoke \texttt{callback(null, sessionData)} once finished. If
+session can't be resumed (i.e.~doesn't exist in storage) one may call
+\texttt{callback(null, null)}. Calling \texttt{callback(err)} will
+terminate incoming connection and destroy socket.
 
 \subsubsection{server.listen(port, {[}host{]}, {[}callback{]})}
 

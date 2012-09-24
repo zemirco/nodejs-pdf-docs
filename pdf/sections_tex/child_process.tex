@@ -243,7 +243,7 @@ Here is an example of sending a server:
 \end{Highlighting}
 \end{Shaded}
 
-And the child would the recive the server object as:
+And the child would the receive the server object as:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -263,7 +263,7 @@ the child.
 
 \textbf{send socket object}
 
-Here is an example of sending a socket. It will spawn two childs and
+Here is an example of sending a socket. It will spawn two children and
 handle connections with the remote address \texttt{74.125.127.100} as
 VIP by sending the socket to a ``special'' child process. Other sockets
 will go to a ``normal'' process.
@@ -304,7 +304,7 @@ The \texttt{child.js} could look like this:
 Note that once a single socket has been sent to a child the parent can
 no longer keep track of when the socket is destroyed. To indicate this
 condition the \texttt{.connections} property becomes \texttt{null}. It
-is also recomended not to use \texttt{.maxConnections} in this
+is also recommended not to use \texttt{.maxConnections} in this
 condition.
 
 \subsubsection{child.disconnect()}
@@ -367,8 +367,7 @@ Example of running \texttt{ls -lh /usr}, capturing \texttt{stdout},
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util  = require(}\CharTok{'util'}\NormalTok{),}
-    \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
     \NormalTok{ls    = spawn(}\CharTok{'ls'}\NormalTok{, [}\CharTok{'-lh'}\NormalTok{, }\CharTok{'/usr'}\NormalTok{]);}
 
 \KeywordTok{ls.stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
@@ -389,8 +388,7 @@ Example: A very elaborate way to run `ps ax \textbar{} grep ssh'
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util  = require(}\CharTok{'util'}\NormalTok{),}
-    \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
     \NormalTok{ps    = spawn(}\CharTok{'ps'}\NormalTok{, [}\CharTok{'ax'}\NormalTok{]),}
     \NormalTok{grep  = spawn(}\CharTok{'grep'}\NormalTok{, [}\CharTok{'ssh'}\NormalTok{]);}
 
@@ -450,7 +448,7 @@ The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
 following:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as
@@ -610,8 +608,7 @@ Runs a command in a shell and buffers the output.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{),}
-    \NormalTok{exec = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{exec}\NormalTok{,}
+\KeywordTok{var} \NormalTok{exec = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{exec}\NormalTok{,}
     \NormalTok{child;}
 
 \NormalTok{child = exec(}\CharTok{'cat *.js bad_file \textbar{} wc -l'}\NormalTok{,}
@@ -713,8 +710,6 @@ options.
 \item
   \texttt{encoding} \{String\} (Default: `utf8')
 \item
-  \texttt{timeout} \{Number\} (Default: 0)
-\item
   Return: ChildProcess object
 \end{itemize}
 
@@ -728,6 +723,10 @@ By default the spawned Node process will have the stdout, stderr
 associated with the parent's. To change this behavior set the
 \texttt{silent} property in the \texttt{options} object to
 \texttt{true}.
+
+The child process does not automatically exit once it's done, you need
+to call \texttt{process.exit()} explicitly. This limitation may be
+lifted in the future.
 
 These child Nodes are still whole new instances of V8. Assume at least
 30ms startup and 10mb memory for each new Node. That is, you cannot

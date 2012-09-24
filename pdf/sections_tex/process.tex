@@ -15,10 +15,10 @@ Example of listening for \texttt{exit}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
-  \KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function} \NormalTok{() \{}
-   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'This will not run'}\NormalTok{);}
-  \NormalTok{\});}
+\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
+    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'This will not run'}\NormalTok{);}
+  \NormalTok{\}, }\DecValTok{0}\NormalTok{);}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'About to exit.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
@@ -34,11 +34,11 @@ Example of listening for \texttt{uncaughtException}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'uncaughtException'}\NormalTok{, }\KeywordTok{function} \NormalTok{(err) \{}
+\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'uncaughtException'}\NormalTok{, }\KeywordTok{function}\NormalTok{(err) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Caught exception: '} \NormalTok{+ err);}
 \NormalTok{\});}
 
-\NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+\NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'This will still run.'}\NormalTok{);}
 \NormalTok{\}, }\DecValTok{500}\NormalTok{);}
 
@@ -77,7 +77,7 @@ Example of listening for \texttt{SIGINT}:
 \CommentTok{// Start reading from stdin so we don't exit.}
 \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 
-\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGINT'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
+\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGINT'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Got SIGINT.  Press Control-D to exit.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
@@ -94,7 +94,7 @@ Example: the definition of \texttt{console.log}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log} \NormalTok{= }\KeywordTok{function} \NormalTok{(d) \{}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log} \NormalTok{= }\KeywordTok{function}\NormalTok{(d) \{}
   \KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(d + }\CharTok{'\textbackslash{}n'}\NormalTok{);}
 \NormalTok{\};}
 \end{Highlighting}
@@ -129,11 +129,11 @@ Example of opening standard input and listening for both events:
 \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
 
-\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(chunk) \{}
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
   \KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'data: '} \NormalTok{+ chunk);}
 \NormalTok{\});}
 
-\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
+\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'end'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
@@ -148,7 +148,7 @@ The next elements will be any additional command line arguments.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// print process.argv}
-\KeywordTok{process.argv}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function} \NormalTok{(val, index, array) \{}
+\KeywordTok{process.argv}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function}\NormalTok{(val, index, array) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(index + }\CharTok{': '} \NormalTok{+ val);}
 \NormalTok{\});}
 \end{Highlighting}
@@ -364,7 +364,6 @@ An example of the possible output looks like:
   \DataTypeTok{variables}\NormalTok{:}
    \NormalTok{\{ }\DataTypeTok{host_arch}\NormalTok{: }\CharTok{'x64'}\NormalTok{,}
      \DataTypeTok{node_install_npm}\NormalTok{: }\CharTok{'true'}\NormalTok{,}
-     \DataTypeTok{node_install_waf}\NormalTok{: }\CharTok{'true'}\NormalTok{,}
      \DataTypeTok{node_prefix}\NormalTok{: }\CharTok{''}\NormalTok{,}
      \DataTypeTok{node_shared_v8}\NormalTok{: }\CharTok{'false'}\NormalTok{,}
      \DataTypeTok{node_shared_zlib}\NormalTok{: }\CharTok{'false'}\NormalTok{,}
@@ -393,11 +392,11 @@ Example of sending a signal to yourself:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGHUP'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
+\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGHUP'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Got SIGHUP signal.'}\NormalTok{);}
 \NormalTok{\});}
 
-\NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+\NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Exiting.'}\NormalTok{);}
   \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}
 \NormalTok{\}, }\DecValTok{100}\NormalTok{);}
@@ -434,7 +433,7 @@ What processor architecture you're running on: \texttt{'arm'},
 \subsection{process.platform}
 
 What platform you're running on: \texttt{'darwin'}, \texttt{'freebsd'},
-\texttt{'linux'}, \texttt{'solaris'} or \texttt{'win32'}
+\texttt{'linux'}, \texttt{'sunos'} or \texttt{'win32'}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -471,15 +470,114 @@ This will generate:
 
 On the next loop around the event loop call this callback. This is
 \emph{not} a simple alias to \texttt{setTimeout(fn, 0)}, it's much more
-efficient.
+efficient. It typically runs before any other I/O events fire, but there
+are some exceptions. See \texttt{process.maxTickDepth} below.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function} \NormalTok{() \{}
+\KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'nextTick callback'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
+
+This is important in developing APIs where you want to give the user the
+chance to assign event handlers after an object has been constructed,
+but before any I/O has occurred.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \NormalTok{MyThing(options) \{}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{setupOptions}\NormalTok{(options);}
+
+  \KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+    \KeywordTok{this}\NormalTok{.}\FunctionTok{startDoingStuff}\NormalTok{();}
+  \NormalTok{\}.}\FunctionTok{bind}\NormalTok{(}\KeywordTok{this}\NormalTok{));}
+\NormalTok{\}}
+
+\KeywordTok{var} \NormalTok{thing = }\KeywordTok{new} \NormalTok{MyThing();}
+\KeywordTok{thing}\NormalTok{.}\FunctionTok{getReadyForStuff}\NormalTok{();}
+
+\CommentTok{// thing.startDoingStuff() gets called now, not before.}
+\end{Highlighting}
+\end{Shaded}
+
+It is very important for APIs to be either 100\% synchronous or 100\%
+asynchronous. Consider this example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// WARNING!  DO NOT USE!  BAD UNSAFE HAZARD!}
+\KeywordTok{function} \NormalTok{maybeSync(arg, cb) \{}
+  \KeywordTok{if} \NormalTok{(arg) \{}
+    \NormalTok{cb();}
+    \KeywordTok{return}\NormalTok{;}
+  \NormalTok{\}}
+
+  \KeywordTok{fs}\NormalTok{.}\FunctionTok{stat}\NormalTok{(}\CharTok{'file'}\NormalTok{, cb);}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+This API is hazardous. If you do this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{maybeSync(}\KeywordTok{true}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \NormalTok{foo();}
+\NormalTok{\});}
+\NormalTok{bar();}
+\end{Highlighting}
+\end{Shaded}
+
+then it's not clear whether \texttt{foo()} or \texttt{bar()} will be
+called first.
+
+This approach is much better:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \NormalTok{definitelyAsync(arg, cb) \{}
+  \KeywordTok{if} \NormalTok{(arg) \{}
+    \KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(cb);}
+    \KeywordTok{return}\NormalTok{;}
+  \NormalTok{\}}
+
+  \KeywordTok{fs}\NormalTok{.}\FunctionTok{stat}\NormalTok{(}\CharTok{'file'}\NormalTok{, cb);}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{process.maxTickDepth}
+
+\begin{itemize}
+\item
+  \{Number\} Default = 1000
+\end{itemize}
+
+Callbacks passed to \texttt{process.nextTick} will \emph{usually} be
+called at the end of the current flow of execution, and are thus
+approximately as fast as calling a function synchronously. Left
+unchecked, this would starve the event loop, preventing any I/O from
+occurring.
+
+Consider this code:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function} \NormalTok{foo() \{}
+  \KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(foo);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+In order to avoid the situation where Node is blocked by an infinite
+loop of recursive series of nextTick calls, it defers to allow some I/O
+to be done every so often.
+
+The \texttt{process.maxTickDepth} value is the maximum depth of
+nextTick-calling nextTick-callbacks that will be evaluated before
+allowing other forms of I/O to occur.
 
 \subsection{process.umask({[}mask{]})}
 
@@ -518,7 +616,7 @@ and measuring intervals:
 \KeywordTok{var} \NormalTok{t = }\KeywordTok{process}\NormalTok{.}\FunctionTok{hrtime}\NormalTok{();}
 \CommentTok{// [ 1800216, 927643717 ]}
 
-\NormalTok{setTimeout(}\KeywordTok{function} \NormalTok{() \{}
+\NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
   \NormalTok{t = }\KeywordTok{process}\NormalTok{.}\FunctionTok{hrtime}\NormalTok{(t);}
   \CommentTok{// [ 1, 6962306 ]}
 
