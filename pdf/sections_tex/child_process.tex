@@ -295,7 +295,7 @@ The \texttt{child.js} could look like this:
 \begin{Highlighting}[]
 \KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m, socket) \{}
   \KeywordTok{if} \NormalTok{(m === }\CharTok{'socket'}\NormalTok{) \{}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'You where handled as a '} \NormalTok{+ }\KeywordTok{process}\NormalTok{.}\FunctionTok{argv}\NormalTok{[}\DecValTok{2}\NormalTok{] + }\CharTok{' person'}\NormalTok{);}
+    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'You were handled as a '} \NormalTok{+ }\KeywordTok{process}\NormalTok{.}\FunctionTok{argv}\NormalTok{[}\DecValTok{2}\NormalTok{] + }\CharTok{' person'}\NormalTok{);}
   \NormalTok{\}}
 \NormalTok{\});}
 \end{Highlighting}
@@ -448,7 +448,7 @@ The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
 following:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as

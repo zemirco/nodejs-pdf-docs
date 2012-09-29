@@ -73,7 +73,7 @@ denial-of-service attacks.
 
 To mitigate this, renegotiations are limited to three times every 10
 minutes. An error is emitted on the
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} instance
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream} instance
 when the threshold is exceeded. The limits are configurable:
 
 \begin{itemize}
@@ -106,9 +106,9 @@ handshake extensions allowing you:
 
 \subsection{tls.createServer(options, {[}secureConnectionListener{]})}
 
-Creates a new \hyperref[tls_class_tls_server]{tls.Server}. The
+Creates a new \hyperref[tls\_class\_tls\_server]{tls.Server}. The
 \texttt{connectionListener} argument is automatically set as a listener
-for the \hyperref[tls_event_secureconnection]{secureConnection} event.
+for the \hyperref[tls\_event\_secureconnection]{secureConnection} event.
 The \texttt{options} object has these possibilities:
 
 \begin{itemize}
@@ -313,10 +313,10 @@ specifies:
 \end{itemize}
 
 The \texttt{secureConnectListener} parameter will be added as a listener
-for the \hyperref[tls_event_secureconnect]{`secureConnect'} event.
+for the \hyperref[tls\_event\_secureconnect]{`secureConnect'} event.
 
 \texttt{tls.connect()} returns a
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} object.
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream} object.
 
 Here is an example of a client of echo server as described previously:
 
@@ -431,7 +431,7 @@ encrypted connections using TLS or SSL.
 
 This event is emitted after a new connection has been successfully
 handshaked. The argument is a instance of
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream}. It has all
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream}. It has all
 the common stream methods and events.
 
 \texttt{cleartextStream.authorized} is a boolean value which indicates

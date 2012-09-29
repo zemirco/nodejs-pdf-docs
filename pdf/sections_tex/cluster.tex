@@ -70,7 +70,7 @@ create one, and pass the handle to the child.
 
 This causes potentially surprising behavior in three edge cases:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{server.listen(\{fd: 7\})} Because the message is passed to the
   master, file descriptor 7 \textbf{in the parent} will be listened on,
@@ -82,7 +82,7 @@ This causes potentially surprising behavior in three edge cases:
   master process. If the worker already has the handle, then it's
   presumed that you know what you are doing.
 \item
-  \texttt{server.listen(0)} Normally, this will case servers to listen
+  \texttt{server.listen(0)} Normally, this will cause servers to listen
   on a random port. However, in a cluster, each worker will receive the
   same ``random'' port each time they do \texttt{listen(0)}. In essence,
   the port is random the first time, but predictable thereafter. If you
