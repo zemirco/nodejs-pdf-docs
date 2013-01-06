@@ -9,8 +9,6 @@ var options = {
 var walker = walk.walk('./pdf', options);
 
 walker.on("file", function (root, fileStats, next) {
-  console.log(root)
-  console.log(fileStats.name);
   // remove all old files created by LaTex
   if (root === './pdf') {
     if (fileStats.name !== 'all.tex' && fileStats.name !== 'options.tex') {
@@ -25,7 +23,6 @@ walker.on("file", function (root, fileStats, next) {
     if (mime.lookup(fileStats.name) === 'application/x-tex') {
       return removeBrokenHyperref(fileStats.name, function(err){
         if (err) console.log(err);
-        console.log('all done');
         next();
       })
     }
