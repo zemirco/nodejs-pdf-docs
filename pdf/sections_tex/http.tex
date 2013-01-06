@@ -53,7 +53,7 @@ to the \texttt{'request'} event.
 \subsection{http.createClient({[}port{]}, {[}host{]})}
 
 This function is \textbf{deprecated}; please use
-\hyperref[http_http_request_options_callback]{http.request()}
+\hyperref[http\_http\_request\_options\_callback]{http.request()}
 instead. Constructs a new HTTP client. \texttt{port} and \texttt{host}
 refer to the server to be connected to.
 
@@ -151,9 +151,12 @@ order to handle data sent to the server on that socket.
 
 \subsubsection{Event: `clientError'}
 
-\texttt{function (exception) \{ \}}
+\texttt{function (exception, socket) \{ \}}
 
 If a client connection emits an `error' event - it will forwarded here.
+
+\texttt{socket} is the \texttt{net.Socket} object that the error
+originated from.
 
 \subsubsection{server.listen(port, {[}hostname{]}, {[}backlog{]},
 {[}callback{]})}
@@ -173,7 +176,7 @@ default value of this parameter is 511 (not 512).
 This function is asynchronous. The last parameter \texttt{callback} will
 be added as a listener for the
 \href{net.html\#net\_event\_listening}{`listening'} event. See also
-\href{net.html\#net\_server\_listen\_port\_host\_backlog\_listeninglistener}{net.Server.listen(port)}.
+\href{net.html\#net\_server\_listen\_port\_host\_backlog\_callback}{net.Server.listen(port)}.
 
 \subsubsection{server.listen(path, {[}callback{]})}
 
@@ -183,15 +186,15 @@ Start a UNIX socket server listening for connections on the given
 This function is asynchronous. The last parameter \texttt{callback} will
 be added as a listener for the
 \href{net.html\#net\_event\_listening}{`listening'} event. See also
-\href{net.html\#net\_server\_listen\_path\_listeninglistener}{net.Server.listen(path)}.
+\href{net.html\#net\_server\_listen\_path\_callback}{net.Server.listen(path)}.
 
-\subsubsection{server.listen(handle, {[}listeningListener{]})}
+\subsubsection{server.listen(handle, {[}callback{]})}
 
 \begin{itemize}
 \item
   \texttt{handle} \{Object\}
 \item
-  \texttt{listeningListener} \{Function\}
+  \texttt{callback} \{Function\}
 \end{itemize}
 
 The \texttt{handle} object can be set to either a server or socket
@@ -207,12 +210,12 @@ Listening on a file descriptor is not supported on Windows.
 This function is asynchronous. The last parameter \texttt{callback} will
 be added as a listener for the
 \href{net.html\#event\_listening\_}{`listening'} event. See also
-\href{net.html\#server.listen}{net.Server.listen()}.
+\href{net.html\#net\_server\_listen\_handle\_callback}{net.Server.listen()}.
 
-\subsubsection{server.close({[}cb{]})}
+\subsubsection{server.close({[}callback{]})}
 
 Stops the server from accepting new connections. See
-\href{net.html\#net\_server\_close\_cb}{net.Server.close()}.
+\href{net.html\#net\_server\_close\_callback}{net.Server.close()}.
 
 \subsubsection{server.maxHeadersCount}
 
@@ -376,17 +379,6 @@ This is an
 \href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}
 with the following events:
 
-\subsubsection{Event: `end'}
-
-\texttt{function () \{ \}}
-
-Emitted when the response has been sent. More specifically, this event
-is emitted when the last segment of the response headers and body have
-been handed off to the operating system for transmission over the
-network. It does not imply that the client has received anything yet.
-
-After this event, no more events will be emitted on the response object.
-
 \subsubsection{Event: `close'}
 
 \texttt{function () \{ \}}
@@ -398,7 +390,7 @@ Indicates that the underlaying connection was terminated before
 
 Sends a HTTP/1.1 100 Continue message to the client, indicating that the
 request body should be sent. See the
-\hyperref[http_event_checkcontinue]{`checkContinue'} event on
+\hyperref[http\_event\_checkcontinue]{`checkContinue'} event on
 \texttt{Server}.
 
 \subsubsection{response.writeHead(statusCode, {[}reasonPhrase{]},
@@ -612,12 +604,12 @@ Options:
   \texttt{auth}: Basic authentication i.e. \texttt{'user:password'} to
   compute an Authorization header.
 \item
-  \texttt{agent}: Controls \hyperref[http_class_http_agent]{Agent}
+  \texttt{agent}: Controls \hyperref[http\_class\_http\_agent]{Agent}
   behavior. When an Agent is used request will default to
   \texttt{Connection: keep-alive}. Possible values:
 \item
   \texttt{undefined} (default): use
-  \hyperref[http_http_globalagent]{global Agent} for this host and
+  \hyperref[http\_http\_globalagent]{global Agent} for this host and
   port.
 \item
   \texttt{Agent} object: explicitly use the passed in \texttt{Agent}.
@@ -636,7 +628,7 @@ Example:
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{options = \{}
-  \DataTypeTok{host}\NormalTok{: }\CharTok{'www.google.com'}\NormalTok{,}
+  \DataTypeTok{hostname}\NormalTok{: }\CharTok{'www.google.com'}\NormalTok{,}
   \DataTypeTok{port}\NormalTok{: }\DecValTok{80}\NormalTok{,}
   \DataTypeTok{path}\NormalTok{: }\CharTok{'/upload'}\NormalTok{,}
   \DataTypeTok{method}\NormalTok{: }\CharTok{'POST'}
@@ -743,7 +735,7 @@ Alternatively, you could just opt out of pooling entirely using
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(\{}\DataTypeTok{host}\NormalTok{:}\CharTok{'localhost'}\NormalTok{, }\DataTypeTok{port}\NormalTok{:}\DecValTok{80}\NormalTok{, }\DataTypeTok{path}\NormalTok{:}\CharTok{'/'}\NormalTok{, }\DataTypeTok{agent}\NormalTok{:}\KeywordTok{false}\NormalTok{\}, }\KeywordTok{function} \NormalTok{(res) \{}
+\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(\{}\DataTypeTok{hostname}\NormalTok{:}\CharTok{'localhost'}\NormalTok{, }\DataTypeTok{port}\NormalTok{:}\DecValTok{80}\NormalTok{, }\DataTypeTok{path}\NormalTok{:}\CharTok{'/'}\NormalTok{, }\DataTypeTok{agent}\NormalTok{:}\KeywordTok{false}\NormalTok{\}, }\KeywordTok{function} \NormalTok{(res) \{}
   \CommentTok{// Do stuff}
 \NormalTok{\})}
 \end{Highlighting}
@@ -889,7 +881,7 @@ A client server pair that show you how to listen for the
   \CommentTok{// make a request to a tunneling proxy}
   \KeywordTok{var} \NormalTok{options = \{}
     \DataTypeTok{port}\NormalTok{: }\DecValTok{1337}\NormalTok{,}
-    \DataTypeTok{host}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
+    \DataTypeTok{hostname}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
     \DataTypeTok{method}\NormalTok{: }\CharTok{'CONNECT'}\NormalTok{,}
     \DataTypeTok{path}\NormalTok{: }\CharTok{'www.google.com:80'}
   \NormalTok{\};}
@@ -951,7 +943,7 @@ A client server pair that show you how to listen for the
   \CommentTok{// make a request}
   \KeywordTok{var} \NormalTok{options = \{}
     \DataTypeTok{port}\NormalTok{: }\DecValTok{1337}\NormalTok{,}
-    \DataTypeTok{host}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
+    \DataTypeTok{hostname}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
     \DataTypeTok{headers}\NormalTok{: \{}
       \CharTok{'Connection'}\NormalTok{: }\CharTok{'Upgrade'}\NormalTok{,}
       \CharTok{'Upgrade'}\NormalTok{: }\CharTok{'websocket'}
@@ -1050,17 +1042,23 @@ Note that the \textbf{data will be lost} if there is no listener when a
 
 \texttt{function () \{ \}}
 
-Emitted exactly once for each message. No arguments. After emitted no
-other events will be emitted on the response.
+Emitted exactly once for each response. After that, no more
+\texttt{'data'} events will be emitted on the response.
 
 \subsubsection{Event: `close'}
 
-\texttt{function (err) \{ \}}
+\texttt{function () \{ \}}
 
 Indicates that the underlaying connection was terminated before
-\texttt{end} event was emitted. See
-\hyperref[http_class_http_serverrequest]{http.ServerRequest}'s
-\texttt{'close'} event for more information.
+\texttt{response.end()} was called or able to flush.
+
+Just like \texttt{'end'}, this event occurs only once per response, and
+no more \texttt{'data'} events will fire afterwards. See
+{[}http.ServerResponse{]}{[}{]}'s \texttt{'close'} event for more
+information.
+
+Note: \texttt{'close'} can fire after \texttt{'end'}, but not vice
+versa.
 
 \subsubsection{response.statusCode}
 

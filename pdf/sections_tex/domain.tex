@@ -32,14 +32,14 @@ are added to it.
 \item
   \texttt{error.domain} The domain that first handled the error.
 \item
-  \texttt{error.domain\_emitter} The event emitter that emitted an
-  `error' event with the error object.
+  \texttt{error.domainEmitter} The event emitter that emitted an `error'
+  event with the error object.
 \item
-  \texttt{error.domain\_bound} The callback function which was bound to
+  \texttt{error.domainBound} The callback function which was bound to
   the domain, and passed an error as its first argument.
 \item
-  \texttt{error.domain\_thrown} A boolean indicating whether the error
-  was thrown, emitted, or passed to a bound callback function.
+  \texttt{error.domainThrown} A boolean indicating whether the error was
+  thrown, emitted, or passed to a bound callback function.
 \end{itemize}
 
 \subsection{Implicit Binding}
@@ -209,11 +209,11 @@ removed from that one, and bound to this one instead.
 The opposite of \texttt{domain.add(emitter)}. Removes domain handling
 from the specified emitter.
 
-\subsubsection{domain.bind(cb)}
+\subsubsection{domain.bind(callback)}
 
 \begin{itemize}
 \item
-  \texttt{cb} \{Function\} The callback function
+  \texttt{callback} \{Function\} The callback function
 \item
   return: \{Function\} The bound function
 \end{itemize}
@@ -243,21 +243,21 @@ thrown will be routed to the domain's \texttt{error} event.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{domain.intercept(cb)}
+\subsubsection{domain.intercept(callback)}
 
 \begin{itemize}
 \item
-  \texttt{cb} \{Function\} The callback function
+  \texttt{callback} \{Function\} The callback function
 \item
   return: \{Function\} The intercepted function
 \end{itemize}
 
-This method is almost identical to \texttt{domain.bind(cb)}. However, in
-addition to catching thrown errors, it will also intercept
+This method is almost identical to \texttt{domain.bind(callback)}.
+However, in addition to catching thrown errors, it will also intercept
 \texttt{Error} objects sent as the first argument to the function.
 
-In this way, the common \texttt{if (er) return cb(er);} pattern can be
-replaced with a single error handler in a single place.
+In this way, the common \texttt{if (er) return callback(er);} pattern
+can be replaced with a single error handler in a single place.
 
 \paragraph{Example}
 

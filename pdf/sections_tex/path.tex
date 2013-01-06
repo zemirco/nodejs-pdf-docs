@@ -19,7 +19,7 @@ Normalize a string path, taking care of \texttt{'..'} and \texttt{'.'}
 parts.
 
 When multiple slashes are found, they're replaced by a single one; when
-the path contains a trailing slash, it is preserved. On windows
+the path contains a trailing slash, it is preserved. On Windows
 backslashes are used.
 
 Example:
@@ -194,7 +194,7 @@ string. Examples:
 The platform-specific file separator.
 \texttt{'\textbackslash{}\textbackslash{}'} or \texttt{'/'}.
 
-An example on linux:
+An example on *nix:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -204,13 +204,43 @@ An example on linux:
 \end{Highlighting}
 \end{Shaded}
 
-An example on windows:
+An example on Windows:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CharTok{'foo\textbackslash{}\textbackslash{}bar\textbackslash{}\textbackslash{}baz'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{sep}\NormalTok{)}
 \CommentTok{// returns}
 \NormalTok{[}\CharTok{'foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz'}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.delimiter}
+
+The platform-specific path delimiter, \texttt{;} or \texttt{':'}.
+
+An example on *nix:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{process.env}\NormalTok{.}\FunctionTok{PATH}\NormalTok{)}
+\CommentTok{// '/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin'}
+
+\KeywordTok{process.env.PATH}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{delimiter}\NormalTok{)}
+\CommentTok{// returns}
+\NormalTok{[}\CharTok{'/usr/bin'}\NormalTok{, }\CharTok{'/bin'}\NormalTok{, }\CharTok{'/usr/sbin'}\NormalTok{, }\CharTok{'/sbin'}\NormalTok{, }\CharTok{'/usr/local/bin'}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+An example on Windows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{process.env}\NormalTok{.}\FunctionTok{PATH}\NormalTok{)}
+\CommentTok{// 'C:\textbackslash{}Windows\textbackslash{}system32;C:\textbackslash{}Windows;C:\textbackslash{}Program Files\textbackslash{}nodejs\textbackslash{}'}
+
+\KeywordTok{process.env.PATH}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{delimiter}\NormalTok{)}
+\CommentTok{// returns}
+\NormalTok{[}\CharTok{'C:\textbackslash{}Windows\textbackslash{}system32'}\NormalTok{, }\CharTok{'C:\textbackslash{}Windows'}\NormalTok{, }\CharTok{'C:\textbackslash{}Program Files\textbackslash{}nodejs\textbackslash{}']}
 \end{Highlighting}
 \end{Shaded}
 

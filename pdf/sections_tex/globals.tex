@@ -91,18 +91,6 @@ Process files with the extension \texttt{.sjs} as \texttt{.js}:
 \end{Highlighting}
 \end{Shaded}
 
-Write your own extension handler:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{require}\NormalTok{.}\FunctionTok{extensions}\NormalTok{[}\CharTok{'.sjs'}\NormalTok{] = }\KeywordTok{function}\NormalTok{(module, filename) \{}
-  \KeywordTok{var} \NormalTok{content = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{readFileSync}\NormalTok{(filename, }\CharTok{'utf8'}\NormalTok{);}
-  \CommentTok{// Parse the file content and give to module.exports}
-  \KeywordTok{module}\NormalTok{.}\FunctionTok{exports} \NormalTok{= content;}
-\NormalTok{\};}
-\end{Highlighting}
-\end{Shaded}
-
 \subsection{\_\_filename}
 
 \begin{itemize}

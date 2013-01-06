@@ -28,6 +28,10 @@ StringDecoder decodes a buffer to a string. It is a simple interface to
 Accepts a single argument, \texttt{encoding} which defaults to
 \texttt{utf8}.
 
-\subsubsection{StringDecoder.write(buffer)}
+\subsubsection{decoder.write(buffer)}
 
 Returns a decoded string.
+
+\subsubsection{decoder.end()}
+
+Returns any trailing bytes that were left in the buffer.

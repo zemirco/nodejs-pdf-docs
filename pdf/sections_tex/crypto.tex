@@ -2,18 +2,44 @@
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable; API changes are being discussed }\KeywordTok{for}
+\NormalTok{future }\KeywordTok{versions}\NormalTok{.  Breaking changes will be }\KeywordTok{minimized}\NormalTok{.  See }\KeywordTok{below}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
 Use \texttt{require('crypto')} to access this module.
 
-The crypto module requires OpenSSL to be available on the underlying
-platform. It offers a way of encapsulating secure credentials to be used
-as part of a secure HTTPS net or http connection.
+The crypto module offers a way of encapsulating secure credentials to be
+used as part of a secure HTTPS net or http connection.
 
 It also offers a set of wrappers for OpenSSL's hash, hmac, cipher,
 decipher, sign and verify methods.
+
+\subsection{crypto.getCiphers()}
+
+Returns an array with the names of the supported ciphers.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{ciphers = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{getCiphers}\NormalTok{();}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(ciphers); }\CommentTok{// ['AES128-SHA', 'AES256-SHA', ...]}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{crypto.getHashes()}
+
+Returns an array with the names of the supported hash algorithms.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{hashes = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{getHashes}\NormalTok{();}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(hashes); }\CommentTok{// ['sha', 'sha1', 'sha1WithRSAEncryption', ...]}
+\end{Highlighting}
+\end{Shaded}
 
 \subsection{crypto.createCredentials(details)}
 
@@ -85,21 +111,29 @@ Example: this program that takes the sha1 sum of a file
 
 The class for creating hash digests of data.
 
+It is a \href{stream.html}{stream} that is both readable and writable.
+The written data is used to compute the hash. Once the writable side of
+the stream is ended, use the \texttt{read()} method to get the computed
+hash digest. The legacy \texttt{update} and \texttt{digest} methods are
+also supported.
+
 Returned by \texttt{crypto.createHash}.
 
 \subsubsection{hash.update(data, {[}input\_encoding{]})}
 
 Updates the hash content with the given \texttt{data}, the encoding of
-which is given in \texttt{input\_encoding} and can be \texttt{'buffer'},
-\texttt{'utf8'}, \texttt{'ascii'} or \texttt{'binary'}. Defaults to
-\texttt{'binary'}. This can be called many times with new data as it is
-streamed.
+which is given in \texttt{input\_encoding} and can be \texttt{'utf8'},
+\texttt{'ascii'} or \texttt{'binary'}. If no encoding is provided, then
+a buffer is expected.
+
+This can be called many times with new data as it is streamed.
 
 \subsubsection{hash.digest({[}encoding{]})}
 
 Calculates the digest of all of the passed data to be hashed. The
-\texttt{encoding} can be \texttt{'buffer'}, \texttt{'hex'},
-\texttt{'binary'} or \texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{encoding} can be \texttt{'hex'}, \texttt{'binary'} or
+\texttt{'base64'}. If no encoding is provided, then a buffer is
+returned.
 
 Note: \texttt{hash} object can not be used after \texttt{digest()}
 method been called.
@@ -108,6 +142,12 @@ method been called.
 
 Creates and returns a hmac object, a cryptographic hmac with the given
 algorithm and key.
+
+It is a \href{stream.html}{stream} that is both readable and writable.
+The written data is used to compute the hmac. Once the writable side of
+the stream is ended, use the \texttt{read()} method to get the computed
+digest. The legacy \texttt{update} and \texttt{digest} methods are also
+supported.
 
 \texttt{algorithm} is dependent on the available algorithms supported by
 OpenSSL - see createHash above. \texttt{key} is the hmac key to be used.
@@ -126,8 +166,9 @@ many times with new data as it is streamed.
 \subsubsection{hmac.digest({[}encoding{]})}
 
 Calculates the digest of all of the passed data to the hmac. The
-\texttt{encoding} can be \texttt{'buffer'}, \texttt{'hex'},
-\texttt{'binary'} or \texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{encoding} can be \texttt{'hex'}, \texttt{'binary'} or
+\texttt{'base64'}. If no encoding is provided, then a buffer is
+returned.
 
 Note: \texttt{hmac} object can not be used after \texttt{digest()}
 method been called.
@@ -143,6 +184,12 @@ password.
 cipher algorithms. \texttt{password} is used to derive key and IV, which
 must be a \texttt{'binary'} encoded string or a
 \href{buffer.html}{buffer}.
+
+It is a \href{stream.html}{stream} that is both readable and writable.
+The written data is used to compute the hash. Once the writable side of
+the stream is ended, use the \texttt{read()} method to get the computed
+hash digest. The legacy \texttt{update} and \texttt{digest} methods are
+also supported.
 
 \subsection{crypto.createCipheriv(algorithm, key, iv)}
 
@@ -165,16 +212,22 @@ Class for encrypting data.
 Returned by \texttt{crypto.createCipher} and
 \texttt{crypto.createCipheriv}.
 
+Cipher objects are \href{stream.html}{streams} that are both readable
+and writable. The written plain text data is used to produce the
+encrypted data on the the readable side. The legacy \texttt{update} and
+\texttt{final} methods are also supported.
+
 \subsubsection{cipher.update(data, {[}input\_encoding{]},
 {[}output\_encoding{]})}
 
 Updates the cipher with \texttt{data}, the encoding of which is given in
-\texttt{input\_encoding} and can be \texttt{'buffer'}, \texttt{'utf8'},
-\texttt{'ascii'} or \texttt{'binary'}. Defaults to \texttt{'binary'}.
+\texttt{input\_encoding} and can be \texttt{'utf8'}, \texttt{'ascii'} or
+\texttt{'binary'}. If no encoding is provided, then a buffer is
+expected.
 
 The \texttt{output\_encoding} specifies the output format of the
-enciphered data, and can be \texttt{'buffer'}, \texttt{'binary'},
-\texttt{'base64'} or \texttt{'hex'}. Defaults to \texttt{'binary'}.
+enciphered data, and can be \texttt{'binary'}, \texttt{'base64'} or
+\texttt{'hex'}. If no encoding is provided, then a buffer iis returned.
 
 Returns the enciphered contents, and can be called many times with new
 data as it is streamed.
@@ -182,9 +235,9 @@ data as it is streamed.
 \subsubsection{cipher.final({[}output\_encoding{]})}
 
 Returns any remaining enciphered contents, with
-\texttt{output\_encoding} being one of: \texttt{'buffer'},
-\texttt{'binary'}, \texttt{'base64'} or \texttt{'hex'}. Defaults to
-\texttt{'binary'}.
+\texttt{output\_encoding} being one of: \texttt{'binary'},
+\texttt{'base64'} or \texttt{'hex'}. If no encoding is provided, then a
+buffer is returned.
 
 Note: \texttt{cipher} object can not be used after \texttt{final()}
 method been called.
@@ -201,14 +254,14 @@ of PKCS padding. You must call this before \texttt{cipher.final}.
 
 Creates and returns a decipher object, with the given algorithm and key.
 This is the mirror of the
-\hyperref[crypto_crypto_createcipher_algorithm_password]{createCipher()}
+\hyperref[crypto\_crypto\_createcipher\_algorithm\_password]{createCipher()}
 above.
 
 \subsection{crypto.createDecipheriv(algorithm, key, iv)}
 
 Creates and returns a decipher object, with the given algorithm, key and
 iv. This is the mirror of the
-\hyperref[crypto_crypto_createcipheriv_algorithm_key_iv]{createCipheriv()}
+\hyperref[crypto\_crypto\_createcipheriv\_algorithm\_key\_iv]{createCipheriv()}
 above.
 
 \subsection{Class: Decipher}
@@ -218,23 +271,28 @@ Class for decrypting data.
 Returned by \texttt{crypto.createDecipher} and
 \texttt{crypto.createDecipheriv}.
 
+Decipher objects are \href{stream.html}{streams} that are both readable
+and writable. The written enciphered data is used to produce the
+plain-text data on the the readable side. The legacy \texttt{update} and
+\texttt{final} methods are also supported.
+
 \subsubsection{decipher.update(data, {[}input\_encoding{]},
 {[}output\_encoding{]})}
 
 Updates the decipher with \texttt{data}, which is encoded in
-\texttt{'buffer'}, \texttt{'binary'}, \texttt{'base64'} or
-\texttt{'hex'}. Defaults to \texttt{'binary'}.
+\texttt{'binary'}, \texttt{'base64'} or \texttt{'hex'}. If no encoding
+is provided, then a buffer is expected.
 
 The \texttt{output\_decoding} specifies in what format to return the
-deciphered plaintext: \texttt{'buffer'}, \texttt{'binary'},
-\texttt{'ascii'} or \texttt{'utf8'}. Defaults to \texttt{'binary'}.
+deciphered plaintext: \texttt{'binary'}, \texttt{'ascii'} or
+\texttt{'utf8'}. If no encoding is provided, then a buffer is returned.
 
 \subsubsection{decipher.final({[}output\_encoding{]})}
 
 Returns any remaining plaintext which is deciphered, with
-\texttt{output\_encoding} being one of: \texttt{'buffer'},
-\texttt{'binary'}, \texttt{'ascii'} or \texttt{'utf8'}. Defaults to
-\texttt{'binary'}.
+\texttt{output\_encoding} being one of: \texttt{'binary'},
+\texttt{'ascii'} or \texttt{'utf8'}. If no encoding is provided, then a
+buffer is returned.
 
 Note: \texttt{decipher} object can not be used after \texttt{final()}
 method been called.
@@ -254,29 +312,34 @@ recent OpenSSL releases, \texttt{openssl list-public-key-algorithms}
 will display the available signing algorithms. Examples are
 \texttt{'RSA-SHA256'}.
 
-\subsection{Class: Signer}
+\subsection{Class: Sign}
 
 Class for generating signatures.
 
 Returned by \texttt{crypto.createSign}.
 
-\subsubsection{signer.update(data)}
+Sign objects are writable \href{stream.html}{streams}. The written data
+is used to generate the signature. Once all of the data has been
+written, the \texttt{sign} method will return the signature. The legacy
+\texttt{update} method is also supported.
 
-Updates the signer object with data. This can be called many times with
+\subsubsection{sign.update(data)}
+
+Updates the sign object with data. This can be called many times with
 new data as it is streamed.
 
-\subsubsection{signer.sign(private\_key, {[}output\_format{]})}
+\subsubsection{sign.sign(private\_key, {[}output\_format{]})}
 
 Calculates the signature on all the updated data passed through the
-signer. \texttt{private\_key} is a string containing the PEM encoded
+sign. \texttt{private\_key} is a string containing the PEM encoded
 private key for signing.
 
 Returns the signature in \texttt{output\_format} which can be
-\texttt{'buffer'}, \texttt{'binary'}, \texttt{'hex'} or
-\texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
+is provided, then a buffer is returned.
 
-Note: \texttt{signer} object can not be used after \texttt{sign()}
-method been called.
+Note: \texttt{sign} object can not be used after \texttt{sign()} method
+been called.
 
 \subsection{crypto.createVerify(algorithm)}
 
@@ -288,6 +351,12 @@ This is the mirror of the signing object above.
 Class for verifying signatures.
 
 Returned by \texttt{crypto.createVerify}.
+
+Verify objects are writable \href{stream.html}{streams}. The written
+data is used to validate against the supplied signature. Once all of the
+data has been written, the \texttt{verify} method will return true if
+the supplied signature is valid. The legacy \texttt{update} method is
+also supported.
 
 \subsubsection{verifier.update(data)}
 
@@ -302,8 +371,8 @@ Verifies the signed data by using the \texttt{object} and
 object, which can be one of RSA public key, DSA public key, or X.509
 certificate. \texttt{signature} is the previously calculated signature
 for the data, in the \texttt{signature\_format} which can be
-\texttt{'buffer'}, \texttt{'binary'}, \texttt{'hex'} or
-\texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
+is specified, then a buffer is expected.
 
 Returns true or false depending on the validity of the signature for the
 data and public key.
@@ -319,9 +388,9 @@ the given bit length. The generator used is \texttt{2}.
 \subsection{crypto.createDiffieHellman(prime, {[}encoding{]})}
 
 Creates a Diffie-Hellman key exchange object using the supplied prime.
-The generator used is \texttt{2}. Encoding can be \texttt{'buffer'},
-\texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. Defaults to
-\texttt{'binary'}.
+The generator used is \texttt{2}. Encoding can be \texttt{'binary'},
+\texttt{'hex'}, or \texttt{'base64'}. If no encoding is specified, then
+a buffer is expected.
 
 \subsection{Class: DiffieHellman}
 
@@ -334,7 +403,8 @@ Returned by \texttt{crypto.createDiffieHellman}.
 Generates private and public Diffie-Hellman key values, and returns the
 public key in the specified encoding. This key should be transferred to
 the other party. Encoding can be \texttt{'binary'}, \texttt{'hex'}, or
-\texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{'base64'}. If no encoding is provided, then a buffer is
+returned.
 
 \subsubsection{diffieHellman.computeSecret(other\_public\_key,
 {[}input\_encoding{]}, {[}output\_encoding{]})}
@@ -343,46 +413,48 @@ Computes the shared secret using \texttt{other\_public\_key} as the
 other party's public key and returns the computed shared secret.
 Supplied key is interpreted using specified \texttt{input\_encoding},
 and secret is encoded using specified \texttt{output\_encoding}.
-Encodings can be \texttt{'buffer'}, \texttt{'binary'}, \texttt{'hex'},
-or \texttt{'base64'}. The input encoding defaults to \texttt{'binary'}.
-If no output encoding is given, the input encoding is used as output
-encoding.
+Encodings can be \texttt{'binary'}, \texttt{'hex'}, or
+\texttt{'base64'}. If the input encoding is not provided, then a buffer
+is expected.
+
+If no output encoding is given, then a buffer is returned.
 
 \subsubsection{diffieHellman.getPrime({[}encoding{]})}
 
 Returns the Diffie-Hellman prime in the specified encoding, which can be
-\texttt{'buffer'}, \texttt{'binary'}, \texttt{'hex'}, or
-\texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no encoding
+is provided, then a buffer is returned.
 
 \subsubsection{diffieHellman.getGenerator({[}encoding{]})}
 
 Returns the Diffie-Hellman prime in the specified encoding, which can be
-\texttt{'buffer'}, \texttt{'binary'}, \texttt{'hex'}, or
-\texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no encoding
+is provided, then a buffer is returned.
 
 \subsubsection{diffieHellman.getPublicKey({[}encoding{]})}
 
 Returns the Diffie-Hellman public key in the specified encoding, which
-can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. Defaults
-to \texttt{'binary'}.
+can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no
+encoding is provided, then a buffer is returned.
 
 \subsubsection{diffieHellman.getPrivateKey({[}encoding{]})}
 
 Returns the Diffie-Hellman private key in the specified encoding, which
-can be \texttt{'buffer'}, \texttt{'binary'}, \texttt{'hex'}, or
-\texttt{'base64'}. Defaults to \texttt{'binary'}.
+can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no
+encoding is provided, then a buffer is returned.
 
 \subsubsection{diffieHellman.setPublicKey(public\_key, {[}encoding{]})}
 
 Sets the Diffie-Hellman public key. Key encoding can be
-\texttt{'buffer', ``'binary'}, \texttt{'hex'} or \texttt{'base64'}.
-Defaults to \texttt{'binary'}.
+\texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
+is provided, then a buffer is expected.
 
-\subsubsection{diffieHellman.setPrivateKey(public\_key, {[}encoding{]})}
+\subsubsection{diffieHellman.setPrivateKey(private\_key,
+{[}encoding{]})}
 
 Sets the Diffie-Hellman private key. Key encoding can be
-\texttt{'buffer'}, \texttt{'binary'}, \texttt{'hex'} or
-\texttt{'base64'}. Defaults to \texttt{'binary'}.
+\texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
+is provided, then a buffer is expected.
 
 \subsection{crypto.getDiffieHellman(group\_name)}
 
@@ -393,9 +465,9 @@ and \texttt{'modp14'}, \texttt{'modp15'}, \texttt{'modp16'},
 \texttt{'modp17'}, \texttt{'modp18'} (defined in
 \href{http://www.rfc-editor.org/rfc/rfc3526.txt}{RFC 3526}). The
 returned object mimics the interface of objects created by
-\hyperref[crypto_crypto_creatediffiehellman_prime_encoding]{crypto.createDiffieHellman()}
+\hyperref[crypto\_crypto\_creatediffiehellman\_prime\_encoding]{crypto.createDiffieHellman()}
 above, but will not allow to change the keys (with
-\hyperref[crypto_diffiehellman_setpublickey_public_key_encoding]{diffieHellman.setPublicKey()}
+\hyperref[crypto\_diffiehellman\_setpublickey\_public\_key\_encoding]{diffieHellman.setPublicKey()}
 for example). The advantage of using this routine is that the parties
 don't have to generate nor exchange group modulus beforehand, saving
 both processor and communication time.
@@ -411,8 +483,8 @@ Example (obtaining a shared secret):
 \KeywordTok{alice}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
 \KeywordTok{bob}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
 
-\KeywordTok{var} \NormalTok{alice_secret = }\KeywordTok{alice}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\KeywordTok{bob}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), }\CharTok{'binary'}\NormalTok{, }\CharTok{'hex'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{bob_secret = }\KeywordTok{bob}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\KeywordTok{alice}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), }\CharTok{'binary'}\NormalTok{, }\CharTok{'hex'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{alice_secret = }\KeywordTok{alice}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\KeywordTok{bob}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), null, }\CharTok{'hex'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{bob_secret = }\KeywordTok{bob}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\KeywordTok{alice}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), null, }\CharTok{'hex'}\NormalTok{);}
 
 \CommentTok{/* alice_secret and bob_secret should be the same */}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(alice_secret == bob_secret);}
@@ -424,6 +496,10 @@ Example (obtaining a shared secret):
 Asynchronous PBKDF2 applies pseudorandom function HMAC-SHA1 to derive a
 key of given length from the given password, salt and iterations. The
 callback gets two arguments \texttt{(err, derivedKey)}.
+
+\subsection{crypto.pbkdf2Sync(password, salt, iterations, keylen)}
+
+Synchronous PBKDF2 function. Returns derivedKey or throws error.
 
 \subsection{crypto.randomBytes(size, {[}callback{]})}
 
@@ -447,3 +523,43 @@ Generates cryptographically strong pseudo-random data. Usage:
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{crypto.DEFAULT\_ENCODING}
+
+The default encoding to use for functions that can take either strings
+or buffers. The default value is \texttt{'buffer'}, which makes it
+default to using Buffer objects. This is here to make the crypto module
+more easily compatible with legacy programs that expected
+\texttt{'binary'} to be the default encoding.
+
+Note that new programs will probably expect buffers, so only use this as
+a temporary measure.
+
+\subsection{Recent API Changes}
+
+The Crypto module was added to Node before there was the concept of a
+unified Stream API, and before there were Buffer objects for handling
+binary data.
+
+As such, the streaming classes don't have the typical methods found on
+other Node classes, and many methods accepted and returned
+Binary-encoded strings by default rather than Buffers. This was changed
+to use Buffers by default instead.
+
+This is a breaking change for some use cases, but not all.
+
+For example, if you currently use the default arguments to the Sign
+class, and then pass the results to the Verify class, without ever
+inspecting the data, then it will continue to work as before. Where you
+once got a binary string and then presented the binary string to the
+Verify object, you'll now get a Buffer, and present the Buffer to the
+Verify object.
+
+However, if you were doing things with the string data that will not
+work properly on Buffers (such as, concatenating them, storing in
+databases, etc.), or you are passing binary strings to the crypto
+functions without an encoding argument, then you will need to start
+providing encoding arguments to specify which encoding you'd like to
+use. To switch to the previous style of using binary strings by default,
+set the \texttt{crypto.DEFAULT\_ENCODING} field to `binary'. Note that
+new programs will probably expect buffers, so only use this as a
+temporary measure.

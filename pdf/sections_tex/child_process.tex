@@ -340,6 +340,12 @@ and child, and the \texttt{connected} flag will be set to
   \texttt{detached} \{Boolean\} The child will be a process group
   leader. (See below)
 \item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
+\item
   return: \{ChildProcess object\}
 \end{itemize}
 
@@ -448,7 +454,7 @@ The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
 following:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as
