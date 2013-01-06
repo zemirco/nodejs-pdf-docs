@@ -21,8 +21,8 @@ You need to have [pandoc](http://johnmacfarlane.net/pandoc/) installed on your s
 
 ### Create .pdf
 
-1. Use `coffee app.coffee` to create the tex files
-2. Manually edit the few files as shown in all.tex
+1. Use `node app.js` to create the .tex files
+2. Manually edit the few files as shown in all.tex (or run `node cleanTex.js`)
 3. Create the pdf with pdfLaTeX
 
 #### Customizing
@@ -31,14 +31,14 @@ Use options.tex and run latex to customize your own manual.
 
 ### Create .epub
 
-1. Run `coffee epub.coffee` to create the file
+1. Run `node epub.js` to create the file
 
 ### Create .mobi
 
 The .mobi version is created from the .epub file which gives better results compared to converting the .pdf file.
 
 1. Download `kindlegen` from this repository or directly from [Amazon](http://www.amazon.com/gp/feature.html?ie=UTF8&docId=1000234621)
-2. Run `coffee mobi.coffee` to create the file. The file is located inside the epub folder
+2. Run `node mobi.js` to create the file. The file is located inside the epub folder
 
 ## License
 
