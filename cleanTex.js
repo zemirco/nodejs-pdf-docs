@@ -24,7 +24,7 @@ walker.on("file", function (root, fileStats, next) {
       return removeBrokenHyperref(fileStats.name, function(err){
         if (err) console.log(err);
         next();
-      })
+      });
     }
     next();
   }
@@ -49,7 +49,7 @@ var removeBrokenHyperref = function(file, cb) {
     data = data.toString();
     // find all \hyperref[...]
     var re = /hyperref\[\S+\]/gi;
-    var hyperrefArray = data.match(re)
+    var hyperrefArray = data.match(re);
     // inside the found results look for \_ and replace with _
     var re2 = /\\_/gi;
     if (hyperrefArray) {
@@ -57,20 +57,20 @@ var removeBrokenHyperref = function(file, cb) {
         var value = hyperrefArray[key];
         var myString = value.replace(re2, '_');
         // replace string inside data with new string
-        data = data.replace(value, myString)
+        data = data.replace(value, myString);
         // save the new file when done
         if (index === hyperrefArray.length - 1) {
           fs.writeFile('./pdf/sections_tex/' + file, data, function(err) {
             if (err) return cb(err);
-            cb(null)
-          })
+            cb(null);
+          });
         }
-      })
+      });
     } else {
-      cb(null)
+      cb(null);
     }
-  })
-}
+  });
+};
 
 walker.on("errors", function (root, nodeStatsArray, next) {
   next();
