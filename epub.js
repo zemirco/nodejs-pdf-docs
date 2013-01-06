@@ -10,13 +10,14 @@ var tocMarkdown = [];
 var writeMdString = function(item, cb) {
   tocMarkdown.push('markdown/' + item + '.markdown');
   cb(null);
-}
+};
 
 async.forEach(toc, writeMdString, function(err) {
   if (err) console.log(err);
   
   var tocMdString = tocMarkdown.join(' ');
 
+  /*jshint multistr: true */
   exec('pandoc \
     -S --epub-metadata=epub/metadata.xml \
     -o epub/nodejs-manual.epub \
@@ -26,4 +27,4 @@ async.forEach(toc, writeMdString, function(err) {
       if (err) console.log(err);
       console.log('all done');
     });
-})
+});
