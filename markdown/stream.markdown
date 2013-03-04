@@ -84,7 +84,7 @@ method.
 A `Readable Stream` has the following methods, members, and events.
 
 Note that `stream.Readable` is an abstract class designed to be
-extended with an underlying implementation of the `_read(size, cb)`
+extended with an underlying implementation of the `_read(size)`
 method. (See below.)
 
 ### new stream.Readable([options])
@@ -92,39 +92,204 @@ method. (See below.)
 * `options` {Object}
   * `bufferSize` {Number} The size of the chunks to consume from the
     underlying resource. Default=16kb
-  * `lowWaterMark` {Number} The minimum number of bytes to store in
-    the internal buffer before emitting `readable`.  Default=0
   * `highWaterMark` {Number} The maximum number of bytes to store in
     the internal buffer before ceasing to read from the underlying
     resource.  Default=16kb
   * `encoding` {String} If specified, then buffers will be decoded to
     strings using the specified encoding.  Default=null
+  * `objectMode` {Boolean} Whether this stream should behave
+    as a stream of objects. Meaning that stream.read(n) returns
+    a single value instead of a Buffer of size n
 
 In classes that extend the Readable class, make sure to call the
 constructor so that the buffering settings can be properly
 initialized.
 
-### readable.\_read(size, callback)
+### readable.\_read(size)
 
 * `size` {Number} Number of bytes to read asynchronously
-* `callback` {Function} Called with an error or with data
 
-All Readable stream implementations must provide a `_read` method
-to fetch data from the underlying resource.
-
-Note: **This function MUST NOT be called directly.**  It should be
+Note: **This function should NOT be called directly.**  It should be
 implemented by child classes, and called by the internal Readable
 class methods only.
 
-Call the callback using the standard `callback(error, data)` pattern.
-When no more data can be fetched, call `callback(null, null)` to
-signal the EOF.
+All Readable stream implementations must provide a `_read` method
+to fetch data from the underlying resource.
 
 This method is prefixed with an underscore because it is internal to
 the class that defines it, and should not be called directly by user
 programs.  However, you **are** expected to override this method in
 your own extension classes.
 
+When data is available, put it into the read queue by calling
+`readable.push(chunk)`.  If `push` returns false, then you should stop
+reading.  When `_read` is called again, you should start pushing more
+data.
+
+The `size` argument is advisory.  Implementations where a "read" is a
+single call that returns data can use this to know how much data to
+fetch.  Implementations where that is not relevant, such as TCP or
+TLS, may ignore this argument, and simply provide data whenever it
+becomes available.  There is no need, for example to "wait" until
+`size` bytes are available before calling `stream.push(chunk)`.
+
+### readable.push(chunk)
+
+* `chunk` {Buffer | null | String} Chunk of data to push into the read queue
+* return {Boolean} Whether or not more pushes should be performed
+
+Note: **This function should be called by Readable implementors, NOT
+by consumers of Readable subclasses.**  The `_read()` function will not
+be called again until at least one `push(chunk)` call is made.  If no
+data is available, then you MAY call `push('')` (an empty string) to
+allow a future `_read` call, without adding any data to the queue.
+
+The `Readable` class works by putting data into a read queue to be
+pulled out later by calling the `read()` method when the `'readable'`
+event fires.
+
+The `push()` method will explicitly insert some data into the read
+queue.  If it is called with `null` then it will signal the end of the
+data.
+
+In some cases, you may be wrapping a lower-level source which has some
+sort of pause/resume mechanism, and a data callback.  In those cases,
+you could wrap the low-level source object by doing something like
+this:
+
+```javascript
+// source is an object with readStop() and readStart() methods,
+// and an `ondata` member that gets called when it has data, and
+// an `onend` member that gets called when the data is over.
+
+var stream = new Readable();
+
+source.ondata = function(chunk) {
+  // if push() returns false, then we need to stop reading from source
+  if (!stream.push(chunk))
+    source.readStop();
+};
+
+source.onend = function() {
+  stream.push(null);
+};
+
+// _read will be called when the stream wants to pull more data in
+// the advisory size argument is ignored in this case.
+stream._read = function(n) {
+  source.readStart();
+};
+```
+
+### readable.unshift(chunk)
+
+* `chunk` {Buffer | null | String} Chunk of data to unshift onto the read queue
+* return {Boolean} Whether or not more pushes should be performed
+
+This is the corollary of `readable.push(chunk)`.  Rather than putting
+the data at the *end* of the read queue, it puts it at the *front* of
+the read queue.
+
+This is useful in certain use-cases where a stream is being consumed
+by a parser, which needs to "un-consume" some data that it has
+optimistically pulled out of the source.
+
+```javascript
+// A parser for a simple data protocol.
+// The "header" is a JSON object, followed by 2 \n characters, and
+// then a message body.
+//
+// Note: This can be done more simply as a Transform stream.  See below.
+
+function SimpleProtocol(source, options) {
+  if (!(this instanceof SimpleProtocol))
+    return new SimpleProtocol(options);
+
+  Readable.call(this, options);
+  this._inBody = false;
+  this._sawFirstCr = false;
+
+  // source is a readable stream, such as a socket or file
+  this._source = source;
+
+  var self = this;
+  source.on('end', function() {
+    self.push(null);
+  });
+
+  // give it a kick whenever the source is readable
+  // read(0) will not consume any bytes
+  source.on('readable', function() {
+    self.read(0);
+  });
+
+  this._rawHeader = [];
+  this.header = null;
+}
+
+SimpleProtocol.prototype = Object.create(
+  Readable.prototype, { constructor: { value: SimpleProtocol }});
+
+SimpleProtocol.prototype._read = function(n) {
+  if (!this._inBody) {
+    var chunk = this._source.read();
+
+    // if the source doesn't have data, we don't have data yet.
+    if (chunk === null)
+      return this.push('');
+
+    // check if the chunk has a \n\n
+    var split = -1;
+    for (var i = 0; i < chunk.length; i++) {
+      if (chunk[i] === 10) { // '\n'
+        if (this._sawFirstCr) {
+          split = i;
+          break;
+        } else {
+          this._sawFirstCr = true;
+        }
+      } else {
+        this._sawFirstCr = false;
+      }
+    }
+
+    if (split === -1) {
+      // still waiting for the \n\n
+      // stash the chunk, and try again.
+      this._rawHeader.push(chunk);
+      this.push('');
+    } else {
+      this._inBody = true;
+      var h = chunk.slice(0, split);
+      this._rawHeader.push(h);
+      var header = Buffer.concat(this._rawHeader).toString();
+      try {
+        this.header = JSON.parse(header);
+      } catch (er) {
+        this.emit('error', new Error('invalid simple protocol data'));
+        return;
+      }
+      // now, because we got some extra data, unshift the rest
+      // back into the read queue so that our consumer will see it.
+      var b = chunk.slice(split);
+      this.unshift(b);
+
+      // and let them know that we are done parsing the header.
+      this.emit('header', this.header);
+    }
+  } else {
+    // from there on, just provide the data to our consumer.
+    // careful not to push(null), since that would indicate EOF.
+    var chunk = this._source.read();
+    if (chunk) this.push(chunk);
+  }
+};
+
+// Usage:
+var parser = new SimpleProtocol(source);
+// Now parser is a readable stream that will emit 'header'
+// with the parsed header data.
+```
 
 ### readable.wrap(stream)
 
@@ -150,9 +315,7 @@ myReader.on('readable', function() {
 
 ### Event: 'readable'
 
-When there is data ready to be consumed, this event will fire.  The
-number of bytes that are required to be considered "readable" depends
-on the `lowWaterMark` option set in the constructor.
+When there is data ready to be consumed, this event will fire.
 
 When this event emits, call the `read()` method to consume the data.
 
@@ -193,6 +356,8 @@ constructor.
 * `size` {Number | null} Optional number of bytes to read.
 * Return: {Buffer | String | null}
 
+Note: **This function SHOULD be called by Readable stream users.**
+
 Call this method to consume data once the `'readable'` event is
 emitted.
 
@@ -204,8 +369,8 @@ If there is no data to consume, or if there are fewer bytes in the
 internal buffer than the `size` argument, then `null` is returned, and
 a future `'readable'` event will be emitted when more is available.
 
-Note that calling `stream.read(0)` will always return `null`, and will
-trigger a refresh of the internal buffer, but otherwise be a no-op.
+Calling `stream.read(0)` will always return `null`, and will trigger a
+refresh of the internal buffer, but otherwise be a no-op.
 
 ### readable.pipe(destination, [options])
 
@@ -279,8 +444,6 @@ method. (See below.)
 * `options` {Object}
   * `highWaterMark` {Number} Buffer level when `write()` starts
     returning false. Default=16kb
-  * `lowWaterMark` {Number} The buffer level when `'drain'` is
-    emitted.  Default=0
   * `decodeStrings` {Boolean} Whether or not to decode strings into
     Buffers before passing them to `_write()`.  Default=true
 
@@ -328,16 +491,16 @@ flushed to the underlying resource.  Returns `false` to indicate that
 the buffer is full, and the data will be sent out in the future. The
 `'drain'` event will indicate when the buffer is empty again.
 
-The specifics of when `write()` will return false, and when a
-subsequent `'drain'` event will be emitted, are determined by the
-`highWaterMark` and `lowWaterMark` options provided to the
-constructor.
+The specifics of when `write()` will return false, is determined by
+the `highWaterMark` option provided to the constructor.
 
-### writable.end([chunk], [encoding])
+### writable.end([chunk], [encoding], [callback])
 
 * `chunk` {Buffer | String} Optional final data to be written
 * `encoding` {String} Optional.  If `chunk` is a string, then encoding
   defaults to `'utf8'`
+* `callback` {Function} Optional.  Called when the final chunk is
+  successfully written.
 
 Call this method to signal the end of the data being written to the
 stream.
@@ -379,14 +542,14 @@ A "duplex" stream is one that is both Readable and Writable, such as a
 TCP socket connection.
 
 Note that `stream.Duplex` is an abstract class designed to be
-extended with an underlying implementation of the `_read(size, cb)`
+extended with an underlying implementation of the `_read(size)`
 and `_write(chunk, callback)` methods as you would with a Readable or
 Writable stream class.
 
 Since JavaScript doesn't have multiple prototypal inheritance, this
 class prototypally inherits from Readable, and then parasitically from
 Writable.  It is thus up to the user to implement both the lowlevel
-`_read(n,cb)` method as well as the lowlevel `_write(chunk,cb)` method
+`_read(n)` method as well as the lowlevel `_write(chunk,cb)` method
 on extension duplex classes.
 
 ### new stream.Duplex(options)
@@ -434,12 +597,12 @@ initialized.
 * `callback` {Function} Call this function (optionally with an error
   argument) when you are done processing the supplied chunk.
 
-All Transform stream implementations must provide a `_transform`
-method to accept input and produce output.
-
 Note: **This function MUST NOT be called directly.**  It should be
 implemented by child classes, and called by the internal Transform
 class methods only.
+
+All Transform stream implementations must provide a `_transform`
+method to accept input and produce output.
 
 `_transform` should do whatever has to be done in this specific
 Transform class, to handle the bytes being written, and pass them off
@@ -483,6 +646,82 @@ This method is prefixed with an underscore because it is internal to
 the class that defines it, and should not be called directly by user
 programs.  However, you **are** expected to override this method in
 your own extension classes.
+
+### Example: `SimpleProtocol` parser
+
+The example above of a simple protocol parser can be implemented much
+more simply by using the higher level `Transform` stream class.
+
+In this example, rather than providing the input as an argument, it
+would be piped into the parser, which is a more idiomatic Node stream
+approach.
+
+```javascript
+function SimpleProtocol(options) {
+  if (!(this instanceof SimpleProtocol))
+    return new SimpleProtocol(options);
+
+  Transform.call(this, options);
+  this._inBody = false;
+  this._sawFirstCr = false;
+  this._rawHeader = [];
+  this.header = null;
+}
+
+SimpleProtocol.prototype = Object.create(
+  Transform.prototype, { constructor: { value: SimpleProtocol }});
+
+SimpleProtocol.prototype._transform = function(chunk, output, done) {
+  if (!this._inBody) {
+    // check if the chunk has a \n\n
+    var split = -1;
+    for (var i = 0; i < chunk.length; i++) {
+      if (chunk[i] === 10) { // '\n'
+        if (this._sawFirstCr) {
+          split = i;
+          break;
+        } else {
+          this._sawFirstCr = true;
+        }
+      } else {
+        this._sawFirstCr = false;
+      }
+    }
+
+    if (split === -1) {
+      // still waiting for the \n\n
+      // stash the chunk, and try again.
+      this._rawHeader.push(chunk);
+    } else {
+      this._inBody = true;
+      var h = chunk.slice(0, split);
+      this._rawHeader.push(h);
+      var header = Buffer.concat(this._rawHeader).toString();
+      try {
+        this.header = JSON.parse(header);
+      } catch (er) {
+        this.emit('error', new Error('invalid simple protocol data'));
+        return;
+      }
+      // and let them know that we are done parsing the header.
+      this.emit('header', this.header);
+
+      // now, because we got some extra data, emit this first.
+      output(b);
+    }
+  } else {
+    // from there on, just provide the data to our consumer as-is.
+    output(b);
+  }
+  done();
+};
+
+var parser = new SimpleProtocol();
+source.pipe(parser)
+
+// Now parser is a readable stream that will emit 'header'
+// with the parsed header data.
+```
 
 
 ## Class: stream.PassThrough
