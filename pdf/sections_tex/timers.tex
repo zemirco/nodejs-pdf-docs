@@ -59,9 +59,11 @@ no effect.
 
 \subsection{setImmediate(callback, {[}arg{]}, {[}\ldots{}{]})}
 
-To schedule the ``immediate'' execution of \texttt{callback}. Returns an
-\texttt{immediateId} for possible use with \texttt{clearImmediate()}.
-Optionally you can also pass arguments to the callback.
+To schedule the ``immediate'' execution of \texttt{callback} after I/O
+events callbacks and before \texttt{setTimeout} and \texttt{setInterval}
+. Returns an \texttt{immediateId} for possible use with
+\texttt{clearImmediate()}. Optionally you can also pass arguments to the
+callback.
 
 Immediates are queued in the order created, and are popped off the queue
 once per loop iteration. This is different from

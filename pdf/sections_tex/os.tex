@@ -10,7 +10,7 @@ Provides a few basic operating-system related utility functions.
 
 Use \texttt{require('os')} to access this module.
 
-\subsection{os.tmpDir()}
+\subsection{os.tmpdir()}
 
 Returns the operating system's default directory for temp files.
 
@@ -59,7 +59,8 @@ Returns the amount of free system memory in bytes.
 
 Returns an array of objects containing information about each CPU/core
 installed: model, speed (in MHz), and times (an object containing the
-number of CPU ticks spent in: user, nice, sys, idle, and irq).
+number of milliseconds the CPU/core spent in: user, nice, sys, idle, and
+irq).
 
 Example inspection of os.cpus:
 

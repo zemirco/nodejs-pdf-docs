@@ -29,6 +29,10 @@ Node statically compiles all its dependencies into the executable. When
 compiling your module, you don't need to worry about linking to any of
 these libraries.
 
+All of the following examples are available for
+\href{https://github.com/rvagg/node-addon-examples}{download} and may be
+used as a starting-point for your own Addon.
+
 \subsection{Hello world}
 
 To get started let's make a small Addon which is the C++ equivalent of
@@ -36,7 +40,7 @@ the following JavaScript code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{exports}\NormalTok{.}\FunctionTok{hello} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{ }\KeywordTok{return} \CharTok{'world'}\NormalTok{; \};}
+\KeywordTok{module.exports}\NormalTok{.}\FunctionTok{hello} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{ }\KeywordTok{return} \CharTok{'world'}\NormalTok{; \};}
 \end{Highlighting}
 \end{Shaded}
 
@@ -54,10 +58,11 @@ First we create a file \texttt{hello.cc}:
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"world"}\NormalTok{));}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{init(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"hello"}\NormalTok{),}
+\KeywordTok{void} \NormalTok{init(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
+  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"hello"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(Method)->GetFunction());}
 \NormalTok{\}}
+
 \NormalTok{NODE_MODULE(hello, init)}
 \end{Highlighting}
 \end{Shaded}
@@ -66,7 +71,7 @@ Note that all Node addons must export an initialization function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{void} \NormalTok{Initialize (Handle<}\KeywordTok{Object}\NormalTok{> target);}
+\KeywordTok{void} \NormalTok{Initialize (Handle<}\KeywordTok{Object}\NormalTok{> exports);}
 \NormalTok{NODE_MODULE(module_name, Initialize)}
 \end{Highlighting}
 \end{Shaded}
@@ -195,8 +200,8 @@ source \texttt{addon.cc}:
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(num);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"add"}\NormalTok{),}
+\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
+  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"add"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(Add)->GetFunction());}
 \NormalTok{\}}
 
@@ -237,8 +242,8 @@ from there. Here's \texttt{addon.cc}:
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined());}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"runCallback"}\NormalTok{),}
+\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
+  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(RunCallback)->GetFunction());}
 \NormalTok{\}}
 
@@ -246,13 +251,19 @@ from there. Here's \texttt{addon.cc}:
 \end{Highlighting}
 \end{Shaded}
 
+Note that this example uses a two-argument form of \texttt{Init()} that
+receives the full \texttt{module} object as the second argument. This
+allows the addon to completely overwrite \texttt{exports} with a single
+function instead of adding the function as a property of
+\texttt{exports}.
+
 To test it run the following JavaScript snippet:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{addon}\NormalTok{.}\FunctionTok{runCallback}\NormalTok{(}\KeywordTok{function}\NormalTok{(msg)\{}
+\NormalTok{addon(}\KeywordTok{function}\NormalTok{(msg)\{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(msg); }\CommentTok{// 'hello world'}
 \NormalTok{\});}
 \end{Highlighting}
@@ -280,8 +291,8 @@ this \texttt{addon.cc} pattern, which returns an object with property
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(obj);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"createObject"}\NormalTok{),}
+\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
+  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateObject)->GetFunction());}
 \NormalTok{\}}
 
@@ -295,8 +306,8 @@ To test it in JavaScript:
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{obj1 = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\CharTok{'hello'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{obj2 = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\CharTok{'world'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{obj1 = addon(}\CharTok{'hello'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{obj2 = addon(}\CharTok{'world'}\NormalTok{);}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{obj1}\NormalTok{.}\FunctionTok{msg}\NormalTok{+}\CharTok{' '}\NormalTok{+}\KeywordTok{obj2}\NormalTok{.}\FunctionTok{msg}\NormalTok{); }\CommentTok{// 'hello world'}
 \end{Highlighting}
 \end{Shaded}
@@ -328,8 +339,8 @@ that wraps a C++ function:
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(fn);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"createFunction"}\NormalTok{),}
+\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
+  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateFunction)->GetFunction());}
 \NormalTok{\}}
 
@@ -343,7 +354,7 @@ To test:
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{fn = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createFunction}\NormalTok{();}
+\KeywordTok{var} \NormalTok{fn = addon();}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(fn()); }\CommentTok{// 'hello world'}
 \end{Highlighting}
 \end{Shaded}
@@ -362,8 +373,8 @@ operator. First prepare the main module \texttt{addon.cc}:
 
 \NormalTok{using namespace v8;}
 
-\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
-  \DataTypeTok{MyObject}\NormalTok{::Init(target);}
+\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
+  \DataTypeTok{MyObject}\NormalTok{::Init(exports);}
 \NormalTok{\}}
 
 \NormalTok{NODE_MODULE(addon, InitAll)}
@@ -382,7 +393,7 @@ Then in \texttt{myobject.h} make your wrapper inherit from
 
 \NormalTok{class }\DataTypeTok{MyObject }\NormalTok{: public }\DataTypeTok{node}\NormalTok{::ObjectWrap \{}
  \DataTypeTok{public}\NormalTok{:}
-  \NormalTok{static }\KeywordTok{void} \NormalTok{Init(}\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::}\KeywordTok{Object}\NormalTok{> target);}
+  \NormalTok{static }\KeywordTok{void} \NormalTok{Init(}\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::}\KeywordTok{Object}\NormalTok{> exports);}
 
  \DataTypeTok{private}\NormalTok{:}
   \NormalTok{MyObject();}
@@ -412,7 +423,7 @@ the constructor's prototype:
 \DataTypeTok{MyObject}\NormalTok{::MyObject() \{\};}
 \DataTypeTok{MyObject}\NormalTok{::~MyObject() \{\};}
 
-\KeywordTok{void} \DataTypeTok{MyObject}\NormalTok{::Init(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
+\KeywordTok{void} \DataTypeTok{MyObject}\NormalTok{::Init(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
   \CommentTok{// Prepare constructor template}
   \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::New(New);}
   \NormalTok{tpl->SetClassName(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{));}
@@ -422,7 +433,7 @@ the constructor's prototype:
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(PlusOne)->GetFunction());}
 
   \NormalTok{Persistent<}\KeywordTok{Function}\NormalTok{> constructor = Persistent<}\KeywordTok{Function}\NormalTok{>::New(tpl->GetFunction());}
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{), constructor);}
+  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{), constructor);}
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::New(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
@@ -488,10 +499,10 @@ Let's register our \texttt{createObject} method in \texttt{addon.cc}:
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{MyObject}\NormalTok{::NewInstance(args));}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
+\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
   \DataTypeTok{MyObject}\NormalTok{::Init();}
 
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"createObject"}\NormalTok{),}
+  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateObject)->GetFunction());}
 \NormalTok{\}}
 
@@ -592,14 +603,14 @@ Test it with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{createObject = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{obj = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\DecValTok{10}\NormalTok{);}
+\KeywordTok{var} \NormalTok{obj = createObject(}\DecValTok{10}\NormalTok{);}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 11}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 12}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 13}
 
-\KeywordTok{var} \NormalTok{obj2 = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\DecValTok{20}\NormalTok{);}
+\KeywordTok{var} \NormalTok{obj2 = createObject(}\DecValTok{20}\NormalTok{);}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 21}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 22}
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 23}
@@ -638,13 +649,13 @@ function \texttt{add()} that can take on two \texttt{MyObject} objects:
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::New(sum));}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> target) \{}
+\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
   \DataTypeTok{MyObject}\NormalTok{::Init();}
 
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"createObject"}\NormalTok{),}
+  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"createObject"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateObject)->GetFunction());}
 
-  \NormalTok{target->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"add"}\NormalTok{),}
+  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"add"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(Add)->GetFunction());}
 \NormalTok{\}}
 

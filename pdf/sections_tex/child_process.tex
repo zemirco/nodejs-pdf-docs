@@ -10,7 +10,10 @@ Node provides a tri-directional \texttt{popen(3)} facility through the
 \texttt{child\_process} module.
 
 It is possible to stream data through a child's \texttt{stdin},
-\texttt{stdout}, and \texttt{stderr} in a fully non-blocking way.
+\texttt{stdout}, and \texttt{stderr} in a fully non-blocking way. (Note
+that some programs use line-buffered I/O internally. That doesn't affect
+node.js but it means data you send to the child process is not
+immediately consumed.)
 
 To create a child process use \texttt{require('child\_process').spawn()}
 or \texttt{require('child\_process').fork()}. The semantics of each are
@@ -51,6 +54,14 @@ Note that the child process stdio streams might still be open.
 See \texttt{waitpid(2)}.
 
 \subsubsection{Event: `close'}
+
+\begin{itemize}
+\item
+  \texttt{code} \{Number\} the exit code, if it exited normally.
+\item
+  \texttt{signal} \{String\} the signal passed to kill the child
+  process, if it was killed by the parent.
+\end{itemize}
 
 This event is emitted when the stdio streams of a child process have all
 terminated. This is distinct from `exit', since multiple processes might
@@ -152,7 +163,7 @@ available signals.
 \KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
     \NormalTok{grep  = spawn(}\CharTok{'grep'}\NormalTok{, [}\CharTok{'ssh'}\NormalTok{]);}
 
-\KeywordTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code, signal) \{}
+\KeywordTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code, signal) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'child process terminated due to receipt of signal '}\NormalTok{+signal);}
 \NormalTok{\});}
 
@@ -224,7 +235,7 @@ The \texttt{sendHandle} option to \texttt{child.send()} is for sending a
 TCP server or socket object to another process. The child will receive
 the object as its second argument to the \texttt{message} event.
 
-\textbf{send server object}
+\paragraph{Example: sending server object}
 
 Here is an example of sending a server:
 
@@ -261,7 +272,7 @@ Note that the server is now shared between the parent and child, this
 means that some connections will be handled by the parent and some by
 the child.
 
-\textbf{send socket object}
+\paragraph{Example: sending socket object}
 
 Here is an example of sending a socket. It will spawn two children and
 handle connections with the remote address \texttt{74.125.127.100} as
@@ -384,7 +395,7 @@ Example of running \texttt{ls -lh /usr}, capturing \texttt{stdout},
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'stderr: '} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{ls}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
+\KeywordTok{ls}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'child process exited with code '} \NormalTok{+ code);}
 \NormalTok{\});}
 \end{Highlighting}
@@ -406,7 +417,7 @@ Example: A very elaborate way to run `ps ax \textbar{} grep ssh'
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'ps stderr: '} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{ps}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
+\KeywordTok{ps}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
   \KeywordTok{if} \NormalTok{(code !== }\DecValTok{0}\NormalTok{) \{}
     \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'ps process exited with code '} \NormalTok{+ code);}
   \NormalTok{\}}
@@ -421,7 +432,7 @@ Example: A very elaborate way to run `ps ax \textbar{} grep ssh'
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'grep stderr: '} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
+\KeywordTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
   \KeywordTok{if} \NormalTok{(code !== }\DecValTok{0}\NormalTok{) \{}
     \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'grep process exited with code '} \NormalTok{+ code);}
   \NormalTok{\}}
@@ -454,7 +465,7 @@ The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
 following:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as
@@ -583,7 +594,8 @@ See also: \texttt{child\_process.exec()} and
   \texttt{cwd} \{String\} Current working directory of the child process
 \item
   \texttt{stdio} \{Array\textbar{}String\} Child's stdio configuration.
-  (See above)
+  (See above) Only stdin is configurable, anything else will lead to
+  unpredictable results.
 \item
   \texttt{customFds} \{Array\} \textbf{Deprecated} File descriptors for
   the child to use for stdio. (See above)
@@ -716,6 +728,9 @@ options.
 \item
   \texttt{encoding} \{String\} (Default: `utf8')
 \item
+  \texttt{execPath} \{String\} Executable used to create the child
+  process
+\item
   Return: ChildProcess object
 \end{itemize}
 
@@ -737,3 +752,10 @@ lifted in the future.
 These child Nodes are still whole new instances of V8. Assume at least
 30ms startup and 10mb memory for each new Node. That is, you cannot
 create many thousands of them.
+
+The \texttt{execPath} property in the \texttt{options} object allows for
+a process to be created for the child rather than the current
+\texttt{node} executable. This should be done with care and by default
+will talk over the fd represented an environmental variable
+\texttt{NODE\_CHANNEL\_FD} on the child process. The input and output on
+this fd is expected to be line delimited JSON objects.

@@ -73,7 +73,7 @@ denial-of-service attacks.
 
 To mitigate this, renegotiations are limited to three times every 10
 minutes. An error is emitted on the
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} instance
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream} instance
 when the threshold is exceeded. The limits are configurable:
 
 \begin{itemize}
@@ -106,9 +106,9 @@ handshake extensions allowing you:
 
 \subsection{tls.createServer(options, {[}secureConnectionListener{]})}
 
-Creates a new \hyperref[tls_class_tls_server]{tls.Server}. The
+Creates a new \hyperref[tls\_class\_tls\_server]{tls.Server}. The
 \texttt{connectionListener} argument is automatically set as a listener
-for the \hyperref[tls_event_secureconnection]{secureConnection} event.
+for the \hyperref[tls\_event\_secureconnection]{secureConnection} event.
 The \texttt{options} object has these possibilities:
 
 \begin{itemize}
@@ -268,6 +268,13 @@ You can test this server by connecting to it with
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{tls.SLAB\_BUFFER\_SIZE}
+
+Size of slab buffer used by all tls servers and clients. Default:
+\texttt{10 * 1024 * 1024}.
+
+Don't change the defaults unless you know what you are doing.
+
 \subsection{tls.connect(options, {[}callback{]})}
 
 \subsection{tls.connect(port, {[}host{]}, {[}options{]},
@@ -320,10 +327,10 @@ specifies:
 \end{itemize}
 
 The \texttt{callback} parameter will be added as a listener for the
-\hyperref[tls_event_secureconnect]{`secureConnect'} event.
+\hyperref[tls\_event\_secureconnect]{`secureConnect'} event.
 
 \texttt{tls.connect()} returns a
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} object.
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream} object.
 
 Here is an example of a client of echo server as described previously:
 
@@ -438,7 +445,7 @@ encrypted connections using TLS or SSL.
 
 This event is emitted after a new connection has been successfully
 handshaked. The argument is a instance of
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream}. It has all
+\hyperref[tls\_class\_tls\_cleartextstream]{CleartextStream}. It has all
 the common stream methods and events.
 
 \texttt{cleartextStream.authorized} is a boolean value which indicates
@@ -519,6 +526,16 @@ count gets high.
 \subsubsection{server.connections}
 
 The number of concurrent connections on the server.
+
+\subsection{Class: CryptoStream}
+
+This is an encrypted stream.
+
+\subsubsection{cryptoStream.bytesWritten}
+
+A proxy to the underlying socket's bytesWritten accessor, this will
+return the total bytes written to the socket, \emph{including the TLS
+overhead}.
 
 \subsection{Class: tls.CleartextStream}
 

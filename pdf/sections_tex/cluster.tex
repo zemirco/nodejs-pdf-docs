@@ -43,9 +43,11 @@ Running node will now share port 8000 between the workers:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{% node }\KeywordTok{server}\NormalTok{.}\FunctionTok{js}
-\FunctionTok{Worker} \DecValTok{2438} \NormalTok{online}
-\NormalTok{Worker }\DecValTok{2437} \NormalTok{online}
+\NormalTok{% NODE_DEBUG=cluster node }\KeywordTok{server}\NormalTok{.}\FunctionTok{js}
+\NormalTok{23521,Master Worker }\DecValTok{23524} \NormalTok{online}
+\DecValTok{23521}\NormalTok{,Master Worker }\DecValTok{23526} \NormalTok{online}
+\DecValTok{23521}\NormalTok{,Master Worker }\DecValTok{23523} \NormalTok{online}
+\DecValTok{23521}\NormalTok{,Master Worker }\DecValTok{23528} \NormalTok{online}
 \end{Highlighting}
 \end{Shaded}
 
@@ -70,7 +72,7 @@ create one, and pass the handle to the child.
 
 This causes potentially surprising behavior in three edge cases:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{server.listen(\{fd: 7\})} Because the message is passed to the
   master, file descriptor 7 \textbf{in the parent} will be listened on,
@@ -121,7 +123,7 @@ the worker pool for your application's needs.
 \end{itemize}
 
 All settings set by the \texttt{.setupMaster} is stored in this settings
-object. This object is not supposed to be change or set manually, by
+object. This object is not supposed to be changed or set manually, by
 you.
 
 \subsection{cluster.isMaster}
@@ -235,7 +237,7 @@ more than one address.
 
 When a workers IPC channel has disconnected this event is emitted. This
 will happen when the worker dies, usually after calling
-\texttt{.destroy()}.
+\texttt{.kill()}.
 
 When calling \texttt{.disconnect()}, there may be a delay between the
 \texttt{disconnect} and \texttt{exit} events. This event can be used to
@@ -450,8 +452,8 @@ See: \href{child\_process.html}{Child Process module}
 \end{itemize}
 
 This property is a boolean. It is set when a worker dies after calling
-\texttt{.destroy()} or immediately after calling the
-\texttt{.disconnect()} method. Until then it is \texttt{undefined}.
+\texttt{.kill()} or immediately after calling the \texttt{.disconnect()}
+method. Until then it is \texttt{undefined}.
 
 \subsubsection{worker.send(message, {[}sendHandle{]})}
 
@@ -484,7 +486,13 @@ This example will echo back all messages from the master:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{worker.destroy()}
+\subsubsection{worker.kill({[}signal=`SIGTERM'{]})}
+
+\begin{itemize}
+\item
+  \texttt{signal} \{String\} Name of the kill signal to send to the
+  worker process.
+\end{itemize}
 
 This function will kill the worker, and inform the master to not spawn a
 new worker. The boolean \texttt{suicide} lets you distinguish between
@@ -498,10 +506,13 @@ voluntary and accidental exit.
   \NormalTok{\}}
 \NormalTok{\});}
 
-\CommentTok{// destroy worker}
-\KeywordTok{worker}\NormalTok{.}\FunctionTok{destroy}\NormalTok{();}
+\CommentTok{// kill worker}
+\KeywordTok{worker}\NormalTok{.}\FunctionTok{kill}\NormalTok{();}
 \end{Highlighting}
 \end{Shaded}
+
+This method is aliased as \texttt{worker.destroy()} for backwards
+compatibility.
 
 \subsubsection{worker.disconnect()}
 
@@ -516,7 +527,7 @@ is emitted when the worker finally die.
 Because there might be long living connections, it is useful to
 implement a timeout. This example ask the worker to disconnect and after
 2 seconds it will destroy the server. An alternative would be to execute
-\texttt{worker.destroy()} after 2 seconds, but that would normally not
+\texttt{worker.kill()} after 2 seconds, but that would normally not
 allow the worker to do any cleanup if needed.
 
 \begin{Shaded}
@@ -624,7 +635,7 @@ state change on the specified worker.
 \begin{Highlighting}[]
 \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{().}\FunctionTok{on}\NormalTok{(}\CharTok{'online'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \CommentTok{// Worker is online}
-\NormalTok{\};}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -642,7 +653,7 @@ the state change on the specified worker.
 \begin{Highlighting}[]
 \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{().}\FunctionTok{on}\NormalTok{(}\CharTok{'listening'}\NormalTok{, }\KeywordTok{function}\NormalTok{(address) \{}
   \CommentTok{// Worker is listening}
-\NormalTok{\};}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -655,7 +666,7 @@ the state change on the specified worker.
 \begin{Highlighting}[]
 \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{().}\FunctionTok{on}\NormalTok{(}\CharTok{'disconnect'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \CommentTok{// Worker has disconnected}
-\NormalTok{\};}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -685,7 +696,7 @@ event: `exit'}.
   \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
     \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"worker success!"}\NormalTok{);}
   \NormalTok{\}}
-\NormalTok{\};}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 

@@ -50,26 +50,17 @@ explicit encoding method. Here are the different string encodings.
   \texttt{'hex'} - Encode each byte as two hexadecimal characters.
 \end{itemize}
 
-\texttt{Buffer} can also be used with Typed Array Views and DataViews.
+A \texttt{Buffer} object can also be used with typed arrays. The buffer
+object is cloned to an \texttt{ArrayBuffer} that is used as the backing
+store for the typed array. The memory of the buffer and the
+\texttt{ArrayBuffer} is not shared.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buff = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
-\KeywordTok{var} \NormalTok{ui16 = }\KeywordTok{new} \NormalTok{Uint16Array(buff);}
-\KeywordTok{var} \NormalTok{view = }\KeywordTok{new} \NormalTok{DataView(buff);}
+NOTE: Node.js v0.8 simply retained a reference to the buffer in
+\texttt{array.buffer} instead of cloning it.
 
-\NormalTok{ui16[}\DecValTok{0}\NormalTok{] = }\DecValTok{1}\NormalTok{;}
-\NormalTok{ui16[}\DecValTok{1}\NormalTok{] = }\DecValTok{2}\NormalTok{;}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buff);}
-
-\KeywordTok{view}\NormalTok{.}\FunctionTok{setInt16}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{);       }\CommentTok{// set big-endian int16 at byte offset 0}
-\KeywordTok{view}\NormalTok{.}\FunctionTok{setInt16}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{, }\KeywordTok{true}\NormalTok{); }\CommentTok{// set little-endian int16 at byte offset 2}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buff);}
-
-\CommentTok{// <Buffer 01 00 02 00>}
-\CommentTok{// <Buffer 00 01 02 00>}
-\end{Highlighting}
-\end{Shaded}
+While more efficient, it introduces subtle incompatibilities with the
+typed arrays specification. \texttt{ArrayBuffer\#slice()} makes a copy
+of the slice while \texttt{Buffer\#slice()} creates a view.
 
 \subsection{Class: Buffer}
 
@@ -324,6 +315,9 @@ Does copy between buffers. The source and target regions can be
 overlapped. \texttt{targetStart} and \texttt{sourceStart} default to
 \texttt{0}. \texttt{sourceEnd} defaults to \texttt{buffer.length}.
 
+All values passed that are \texttt{undefined}/\texttt{NaN} or are out of
+bounds are set equal to their respective defaults.
+
 Example: build two Buffers, then copy \texttt{buf1} from byte 16 through
 byte 19 into \texttt{buf2}, starting at the 8th byte in \texttt{buf2}.
 
@@ -355,7 +349,8 @@ byte 19 into \texttt{buf2}, starting at the 8th byte in \texttt{buf2}.
 
 Returns a new buffer which references the same memory as the old, but
 offset and cropped by the \texttt{start} (defaults to \texttt{0}) and
-\texttt{end} (defaults to \texttt{buffer.length}) indexes.
+\texttt{end} (defaults to \texttt{buffer.length}) indexes. Negative
+indexes start from the end of the buffer.
 
 \textbf{Modifying the new buffer slice will modify memory in the
 original buffer!}
@@ -859,8 +854,8 @@ two's complement signed integer into \texttt{buffer}.
 \end{itemize}
 
 Writes \texttt{value} to the buffer at the specified offset with
-specified endian format. Note, \texttt{value} must be a valid 32 bit
-float.
+specified endian format. Note, behavior is unspecified if \texttt{value}
+is not a 32 bit float.
 
 Set \texttt{noAssert} to true to skip validation of \texttt{value} and
 \texttt{offset}. This means that \texttt{value} may be too large for the
