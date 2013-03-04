@@ -6,6 +6,10 @@ file and an .epub (iOS, Android and more) file.
 
 Of course the whole creation and conversion process is written in node.js.
 
+Current version of node.js in the docs: 0.8.21
+
+Check out the other branches for older versions (incomplete).
+
 ## How to use
 
 Just check out the different folders or download directly:
