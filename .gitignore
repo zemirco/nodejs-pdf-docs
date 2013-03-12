@@ -6,3 +6,4 @@ node_modules
 *.synctex.gz
 *.toc
 .tm_properties
+.idea
