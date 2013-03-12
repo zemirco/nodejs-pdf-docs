@@ -155,6 +155,8 @@ Predefined color codes are: \texttt{white}, \texttt{grey},
 \texttt{bold}, \texttt{italic}, \texttt{underline} and \texttt{inverse}
 codes.
 
+\subsubsection{Custom \texttt{inpect()} function on Objects}
+
 Objects also may define their own \texttt{inspect(depth)} function which
 \texttt{util.inspect()} will invoke and use the result of when
 inspecting the object:
@@ -170,6 +172,22 @@ inspecting the object:
 
 \KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(obj);}
   \CommentTok{// "\{nate\}"}
+\end{Highlighting}
+\end{Shaded}
+
+You may also return another Object entirely, and the returned String
+will be formatted according to the returned Object. This is similar to
+how \texttt{JSON.stringify()} works:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{obj = \{ }\DataTypeTok{foo}\NormalTok{: }\CharTok{'this will not show up in the inspect() output'} \NormalTok{\};}
+\KeywordTok{obj}\NormalTok{.}\FunctionTok{inspect} \NormalTok{= }\KeywordTok{function}\NormalTok{(depth) \{}
+  \KeywordTok{return} \NormalTok{\{ }\DataTypeTok{bar}\NormalTok{: }\CharTok{'baz'} \NormalTok{\};}
+\NormalTok{\};}
+
+\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(obj);}
+  \CommentTok{// "\{ bar: 'baz' \}"}
 \end{Highlighting}
 \end{Shaded}
 

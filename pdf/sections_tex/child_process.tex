@@ -272,6 +272,10 @@ Note that the server is now shared between the parent and child, this
 means that some connections will be handled by the parent and some by
 the child.
 
+For \texttt{dgram} servers the workflow is exactly the same. Here you
+listen on a \texttt{message} event instead of \texttt{connection} and
+use \texttt{server.bind} instead of \texttt{server.listen}.
+
 \paragraph{Example: sending socket object}
 
 Here is an example of sending a socket. It will spawn two children and

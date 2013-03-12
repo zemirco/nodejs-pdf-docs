@@ -109,9 +109,6 @@ method. (See below.)
 \item
   \texttt{options} \{Object\}
 \item
-  \texttt{bufferSize} \{Number\} The size of the chunks to consume from
-  the underlying resource. Default=16kb
-\item
   \texttt{highWaterMark} \{Number\} The maximum number of bytes to store
   in the internal buffer before ceasing to read from the underlying
   resource. Default=16kb
@@ -506,7 +503,7 @@ events.
 
 Note that \texttt{stream.Writable} is an abstract class designed to be
 extended with an underlying implementation of the
-\texttt{\_write(chunk, cb)} method. (See below.)
+\texttt{\_write(chunk, encoding, cb)} method. (See below.)
 
 \subsubsection{new stream.Writable({[}options{]})}
 
@@ -524,14 +521,21 @@ extended with an underlying implementation of the
 In classes that extend the Writable class, make sure to call the
 constructor so that the buffering settings can be properly initialized.
 
-\subsubsection{writable.\_write(chunk, callback)}
+\subsubsection{writable.\_write(chunk, encoding, callback)}
 
 \begin{itemize}
 \item
-  \texttt{chunk} \{Buffer \textbar{} Array\} The data to be written
+  \texttt{chunk} \{Buffer \textbar{} String\} The chunk to be written.
+  Will always be a buffer unless the \texttt{decodeStrings} option was
+  set to \texttt{false}.
 \item
-  \texttt{callback} \{Function\} Called with an error, or null when
-  finished
+  \texttt{encoding} \{String\} If the chunk is a string, then this is
+  the encoding type. Ignore chunk is a buffer. Note that chunk will
+  \textbf{always} be a buffer unless the \texttt{decodeStrings} option
+  is explicitly set to \texttt{false}.
+\item
+  \texttt{callback} \{Function\} Call this function (optionally with an
+  error argument) when you are done processing the supplied chunk.
 \end{itemize}
 
 All Writable stream implementations must provide a \texttt{\_write}
@@ -545,9 +549,13 @@ Call the callback using the standard \texttt{callback(error)} pattern to
 signal that the write completed successfully or with an error.
 
 If the \texttt{decodeStrings} flag is set in the constructor options,
-then \texttt{chunk} will be an array rather than a Buffer. This is to
-support implementations that have an optimized handling for certain
-string data encodings.
+then \texttt{chunk} may be a string rather than a Buffer, and
+\texttt{encoding} will indicate the sort of string that it is. This is
+to support implementations that have an optimized handling for certain
+string data encodings. If you do not explicitly set the
+\texttt{decodeStrings} option to \texttt{false}, then you can safely
+ignore the \texttt{encoding} argument, and assume that \texttt{chunk}
+will always be a Buffer.
 
 This method is prefixed with an underscore because it is internal to the
 class that defines it, and should not be called directly by user
@@ -638,14 +646,15 @@ TCP socket connection.
 
 Note that \texttt{stream.Duplex} is an abstract class designed to be
 extended with an underlying implementation of the \texttt{\_read(size)}
-and \texttt{\_write(chunk, callback)} methods as you would with a
-Readable or Writable stream class.
+and \texttt{\_write(chunk, encoding, callback)} methods as you would
+with a Readable or Writable stream class.
 
 Since JavaScript doesn't have multiple prototypal inheritance, this
 class prototypally inherits from Readable, and then parasitically from
 Writable. It is thus up to the user to implement both the lowlevel
 \texttt{\_read(n)} method as well as the lowlevel
-\texttt{\_write(chunk,cb)} method on extension duplex classes.
+\texttt{\_write(chunk, encoding, cb)} method on extension duplex
+classes.
 
 \subsubsection{new stream.Duplex(options)}
 
@@ -690,14 +699,17 @@ method, and may optionally also implement the \texttt{\_flush()} method.
 In classes that extend the Transform class, make sure to call the
 constructor so that the buffering settings can be properly initialized.
 
-\subsubsection{transform.\_transform(chunk, outputFn, callback)}
+\subsubsection{transform.\_transform(chunk, encoding, callback)}
 
 \begin{itemize}
 \item
-  \texttt{chunk} \{Buffer\} The chunk to be transformed.
+  \texttt{chunk} \{Buffer \textbar{} String\} The chunk to be
+  transformed. Will always be a buffer unless the \texttt{decodeStrings}
+  option was set to \texttt{false}.
 \item
-  \texttt{outputFn} \{Function\} Call this function with any output data
-  to be passed to the readable interface.
+  \texttt{encoding} \{String\} If the chunk is a string, then this is
+  the encoding type. (Ignore if \texttt{decodeStrings} chunk is a
+  buffer.)
 \item
   \texttt{callback} \{Function\} Call this function (optionally with an
   error argument) when you are done processing the supplied chunk.
@@ -715,22 +727,22 @@ Transform class, to handle the bytes being written, and pass them off to
 the readable portion of the interface. Do asynchronous I/O, process
 things, and so on.
 
+Call \texttt{transform.push(outputChunk)} 0 or more times to generate
+output from this input chunk, depending on how much data you want to
+output as a result of this chunk.
+
 Call the callback function only when the current chunk is completely
-consumed. Note that this may mean that you call the \texttt{outputFn}
-zero or more times, depending on how much data you want to output as a
-result of this chunk.
+consumed. Note that there may or may not be output as a result of any
+particular input chunk.
 
 This method is prefixed with an underscore because it is internal to the
 class that defines it, and should not be called directly by user
 programs. However, you \textbf{are} expected to override this method in
 your own extension classes.
 
-\subsubsection{transform.\_flush(outputFn, callback)}
+\subsubsection{transform.\_flush(callback)}
 
 \begin{itemize}
-\item
-  \texttt{outputFn} \{Function\} Call this function with any output data
-  to be passed to the readable interface.
 \item
   \texttt{callback} \{Function\} Call this function (optionally with an
   error argument) when you are done flushing any remaining data.
@@ -749,9 +761,9 @@ with what is left, so that the data will be complete.
 In those cases, you can implement a \texttt{\_flush} method, which will
 be called at the very end, after all the written data is consumed, but
 before emitting \texttt{end} to signal the end of the readable side.
-Just like with \texttt{\_transform}, call \texttt{outputFn} zero or more
-times, as appropriate, and call \texttt{callback} when the flush
-operation is complete.
+Just like with \texttt{\_transform}, call \texttt{transform.push(chunk)}
+zero or more times, as appropriate, and call \texttt{callback} when the
+flush operation is complete.
 
 This method is prefixed with an underscore because it is internal to the
 class that defines it, and should not be called directly by user
@@ -783,7 +795,7 @@ approach.
 \KeywordTok{SimpleProtocol}\NormalTok{.}\FunctionTok{prototype} \NormalTok{= }\KeywordTok{Object}\NormalTok{.}\FunctionTok{create}\NormalTok{(}
   \KeywordTok{Transform}\NormalTok{.}\FunctionTok{prototype}\NormalTok{, \{ }\DataTypeTok{constructor}\NormalTok{: \{ }\DataTypeTok{value}\NormalTok{: SimpleProtocol \}\});}
 
-\KeywordTok{SimpleProtocol.prototype}\NormalTok{._}\FunctionTok{transform} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk, output, done) \{}
+\KeywordTok{SimpleProtocol.prototype}\NormalTok{._}\FunctionTok{transform} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk, encoding, done) \{}
   \KeywordTok{if} \NormalTok{(!}\KeywordTok{this}\NormalTok{._}\FunctionTok{inBody}\NormalTok{) \{}
     \CommentTok{// check if the chunk has a \textbackslash{}n\textbackslash{}n}
     \KeywordTok{var} \NormalTok{split = -}\DecValTok{1}\NormalTok{;}
@@ -819,11 +831,11 @@ approach.
       \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'header'}\NormalTok{, }\KeywordTok{this}\NormalTok{.}\FunctionTok{header}\NormalTok{);}
 
       \CommentTok{// now, because we got some extra data, emit this first.}
-      \NormalTok{output(b);}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(b);}
     \NormalTok{\}}
   \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
     \CommentTok{// from there on, just provide the data to our consumer as-is.}
-    \NormalTok{output(b);}
+    \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(b);}
   \NormalTok{\}}
   \NormalTok{done();}
 \NormalTok{\};}

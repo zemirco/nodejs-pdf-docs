@@ -8,6 +8,29 @@
 
 Datagram sockets are available through \texttt{require('dgram')}.
 
+Important note: the behavior of \texttt{dgram.Socket\#bind()} has
+changed in v0.10 and is always asynchronous now. If you have code that
+looks like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{s = }\KeywordTok{dgram}\NormalTok{.}\FunctionTok{createSocket}\NormalTok{(}\CharTok{'udp4'}\NormalTok{);}
+\KeywordTok{s}\NormalTok{.}\FunctionTok{bind}\NormalTok{(}\DecValTok{1234}\NormalTok{);}
+\KeywordTok{s}\NormalTok{.}\FunctionTok{addMembership}\NormalTok{(}\CharTok{'224.0.0.114'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+You have to change it to this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{s = }\KeywordTok{dgram}\NormalTok{.}\FunctionTok{createSocket}\NormalTok{(}\CharTok{'udp4'}\NormalTok{);}
+\KeywordTok{s}\NormalTok{.}\FunctionTok{bind}\NormalTok{(}\DecValTok{1234}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{s}\NormalTok{.}\FunctionTok{addMembership}\NormalTok{(}\CharTok{'224.0.0.114'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
 \subsection{dgram.createSocket(type, {[}callback{]})}
 
 \begin{itemize}
@@ -149,18 +172,23 @@ datagram greater than the (receiver) \texttt{MTU} won't work (the packet
 gets silently dropped, without informing the source that the data did
 not reach its intended recipient).
 
-\subsubsection{dgram.bind(port, {[}address{]})}
+\subsubsection{dgram.bind(port, {[}address{]}, {[}callback{]})}
 
 \begin{itemize}
 \item
   \texttt{port} Integer
 \item
   \texttt{address} String, Optional
+\item
+  \texttt{callback} Function, Optional
 \end{itemize}
 
 For UDP sockets, listen for datagrams on a named \texttt{port} and
 optional \texttt{address}. If \texttt{address} is not specified, the OS
 will try to listen on all addresses.
+
+The \texttt{callback} argument, if provided, is added as a one-shot
+\texttt{'listening'} event listener.
 
 Example of a UDP server listening on port 41234:
 

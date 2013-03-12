@@ -46,7 +46,8 @@ Same as \texttt{console.error}.
 \subsection{console.dir(obj)}
 
 Uses \texttt{util.inspect} on \texttt{obj} and prints resulting string
-to stdout.
+to stdout. This function bypasses any custom \texttt{inspect()} function
+on \texttt{obj}.
 
 \subsection{console.time(label)}
 

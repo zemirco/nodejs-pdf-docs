@@ -130,4 +130,13 @@ Take a parsed URL object, and return a formatted URL string.
 \subsection{url.resolve(from, to)}
 
 Take a base URL, and a href URL, and resolve them as a browser would for
-an anchor tag.
+an anchor tag. Examples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'/one/two/three'}\NormalTok{, }\CharTok{'four'}\NormalTok{)         }\CommentTok{// '/one/two/four'}
+\KeywordTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'http://example.com/'}\NormalTok{, }\CharTok{'/one'}\NormalTok{)    }\CommentTok{// 'http://example.com/one'}
+\KeywordTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'http://example.com/one'}\NormalTok{, }\CharTok{'/two'}\NormalTok{) }\CommentTok{// 'http://example.com/two'}
+\end{Highlighting}
+\end{Shaded}
+

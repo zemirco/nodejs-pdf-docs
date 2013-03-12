@@ -25,11 +25,16 @@ explicit encoding method. Here are the different string encodings.
 \begin{itemize}
 \item
   \texttt{'ascii'} - for 7 bit ASCII data only. This encoding method is
-  very fast, and will strip the high bit if set. Note that this encoding
-  converts a null character (\texttt{'\textbackslash{}0'} or
-  \texttt{'\textbackslash{}u0000'}) into \texttt{0x20} (character code
-  of a space). If you want to convert a null character into
-  \texttt{0x00}, you should use \texttt{'utf8'}.
+  very fast, and will strip the high bit if set.
+\end{itemize}
+
+Note that when converting from string to buffer, this encoding converts
+a null character (\texttt{'\textbackslash{}0'} or
+\texttt{'\textbackslash{}u0000'}) into \texttt{0x20} (character code of
+a space). If you want to convert a null character into \texttt{0x00},
+you should use \texttt{'utf8'}.
+
+\begin{itemize}
 \item
   \texttt{'utf8'} - Multibyte encoded Unicode characters. Many web pages
   and other document formats use UTF-8.
