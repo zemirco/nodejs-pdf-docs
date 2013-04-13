@@ -43,7 +43,7 @@ Example of listening for `uncaughtException`:
     console.log('This will not run.');
 
 Note that `uncaughtException` is a very crude mechanism for exception
-handling and may be removed in the future.
+handling.
 
 Don't use it, use [domains](domain.html) instead. If you do use it, restart
 your application after every unhandled exception!
@@ -93,6 +93,20 @@ that writes to them are usually blocking.  They are blocking in the case
 that they refer to regular files or TTY file descriptors. In the case they
 refer to pipes, they are non-blocking like other streams.
 
+To check if Node is being run in a TTY context, read the `isTTY` property
+on `process.stderr`, `process.stdout`, or `process.stdin`:
+
+    $ node -p "Boolean(process.stdin.isTTY)"
+    true
+    $ echo "foo" | node -p "Boolean(process.stdin.isTTY)"
+    false
+
+    $ node -p "Boolean(process.stdout.isTTY)"
+    true
+    $ node -p "Boolean(process.stdout.isTTY)" | cat
+    false
+
+See [the tty docs](tty.html#tty_tty) for more information.
 
 ## process.stderr
 
@@ -310,13 +324,16 @@ A property exposing version strings of node and its dependencies.
 
     console.log(process.versions);
 
-Will output:
+Will print something like:
 
-    { node: '0.4.12',
-      v8: '3.1.8.26',
-      ares: '1.7.4',
-      ev: '4.4',
-      openssl: '1.0.0e-fips' }
+    { http_parser: '1.0',
+      node: '0.10.4',
+      v8: '3.14.5.8',
+      ares: '1.9.0-DEV',
+      uv: '0.10.3',
+      zlib: '1.2.3',
+      modules: '11',
+      openssl: '1.0.1e' }
 
 ## process.config
 
@@ -379,9 +396,20 @@ The PID of the process.
 
     console.log('This process is pid ' + process.pid);
 
+
 ## process.title
 
 Getter/setter to set what is displayed in 'ps'.
+
+When used as a setter, the maximum length is platform-specific and probably
+short.
+
+On Linux and OS X, it's limited to the size of the binary name plus the
+length of the command line arguments because it overwrites the argv memory.
+
+v0.8 allowed for longer process title strings by also overwriting the environ
+memory but that was potentially insecure/confusing in some (rather obscure)
+cases.
 
 
 ## process.arch
