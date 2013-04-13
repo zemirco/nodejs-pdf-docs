@@ -53,7 +53,7 @@ to the \texttt{'request'} event.
 \subsection{http.createClient({[}port{]}, {[}host{]})}
 
 This function is \textbf{deprecated}; please use
-\hyperref[http\_http\_request\_options\_callback]{http.request()}
+\hyperref[http_http_request_options_callback]{http.request()}
 instead. Constructs a new HTTP client. \texttt{port} and \texttt{host}
 refer to the server to be connected to.
 
@@ -282,7 +282,7 @@ Indicates that the underlying connection was terminated before
 
 Sends a HTTP/1.1 100 Continue message to the client, indicating that the
 request body should be sent. See the
-\hyperref[http\_event\_checkcontinue]{`checkContinue'} event on
+\hyperref[http_event_checkcontinue]{`checkContinue'} event on
 \texttt{Server}.
 
 \subsubsection{response.writeHead(statusCode, {[}reasonPhrase{]},
@@ -515,12 +515,12 @@ Options:
   \texttt{auth}: Basic authentication i.e. \texttt{'user:password'} to
   compute an Authorization header.
 \item
-  \texttt{agent}: Controls \hyperref[http\_class\_http\_agent]{Agent}
+  \texttt{agent}: Controls \hyperref[http_class_http_agent]{Agent}
   behavior. When an Agent is used request will default to
   \texttt{Connection: keep-alive}. Possible values:
 \item
   \texttt{undefined} (default): use
-  \hyperref[http\_http\_globalagent]{global Agent} for this host and
+  \hyperref[http_http_globalagent]{global Agent} for this host and
   port.
 \item
   \texttt{Agent} object: explicitly use the passed in \texttt{Agent}.
