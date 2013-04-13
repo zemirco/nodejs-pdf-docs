@@ -72,7 +72,7 @@ create one, and pass the handle to the child.
 
 This causes potentially surprising behavior in three edge cases:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{server.listen(\{fd: 7\})} Because the message is passed to the
   master, file descriptor 7 \textbf{in the parent} will be listened on,

@@ -26,15 +26,6 @@ explicit encoding method. Here are the different string encodings.
 \item
   \texttt{'ascii'} - for 7 bit ASCII data only. This encoding method is
   very fast, and will strip the high bit if set.
-\end{itemize}
-
-Note that when converting from string to buffer, this encoding converts
-a null character (\texttt{'\textbackslash{}0'} or
-\texttt{'\textbackslash{}u0000'}) into \texttt{0x20} (character code of
-a space). If you want to convert a null character into \texttt{0x00},
-you should use \texttt{'utf8'}.
-
-\begin{itemize}
 \item
   \texttt{'utf8'} - Multibyte encoded Unicode characters. Many web pages
   and other document formats use UTF-8.
@@ -144,10 +135,6 @@ characters.
 \end{Highlighting}
 \end{Shaded}
 
-The number of characters written (which may be different than the number
-of bytes written) is set in \texttt{Buffer.\_charsWritten} and will be
-overwritten the next time \texttt{buf.write()} is called.
-
 \subsubsection{buf.toString({[}encoding{]}, {[}start{]}, {[}end{]})}
 
 \begin{itemize}
@@ -168,9 +155,9 @@ See \texttt{buffer.write()} example, above.
 
 \subsubsection{buf.toJSON()}
 
-Returns a JSON-representation of the Buffer instance, which is identical
-to the output for JSON Arrays. \texttt{JSON.stringify} implicitly calls
-this function when stringifying a Buffer instance.
+Returns a JSON-representation of the Buffer instance.
+\texttt{JSON.stringify} implicitly calls this function when stringifying
+a Buffer instance.
 
 Example:
 
@@ -180,9 +167,13 @@ Example:
 \KeywordTok{var} \NormalTok{json = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(buf);}
 
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(json);}
-\CommentTok{// '[116,101,115,116]'}
+\CommentTok{// '\{"type":"Buffer","data":[116,101,115,116]\}'}
 
-\KeywordTok{var} \NormalTok{copy = }\KeywordTok{new} \NormalTok{Buffer(}\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(json));}
+\KeywordTok{var} \NormalTok{copy = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(json, }\KeywordTok{function}\NormalTok{(key, value) \{}
+    \KeywordTok{return} \NormalTok{value && }\KeywordTok{value}\NormalTok{.}\FunctionTok{type} \NormalTok{=== }\CharTok{'Buffer'}
+      \NormalTok{? }\KeywordTok{new} \NormalTok{Buffer(}\KeywordTok{value}\NormalTok{.}\FunctionTok{data}\NormalTok{)}
+      \NormalTok{: value;}
+  \NormalTok{\});}
 
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(copy);}
 \CommentTok{// <Buffer 74 65 73 74>}

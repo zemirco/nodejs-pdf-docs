@@ -49,7 +49,7 @@ Example of listening for \texttt{uncaughtException}:
 \end{Shaded}
 
 Note that \texttt{uncaughtException} is a very crude mechanism for
-exception handling and may be removed in the future.
+exception handling.
 
 Don't use it, use \href{domain.html}{domains} instead. If you do use it,
 restart your application after every unhandled exception!
@@ -105,6 +105,26 @@ streams in Node in that writes to them are usually blocking. They are
 blocking in the case that they refer to regular files or TTY file
 descriptors. In the case they refer to pipes, they are non-blocking like
 other streams.
+
+To check if Node is being run in a TTY context, read the \texttt{isTTY}
+property on \texttt{process.stderr}, \texttt{process.stdout}, or
+\texttt{process.stdin}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ node -p }\StringTok{"Boolean(process.stdin.isTTY)"}
+\KeywordTok{true}
+\NormalTok{$ echo }\StringTok{"foo"} \NormalTok{\textbar{} node -p }\StringTok{"Boolean(process.stdin.isTTY)"}
+\KeywordTok{false}
+
+\NormalTok{$ node -p }\StringTok{"Boolean(process.stdout.isTTY)"}
+\KeywordTok{true}
+\NormalTok{$ node -p }\StringTok{"Boolean(process.stdout.isTTY)"} \NormalTok{\textbar{} cat}
+\KeywordTok{false}
+\end{Highlighting}
+\end{Shaded}
+
+See \href{tty.html\#tty\_tty}{the tty docs} for more information.
 
 \subsection{process.stderr}
 
@@ -375,15 +395,18 @@ A property exposing version strings of node and its dependencies.
 \end{Highlighting}
 \end{Shaded}
 
-Will output:
+Will print something like:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\{ }\DataTypeTok{node}\NormalTok{: }\CharTok{'0.4.12'}\NormalTok{,}
-  \DataTypeTok{v8}\NormalTok{: }\CharTok{'3.1.8.26'}\NormalTok{,}
-  \DataTypeTok{ares}\NormalTok{: }\CharTok{'1.7.4'}\NormalTok{,}
-  \DataTypeTok{ev}\NormalTok{: }\CharTok{'4.4'}\NormalTok{,}
-  \DataTypeTok{openssl}\NormalTok{: }\CharTok{'1.0.0e-fips'} \NormalTok{\}}
+\NormalTok{\{ }\DataTypeTok{http_parser}\NormalTok{: }\CharTok{'1.0'}\NormalTok{,}
+  \DataTypeTok{node}\NormalTok{: }\CharTok{'0.10.4'}\NormalTok{,}
+  \DataTypeTok{v8}\NormalTok{: }\CharTok{'3.14.5.8'}\NormalTok{,}
+  \DataTypeTok{ares}\NormalTok{: }\CharTok{'1.9.0-DEV'}\NormalTok{,}
+  \DataTypeTok{uv}\NormalTok{: }\CharTok{'0.10.3'}\NormalTok{,}
+  \DataTypeTok{zlib}\NormalTok{: }\CharTok{'1.2.3'}\NormalTok{,}
+  \DataTypeTok{modules}\NormalTok{: }\CharTok{'11'}\NormalTok{,}
+  \DataTypeTok{openssl}\NormalTok{: }\CharTok{'1.0.1e'} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -464,6 +487,17 @@ The PID of the process.
 \subsection{process.title}
 
 Getter/setter to set what is displayed in `ps'.
+
+When used as a setter, the maximum length is platform-specific and
+probably short.
+
+On Linux and OS X, it's limited to the size of the binary name plus the
+length of the command line arguments because it overwrites the argv
+memory.
+
+v0.8 allowed for longer process title strings by also overwriting the
+environ memory but that was potentially insecure/confusing in some
+(rather obscure) cases.
 
 \subsection{process.arch}
 

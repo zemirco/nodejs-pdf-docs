@@ -11,17 +11,164 @@ single group. If any of the event emitters or callbacks registered to a
 domain emit an \texttt{error} event, or throw an error, then the domain
 object will be notified, rather than losing the context of the error in
 the \texttt{process.on('uncaughtException')} handler, or causing the
-program to exit with an error code.
+program to exit immediately with an error code.
 
-This feature is new in Node version 0.8. It is a first pass, and is
-expected to change significantly in future versions. Please use it and
-provide feedback.
+\subsection{Warning: Don't Ignore Errors!}
 
-Due to their experimental nature, the Domains features are disabled
-unless the \texttt{domain} module is loaded at least once. No domains
-are created or registered by default. This is by design, to prevent
-adverse effects on current programs. It is expected to be enabled by
-default in future Node.js versions.
+Domain error handlers are not a substitute for closing down your process
+when an error occurs.
+
+By the very nature of how \texttt{throw} works in JavaScript, there is
+almost never any way to safely ``pick up where you left off'', without
+leaking references, or creating some other sort of undefined brittle
+state.
+
+The safest way to respond to a thrown error is to shut down the process.
+Of course, in a normal web server, you might have many connections open,
+and it is not reasonable to abruptly shut those down because an error
+was triggered by someone else.
+
+The better approach is send an error response to the request that
+triggered the error, while letting the others finish in their normal
+time, and stop listening for new requests in that worker.
+
+In this way, \texttt{domain} usage goes hand-in-hand with the cluster
+module, since the master process can fork a new worker when a worker
+encounters an error. For node programs that scale to multiple machines,
+the terminating proxy or service registry can take note of the failure,
+and react accordingly.
+
+For example, this is not a good idea:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// XXX WARNING!  BAD IDEA!}
+
+\KeywordTok{var} \NormalTok{d = require(}\CharTok{'domain'}\NormalTok{).}\FunctionTok{create}\NormalTok{();}
+\KeywordTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
+  \CommentTok{// The error won't crash the process, but what it does is worse!}
+  \CommentTok{// Though we've prevented abrupt process restarting, we are leaking}
+  \CommentTok{// resources like crazy if this ever happens.}
+  \CommentTok{// This is no better than process.on('uncaughtException')!}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'error, but oh well'}\NormalTok{, }\KeywordTok{er}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
+\NormalTok{\});}
+\KeywordTok{d}\NormalTok{.}\FunctionTok{run}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+  \NormalTok{require(}\CharTok{'http'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(req, res) \{}
+    \NormalTok{handleRequest(req, res);}
+  \NormalTok{\}).}\FunctionTok{listen}\NormalTok{(PORT);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+By using the context of a domain, and the resilience of separating our
+program into multiple worker processes, we can react more appropriately,
+and handle errors with much greater safety.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// Much better!}
+
+\KeywordTok{var} \NormalTok{cluster = require(}\CharTok{'cluster'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{PORT = +}\KeywordTok{process.env}\NormalTok{.}\FunctionTok{PORT} \NormalTok{\textbar{}\textbar{} }\DecValTok{1337}\NormalTok{;}
+
+\KeywordTok{if} \NormalTok{(}\KeywordTok{cluster}\NormalTok{.}\FunctionTok{isMaster}\NormalTok{) \{}
+  \CommentTok{// In real life, you'd probably use more than just 2 workers,}
+  \CommentTok{// and perhaps not put the master and worker in the same file.}
+  \CommentTok{//}
+  \CommentTok{// You can also of course get a bit fancier about logging, and}
+  \CommentTok{// implement whatever custom logic you need to prevent DoS}
+  \CommentTok{// attacks and other bad behavior.}
+  \CommentTok{//}
+  \CommentTok{// See the options in the cluster documentation.}
+  \CommentTok{//}
+  \CommentTok{// The important thing is that the master does very little,}
+  \CommentTok{// increasing our resilience to unexpected errors.}
+
+  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+
+  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'disconnect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(worker) \{}
+    \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'disconnect!'}\NormalTok{);}
+    \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+  \NormalTok{\});}
+
+\NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
+  \CommentTok{// the worker}
+  \CommentTok{//}
+  \CommentTok{// This is where we put our bugs!}
+
+  \KeywordTok{var} \NormalTok{domain = require(}\CharTok{'domain'}\NormalTok{);}
+
+  \CommentTok{// See the cluster documentation for more details about using}
+  \CommentTok{// worker processes to serve requests.  How it works, caveats, etc.}
+
+  \KeywordTok{var} \NormalTok{server = require(}\CharTok{'http'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(req, res) \{}
+    \KeywordTok{var} \NormalTok{d = }\KeywordTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
+    \KeywordTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
+      \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{er}\NormalTok{.}\FunctionTok{stack}\NormalTok{);}
+
+      \CommentTok{// Note: we're in dangerous territory!}
+      \CommentTok{// By definition, something unexpected occurred,}
+      \CommentTok{// which we probably didn't want.}
+      \CommentTok{// Anything can happen now!  Be very careful!}
+
+      \KeywordTok{try} \NormalTok{\{}
+        \CommentTok{// make sure we close down within 30 seconds}
+        \KeywordTok{var} \NormalTok{killtimer = setTimeout(}\KeywordTok{function}\NormalTok{() \{}
+          \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{1}\NormalTok{);}
+        \NormalTok{\}, }\DecValTok{30000}\NormalTok{);}
+        \CommentTok{// But don't keep the process open just for that!}
+        \KeywordTok{killtimer}\NormalTok{.}\FunctionTok{unref}\NormalTok{();}
+
+        \CommentTok{// stop taking new requests.}
+        \KeywordTok{server}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
+
+        \CommentTok{// Let the master know we're dead.  This will trigger a}
+        \CommentTok{// 'disconnect' in the cluster master, and then it will fork}
+        \CommentTok{// a new worker.}
+        \KeywordTok{cluster.worker}\NormalTok{.}\FunctionTok{disconnect}\NormalTok{();}
+
+        \CommentTok{// try to send an error to the request that triggered the problem}
+        \KeywordTok{res}\NormalTok{.}\FunctionTok{statusCode} \NormalTok{= }\DecValTok{500}\NormalTok{;}
+        \KeywordTok{res}\NormalTok{.}\FunctionTok{setHeader}\NormalTok{(}\CharTok{'content-type'}\NormalTok{, }\CharTok{'text/plain'}\NormalTok{);}
+        \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'Oops, there was a problem!\textbackslash{}n'}\NormalTok{);}
+      \NormalTok{\} }\KeywordTok{catch} \NormalTok{(er2) \{}
+        \CommentTok{// oh well, not much we can do at this point.}
+        \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'Error sending 500!'}\NormalTok{, }\KeywordTok{er2}\NormalTok{.}\FunctionTok{stack}\NormalTok{);}
+      \NormalTok{\}}
+    \NormalTok{\});}
+
+    \CommentTok{// Because req and res were created before this domain existed,}
+    \CommentTok{// we need to explicitly add them.}
+    \CommentTok{// See the explanation of implicit vs explicit binding below.}
+    \KeywordTok{d}\NormalTok{.}\FunctionTok{add}\NormalTok{(req);}
+    \KeywordTok{d}\NormalTok{.}\FunctionTok{add}\NormalTok{(res);}
+
+    \CommentTok{// Now run the handler function in the domain.}
+    \KeywordTok{d}\NormalTok{.}\FunctionTok{run}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+      \NormalTok{handleRequest(req, res);}
+    \NormalTok{\});}
+  \NormalTok{\});}
+  \KeywordTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(PORT);}
+\NormalTok{\}}
+
+\CommentTok{// This part isn't important.  Just an example routing thing.}
+\CommentTok{// You'd put your fancy application logic here.}
+\KeywordTok{function} \NormalTok{handleRequest(req, res) \{}
+  \KeywordTok{switch}\NormalTok{(}\KeywordTok{req}\NormalTok{.}\FunctionTok{url}\NormalTok{) \{}
+    \KeywordTok{case} \CharTok{'/error'}\NormalTok{:}
+      \CommentTok{// We do some async stuff, and then...}
+      \NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
+        \CommentTok{// Whoops!}
+        \KeywordTok{flerb}\NormalTok{.}\FunctionTok{bark}\NormalTok{();}
+      \NormalTok{\});}
+      \KeywordTok{break}\NormalTok{;}
+    \DataTypeTok{default}\NormalTok{:}
+      \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'ok'}\NormalTok{);}
+  \NormalTok{\}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 \subsection{Additions to Error objects}
 
@@ -44,9 +191,9 @@ are added to it.
 
 \subsection{Implicit Binding}
 
-If domains are in use, then all new EventEmitter objects (including
-Stream objects, requests, responses, etc.) will be implicitly bound to
-the active domain at the time of their creation.
+If domains are in use, then all \textbf{new} EventEmitter objects
+(including Stream objects, requests, responses, etc.) will be implicitly
+bound to the active domain at the time of their creation.
 
 Additionally, callbacks passed to lowlevel event loop requests (such as
 to fs.open, or other callback-taking methods) will automatically be
@@ -59,8 +206,7 @@ then it would be too easy to prevent request and response objects from
 being properly garbage collected.
 
 If you \emph{want} to nest Domain objects as children of a parent
-Domain, then you must explicitly add them, and then dispose of them
-later.
+Domain, then you must explicitly add them.
 
 Implicit binding routes thrown errors and \texttt{'error'} events to the
 Domain's \texttt{error} event, but does not register the EventEmitter on
@@ -100,14 +246,8 @@ serverDomain.run(function() {
       try {
         res.writeHead(500);
         res.end('Error occurred, sorry.');
-        res.on('close', function() {
-          // forcibly shut down any other things added to this domain
-          reqd.dispose();
-        });
       } catch (er) {
         console.error('Error sending 500', er, req.url);
-        // tried our best.  clean up anything remaining.
-        reqd.dispose();
       }
     });
   }).listen(1337);

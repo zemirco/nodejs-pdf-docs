@@ -63,7 +63,7 @@ header on responses.
 
 \textbf{Note: these examples are drastically simplified to show the
 basic concept.} Zlib encoding can be expensive, and the results ought to
-be cached. See \hyperref[zlib_memory_usage_tuning]{Memory Usage
+be cached. See \hyperref[zlib\_memory\_usage\_tuning]{Memory Usage
 Tuning} below for more information on the speed/memory/compression
 tradeoffs involved in zlib usage.
 
@@ -125,38 +125,38 @@ tradeoffs involved in zlib usage.
 
 \subsection{zlib.createGzip({[}options{]})}
 
-Returns a new \hyperref[zlib_class_zlib_gzip]{Gzip} object with an
-\hyperref[zlib_options]{options}.
+Returns a new \hyperref[zlib\_class\_zlib\_gzip]{Gzip} object with an
+\hyperref[zlib\_options]{options}.
 
 \subsection{zlib.createGunzip({[}options{]})}
 
-Returns a new \hyperref[zlib_class_zlib_gunzip]{Gunzip} object with
-an \hyperref[zlib_options]{options}.
+Returns a new \hyperref[zlib\_class\_zlib\_gunzip]{Gunzip} object with
+an \hyperref[zlib\_options]{options}.
 
 \subsection{zlib.createDeflate({[}options{]})}
 
-Returns a new \hyperref[zlib_class_zlib_deflate]{Deflate} object with
-an \hyperref[zlib_options]{options}.
+Returns a new \hyperref[zlib\_class\_zlib\_deflate]{Deflate} object with
+an \hyperref[zlib\_options]{options}.
 
 \subsection{zlib.createInflate({[}options{]})}
 
-Returns a new \hyperref[zlib_class_zlib_inflate]{Inflate} object with
-an \hyperref[zlib_options]{options}.
+Returns a new \hyperref[zlib\_class\_zlib\_inflate]{Inflate} object with
+an \hyperref[zlib\_options]{options}.
 
 \subsection{zlib.createDeflateRaw({[}options{]})}
 
-Returns a new \hyperref[zlib_class_zlib_deflateraw]{DeflateRaw}
-object with an \hyperref[zlib_options]{options}.
+Returns a new \hyperref[zlib\_class\_zlib\_deflateraw]{DeflateRaw}
+object with an \hyperref[zlib\_options]{options}.
 
 \subsection{zlib.createInflateRaw({[}options{]})}
 
-Returns a new \hyperref[zlib_class_zlib_inflateraw]{InflateRaw}
-object with an \hyperref[zlib_options]{options}.
+Returns a new \hyperref[zlib\_class\_zlib\_inflateraw]{InflateRaw}
+object with an \hyperref[zlib\_options]{options}.
 
 \subsection{zlib.createUnzip({[}options{]})}
 
-Returns a new \hyperref[zlib_class_zlib_unzip]{Unzip} object with an
-\hyperref[zlib_options]{options}.
+Returns a new \hyperref[zlib\_class\_zlib\_unzip]{Unzip} object with an
+\hyperref[zlib\_options]{options}.
 
 \subsection{Class: zlib.Zlib}
 
@@ -204,44 +204,41 @@ the header.
 
 \subsection{Convenience Methods}
 
-All of these take a string or buffer as the first argument, and call the
-supplied callback with \texttt{callback(error, result)}. The
-compression/decompression engine is created using the default settings
-in all convenience methods. To supply different options, use the zlib
-classes directly.
+All of these take a string or buffer as the first argument, an optional
+second argument to supply options to the zlib classes and will call the
+supplied callback with \texttt{callback(error, result)}.
 
-\subsection{zlib.deflate(buf, callback)}
+\subsection{zlib.deflate(buf, {[}options{]}, callback)}
 
 Compress a string with Deflate.
 
-\subsection{zlib.deflateRaw(buf, callback)}
+\subsection{zlib.deflateRaw(buf, {[}options{]}, callback)}
 
 Compress a string with DeflateRaw.
 
-\subsection{zlib.gzip(buf, callback)}
+\subsection{zlib.gzip(buf, {[}options{]}, callback)}
 
 Compress a string with Gzip.
 
-\subsection{zlib.gunzip(buf, callback)}
+\subsection{zlib.gunzip(buf, {[}options{]}, callback)}
 
 Decompress a raw Buffer with Gunzip.
 
-\subsection{zlib.inflate(buf, callback)}
+\subsection{zlib.inflate(buf, {[}options{]}, callback)}
 
 Decompress a raw Buffer with Inflate.
 
-\subsection{zlib.inflateRaw(buf, callback)}
+\subsection{zlib.inflateRaw(buf, {[}options{]}, callback)}
 
 Decompress a raw Buffer with InflateRaw.
 
-\subsection{zlib.unzip(buf, callback)}
+\subsection{zlib.unzip(buf, {[}options{]}, callback)}
 
 Decompress a raw Buffer with Unzip.
 
 \subsection{Options}
 
-Each class takes an options object. All options are optional. (The
-convenience methods use the default settings for all options.)
+Each class takes an options object. All options are optional.
 
 Note that some options are only relevant when compressing, and are
 ignored by the decompression classes.

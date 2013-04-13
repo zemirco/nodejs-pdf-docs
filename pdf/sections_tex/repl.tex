@@ -168,6 +168,30 @@ Example of listening for \texttt{exit}:
 \end{Highlighting}
 \end{Shaded}
 
+\subsubsection{Event: `reset'}
+
+\texttt{function (context) \{\}}
+
+Emitted when the REPL's context is reset. This happens when you type
+\texttt{.clear}. If you start the repl with
+\texttt{\{ useGlobal: true \}} then this event will never be emitted.
+
+Example of listening for \texttt{reset}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// Extend the initial repl context.}
+\NormalTok{r = }\KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{ options ... \});}
+\KeywordTok{someExtension}\NormalTok{.}\FunctionTok{extend}\NormalTok{(}\KeywordTok{r}\NormalTok{.}\FunctionTok{context}\NormalTok{);}
+
+\CommentTok{// When a new context is created extend it as well.}
+\KeywordTok{r}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'reset'}\NormalTok{, }\KeywordTok{function} \NormalTok{(context) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'repl has a new context'}\NormalTok{);}
+  \KeywordTok{someExtension}\NormalTok{.}\FunctionTok{extend}\NormalTok{(context);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
 \subsection{REPL Features}
 
 Inside the REPL, Control+D will exit. Multi-line expressions can be

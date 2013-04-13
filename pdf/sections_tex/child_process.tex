@@ -33,6 +33,29 @@ The ChildProcess class is not intended to be used directly. Use the
 \texttt{spawn()} or \texttt{fork()} methods to create a Child Process
 instance.
 
+\subsubsection{Event: `error'}
+
+\begin{itemize}
+\item
+  \texttt{err} \{Error Object\} the error.
+\end{itemize}
+
+Emitted when:
+
+\begin{enumerate}[1.]
+\item
+  The process could not be spawned, or
+\item
+  The process could not be killed, or
+\item
+  Sending a message to the child process failed for whatever reason.
+\end{enumerate}
+
+See also
+\hyperref[child\_process\_child\_kill\_signal]{\texttt{ChildProcess\#kill()}}
+and
+\hyperref[child\_process\_child\_send\_message\_sendhandle]{\texttt{ChildProcess\#send()}}.
+
 \subsubsection{Event: `exit'}
 
 \begin{itemize}
@@ -172,6 +195,12 @@ available signals.
 \end{Highlighting}
 \end{Shaded}
 
+May emit an \texttt{'error'} event when the signal cannot be delivered.
+Sending a signal to a child process that has already exited is not an
+error but may have unforeseen consequences: if the PID (the process ID)
+has been reassigned to another process, the signal will be delivered to
+that process instead. What happens next is anyone's guess.
+
 Note that while the function is called \texttt{kill}, the signal
 delivered to the child process may not actually kill it. \texttt{kill}
 really just sends a signal to a process.
@@ -234,6 +263,9 @@ notice.
 The \texttt{sendHandle} option to \texttt{child.send()} is for sending a
 TCP server or socket object to another process. The child will receive
 the object as its second argument to the \texttt{message} event.
+
+Emits an \texttt{'error'} event if the message cannot be sent, for
+example because the child process has already exited.
 
 \paragraph{Example: sending server object}
 
@@ -469,7 +501,7 @@ The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
 following:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as

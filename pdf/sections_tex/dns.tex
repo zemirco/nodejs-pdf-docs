@@ -13,7 +13,7 @@ dns module use C-Ares except for \texttt{dns.lookup} which uses
 other programs operate. When a user does
 \texttt{net.connect(80, 'google.com')} or
 \texttt{http.get(\{ host: 'google.com' \})} the \texttt{dns.lookup}
-method is used. Users who need to do a large number of look ups quickly
+method is used. Users who need to do a large number of lookups quickly
 should use the methods that go through C-Ares.
 
 Here is an example which resolves \texttt{'www.google.com'} then reverse

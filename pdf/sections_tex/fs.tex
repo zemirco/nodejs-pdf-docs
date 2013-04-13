@@ -107,7 +107,7 @@ original call site, set the NODE\_DEBUG environment variable:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{fs.rename(oldPath, newPath, {[}callback{]})}
+\subsection{fs.rename(oldPath, newPath, callback)}
 
 Asynchronous rename(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -116,7 +116,7 @@ given to the completion callback.
 
 Synchronous rename(2).
 
-\subsection{fs.ftruncate(fd, len, {[}callback{]})}
+\subsection{fs.ftruncate(fd, len, callback)}
 
 Asynchronous ftruncate(2). No arguments other than a possible exception
 are given to the completion callback.
@@ -125,7 +125,7 @@ are given to the completion callback.
 
 Synchronous ftruncate(2).
 
-\subsection{fs.truncate(path, len, {[}callback{]})}
+\subsection{fs.truncate(path, len, callback)}
 
 Asynchronous truncate(2). No arguments other than a possible exception
 are given to the completion callback.
@@ -134,7 +134,7 @@ are given to the completion callback.
 
 Synchronous truncate(2).
 
-\subsection{fs.chown(path, uid, gid, {[}callback{]})}
+\subsection{fs.chown(path, uid, gid, callback)}
 
 Asynchronous chown(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -143,7 +143,7 @@ given to the completion callback.
 
 Synchronous chown(2).
 
-\subsection{fs.fchown(fd, uid, gid, {[}callback{]})}
+\subsection{fs.fchown(fd, uid, gid, callback)}
 
 Asynchronous fchown(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -152,7 +152,7 @@ given to the completion callback.
 
 Synchronous fchown(2).
 
-\subsection{fs.lchown(path, uid, gid, {[}callback{]})}
+\subsection{fs.lchown(path, uid, gid, callback)}
 
 Asynchronous lchown(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -161,7 +161,7 @@ given to the completion callback.
 
 Synchronous lchown(2).
 
-\subsection{fs.chmod(path, mode, {[}callback{]})}
+\subsection{fs.chmod(path, mode, callback)}
 
 Asynchronous chmod(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -170,7 +170,7 @@ given to the completion callback.
 
 Synchronous chmod(2).
 
-\subsection{fs.fchmod(fd, mode, {[}callback{]})}
+\subsection{fs.fchmod(fd, mode, callback)}
 
 Asynchronous fchmod(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -179,7 +179,7 @@ given to the completion callback.
 
 Synchronous fchmod(2).
 
-\subsection{fs.lchmod(path, mode, {[}callback{]})}
+\subsection{fs.lchmod(path, mode, callback)}
 
 Asynchronous lchmod(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -190,15 +190,15 @@ Only available on Mac OS X.
 
 Synchronous lchmod(2).
 
-\subsection{fs.stat(path, {[}callback{]})}
+\subsection{fs.stat(path, callback)}
 
 Asynchronous stat(2). The callback gets two arguments
 \texttt{(err, stats)} where \texttt{stats} is a
-\hyperref[fs_class_fs_stats]{fs.Stats} object. See the
-\hyperref[fs_class_fs_stats]{fs.Stats} section below for more
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} object. See the
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} section below for more
 information.
 
-\subsection{fs.lstat(path, {[}callback{]})}
+\subsection{fs.lstat(path, callback)}
 
 Asynchronous lstat(2). The callback gets two arguments
 \texttt{(err, stats)} where \texttt{stats} is a \texttt{fs.Stats}
@@ -206,7 +206,7 @@ object. \texttt{lstat()} is identical to \texttt{stat()}, except that if
 \texttt{path} is a symbolic link, then the link itself is stat-ed, not
 the file that it refers to.
 
-\subsection{fs.fstat(fd, {[}callback{]})}
+\subsection{fs.fstat(fd, callback)}
 
 Asynchronous fstat(2). The callback gets two arguments
 \texttt{(err, stats)} where \texttt{stats} is a \texttt{fs.Stats}
@@ -225,7 +225,7 @@ Synchronous lstat(2). Returns an instance of \texttt{fs.Stats}.
 
 Synchronous fstat(2). Returns an instance of \texttt{fs.Stats}.
 
-\subsection{fs.link(srcpath, dstpath, {[}callback{]})}
+\subsection{fs.link(srcpath, dstpath, callback)}
 
 Asynchronous link(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -234,7 +234,7 @@ given to the completion callback.
 
 Synchronous link(2).
 
-\subsection{fs.symlink(srcpath, dstpath, {[}type{]}, {[}callback{]})}
+\subsection{fs.symlink(srcpath, dstpath, {[}type{]}, callback)}
 
 Asynchronous symlink(2). No arguments other than a possible exception
 are given to the completion callback. \texttt{type} argument can be
@@ -249,7 +249,7 @@ absolute path.
 
 Synchronous symlink(2).
 
-\subsection{fs.readlink(path, {[}callback{]})}
+\subsection{fs.readlink(path, callback)}
 
 Asynchronous readlink(2). The callback gets two arguments
 \texttt{(err, linkString)}.
@@ -282,7 +282,7 @@ Example:
 
 Synchronous realpath(2). Returns the resolved path.
 
-\subsection{fs.unlink(path, {[}callback{]})}
+\subsection{fs.unlink(path, callback)}
 
 Asynchronous unlink(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -291,7 +291,7 @@ given to the completion callback.
 
 Synchronous unlink(2).
 
-\subsection{fs.rmdir(path, {[}callback{]})}
+\subsection{fs.rmdir(path, callback)}
 
 Asynchronous rmdir(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -300,7 +300,7 @@ given to the completion callback.
 
 Synchronous rmdir(2).
 
-\subsection{fs.mkdir(path, {[}mode{]}, {[}callback{]})}
+\subsection{fs.mkdir(path, {[}mode{]}, callback)}
 
 Asynchronous mkdir(2). No arguments other than a possible exception are
 given to the completion callback. \texttt{mode} defaults to
@@ -310,7 +310,7 @@ given to the completion callback. \texttt{mode} defaults to
 
 Synchronous mkdir(2).
 
-\subsection{fs.readdir(path, {[}callback{]})}
+\subsection{fs.readdir(path, callback)}
 
 Asynchronous readdir(3). Reads the contents of a directory. The callback
 gets two arguments \texttt{(err, files)} where \texttt{files} is an
@@ -322,7 +322,7 @@ and \texttt{'..'}.
 Synchronous readdir(3). Returns an array of filenames excluding
 \texttt{'.'} and \texttt{'..'}.
 
-\subsection{fs.close(fd, {[}callback{]})}
+\subsection{fs.close(fd, callback)}
 
 Asynchronous close(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -331,7 +331,7 @@ given to the completion callback.
 
 Synchronous close(2).
 
-\subsection{fs.open(path, flags, {[}mode{]}, {[}callback{]})}
+\subsection{fs.open(path, flags, {[}mode{]}, callback)}
 
 Asynchronous file open. See open(2). \texttt{flags} can be:
 
@@ -394,24 +394,28 @@ created. \texttt{fs.open()} fails if a file by that name already exists.
 On POSIX systems, symlinks are not followed. Exclusive mode may or may
 not work with network file systems.
 
+On Linux, positional writes don't work when the file is opened in append
+mode. The kernel ignores the position argument and always appends the
+data to the end of the file.
+
 \subsection{fs.openSync(path, flags, {[}mode{]})}
 
 Synchronous open(2).
 
-\subsection{fs.utimes(path, atime, mtime, {[}callback{]})}
+\subsection{fs.utimes(path, atime, mtime, callback)}
 
 \subsection{fs.utimesSync(path, atime, mtime)}
 
 Change file timestamps of the file referenced by the supplied path.
 
-\subsection{fs.futimes(fd, atime, mtime, {[}callback{]})}
+\subsection{fs.futimes(fd, atime, mtime, callback)}
 
 \subsection{fs.futimesSync(fd, atime, mtime)}
 
 Change the file timestamps of a file referenced by the supplied file
 descriptor.
 
-\subsection{fs.fsync(fd, {[}callback{]})}
+\subsection{fs.fsync(fd, callback)}
 
 Asynchronous fsync(2). No arguments other than a possible exception are
 given to the completion callback.
@@ -420,8 +424,7 @@ given to the completion callback.
 
 Synchronous fsync(2).
 
-\subsection{fs.write(fd, buffer, offset, length, position,
-{[}callback{]})}
+\subsection{fs.write(fd, buffer, offset, length, position, callback)}
 
 Write \texttt{buffer} to the file specified by \texttt{fd}.
 
@@ -441,13 +444,16 @@ Note that it is unsafe to use \texttt{fs.write} multiple times on the
 same file without waiting for the callback. For this scenario,
 \texttt{fs.createWriteStream} is strongly recommended.
 
+On Linux, positional writes don't work when the file is opened in append
+mode. The kernel ignores the position argument and always appends the
+data to the end of the file.
+
 \subsection{fs.writeSync(fd, buffer, offset, length, position)}
 
 Synchronous version of \texttt{fs.write()}. Returns the number of bytes
 written.
 
-\subsection{fs.read(fd, buffer, offset, length, position,
-{[}callback{]})}
+\subsection{fs.read(fd, buffer, offset, length, position, callback)}
 
 Read data from the file specified by \texttt{fd}.
 
@@ -469,7 +475,7 @@ The callback is given the three arguments,
 Synchronous version of \texttt{fs.read}. Returns the number of
 \texttt{bytesRead}.
 
-\subsection{fs.readFile(filename, {[}options{]}, {[}callback{]})}
+\subsection{fs.readFile(filename, {[}options{]}, callback)}
 
 \begin{itemize}
 \item
@@ -480,6 +486,8 @@ Synchronous version of \texttt{fs.read}. Returns the number of
   \texttt{encoding} \{String \textbar{} Null\} default = \texttt{null}
 \item
   \texttt{flag} \{String\} default = \texttt{'r'}
+\item
+  \texttt{callback} \{Function\}
 \end{itemize}
 
 Asynchronously reads the entire contents of a file. Example:
@@ -506,7 +514,7 @@ Synchronous version of \texttt{fs.readFile}. Returns the contents of the
 If the \texttt{encoding} option is specified then this function returns
 a string. Otherwise it returns a buffer.
 
-\subsection{fs.writeFile(filename, data, {[}options{]}, {[}callback{]})}
+\subsection{fs.writeFile(filename, data, {[}options{]}, callback)}
 
 \begin{itemize}
 \item
@@ -522,6 +530,8 @@ a string. Otherwise it returns a buffer.
   Octal)
 \item
   \texttt{flag} \{String\} default = \texttt{'w'}
+\item
+  \texttt{callback} \{Function\}
 \end{itemize}
 
 Asynchronously writes data to a file, replacing the file if it already
@@ -545,8 +555,7 @@ Example:
 
 The synchronous version of \texttt{fs.writeFile}.
 
-\subsection{fs.appendFile(filename, data, {[}options{]},
-{[}callback{]})}
+\subsection{fs.appendFile(filename, data, {[}options{]}, callback)}
 
 \begin{itemize}
 \item
@@ -562,6 +571,8 @@ The synchronous version of \texttt{fs.writeFile}.
   Octal)
 \item
   \texttt{flag} \{String\} default = \texttt{'a'}
+\item
+  \texttt{callback} \{Function\}
 \end{itemize}
 
 Asynchronously append data to a file, creating the file if it not yet
@@ -644,7 +655,7 @@ watched is a no-op, not an error.
 
 Watch for changes on \texttt{filename}, where \texttt{filename} is
 either a file or a directory. The returned object is a
-\hyperref[fs_class_fs_fswatcher]{fs.FSWatcher}.
+\hyperref[fs\_class\_fs\_fswatcher]{fs.FSWatcher}.
 
 The second argument is optional. The \texttt{options} if provided should
 be an object containing a boolean member \texttt{persistent}, which
@@ -708,7 +719,7 @@ is null.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{fs.exists(path, {[}callback{]})}
+\subsection{fs.exists(path, callback)}
 
 Test whether or not the given path exists by checking with the file
 system. Then call the \texttt{callback} argument with either true or
@@ -807,7 +818,7 @@ read a range of bytes from the file instead of the entire file. Both
 \texttt{'base64'}.
 
 If \texttt{autoClose} is false, then the file descriptor won't be
-closed, even if there's an error. It is your responsiblity to close it
+closed, even if there's an error. It is your responsibility to close it
 and make sure there's no file descriptor leak. If \texttt{autoClose} is
 set to true (default behavior), on \texttt{error} or \texttt{end} the
 file descriptor will be closed automatically.
@@ -892,7 +903,7 @@ Stop watching for changes on the given \texttt{fs.FSWatcher}.
 
 Emitted when something changes in a watched directory or file. See more
 details in
-\hyperref[fs_fs_watch_filename_options_listener]{fs.watch}.
+\hyperref[fs\_fs\_watch\_filename\_options\_listener]{fs.watch}.
 
 \subsubsection{Event: `error'}
 

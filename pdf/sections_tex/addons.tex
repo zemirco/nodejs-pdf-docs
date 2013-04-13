@@ -14,7 +14,7 @@ knowledge of several libraries:
 \item
   \href{https://github.com/joyent/libuv}{libuv}, C event loop library.
   Anytime one needs to wait for a file descriptor to become readable,
-  wait for a timer, or wait for a signal to received one will need to
+  wait for a timer, or wait for a signal to be received one will need to
   interface with libuv. That is, if you perform any I/O, libuv will need
   to be used.
 \item
@@ -51,10 +51,12 @@ First we create a file \texttt{hello.cc}:
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include <}\KeywordTok{v8}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \NormalTok{Handle<Value> Method(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"world"}\NormalTok{));}
 \NormalTok{\}}
 
@@ -180,19 +182,21 @@ source \texttt{addon.cc}:
 \NormalTok{#define BUILDING_NODE_EXTENSION}
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \NormalTok{Handle<Value> Add(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \KeywordTok{if} \NormalTok{(}\KeywordTok{args}\NormalTok{.}\FunctionTok{Length}\NormalTok{() < }\DecValTok{2}\NormalTok{) \{}
     \NormalTok{ThrowException(}\DataTypeTok{Exception}\NormalTok{::TypeError(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"Wrong number of arguments"}\NormalTok{)));}
-    \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined());}
+    \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined(isolate));}
   \NormalTok{\}}
 
   \KeywordTok{if} \NormalTok{(!args[}\DecValTok{0}\NormalTok{]->IsNumber() \textbar{}\textbar{} !args[}\DecValTok{1}\NormalTok{]->IsNumber()) \{}
     \NormalTok{ThrowException(}\DataTypeTok{Exception}\NormalTok{::TypeError(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"Wrong arguments"}\NormalTok{)));}
-    \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined());}
+    \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined(isolate));}
   \NormalTok{\}}
 
   \NormalTok{Local<}\FunctionTok{Number}\NormalTok{> num = }\DataTypeTok{Number}\NormalTok{::New(args[}\DecValTok{0}\NormalTok{]->NumberValue() +}
@@ -229,17 +233,19 @@ from there. Here's \texttt{addon.cc}:
 \NormalTok{#define BUILDING_NODE_EXTENSION}
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \NormalTok{Handle<Value> RunCallback(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{Local<}\KeywordTok{Function}\NormalTok{> cb = Local<}\KeywordTok{Function}\NormalTok{>::Cast(args[}\DecValTok{0}\NormalTok{]);}
   \KeywordTok{const} \NormalTok{unsigned argc = }\DecValTok{1}\NormalTok{;}
   \NormalTok{Local<Value> argv[argc] = \{ Local<Value>::New(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"hello world"}\NormalTok{)) \};}
   \NormalTok{cb->Call(}\DataTypeTok{Context}\NormalTok{::GetCurrent()->Global(), argc, argv);}
 
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined());}
+  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined(isolate));}
 \NormalTok{\}}
 
 \KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
@@ -280,10 +286,12 @@ this \texttt{addon.cc} pattern, which returns an object with property
 \NormalTok{#define BUILDING_NODE_EXTENSION}
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \NormalTok{Handle<Value> CreateObject(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{Local<}\KeywordTok{Object}\NormalTok{> obj = }\DataTypeTok{Object}\NormalTok{::New();}
   \NormalTok{obj->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"msg"}\NormalTok{), args[}\DecValTok{0}\NormalTok{]->ToString());}
@@ -322,15 +330,17 @@ that wraps a C++ function:
 \NormalTok{#define BUILDING_NODE_EXTENSION}
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \NormalTok{Handle<Value> MyFunction(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"hello world"}\NormalTok{));}
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> CreateFunction(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::New(MyFunction);}
   \NormalTok{Local<}\KeywordTok{Function}\NormalTok{> fn = tpl->GetFunction();}
@@ -418,6 +428,8 @@ the constructor's prototype:
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \DataTypeTok{MyObject}\NormalTok{::MyObject() \{\};}
@@ -432,12 +444,12 @@ the constructor's prototype:
   \NormalTok{tpl->PrototypeTemplate()->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"plusOne"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(PlusOne)->GetFunction());}
 
-  \NormalTok{Persistent<}\KeywordTok{Function}\NormalTok{> constructor = Persistent<}\KeywordTok{Function}\NormalTok{>::New(tpl->GetFunction());}
+  \NormalTok{Persistent<}\KeywordTok{Function}\NormalTok{> constructor = Persistent<}\KeywordTok{Function}\NormalTok{>::New(isolate, tpl->GetFunction());}
   \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{), constructor);}
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::New(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{MyObject* obj = }\KeywordTok{new} \NormalTok{MyObject();}
   \NormalTok{obj->counter_ = args[}\DecValTok{0}\NormalTok{]->IsUndefined() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->NumberValue();}
@@ -447,7 +459,7 @@ the constructor's prototype:
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::PlusOne(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
   \NormalTok{obj->counter_ += }\DecValTok{1}\NormalTok{;}
@@ -492,10 +504,12 @@ Let's register our \texttt{createObject} method in \texttt{addon.cc}:
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \NormalTok{Handle<Value> CreateObject(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{MyObject}\NormalTok{::NewInstance(args));}
 \NormalTok{\}}
 
@@ -549,6 +563,8 @@ The implementation is similar to the above in \texttt{myobject.cc}:
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \DataTypeTok{MyObject}\NormalTok{::MyObject() \{\};}
@@ -565,11 +581,11 @@ The implementation is similar to the above in \texttt{myobject.cc}:
   \NormalTok{tpl->PrototypeTemplate()->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"plusOne"}\NormalTok{),}
       \DataTypeTok{FunctionTemplate}\NormalTok{::New(PlusOne)->GetFunction());}
 
-  \NormalTok{constructor = Persistent<}\KeywordTok{Function}\NormalTok{>::New(tpl->GetFunction());}
+  \NormalTok{constructor = Persistent<}\KeywordTok{Function}\NormalTok{>::New(isolate, tpl->GetFunction());}
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::New(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{MyObject* obj = }\KeywordTok{new} \NormalTok{MyObject();}
   \NormalTok{obj->counter_ = args[}\DecValTok{0}\NormalTok{]->IsUndefined() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->NumberValue();}
@@ -579,7 +595,7 @@ The implementation is similar to the above in \texttt{myobject.cc}:
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::NewInstance(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \KeywordTok{const} \NormalTok{unsigned argc = }\DecValTok{1}\NormalTok{;}
   \NormalTok{Handle<Value> argv[argc] = \{ args[}\DecValTok{0}\NormalTok{] \};}
@@ -589,7 +605,7 @@ The implementation is similar to the above in \texttt{myobject.cc}:
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::PlusOne(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
   \NormalTok{obj->counter_ += }\DecValTok{1}\NormalTok{;}
@@ -630,15 +646,17 @@ function \texttt{add()} that can take on two \texttt{MyObject} objects:
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \NormalTok{Handle<Value> CreateObject(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
   \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{MyObject}\NormalTok{::NewInstance(args));}
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> Add(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{MyObject* obj1 = }\DataTypeTok{node}\NormalTok{::}\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}
       \NormalTok{args[}\DecValTok{0}\NormalTok{]->ToObject());}
@@ -702,6 +720,8 @@ The implementation of \texttt{myobject.cc} is similar as before:
 \NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
+\NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+
 \NormalTok{using namespace v8;}
 
 \DataTypeTok{MyObject}\NormalTok{::MyObject() \{\};}
@@ -719,7 +739,7 @@ The implementation of \texttt{myobject.cc} is similar as before:
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::New(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \NormalTok{MyObject* obj = }\KeywordTok{new} \NormalTok{MyObject();}
   \NormalTok{obj->val_ = args[}\DecValTok{0}\NormalTok{]->IsUndefined() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->NumberValue();}
@@ -729,7 +749,7 @@ The implementation of \texttt{myobject.cc} is similar as before:
 \NormalTok{\}}
 
 \NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::NewInstance(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{HandleScope scope;}
+  \NormalTok{HandleScope scope(isolate);}
 
   \KeywordTok{const} \NormalTok{unsigned argc = }\DecValTok{1}\NormalTok{;}
   \NormalTok{Handle<Value> argv[argc] = \{ args[}\DecValTok{0}\NormalTok{] \};}

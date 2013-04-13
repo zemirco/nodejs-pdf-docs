@@ -55,7 +55,7 @@ random port (it does the right thing for both \texttt{udp4} and
 \texttt{udp6} sockets). You can then retrieve the address and port with
 \texttt{socket.address().address} and \texttt{socket.address().port}.
 
-\subsection{Class: Socket}
+\subsection{Class: dgram.Socket}
 
 The dgram Socket class encapsulates the datagram functionality. It
 should be created via \texttt{dgram.createSocket(type, {[}callback{]})}.
@@ -92,7 +92,7 @@ Emitted when a socket is closed with \texttt{close()}. No new
 
 Emitted when an error occurs.
 
-\subsubsection{dgram.send(buf, offset, length, port, address,
+\subsubsection{socket.send(buf, offset, length, port, address,
 {[}callback{]})}
 
 \begin{itemize}
@@ -172,7 +172,7 @@ datagram greater than the (receiver) \texttt{MTU} won't work (the packet
 gets silently dropped, without informing the source that the data did
 not reach its intended recipient).
 
-\subsubsection{dgram.bind(port, {[}address{]}, {[}callback{]})}
+\subsubsection{socket.bind(port, {[}address{]}, {[}callback{]})}
 
 \begin{itemize}
 \item
@@ -214,17 +214,17 @@ Example of a UDP server listening on port 41234:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{dgram.close()}
+\subsubsection{socket.close()}
 
 Close the underlying socket and stop listening for data on it.
 
-\subsubsection{dgram.address()}
+\subsubsection{socket.address()}
 
 Returns an object containing the address information for a socket. For
 UDP sockets, this object will contain \texttt{address} , \texttt{family}
 and \texttt{port}.
 
-\subsubsection{dgram.setBroadcast(flag)}
+\subsubsection{socket.setBroadcast(flag)}
 
 \begin{itemize}
 \item
@@ -235,7 +235,7 @@ Sets or clears the \texttt{SO\_BROADCAST} socket option. When this
 option is set, UDP packets may be sent to a local interface's broadcast
 address.
 
-\subsubsection{dgram.setTTL(ttl)}
+\subsubsection{socket.setTTL(ttl)}
 
 \begin{itemize}
 \item
@@ -252,7 +252,7 @@ network probes or when multicasting.
 The argument to \texttt{setTTL()} is a number of hops between 1 and 255.
 The default on most systems is 64.
 
-\subsubsection{dgram.setMulticastTTL(ttl)}
+\subsubsection{socket.setMulticastTTL(ttl)}
 
 \begin{itemize}
 \item
@@ -269,7 +269,7 @@ forwarded.
 The argument to \texttt{setMulticastTTL()} is a number of hops between 0
 and 255. The default on most systems is 1.
 
-\subsubsection{dgram.setMulticastLoopback(flag)}
+\subsubsection{socket.setMulticastLoopback(flag)}
 
 \begin{itemize}
 \item
@@ -280,7 +280,7 @@ Sets or clears the \texttt{IP\_MULTICAST\_LOOP} socket option. When this
 option is set, multicast packets will also be received on the local
 interface.
 
-\subsubsection{dgram.addMembership(multicastAddress,
+\subsubsection{socket.addMembership(multicastAddress,
 {[}multicastInterface{]})}
 
 \begin{itemize}
@@ -296,7 +296,7 @@ Tells the kernel to join a multicast group with
 If \texttt{multicastInterface} is not specified, the OS will try to add
 membership to all valid interfaces.
 
-\subsubsection{dgram.dropMembership(multicastAddress,
+\subsubsection{socket.dropMembership(multicastAddress,
 {[}multicastInterface{]})}
 
 \begin{itemize}
@@ -314,14 +314,14 @@ process terminates, so most apps will never need to call this.
 If \texttt{multicastInterface} is not specified, the OS will try to drop
 membership to all valid interfaces.
 
-\subsubsection{dgram.unref()}
+\subsubsection{socket.unref()}
 
 Calling \texttt{unref} on a socket will allow the program to exit if
 this is the only active socket in the event system. If the socket is
 already \texttt{unref}d calling \texttt{unref} again will have no
 effect.
 
-\subsubsection{dgram.ref()}
+\subsubsection{socket.ref()}
 
 Opposite of \texttt{unref}, calling \texttt{ref} on a previously
 \texttt{unref}d socket will \emph{not} let the program exit if it's the

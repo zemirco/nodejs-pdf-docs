@@ -24,7 +24,7 @@ Example:
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{ciphers = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{getCiphers}\NormalTok{();}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(ciphers); }\CommentTok{// ['AES128-SHA', 'AES256-SHA', ...]}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(ciphers); }\CommentTok{// ['AES-128-CBC', 'AES-128-CBC-HMAC-SHA1', ...]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -136,7 +136,7 @@ Calculates the digest of all of the passed data to be hashed. The
 returned.
 
 Note: \texttt{hash} object can not be used after \texttt{digest()}
-method been called.
+method has been called.
 
 \subsection{crypto.createHmac(algorithm, key)}
 
@@ -171,7 +171,7 @@ Calculates the digest of all of the passed data to the hmac. The
 returned.
 
 Note: \texttt{hmac} object can not be used after \texttt{digest()}
-method been called.
+method has been called.
 
 \subsection{crypto.createCipher(algorithm, password)}
 
@@ -227,7 +227,7 @@ expected.
 
 The \texttt{output\_encoding} specifies the output format of the
 enciphered data, and can be \texttt{'binary'}, \texttt{'base64'} or
-\texttt{'hex'}. If no encoding is provided, then a buffer iis returned.
+\texttt{'hex'}. If no encoding is provided, then a buffer is returned.
 
 Returns the enciphered contents, and can be called many times with new
 data as it is streamed.
@@ -240,7 +240,7 @@ Returns any remaining enciphered contents, with
 buffer is returned.
 
 Note: \texttt{cipher} object can not be used after \texttt{final()}
-method been called.
+method has been called.
 
 \subsubsection{cipher.setAutoPadding(auto\_padding=true)}
 
@@ -254,14 +254,14 @@ of PKCS padding. You must call this before \texttt{cipher.final}.
 
 Creates and returns a decipher object, with the given algorithm and key.
 This is the mirror of the
-\hyperref[crypto_crypto_createcipher_algorithm_password]{createCipher()}
+\hyperref[crypto\_crypto\_createcipher\_algorithm\_password]{createCipher()}
 above.
 
 \subsection{crypto.createDecipheriv(algorithm, key, iv)}
 
 Creates and returns a decipher object, with the given algorithm, key and
 iv. This is the mirror of the
-\hyperref[crypto_crypto_createcipheriv_algorithm_key_iv]{createCipheriv()}
+\hyperref[crypto\_crypto\_createcipheriv\_algorithm\_key\_iv]{createCipheriv()}
 above.
 
 \subsection{Class: Decipher}
@@ -295,7 +295,7 @@ Returns any remaining plaintext which is deciphered, with
 buffer is returned.
 
 Note: \texttt{decipher} object can not be used after \texttt{final()}
-method been called.
+method has been called.
 
 \subsubsection{decipher.setAutoPadding(auto\_padding=true)}
 
@@ -339,7 +339,7 @@ Returns the signature in \texttt{output\_format} which can be
 is provided, then a buffer is returned.
 
 Note: \texttt{sign} object can not be used after \texttt{sign()} method
-been called.
+has been called.
 
 \subsection{crypto.createVerify(algorithm)}
 
@@ -378,7 +378,7 @@ Returns true or false depending on the validity of the signature for the
 data and public key.
 
 Note: \texttt{verifier} object can not be used after \texttt{verify()}
-method been called.
+method has been called.
 
 \subsection{crypto.createDiffieHellman(prime\_length)}
 
@@ -465,9 +465,9 @@ and \texttt{'modp14'}, \texttt{'modp15'}, \texttt{'modp16'},
 \texttt{'modp17'}, \texttt{'modp18'} (defined in
 \href{http://www.rfc-editor.org/rfc/rfc3526.txt}{RFC 3526}). The
 returned object mimics the interface of objects created by
-\hyperref[crypto_crypto_creatediffiehellman_prime_encoding]{crypto.createDiffieHellman()}
+\hyperref[crypto\_crypto\_creatediffiehellman\_prime\_encoding]{crypto.createDiffieHellman()}
 above, but will not allow to change the keys (with
-\hyperref[crypto_diffiehellman_setpublickey_public_key_encoding]{diffieHellman.setPublicKey()}
+\hyperref[crypto\_diffiehellman\_setpublickey\_public\_key\_encoding]{diffieHellman.setPublicKey()}
 for example). The advantage of using this routine is that the parties
 don't have to generate nor exchange group modulus beforehand, saving
 both processor and communication time.
