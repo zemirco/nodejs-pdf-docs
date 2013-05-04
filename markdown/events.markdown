@@ -13,7 +13,9 @@ Typically, event names are represented by a camel-cased string, however,
 there aren't any strict restrictions on that, as any string will be accepted.
 
 Functions can then be attached to objects, to be executed when an event
-is emitted. These functions are called _listeners_.
+is emitted. These functions are called _listeners_. Inside a listener
+function, `this` refers to the `EventEmitter` that the listener was
+attached to.
 
 
 ## Class: events.EventEmitter
@@ -37,6 +39,8 @@ Adds a listener to the end of the listeners array for the specified event.
       console.log('someone connected!');
     });
 
+Returns emitter, so calls can be chained.
+
 ### emitter.once(event, listener)
 
 Adds a **one time** listener for the event. This listener is
@@ -46,6 +50,8 @@ it is removed.
     server.once('connection', function (stream) {
       console.log('Ah, we have our first user!');
     });
+
+Returns emitter, so calls can be chained.
 
 ### emitter.removeListener(event, listener)
 
@@ -59,18 +65,31 @@ Remove a listener from the listener array for the specified event.
     // ...
     server.removeListener('connection', callback);
 
+Returns emitter, so calls can be chained.
 
 ### emitter.removeAllListeners([event])
 
 Removes all listeners, or those of the specified event.
 
+Returns emitter, so calls can be chained.
 
 ### emitter.setMaxListeners(n)
 
 By default EventEmitters will print a warning if more than 10 listeners are
-added for a particular event. This is a useful default which helps finding memory leaks.
-Obviously not all Emitters should be limited to 10. This function allows
-that to be increased. Set to zero for unlimited.
+added for a particular event. This is a useful default which helps finding
+memory leaks. Obviously not all Emitters should be limited to 10. This function
+allows that to be increased. Set to zero for unlimited.
+
+Returns emitter, so calls can be chained.
+
+### EventEmitter.defaultMaxListeners
+
+`emitter.setMaxListeners(n)` sets the maximum on a per-instance basis.
+This class property lets you set it for *all* `EventEmitter` instances,
+current and future, effective immediately. Use with care.
+
+Note that `emitter.setMaxListeners(n)` still has precedence over
+`EventEmitter.defaultMaxListeners`.
 
 
 ### emitter.listeners(event)
@@ -86,6 +105,8 @@ Returns an array of listeners for the specified event.
 ### emitter.emit(event, [arg1], [arg2], [...])
 
 Execute each of the listeners in order with the supplied arguments.
+
+Returns `true` if event had listeners, `false` otherwise.
 
 
 ### Class Method: EventEmitter.listenerCount(emitter, event)
