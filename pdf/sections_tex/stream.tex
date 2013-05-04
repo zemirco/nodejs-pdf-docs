@@ -226,7 +226,7 @@ indicate the end of a \texttt{\_read()} transaction in the way that
 \texttt{readable.push(chunk)} does. If you find that you have to call
 \texttt{this.unshift(chunk)} in your Readable class, then there's a good
 chance you ought to be using the
-\hyperref[stream_class_stream_transform]{stream.Transform} class
+\hyperref[stream\_class\_stream\_transform]{stream.Transform} class
 instead.
 
 This is the corollary of \texttt{readable.push(chunk)}. Rather than
@@ -574,6 +574,21 @@ class that defines it, and should not be called directly by user
 programs. However, you \textbf{are} expected to override this method in
 your own extension classes.
 
+\subsubsection{writable.\_writev(chunks, callback)}
+
+\begin{itemize}
+\item
+  \texttt{chunks} \{Array\} The chunks to be written. Each chunk has
+  following format: \texttt{\{ chunk: ..., encoding: ... \}}.
+\item
+  \texttt{callback} \{Function\} Call this function (optionally with an
+  error argument) when you are done processing the supplied chunks.
+\end{itemize}
+
+This function is completely optional to implement. In the most cases it
+is unnecessary. If implemented, it will be called with all the chunks
+that are buffered in the write queue.
+
 \subsubsection{writable.write(chunk, {[}encoding{]}, {[}callback{]})}
 
 \begin{itemize}
@@ -597,6 +612,17 @@ empty again.
 
 The specifics of when \texttt{write()} will return false, is determined
 by the \texttt{highWaterMark} option provided to the constructor.
+
+\subsubsection{writable.cork()}
+
+Forces buffering of all writes.
+
+Buffered data will be flushed either at \texttt{.uncork()} or at
+\texttt{.end()} call.
+
+\subsubsection{writable.uncork()}
+
+Flush all data, buffered since \texttt{.cork()} call.
 
 \subsubsection{writable.end({[}chunk{]}, {[}encoding{]},
 {[}callback{]})}

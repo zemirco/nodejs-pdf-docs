@@ -48,8 +48,8 @@ Example:
 \CharTok{'/foo/bar/baz/asdf'}
 
 \KeywordTok{path}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\CharTok{'foo'}\NormalTok{, \{\}, }\CharTok{'bar'}\NormalTok{)}
-\CommentTok{// returns}
-\CharTok{'foo/bar'}
+\CommentTok{// throws exception}
+\DataTypeTok{TypeError}\NormalTok{: Arguments to }\KeywordTok{path}\NormalTok{.}\FunctionTok{join} \NormalTok{must be strings}
 \end{Highlighting}
 \end{Shaded}
 
@@ -103,6 +103,34 @@ Examples:
 \KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'wwwroot'}\NormalTok{, }\CharTok{'static_files/png/'}\NormalTok{, }\CharTok{'../gif/image.gif'}\NormalTok{)}
 \CommentTok{// if currently in /home/myself/node, it returns}
 \CharTok{'/home/myself/node/wwwroot/static_files/gif/image.gif'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.isAbsolute(path)}
+
+Determines whether \texttt{path} is an absolute path. An absolute path
+will always resolve to the same location, regardless of the working
+directory.
+
+Posix examples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'/foo/bar'}\NormalTok{) }\CommentTok{// true}
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'/baz/..'}\NormalTok{)  }\CommentTok{// true}
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'qux/'}\NormalTok{)     }\CommentTok{// false}
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'.'}\NormalTok{)        }\CommentTok{// false}
+\end{Highlighting}
+\end{Shaded}
+
+Windows examples:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'//server'}\NormalTok{)  }\CommentTok{// true}
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'C:/foo/..'}\NormalTok{) }\CommentTok{// true}
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'bar\textbackslash{}\textbackslash{}baz'}\NormalTok{)   }\CommentTok{// false}
+\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'.'}\NormalTok{)         }\CommentTok{// false}
 \end{Highlighting}
 \end{Shaded}
 

@@ -17,7 +17,9 @@ there aren't any strict restrictions on that, as any string will be
 accepted.
 
 Functions can then be attached to objects, to be executed when an event
-is emitted. These functions are called \emph{listeners}.
+is emitted. These functions are called \emph{listeners}. Inside a
+listener function, \texttt{this} refers to the \texttt{EventEmitter}
+that the listener was attached to.
 
 \subsection{Class: events.EventEmitter}
 
@@ -48,6 +50,8 @@ event.
 \end{Highlighting}
 \end{Shaded}
 
+Returns emitter, so calls can be chained.
+
 \subsubsection{emitter.once(event, listener)}
 
 Adds a \textbf{one time} listener for the event. This listener is
@@ -61,6 +65,8 @@ removed.
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
+
+Returns emitter, so calls can be chained.
 
 \subsubsection{emitter.removeListener(event, listener)}
 
@@ -79,9 +85,13 @@ listener.
 \end{Highlighting}
 \end{Shaded}
 
+Returns emitter, so calls can be chained.
+
 \subsubsection{emitter.removeAllListeners({[}event{]})}
 
 Removes all listeners, or those of the specified event.
+
+Returns emitter, so calls can be chained.
 
 \subsubsection{emitter.setMaxListeners(n)}
 
@@ -90,6 +100,18 @@ are added for a particular event. This is a useful default which helps
 finding memory leaks. Obviously not all Emitters should be limited to
 10. This function allows that to be increased. Set to zero for
 unlimited.
+
+Returns emitter, so calls can be chained.
+
+\subsubsection{EventEmitter.defaultMaxListeners}
+
+\texttt{emitter.setMaxListeners(n)} sets the maximum on a per-instance
+basis. This class property lets you set it for \emph{all}
+\texttt{EventEmitter} instances, current and future, effective
+immediately. Use with care.
+
+Note that \texttt{emitter.setMaxListeners(n)} still has precedence over
+\texttt{EventEmitter.defaultMaxListeners}.
 
 \subsubsection{emitter.listeners(event)}
 
@@ -108,6 +130,8 @@ Returns an array of listeners for the specified event.
 {[}\ldots{}{]})}
 
 Execute each of the listeners in order with the supplied arguments.
+
+Returns \texttt{true} if event had listeners, \texttt{false} otherwise.
 
 \subsubsection{Class Method: EventEmitter.listenerCount(emitter, event)}
 

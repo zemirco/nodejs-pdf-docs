@@ -92,13 +92,17 @@ local scope, so \texttt{localVar} is changed.
 In case of syntax error in \texttt{code}, \texttt{vm.runInThisContext}
 emits the syntax error to stderr and throws an exception.
 
-\subsection{vm.runInNewContext(code, {[}sandbox{]}, {[}filename{]})}
+\subsection{vm.runInNewContext(code, {[}sandbox{]}, {[}filename{]},
+{[}timeout{]})}
 
 \texttt{vm.runInNewContext} compiles \texttt{code}, then runs it in
 \texttt{sandbox} and returns the result. Running code does not have
 access to local scope. The object \texttt{sandbox} will be used as the
 global object for \texttt{code}. \texttt{sandbox} and \texttt{filename}
 are optional, \texttt{filename} is only used in stack traces.
+\texttt{timeout} specifies an optional number of milliseconds to execute
+\texttt{code} before terminating execution. If execution is terminated,
+\texttt{null} will be thrown.
 
 Example: compile and execute code that increments a global variable and
 sets a new one. These globals are contained in the sandbox.
@@ -127,7 +131,8 @@ untrusted code requires a separate process.
 In case of syntax error in \texttt{code}, \texttt{vm.runInNewContext}
 emits the syntax error to stderr and throws an exception.
 
-\subsection{vm.runInContext(code, context, {[}filename{]})}
+\subsection{vm.runInContext(code, context, {[}filename{]},
+{[}timeout{]})}
 
 \texttt{vm.runInContext} compiles \texttt{code}, then runs it in
 \texttt{context} and returns the result. A (V8) context comprises a
@@ -135,7 +140,9 @@ global object, together with a set of built-in objects and functions.
 Running code does not have access to local scope and the global object
 held within \texttt{context} will be used as the global object for
 \texttt{code}. \texttt{filename} is optional, it's used only in stack
-traces.
+traces. \texttt{timeout} specifies an optional number of milliseconds to
+execute \texttt{code} before terminating execution. If execution is
+terminated, \texttt{null} will be thrown.
 
 Example: compile and execute code in a existing context.
 
@@ -193,13 +200,15 @@ the syntax error to stderr and throws an exception.
 
 A class for running scripts. Returned by vm.createScript.
 
-\subsubsection{script.runInThisContext()}
+\subsubsection{script.runInThisContext({[}timeout{]})}
 
 Similar to \texttt{vm.runInThisContext} but a method of a precompiled
 \texttt{Script} object. \texttt{script.runInThisContext} runs the code
 of \texttt{script} and returns the result. Running code does not have
 access to local scope, but does have access to the \texttt{global}
-object (v8: in actual context).
+object (v8: in actual context). \texttt{timeout} specifies an optional
+number of milliseconds to execute \texttt{code} before terminating
+execution. If execution is terminated, \texttt{null} will be thrown.
 
 Example of using \texttt{script.runInThisContext} to compile code once
 and run it multiple times:
@@ -222,13 +231,15 @@ and run it multiple times:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{script.runInNewContext({[}sandbox{]})}
+\subsubsection{script.runInNewContext({[}sandbox{]}, {[}timeout{]})}
 
 Similar to \texttt{vm.runInNewContext} a method of a precompiled
 \texttt{Script} object. \texttt{script.runInNewContext} runs the code of
 \texttt{script} with \texttt{sandbox} as the global object and returns
 the result. Running code does not have access to local scope.
-\texttt{sandbox} is optional.
+\texttt{sandbox} is optional. \texttt{timeout} specifies an optional
+number of milliseconds to execute \texttt{code} before terminating
+execution. If execution is terminated, \texttt{null} will be thrown.
 
 Example: compile code that increments a global variable and sets one,
 then execute this code multiple times. These globals are contained in

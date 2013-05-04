@@ -141,6 +141,34 @@ To start watching an expression, type \texttt{watch("my\_expression")}.
   \texttt{clearBreakpoint}, \texttt{cb(...)} - Clear breakpoint
 \end{itemize}
 
+It is also possible to set a breakpoint in a file (module) that isn't
+loaded yet:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{% ./node debug test/fixtures/}\KeywordTok{break}\NormalTok{-}\KeywordTok{in}\NormalTok{-module/}\KeywordTok{main}\NormalTok{.}\FunctionTok{js}
+\NormalTok{< debugger listening on port }\DecValTok{5858}
+\NormalTok{connecting to port }\DecValTok{5858}\NormalTok{... ok}
+\KeywordTok{break} \KeywordTok{in} \NormalTok{test/fixtures/}\KeywordTok{break}\NormalTok{-}\KeywordTok{in}\NormalTok{-module/}\DataTypeTok{main.js}\NormalTok{:}\DecValTok{1}
+  \DecValTok{1} \KeywordTok{var} \NormalTok{mod = require(}\CharTok{'./mod.js'}\NormalTok{);}
+  \DecValTok{2} \KeywordTok{mod}\NormalTok{.}\FunctionTok{hello}\NormalTok{();}
+  \DecValTok{3} \KeywordTok{mod}\NormalTok{.}\FunctionTok{hello}\NormalTok{();}
+\NormalTok{debug> setBreakpoint(}\CharTok{'mod.js'}\NormalTok{, }\DecValTok{23}\NormalTok{)}
+\DataTypeTok{Warning}\NormalTok{: script }\CharTok{'mod.js'} \NormalTok{was not loaded }\KeywordTok{yet}\NormalTok{.}
+  \DecValTok{1} \KeywordTok{var} \NormalTok{mod = require(}\CharTok{'./mod.js'}\NormalTok{);}
+  \DecValTok{2} \KeywordTok{mod}\NormalTok{.}\FunctionTok{hello}\NormalTok{();}
+  \DecValTok{3} \KeywordTok{mod}\NormalTok{.}\FunctionTok{hello}\NormalTok{();}
+\NormalTok{debug> c}
+\KeywordTok{break} \KeywordTok{in} \NormalTok{test/fixtures/}\KeywordTok{break}\NormalTok{-}\KeywordTok{in}\NormalTok{-module/}\DataTypeTok{mod.js}\NormalTok{:}\DecValTok{23}
+ \DecValTok{21}
+ \DecValTok{22} \KeywordTok{exports}\NormalTok{.}\FunctionTok{hello} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{}
+ \DecValTok{23}   \KeywordTok{return} \CharTok{'hello from module'}\NormalTok{;}
+ \DecValTok{24} \NormalTok{\};}
+ \DecValTok{25}
+\NormalTok{debug>}
+\end{Highlighting}
+\end{Shaded}
+
 \subsubsection{Info}
 
 \begin{itemize}
