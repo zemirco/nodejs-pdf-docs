@@ -139,17 +139,24 @@ Get a list of network interfaces:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\{ }\DataTypeTok{lo0}\NormalTok{: }
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'::1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\} ],}
-  \DataTypeTok{en1}\NormalTok{: }
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::cabc:c8ff:feef:f996'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{,}
-       \DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.0.1.123'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
-  \DataTypeTok{vmnet1}\NormalTok{: [ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.99.99.254'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
-  \DataTypeTok{vmnet8}\NormalTok{: [ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.88.88.1'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
-  \DataTypeTok{ppp0}\NormalTok{: [ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.2.0.231'}\NormalTok{, }\DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ] \}}
+\NormalTok{\{ }\DataTypeTok{lo0}\NormalTok{:}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff::'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.0.0.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'::1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\} ],}
+  \DataTypeTok{en1}\NormalTok{:}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::226:8ff:fedc:1dd'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff::'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.0.1.6'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
+  \DataTypeTok{vmnet1}\NormalTok{:}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'192.168.252.1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
+  \DataTypeTok{vmnet8}\NormalTok{:}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'192.168.207.1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ] \}}
 \end{Highlighting}
 \end{Shaded}
 

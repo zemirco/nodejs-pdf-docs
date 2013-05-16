@@ -136,6 +136,21 @@ The callback has arguments \texttt{(err, domains)}.
 On error, \texttt{err} is an \texttt{Error} object, where
 \texttt{err.code} is one of the error codes listed below.
 
+\subsection{dns.getServers()}
+
+Returns an array of IP addresses as strings that are currently being
+used for resolution
+
+\subsection{dns.setServers(servers)}
+
+Given an array of IP addresses as strings, set them as the servers to
+use for resolving
+
+If you specify a port with the address it will be stripped, as the
+underlying library doesn't support that.
+
+This will throw if you pass invalid input.
+
 \subsection{Error codes}
 
 Each DNS query can return one of the following error codes:
