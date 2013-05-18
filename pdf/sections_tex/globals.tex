@@ -169,10 +169,12 @@ information.
 
 \subsection{exports}
 
-An object which is shared between all instances of the current module
-and made accessible through \texttt{require()}. \texttt{exports} is the
-same as the \texttt{module.exports} object. \texttt{exports} isn't
-actually a global but rather local to each module.
+A reference to the \texttt{module.exports} object which is shared
+between all instances of the current module and made accessible through
+\texttt{require()}. See \href{modules.html}{module system documentation}
+for details on when to use \texttt{exports} and when to use
+\texttt{module.exports}. \texttt{exports} isn't actually a global but
+rather local to each module.
 
 See the \href{modules.html}{module system documentation} for more
 information.

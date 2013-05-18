@@ -40,6 +40,25 @@ The module \texttt{circle.js} has exported the functions \texttt{area()}
 and \texttt{circumference()}. To export an object, add to the special
 \texttt{exports} object.
 
+Note that \texttt{exports} is a reference to \texttt{module.exports}
+making it suitable for augmentation only. If you are exporting a single
+item such as a constructor you will want to use \texttt{module.exports}
+directly instead.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \NormalTok{MyConstructor (opts) \{}
+  \CommentTok{//...}
+\NormalTok{\}}
+
+\CommentTok{// BROKEN: Does not modify exports}
+\NormalTok{exports = MyConstructor;}
+
+\CommentTok{// exports the constructor properly}
+\KeywordTok{module}\NormalTok{.}\FunctionTok{exports} \NormalTok{= MyConstructor;}
+\end{Highlighting}
+\end{Shaded}
+
 Variables local to the module will be private. In this example the
 variable \texttt{PI} is private to \texttt{circle.js}.
 
@@ -95,7 +114,7 @@ loads \texttt{b.js}. At that point, \texttt{b.js} tries to load
 \texttt{a.js}. In order to prevent an infinite loop an
 \textbf{unfinished copy} of the \texttt{a.js} exports object is returned
 to the \texttt{b.js} module. \texttt{b.js} then finishes loading, and
-its exports object is provided to the \texttt{a.js} module.
+its \texttt{exports} object is provided to the \texttt{a.js} module.
 
 By the time \texttt{main.js} has loaded both modules, they're both
 finished. The output of this program would thus be:
@@ -252,8 +271,9 @@ exact same object, if it would resolve to different files.
 
 In each module, the \texttt{module} free variable is a reference to the
 object representing the current module. In particular
-\texttt{module.exports} is the same as the \texttt{exports} object.
-\texttt{module} isn't actually a global but rather local to each module.
+\texttt{module.exports} is accessible via the \texttt{exports}
+module-global. \texttt{module} isn't actually a global but rather local
+to each module.
 
 \subsubsection{module.exports}
 
@@ -262,9 +282,9 @@ object representing the current module. In particular
   \{Object\}
 \end{itemize}
 
-The \texttt{exports} object is created by the Module system. Sometimes
-this is not acceptable, many want their module to be an instance of some
-class. To do this assign the desired export object to
+The \texttt{module.exports} object is created by the Module system.
+Sometimes this is not acceptable, many want their module to be an
+instance of some class. To do this assign the desired export object to
 \texttt{module.exports}. For example suppose we were making a module
 called \texttt{a.js}
 
@@ -321,7 +341,7 @@ y.js:
 \item
   \texttt{id} \{String\}
 \item
-  Return: \{Object\} \texttt{exports} from the resolved module
+  Return: \{Object\} \texttt{module.exports} from the resolved module
 \end{itemize}
 
 The \texttt{module.require} method provides a way to load a module as if
@@ -329,9 +349,9 @@ The \texttt{module.require} method provides a way to load a module as if
 
 Note that in order to do this, you must get a reference to the
 \texttt{module} object. Since \texttt{require()} returns the
-\texttt{exports}, and the \texttt{module} is typically \emph{only}
-available within a specific module's code, it must be explicitly
-exported in order to be used.
+\texttt{module.exports}, and the \texttt{module} is typically
+\emph{only} available within a specific module's code, it must be
+explicitly exported in order to be used.
 
 \subsubsection{module.id}
 

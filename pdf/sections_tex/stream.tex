@@ -155,18 +155,21 @@ may ignore this argument, and simply provide data whenever it becomes
 available. There is no need, for example to ``wait'' until \texttt{size}
 bytes are available before calling \texttt{stream.push(chunk)}.
 
-\subsubsection{readable.push(chunk)}
+\subsubsection{readable.push(chunk, {[}encoding{]})}
 
 \begin{itemize}
 \item
   \texttt{chunk} \{Buffer \textbar{} null \textbar{} String\} Chunk of
   data to push into the read queue
 \item
+  \texttt{encoding} \{String\} Encoding of String chunks. Must be a
+  valid Buffer encoding, such as \texttt{'utf8'} or \texttt{'ascii'}
+\item
   return \{Boolean\} Whether or not more pushes should be performed
 \end{itemize}
 
 Note: \textbf{This function should be called by Readable implementors,
-NOT by consumers of Readable subclasses.} The \texttt{\_read()} function
+NOT by consumers of Readable streams.} The \texttt{\_read()} function
 will not be called again until at least one \texttt{push(chunk)} call is
 made. If no data is available, then you MAY call \texttt{push('')} (an
 empty string) to allow a future \texttt{\_read} call, without adding any
@@ -226,7 +229,7 @@ indicate the end of a \texttt{\_read()} transaction in the way that
 \texttt{readable.push(chunk)} does. If you find that you have to call
 \texttt{this.unshift(chunk)} in your Readable class, then there's a good
 chance you ought to be using the
-\hyperref[stream_class_stream_transform]{stream.Transform} class
+\hyperref[stream\_class\_stream\_transform]{stream.Transform} class
 instead.
 
 This is the corollary of \texttt{readable.push(chunk)}. Rather than

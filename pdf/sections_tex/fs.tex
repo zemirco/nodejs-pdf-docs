@@ -194,8 +194,8 @@ Synchronous lchmod(2).
 
 Asynchronous stat(2). The callback gets two arguments
 \texttt{(err, stats)} where \texttt{stats} is a
-\hyperref[fs_class_fs_stats]{fs.Stats} object. See the
-\hyperref[fs_class_fs_stats]{fs.Stats} section below for more
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} object. See the
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} section below for more
 information.
 
 \subsection{fs.lstat(path, callback)}
@@ -655,7 +655,7 @@ watched is a no-op, not an error.
 
 Watch for changes on \texttt{filename}, where \texttt{filename} is
 either a file or a directory. The returned object is a
-\hyperref[fs_class_fs_fswatcher]{fs.FSWatcher}.
+\hyperref[fs\_class\_fs\_fswatcher]{fs.FSWatcher}.
 
 The second argument is optional. The \texttt{options} if provided should
 be an object containing a boolean member \texttt{persistent}, which
@@ -834,7 +834,7 @@ An example to read the last 10 bytes of a file which is 100 bytes long:
 \subsection{Class: fs.ReadStream}
 
 \texttt{ReadStream} is a
-\href{stream.html\#stream\_readable\_stream}{Readable Stream}.
+\href{stream.html\#stream\_class\_stream\_readable}{Readable Stream}.
 
 \subsubsection{Event: `open'}
 
@@ -864,10 +864,10 @@ writing data at some position past the beginning of the file. Modifying
 a file rather than replacing it may require a \texttt{flags} mode of
 \texttt{r+} rather than the default mode \texttt{w}.
 
-\subsection{fs.WriteStream}
+\subsection{Class: fs.WriteStream}
 
 \texttt{WriteStream} is a
-\href{stream.html\#stream\_writable\_stream}{Writable Stream}.
+\href{stream.html\#stream\_class\_stream\_writable}{Writable Stream}.
 
 \subsubsection{Event: `open'}
 
@@ -903,7 +903,7 @@ Stop watching for changes on the given \texttt{fs.FSWatcher}.
 
 Emitted when something changes in a watched directory or file. See more
 details in
-\hyperref[fs_fs_watch_filename_options_listener]{fs.watch}.
+\hyperref[fs\_fs\_watch\_filename\_options\_listener]{fs.watch}.
 
 \subsubsection{Event: `error'}
 
