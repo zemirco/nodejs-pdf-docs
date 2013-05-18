@@ -1,3 +1,3 @@
-% Node.js v0.10.6 Manual & Documentation
+% Node.js v0.10.7 Manual & Documentation
 % PDF created by Mirco Zeiss
 % Content by node.js and its creators
