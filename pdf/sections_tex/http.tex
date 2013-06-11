@@ -53,7 +53,7 @@ to the \texttt{'request'} event.
 \subsection{http.createClient({[}port{]}, {[}host{]})}
 
 This function is \textbf{deprecated}; please use
-\hyperref[http_http_request_options_callback]{http.request()}
+\hyperref[http\_http\_request\_options\_callback]{http.request()}
 instead. Constructs a new HTTP client. \texttt{port} and \texttt{host}
 refer to the server to be connected to.
 
@@ -106,7 +106,7 @@ event will not be emitted.
 
 \subsubsection{Event: `connect'}
 
-\texttt{function (request, socket, head) \{ \}}
+\texttt{function (request, socket) \{ \}}
 
 Emitted each time a client requests a http CONNECT method. If this event
 isn't listened for, then clients requesting a CONNECT method will have
@@ -118,9 +118,6 @@ their connections closed.
   the request event.
 \item
   \texttt{socket} is the network socket between the server and client.
-\item
-  \texttt{head} is an instance of Buffer, the first packet of the
-  tunneling stream, this may be empty.
 \end{itemize}
 
 After this event is emitted, the request's socket will not have a
@@ -129,7 +126,7 @@ order to handle data sent to the server on that socket.
 
 \subsubsection{Event: `upgrade'}
 
-\texttt{function (request, socket, head) \{ \}}
+\texttt{function (request, socket) \{ \}}
 
 Emitted each time a client requests a http upgrade. If this event isn't
 listened for, then clients requesting an upgrade will have their
@@ -141,9 +138,6 @@ connections closed.
   the request event.
 \item
   \texttt{socket} is the network socket between the server and client.
-\item
-  \texttt{head} is an instance of Buffer, the first packet of the
-  upgraded stream, this may be empty.
 \end{itemize}
 
 After this event is emitted, the request's socket will not have a
@@ -283,7 +277,7 @@ Indicates that the underlying connection was terminated before
 
 Sends a HTTP/1.1 100 Continue message to the client, indicating that the
 request body should be sent. See the
-\hyperref[http_event_checkcontinue]{`checkContinue'} event on
+\hyperref[http\_event\_checkcontinue]{`checkContinue'} event on
 \texttt{Server}.
 
 \subsubsection{response.writeHead(statusCode, {[}reasonPhrase{]},
@@ -518,12 +512,12 @@ Options:
   \texttt{auth}: Basic authentication i.e. \texttt{'user:password'} to
   compute an Authorization header.
 \item
-  \texttt{agent}: Controls \hyperref[http_class_http_agent]{Agent}
+  \texttt{agent}: Controls \hyperref[http\_class\_http\_agent]{Agent}
   behavior. When an Agent is used request will default to
   \texttt{Connection: keep-alive}. Possible values:
 \item
   \texttt{undefined} (default): use
-  \hyperref[http_http_globalagent]{global Agent} for this host and
+  \hyperref[http\_http\_globalagent]{global Agent} for this host and
   port.
 \item
   \texttt{Agent} object: explicitly use the passed in \texttt{Agent}.
@@ -739,7 +733,7 @@ Emitted after a socket is assigned to this request.
 
 \subsubsection{Event: `connect'}
 
-\texttt{function (response, socket, head) \{ \}}
+\texttt{function (response, socket) \{ \}}
 
 Emitted each time a server responds to a request with a CONNECT method.
 If this event isn't being listened for, clients receiving a CONNECT
@@ -759,14 +753,13 @@ A client server pair that show you how to listen for the
   \KeywordTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{\});}
   \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'okay'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{proxy}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, cltSocket, head) \{}
+\KeywordTok{proxy}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, cltSocket) \{}
   \CommentTok{// connect to an origin server}
   \KeywordTok{var} \NormalTok{srvUrl = }\KeywordTok{url}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\CharTok{'http://'} \NormalTok{+ }\KeywordTok{req}\NormalTok{.}\FunctionTok{url}\NormalTok{);}
   \KeywordTok{var} \NormalTok{srvSocket = }\KeywordTok{net}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\KeywordTok{srvUrl}\NormalTok{.}\FunctionTok{port}\NormalTok{, }\KeywordTok{srvUrl}\NormalTok{.}\FunctionTok{hostname}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
     \KeywordTok{cltSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'HTTP/1.1 200 Connection Established\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                     \CharTok{'Proxy-agent: Node-Proxy\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                     \CharTok{'\textbackslash{}r\textbackslash{}n'}\NormalTok{);}
-    \KeywordTok{srvSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(head);}
     \KeywordTok{srvSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cltSocket);}
     \KeywordTok{cltSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(srvSocket);}
   \NormalTok{\});}
@@ -786,7 +779,7 @@ A client server pair that show you how to listen for the
   \KeywordTok{var} \NormalTok{req = }\KeywordTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
   \KeywordTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, head) \{}
+  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket) \{}
     \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got connected!'}\NormalTok{);}
 
     \CommentTok{// make a request over an HTTP tunnel}
@@ -807,7 +800,7 @@ A client server pair that show you how to listen for the
 
 \subsubsection{Event: `upgrade'}
 
-\texttt{function (response, socket, head) \{ \}}
+\texttt{function (response, socket) \{ \}}
 
 Emitted each time a server responds to a request with an upgrade. If
 this event isn't being listened for, clients receiving an upgrade header
@@ -825,7 +818,7 @@ A client server pair that show you how to listen for the
   \KeywordTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{\});}
   \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'okay'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{srv}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, socket, head) \{}
+\KeywordTok{srv}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, socket) \{}
   \KeywordTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'HTTP/1.1 101 Web Socket Protocol Handshake\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                \CharTok{'Upgrade: WebSocket\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                \CharTok{'Connection: Upgrade\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
@@ -850,7 +843,7 @@ A client server pair that show you how to listen for the
   \KeywordTok{var} \NormalTok{req = }\KeywordTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
   \KeywordTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, upgradeHead) \{}
+  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket) \{}
     \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got upgraded!'}\NormalTok{);}
     \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
     \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}

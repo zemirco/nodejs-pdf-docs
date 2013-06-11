@@ -9,6 +9,54 @@
 These functions are in the module \texttt{'util'}. Use
 \texttt{require('util')} to access them.
 
+The \texttt{util} module is primarily designed to support the needs of
+Node's internal APIs. Many of these utilities are useful for your own
+programs. If you find that these functions are lacking for your
+purposes, however, you are encouraged to write your own utilities. We
+are not interested in any future additions to the \texttt{util} module
+that are unnecessary for Node's internal functionality.
+
+\subsection{util.debuglog(section)}
+
+\begin{itemize}
+\item
+  \texttt{section} \{String\} The section of the program to be debugged
+\item
+  Returns: \{Function\} The logging function
+\end{itemize}
+
+This is used to create a function which conditionally writes to stderr
+based on the existence of a \texttt{NODE\_DEBUG} environment variable.
+If the \texttt{section} name appears in that environment variable, then
+the returned function will be similar to \texttt{console.error()}. If
+not, then the returned function is a no-op.
+
+For example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{debuglog = }\KeywordTok{util}\NormalTok{.}\FunctionTok{debuglog}\NormalTok{(}\CharTok{'foo'}\NormalTok{);}
+
+\KeywordTok{var} \NormalTok{bar = }\DecValTok{123}\NormalTok{;}
+\NormalTok{debuglog(}\CharTok{'hello from foo [%d]'}\NormalTok{, bar);}
+\end{Highlighting}
+\end{Shaded}
+
+If this program is run with \texttt{NODE\_DEBUG=foo} in the environment,
+then it will output something like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{FOO }\DecValTok{3245}\NormalTok{: hello from foo [}\DecValTok{123}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+where \texttt{3245} is the process id. If it is not run with that
+environment variable set, then it will not print anything.
+
+You may separate multiple \texttt{NODE\_DEBUG} environment variables
+with a comma. For example, \texttt{NODE\_DEBUG=fs,net,tls}.
+
 \subsection{util.format(format, {[}\ldots{}{]})}
 
 Returns a formatted string using the first argument as a
@@ -59,33 +107,6 @@ separated by spaces. Each argument is converted to a string with
 \KeywordTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{); }\CommentTok{// '1 2 3'}
 \end{Highlighting}
 \end{Shaded}
-
-\subsection{util.debug(string)}
-
-A synchronous output function. Will block the process and output
-\texttt{string} immediately to \texttt{stderr}.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{require(}\CharTok{'util'}\NormalTok{).}\FunctionTok{debug}\NormalTok{(}\CharTok{'message on stderr'}\NormalTok{);}
-\end{Highlighting}
-\end{Shaded}
-
-\subsection{util.error({[}\ldots{}{]})}
-
-Same as \texttt{util.debug()} except this will output all arguments
-immediately to \texttt{stderr}.
-
-\subsection{util.puts({[}\ldots{}{]})}
-
-A synchronous output function. Will block the process and output all
-arguments to \texttt{stdout} with newlines after each argument.
-
-\subsection{util.print({[}\ldots{}{]})}
-
-A synchronous output function. Will block the process, cast each
-argument to a string then output to \texttt{stdout}. Does not place
-newlines after each argument.
 
 \subsection{util.log(string)}
 
@@ -263,21 +284,6 @@ Returns \texttt{true} if the given ``object'' is an \texttt{Error}.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.pump(readableStream, writableStream, {[}callback{]})}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{readableStream}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writableStream)}
-\end{Highlighting}
-\end{Shaded}
-
-Read the data from \texttt{readableStream} and send it to the
-\texttt{writableStream}. When \texttt{writableStream.write(data)}
-returns \texttt{false} \texttt{readableStream} will be paused until the
-\texttt{drain} event occurs on the \texttt{writableStream}.
-\texttt{callback} gets an error as its only argument and is called when
-\texttt{writableStream} is closed or when an error occurs.
-
 \subsection{util.inherits(constructor, superConstructor)}
 
 Inherit the prototype methods from one
@@ -315,3 +321,52 @@ accessible through the \texttt{constructor.super\_} property.
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{util.debug(string)}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: use }\KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{() }\KeywordTok{instead}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
+
+Deprecated predecessor of \texttt{console.error}.
+
+\subsection{util.error({[}\ldots{}{]})}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{() }\KeywordTok{instead}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
+
+Deprecated predecessor of \texttt{console.error}.
+
+\subsection{util.puts({[}\ldots{}{]})}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{() }\KeywordTok{instead}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
+
+Deprecated predecessor of \texttt{console.log}.
+
+\subsection{util.print({[}\ldots{}{]})}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use `}\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{` }\KeywordTok{instead}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
+
+Deprecated predecessor of \texttt{console.log}.
+
+\subsection{util.pump(readableStream, writableStream, {[}callback{]})}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{readableStream}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writableStream)}
+\end{Highlighting}
+\end{Shaded}
+
+Deprecated predecessor of \texttt{stream.pipe()}.
