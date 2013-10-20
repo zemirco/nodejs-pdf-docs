@@ -48,8 +48,13 @@ should be created via `dgram.createSocket(type, [callback])`.
 * `msg` Buffer object. The message
 * `rinfo` Object. Remote address information
 
-Emitted when a new datagram is available on a socket.  `msg` is a `Buffer` and `rinfo` is
-an object with the sender's address information and the number of bytes in the datagram.
+Emitted when a new datagram is available on a socket.  `msg` is a `Buffer` and
+`rinfo` is an object with the sender's address information:
+
+    socket.on('message', function(msg, rinfo) {
+      console.log('Received %d bytes from %s:%d\n',
+                  msg.length, rinfo.address, rinfo.port);
+    });
 
 ### Event: 'listening'
 
@@ -93,7 +98,7 @@ Example of sending a UDP packet to a random port on `localhost`;
     var dgram = require('dgram');
     var message = new Buffer("Some bytes");
     var client = dgram.createSocket("udp4");
-    client.send(message, 0, message.length, 41234, "localhost", function(err, bytes) {
+    client.send(message, 0, message.length, 41234, "localhost", function(err) {
       client.close();
     });
 
@@ -127,19 +132,32 @@ informing the source that the data did not reach its intended recipient).
 
 * `port` Integer
 * `address` String, Optional
-* `callback` Function, Optional
+* `callback` Function with no parameters, Optional. Callback when
+  binding is done.
 
-For UDP sockets, listen for datagrams on a named `port` and optional `address`.
-If `address` is not specified, the OS will try to listen on all addresses.
+For UDP sockets, listen for datagrams on a named `port` and optional
+`address`. If `address` is not specified, the OS will try to listen on
+all addresses.  After binding is done, a "listening" event is emitted
+and the `callback`(if specified) is called. Specifying both a
+"listening" event listener and `callback` is not harmful but not very
+useful.
 
-The `callback` argument, if provided, is added as a one-shot `'listening'`
-event listener.
+A bound datagram socket keeps the node process running to receive
+datagrams.
+
+If binding fails, an "error" event is generated. In rare case (e.g.
+binding a closed socket), an `Error` may be thrown by this method.
 
 Example of a UDP server listening on port 41234:
 
     var dgram = require("dgram");
 
     var server = dgram.createSocket("udp4");
+
+    server.on("error", function (err) {
+      console.log("server error:\n" + err.stack);
+      server.close();
+    });
 
     server.on("message", function (msg, rinfo) {
       console.log("server got: " + msg + " from " +

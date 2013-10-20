@@ -5,6 +5,50 @@
 The `process` object is a global object and can be accessed from anywhere.
 It is an instance of [EventEmitter][].
 
+## Exit Codes
+
+Node will normally exit with a `0` status code when no more async
+operations are pending.  The following status codes are used in other
+cases:
+
+* `1` **Uncaught Fatal Exception** - There was an uncaught exception,
+  and it was not handled by a domain or an `uncaughtException` event
+  handler.
+* `2` - Unused (reserved by Bash for builtin misuse)
+* `3` **Internal JavaScript Parse Error** - The JavaScript source code
+  internal in Node's bootstrapping process caused a parse error.  This
+  is extremely rare, and generally can only happen during development
+  of Node itself.
+* `4` **Internal JavaScript Evaluation Failure** - The JavaScript
+  source code internal in Node's bootstrapping process failed to
+  return a function value when evaluated.  This is extremely rare, and
+  generally can only happen during development of Node itself.
+* `5` **Fatal Error** - There was a fatal unrecoverable error in V8.
+  Typically a message will be printed to stderr with the prefix `FATAL
+  ERROR`.
+* `6` **Non-function Internal Exception Handler** - There was an
+  uncaught exception, but the internal fatal exception handler
+  function was somehow set to a non-function, and could not be called.
+* `7` **Internal Exception Handler Run-Time Failure** - There was an
+  uncaught exception, and the internal fatal exception handler
+  function itself threw an error while attempting to handle it.  This
+  can happen, for example, if a `process.on('uncaughtException')` or
+  `domain.on('error')` handler throws an error.
+* `8` - Unused.  In previous versions of Node, exit code 8 sometimes
+  indicated an uncaught exception.
+* `9` - **Invalid Argument** - Either an unknown option was specified,
+  or an option requiring a value was provided without a value.
+* `10` **Internal JavaScript Run-Time Failure** - The JavaScript
+  source code internal in Node's bootstrapping process threw an error
+  when the bootstrapping function was called.  This is extremely rare,
+  and generally can only happen during development of Node itself.
+* `12` **Invalid Debug Argument** - The `--debug` and/or `--debug-brk`
+  options were set, but an invalid port number was chosen.
+* `>128` **Signal Exits** - If Node receives a fatal signal such as
+  `SIGKILL` or `SIGHUP`, then its exit code will be `128` plus the
+  value of the signal code.  This is a standard Unix practice, since
+  exit codes are defined to be 7-bit integers, and signal exits set
+  the high-order bit, and then contain the value of the signal code.
 
 ## Event: 'exit'
 
@@ -60,10 +104,10 @@ You have been warned.
 ## Signal Events
 
 <!--type=event-->
-<!--name=SIGINT, SIGUSR1, etc.-->
+<!--name=SIGINT, SIGHUP, etc.-->
 
 Emitted when the processes receives a signal. See sigaction(2) for a list of
-standard POSIX signal names such as SIGINT, SIGUSR1, etc.
+standard POSIX signal names such as SIGINT, SIGHUP, etc.
 
 Example of listening for `SIGINT`:
 
@@ -77,6 +121,8 @@ Example of listening for `SIGINT`:
 An easy way to send the `SIGINT` signal is with `Control-C` in most terminal
 programs.
 
+Note: SIGUSR1 is reserved by node.js to kickstart the debugger.  It's possible
+to install a listener but that won't stop the debugger from starting.
 
 ## process.stdout
 
@@ -167,6 +213,28 @@ Example:
     /usr/local/bin/node
 
 
+## process.execArgv
+
+This is the set of node-specific command line options from the
+executable that started the process.  These options do not show up in
+`process.argv`, and do not include the node executable, the name of
+the script, or any options following the script name. These options
+are useful in order to spawn child processes with the same execution
+environment as the parent.
+
+Example:
+
+    $ node --harmony script.js --version
+
+results in process.execArgv:
+
+    ['--harmony']
+
+and process.argv:
+
+    ['/usr/local/bin/node', 'script.js', '--version']
+
+
 ## process.abort()
 
 This causes node to emit an abort. This will cause node to exit and
@@ -211,9 +279,20 @@ To exit with a 'failure' code:
 The shell that executed node should see the exit code as 1.
 
 
+## process.exitCode
+
+A number which will be the process exit code, when the process either
+exits gracefully, or is exited via `process.exit()` without specifying
+a code.
+
+Specifying a code to `process.exit(code)` will override any previous
+setting of `process.exitCode`.
+
+
 ## process.getgid()
 
-Note: this function is only available on POSIX platforms (i.e. not Windows)
+Note: this function is only available on POSIX platforms (i.e. not Windows,
+Android)
 
 Gets the group identity of the process. (See getgid(2).)
 This is the numerical group id, not the group name.
@@ -225,7 +304,8 @@ This is the numerical group id, not the group name.
 
 ## process.setgid(id)
 
-Note: this function is only available on POSIX platforms (i.e. not Windows)
+Note: this function is only available on POSIX platforms (i.e. not Windows,
+Android)
 
 Sets the group identity of the process. (See setgid(2).)  This accepts either
 a numerical ID or a groupname string. If a groupname is specified, this method
@@ -245,7 +325,8 @@ blocks while resolving it to a numerical ID.
 
 ## process.getuid()
 
-Note: this function is only available on POSIX platforms (i.e. not Windows)
+Note: this function is only available on POSIX platforms (i.e. not Windows,
+Android)
 
 Gets the user identity of the process. (See getuid(2).)
 This is the numerical userid, not the username.
@@ -257,7 +338,8 @@ This is the numerical userid, not the username.
 
 ## process.setuid(id)
 
-Note: this function is only available on POSIX platforms (i.e. not Windows)
+Note: this function is only available on POSIX platforms (i.e. not Windows,
+Android)
 
 Sets the user identity of the process. (See setuid(2).)  This accepts either
 a numerical ID or a username string.  If a username is specified, this method
@@ -277,7 +359,8 @@ blocks while resolving it to a numerical ID.
 
 ## process.getgroups()
 
-Note: this function is only available on POSIX platforms (i.e. not Windows)
+Note: this function is only available on POSIX platforms (i.e. not Windows,
+Android)
 
 Returns an array with the supplementary group IDs. POSIX leaves it unspecified
 if the effective group ID is included but node.js ensures it always is.
@@ -285,7 +368,8 @@ if the effective group ID is included but node.js ensures it always is.
 
 ## process.setgroups(groups)
 
-Note: this function is only available on POSIX platforms (i.e. not Windows)
+Note: this function is only available on POSIX platforms (i.e. not Windows,
+Android)
 
 Sets the supplementary group IDs. This is a privileged operation, meaning you
 need to be root or have the CAP_SETGID capability.
@@ -295,7 +379,8 @@ The list can contain group IDs, group names or both.
 
 ## process.initgroups(user, extra_group)
 
-Note: this function is only available on POSIX platforms (i.e. not Windows)
+Note: this function is only available on POSIX platforms (i.e. not Windows,
+Android)
 
 Reads /etc/group and initializes the group access list, using all groups of
 which the user is a member. This is a privileged operation, meaning you need
@@ -369,7 +454,7 @@ An example of the possible output looks like:
 
 Send a signal to a process. `pid` is the process id and `signal` is the
 string describing the signal to send.  Signal names are strings like
-'SIGINT' or 'SIGUSR1'.  If omitted, the signal will be 'SIGTERM'.
+'SIGINT' or 'SIGHUP'.  If omitted, the signal will be 'SIGTERM'.
 See kill(2) for more information.
 
 Note that just because the name of this function is `process.kill`, it is
@@ -389,6 +474,8 @@ Example of sending a signal to yourself:
 
     process.kill(process.pid, 'SIGHUP');
 
+Note: SIGUSR1 is reserved by node.js.  It can be used to kickstart the
+debugger.
 
 ## process.pid
 
@@ -447,14 +534,24 @@ This will generate:
 
 ## process.nextTick(callback)
 
-On the next loop around the event loop call this callback.
-This is *not* a simple alias to `setTimeout(fn, 0)`, it's much more
-efficient.  It typically runs before any other I/O events fire, but there
-are some exceptions.  See `process.maxTickDepth` below.
+* `callback` {Function}
 
+Once the current event loop turn runs to completion, call the callback
+function.
+
+This is *not* a simple alias to `setTimeout(fn, 0)`, it's much more
+efficient.  It runs before any additional I/O events (including
+timers) fire in subsequent ticks of the event loop.
+
+    console.log('start');
     process.nextTick(function() {
       console.log('nextTick callback');
     });
+    console.log('scheduled');
+    // Output:
+    // start
+    // scheduled
+    // nextTick callback
 
 This is important in developing APIs where you want to give the user the
 chance to assign event handlers after an object has been constructed,
@@ -506,28 +603,10 @@ This approach is much better:
       fs.stat('file', cb);
     }
 
-## process.maxTickDepth
-
-* {Number} Default = 1000
-
-Callbacks passed to `process.nextTick` will *usually* be called at the
-end of the current flow of execution, and are thus approximately as fast
-as calling a function synchronously.  Left unchecked, this would starve
-the event loop, preventing any I/O from occurring.
-
-Consider this code:
-
-    process.nextTick(function foo() {
-      process.nextTick(foo);
-    });
-
-In order to avoid the situation where Node is blocked by an infinite
-loop of recursive series of nextTick calls, it defers to allow some I/O
-to be done every so often.
-
-The `process.maxTickDepth` value is the maximum depth of
-nextTick-calling nextTick-callbacks that will be evaluated before
-allowing other forms of I/O to occur.
+Note: the nextTick queue is completely drained on each pass of the
+event loop **before** additional I/O is processed.  As a result,
+recursively setting nextTick callbacks will block any I/O from
+happening, just like a `while(true);` loop.
 
 ## process.umask([mask])
 
