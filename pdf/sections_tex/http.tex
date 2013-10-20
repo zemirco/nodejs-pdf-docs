@@ -21,6 +21,7 @@ HTTP message headers are represented by an object like this:
 \NormalTok{\{ }\CharTok{'content-length'}\NormalTok{: }\CharTok{'123'}\NormalTok{,}
   \CharTok{'content-type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{,}
   \CharTok{'connection'}\NormalTok{: }\CharTok{'keep-alive'}\NormalTok{,}
+  \CharTok{'host'}\NormalTok{: }\CharTok{'mysite.com'}\NormalTok{,}
   \CharTok{'accept'}\NormalTok{: }\CharTok{'*/*'} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -31,6 +32,30 @@ In order to support the full spectrum of possible HTTP applications,
 Node's HTTP API is very low-level. It deals with stream handling and
 message parsing only. It parses a message into headers and body but it
 does not parse the actual headers or the body.
+
+Defined headers that allow multiple values are concatenated with a
+\texttt{,} character, except for the \texttt{set-cookie} and
+\texttt{cookie} headers which are represented as an array of values.
+Headers such as \texttt{content-length} which can only have a single
+value are parsed accordingly, and only a single value is represented on
+the parsed object.
+
+The raw headers as they were received are retained in the
+\texttt{rawHeaders} property, which is an array of
+\texttt{{[}key, value, key2, value2, ...{]}}. For example, the previous
+message header object might have a \texttt{rawHeaders} list like the
+following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{[ }\CharTok{'ConTent-Length'}\NormalTok{, }\CharTok{'123456'}\NormalTok{,}
+  \CharTok{'content-LENGTH'}\NormalTok{, }\CharTok{'123'}\NormalTok{,}
+  \CharTok{'content-type'}\NormalTok{, }\CharTok{'text/plain'}\NormalTok{,}
+  \CharTok{'CONNECTION'}\NormalTok{, }\CharTok{'keep-alive'}\NormalTok{,}
+  \CharTok{'Host'}\NormalTok{, }\CharTok{'mysite.com'}\NormalTok{,}
+  \CharTok{'accepT'}\NormalTok{, }\CharTok{'*/*'} \NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
 
 \subsection{http.STATUS\_CODES}
 
@@ -53,7 +78,7 @@ to the \texttt{'request'} event.
 \subsection{http.createClient({[}port{]}, {[}host{]})}
 
 This function is \textbf{deprecated}; please use
-\hyperref[http_http_request_options_callback]{http.request()}
+\hyperref[http\_http\_request\_options\_callback]{http.request()}
 instead. Constructs a new HTTP client. \texttt{port} and \texttt{host}
 refer to the server to be connected to.
 
@@ -106,7 +131,7 @@ event will not be emitted.
 
 \subsubsection{Event: `connect'}
 
-\texttt{function (request, socket) \{ \}}
+\texttt{function (request, socket, head) \{ \}}
 
 Emitted each time a client requests a http CONNECT method. If this event
 isn't listened for, then clients requesting a CONNECT method will have
@@ -118,6 +143,9 @@ their connections closed.
   the request event.
 \item
   \texttt{socket} is the network socket between the server and client.
+\item
+  \texttt{head} is an instance of Buffer, the first packet of the
+  tunneling stream, this may be empty.
 \end{itemize}
 
 After this event is emitted, the request's socket will not have a
@@ -126,7 +154,7 @@ order to handle data sent to the server on that socket.
 
 \subsubsection{Event: `upgrade'}
 
-\texttt{function (request, socket) \{ \}}
+\texttt{function (request, socket, head) \{ \}}
 
 Emitted each time a client requests a http upgrade. If this event isn't
 listened for, then clients requesting an upgrade will have their
@@ -138,6 +166,9 @@ connections closed.
   the request event.
 \item
   \texttt{socket} is the network socket between the server and client.
+\item
+  \texttt{head} is an instance of Buffer, the first packet of the
+  upgraded stream, this may be empty.
 \end{itemize}
 
 After this event is emitted, the request's socket will not have a
@@ -277,16 +308,16 @@ Indicates that the underlying connection was terminated before
 
 Sends a HTTP/1.1 100 Continue message to the client, indicating that the
 request body should be sent. See the
-\hyperref[http_event_checkcontinue]{`checkContinue'} event on
+\hyperref[http\_event\_checkcontinue]{`checkContinue'} event on
 \texttt{Server}.
 
-\subsubsection{response.writeHead(statusCode, {[}reasonPhrase{]},
+\subsubsection{response.writeHead(statusCode, {[}statusMessage{]},
 {[}headers{]})}
 
 Sends a response header to the request. The status code is a 3-digit
 HTTP status code, like \texttt{404}. The last argument,
 \texttt{headers}, are the response headers. Optionally one can give a
-human-readable \texttt{reasonPhrase} as the second argument.
+human-readable \texttt{statusMessage} as the second argument.
 
 Example:
 
@@ -349,6 +380,25 @@ Example:
 
 After response header was sent to the client, this property indicates
 the status code which was sent out.
+
+\subsubsection{response.statusMessage}
+
+When using implicit headers (not calling \texttt{response.writeHead()}
+explicitly), this property controls the status message that will be sent
+to the client when the headers get flushed. If this is left as
+\texttt{undefined} then the standard message for the status code will be
+used.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{response}\NormalTok{.}\FunctionTok{statusMessage} \NormalTok{= }\CharTok{'Not found'}\NormalTok{;}
+\end{Highlighting}
+\end{Shaded}
+
+After response header was sent to the client, this property indicates
+the status message which was sent out.
 
 \subsubsection{response.setHeader(name, value)}
 
@@ -512,18 +562,26 @@ Options:
   \texttt{auth}: Basic authentication i.e. \texttt{'user:password'} to
   compute an Authorization header.
 \item
-  \texttt{agent}: Controls \hyperref[http_class_http_agent]{Agent}
+  \texttt{agent}: Controls \hyperref[http\_class\_http\_agent]{Agent}
   behavior. When an Agent is used request will default to
   \texttt{Connection: keep-alive}. Possible values:
 \item
   \texttt{undefined} (default): use
-  \hyperref[http_http_globalagent]{global Agent} for this host and
+  \hyperref[http\_http\_globalagent]{global Agent} for this host and
   port.
 \item
   \texttt{Agent} object: explicitly use the passed in \texttt{Agent}.
 \item
   \texttt{false}: opts out of connection pooling with an Agent, defaults
   request to \texttt{Connection: close}.
+\item
+  \texttt{keepAlive}: \{Boolean\} Keep sockets around in a pool to be
+  used by other requests in the future. Default = \texttt{false}
+\item
+  \texttt{keepAliveMsecs}: \{Integer\} When using HTTP KeepAlive, how
+  often to send TCP KeepAlive packets over sockets being kept alive.
+  Default = \texttt{1000}. Only relevant if \texttt{keepAlive} is set to
+  \texttt{true}.
 \end{itemize}
 
 \texttt{http.request()} returns an instance of the
@@ -611,17 +669,22 @@ Example:
 
 \subsection{Class: http.Agent}
 
-In node 0.5.3+ there is a new implementation of the HTTP Agent which is
-used for pooling sockets used in HTTP client requests.
+The HTTP Agent is used for pooling sockets used in HTTP client requests.
 
-Previously, a single agent instance helped pool for a single host+port.
-The current implementation now holds sockets for any number of hosts.
-
-The current HTTP Agent also defaults client requests to using
+The HTTP Agent also defaults client requests to using
 Connection:keep-alive. If no pending HTTP requests are waiting on a
-socket to become free the socket is closed. This means that node's pool
+socket to become free the socket is closed. This means that Node's pool
 has the benefit of keep-alive when under load but still does not require
-developers to manually close the HTTP clients using keep-alive.
+developers to manually close the HTTP clients using KeepAlive.
+
+If you opt into using HTTP KeepAlive, you can create an Agent object
+with that flag set to \texttt{true}. (See the
+\hyperref[http\_new\_agent\_options]{constructor options} below.) Then,
+the Agent will keep unused sockets in a pool for later use. They will be
+explicitly marked so as to not keep the Node process running. However,
+it is still a good idea to explicitly
+\hyperref[http\_agent\_destroy]{\texttt{destroy()}} KeepAlive agents
+when they are no longer in use, so that the Sockets will be shut down.
 
 Sockets are removed from the agent's pool when the socket emits either a
 ``close'' event or a special ``agentRemove'' event. This means that if
@@ -643,26 +706,97 @@ Alternatively, you could just opt out of pooling entirely using
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(\{}\DataTypeTok{hostname}\NormalTok{:}\CharTok{'localhost'}\NormalTok{, }\DataTypeTok{port}\NormalTok{:}\DecValTok{80}\NormalTok{, }\DataTypeTok{path}\NormalTok{:}\CharTok{'/'}\NormalTok{, }\DataTypeTok{agent}\NormalTok{:}\KeywordTok{false}\NormalTok{\}, }\KeywordTok{function} \NormalTok{(res) \{}
-  \CommentTok{// Do stuff}
+\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(\{}
+  \DataTypeTok{hostname}\NormalTok{: }\CharTok{'localhost'}\NormalTok{,}
+  \DataTypeTok{port}\NormalTok{: }\DecValTok{80}\NormalTok{,}
+  \DataTypeTok{path}\NormalTok{: }\CharTok{'/'}\NormalTok{,}
+  \DataTypeTok{agent}\NormalTok{: }\KeywordTok{false}  \CommentTok{// create a new agent just for this one request}
+\NormalTok{\}, }\KeywordTok{function} \NormalTok{(res) \{}
+  \CommentTok{// Do stuff with response}
 \NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{new Agent({[}options{]})}
+
+\begin{itemize}
+\item
+  \texttt{options} \{Object\} Set of configurable options to set on the
+  agent. Can have the following fields:
+\item
+  \texttt{keepAlive} \{Boolean\} Keep sockets around in a pool to be
+  used by other requests in the future. Default = \texttt{false}
+\item
+  \texttt{keepAliveMsecs} \{Integer\} When using HTTP KeepAlive, how
+  often to send TCP KeepAlive packets over sockets being kept alive.
+  Default = \texttt{1000}. Only relevant if \texttt{keepAlive} is set to
+  \texttt{true}.
+\item
+  \texttt{maxSockets} \{Number\} Maximum number of sockets to allow per
+  host. Default = \texttt{Infinity}.
+\item
+  \texttt{maxFreeSockets} \{Number\} Maximum number of sockets to leave
+  open in a free state. Only relevant if \texttt{keepAlive} is set to
+  \texttt{true}. Default = \texttt{256}.
+\end{itemize}
+
+The default \texttt{http.globalAgent} that is used by
+\texttt{http.request} has all of these values set to their respective
+defaults.
+
+To configure any of them, you must create your own \texttt{Agent}
+object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{http = require(}\CharTok{'http'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{keepAliveAgent = }\KeywordTok{new} \KeywordTok{http}\NormalTok{.}\FunctionTok{Agent}\NormalTok{(\{ }\DataTypeTok{keepAlive}\NormalTok{: }\KeywordTok{true} \NormalTok{\});}
+\KeywordTok{keepAliveAgent}\NormalTok{.}\FunctionTok{request}\NormalTok{(options, onResponseCallback);}
 \end{Highlighting}
 \end{Shaded}
 
 \subsubsection{agent.maxSockets}
 
-By default set to 5. Determines how many concurrent sockets the agent
-can have open per host.
+By default set to Infinity. Determines how many concurrent sockets the
+agent can have open per host.
+
+\subsubsection{agent.maxFreeSockets}
+
+By default set to 256. For Agents supporting HTTP KeepAlive, this sets
+the maximum number of sockets that will be left open in the free state.
 
 \subsubsection{agent.sockets}
 
 An object which contains arrays of sockets currently in use by the
 Agent. Do not modify.
 
+\subsubsection{agent.freeSockets}
+
+An object which contains arrays of sockets currently awaiting use by the
+Agent when HTTP KeepAlive is used. Do not modify.
+
 \subsubsection{agent.requests}
 
 An object which contains queues of requests that have not yet been
 assigned to sockets. Do not modify.
+
+\subsubsection{agent.destroy()}
+
+Destroy any sockets that are currently in use by the agent.
+
+It is usually not necessary to do this. However, if you are using an
+agent with KeepAlive enabled, then it is best to explicitly shut down
+the agent when you know that it will no longer be used. Otherwise,
+sockets may hang open for quite a long time before the server terminates
+them.
+
+\subsubsection{agent.getName(options)}
+
+Get a unique name for a set of request options, to determine whether a
+connection can be reused. In the http agent, this returns
+\texttt{host:port:localAddress}. In the https agent, the name includes
+the CA, cert, ciphers, and other HTTPS/TLS-specific options that
+determine socket reusability.
 
 \subsection{http.globalAgent}
 
@@ -693,7 +827,9 @@ handler, then you \textbf{must} consume the data from the response
 object, either by calling \texttt{response.read()} whenever there is a
 \texttt{'readable'} event, or by adding a \texttt{'data'} handler, or by
 calling the \texttt{.resume()} method. Until the data is consumed, the
-\texttt{'end'} event will not fire.
+\texttt{'end'} event will not fire. Also, until the data is read it will
+consume memory that can eventually lead to a `process out of memory'
+error.
 
 Note: Node does not check whether Content-Length and the length of the
 body which has been transmitted are equal or not.
@@ -733,7 +869,7 @@ Emitted after a socket is assigned to this request.
 
 \subsubsection{Event: `connect'}
 
-\texttt{function (response, socket) \{ \}}
+\texttt{function (response, socket, head) \{ \}}
 
 Emitted each time a server responds to a request with a CONNECT method.
 If this event isn't being listened for, clients receiving a CONNECT
@@ -753,13 +889,14 @@ A client server pair that show you how to listen for the
   \KeywordTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{\});}
   \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'okay'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{proxy}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, cltSocket) \{}
+\KeywordTok{proxy}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, cltSocket, head) \{}
   \CommentTok{// connect to an origin server}
   \KeywordTok{var} \NormalTok{srvUrl = }\KeywordTok{url}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\CharTok{'http://'} \NormalTok{+ }\KeywordTok{req}\NormalTok{.}\FunctionTok{url}\NormalTok{);}
   \KeywordTok{var} \NormalTok{srvSocket = }\KeywordTok{net}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\KeywordTok{srvUrl}\NormalTok{.}\FunctionTok{port}\NormalTok{, }\KeywordTok{srvUrl}\NormalTok{.}\FunctionTok{hostname}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
     \KeywordTok{cltSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'HTTP/1.1 200 Connection Established\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                     \CharTok{'Proxy-agent: Node-Proxy\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                     \CharTok{'\textbackslash{}r\textbackslash{}n'}\NormalTok{);}
+    \KeywordTok{srvSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(head);}
     \KeywordTok{srvSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cltSocket);}
     \KeywordTok{cltSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(srvSocket);}
   \NormalTok{\});}
@@ -779,7 +916,7 @@ A client server pair that show you how to listen for the
   \KeywordTok{var} \NormalTok{req = }\KeywordTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
   \KeywordTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket) \{}
+  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, head) \{}
     \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got connected!'}\NormalTok{);}
 
     \CommentTok{// make a request over an HTTP tunnel}
@@ -800,7 +937,7 @@ A client server pair that show you how to listen for the
 
 \subsubsection{Event: `upgrade'}
 
-\texttt{function (response, socket) \{ \}}
+\texttt{function (response, socket, head) \{ \}}
 
 Emitted each time a server responds to a request with an upgrade. If
 this event isn't being listened for, clients receiving an upgrade header
@@ -818,7 +955,7 @@ A client server pair that show you how to listen for the
   \KeywordTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{\});}
   \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'okay'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{srv}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, socket) \{}
+\KeywordTok{srv}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, socket, head) \{}
   \KeywordTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'HTTP/1.1 101 Web Socket Protocol Handshake\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                \CharTok{'Upgrade: WebSocket\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
                \CharTok{'Connection: Upgrade\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
@@ -843,7 +980,7 @@ A client server pair that show you how to listen for the
   \KeywordTok{var} \NormalTok{req = }\KeywordTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
   \KeywordTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket) \{}
+  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, upgradeHead) \{}
     \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got upgraded!'}\NormalTok{);}
     \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
     \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}
@@ -956,10 +1093,40 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
+\subsubsection{message.rawHeaders}
+
+The raw request/response headers list exactly as they were received.
+
+Note that the keys and values are in the same list. It is \emph{not} a
+list of tuples. So, the even-numbered offsets are key values, and the
+odd-numbered offsets are the associated values.
+
+Header names are not lowercased, and duplicates are not merged.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// Prints something like:}
+\CommentTok{//}
+\CommentTok{// [ 'user-agent',}
+\CommentTok{//   'this is invalid because there can be only one',}
+\CommentTok{//   'User-Agent',}
+\CommentTok{//   'curl/7.22.0',}
+\CommentTok{//   'Host',}
+\CommentTok{//   '127.0.0.1:8000',}
+\CommentTok{//   'ACCEPT',}
+\CommentTok{//   '*/*' ]}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{request}\NormalTok{.}\FunctionTok{rawHeaders}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
 \subsubsection{message.trailers}
 
-The request/response trailers object. Only populated after the `end'
-event.
+The request/response trailers object. Only populated at the `end' event.
+
+\subsubsection{message.rawTrailers}
+
+The raw request/response trailer keys and values exactly as they were
+received. Only populated at the `end' event.
 
 \subsubsection{message.setTimeout(msecs, callback)}
 

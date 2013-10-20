@@ -194,8 +194,8 @@ Synchronous lchmod(2).
 
 Asynchronous stat(2). The callback gets two arguments
 \texttt{(err, stats)} where \texttt{stats} is a
-\hyperref[fs_class_fs_stats]{fs.Stats} object. See the
-\hyperref[fs_class_fs_stats]{fs.Stats} section below for more
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} object. See the
+\hyperref[fs\_class\_fs\_stats]{fs.Stats} section below for more
 information.
 
 \subsection{fs.lstat(path, callback)}
@@ -349,7 +349,7 @@ Asynchronous file open. See open(2). \texttt{flags} can be:
 
 This is primarily useful for opening files on NFS mounts as it allows
 you to skip the potentially stale local cache. It has a very real impact
-on I/O performance so don't use this mode unless you need it.
+on I/O performance so don't use this flag unless you need it.
 
 Note that this doesn't turn \texttt{fs.open()} into a synchronous
 blocking call. If that's what you want then you should be using
@@ -364,35 +364,35 @@ blocking call. If that's what you want then you should be using
   \texttt{'w'} - Open file for writing. The file is created (if it does
   not exist) or truncated (if it exists).
 \item
-  \texttt{'wx'} - Like \texttt{'w'} but opens the file in exclusive
-  mode.
+  \texttt{'wx'} - Like \texttt{'w'} but fails if \texttt{path} exists.
 \item
   \texttt{'w+'} - Open file for reading and writing. The file is created
   (if it does not exist) or truncated (if it exists).
 \item
-  \texttt{'wx+'} - Like \texttt{'w+'} but opens the file in exclusive
-  mode.
+  \texttt{'wx+'} - Like \texttt{'w+'} but fails if \texttt{path} exists.
 \item
   \texttt{'a'} - Open file for appending. The file is created if it does
   not exist.
 \item
-  \texttt{'ax'} - Like \texttt{'a'} but opens the file in exclusive
-  mode.
+  \texttt{'ax'} - Like \texttt{'a'} but fails if \texttt{path} exists.
 \item
   \texttt{'a+'} - Open file for reading and appending. The file is
   created if it does not exist.
 \item
-  \texttt{'ax+'} - Like \texttt{'a+'} but opens the file in exclusive
-  mode.
+  \texttt{'ax+'} - Like \texttt{'a+'} but fails if \texttt{path} exists.
 \end{itemize}
 
-\texttt{mode} defaults to \texttt{0666}. The callback gets two arguments
-\texttt{(err, fd)}.
+\texttt{mode} sets the file mode (permission and sticky bits), but only
+if the file was created. It defaults to \texttt{0666}, readable and
+writeable.
 
-Exclusive mode (\texttt{O\_EXCL}) ensures that \texttt{path} is newly
-created. \texttt{fs.open()} fails if a file by that name already exists.
-On POSIX systems, symlinks are not followed. Exclusive mode may or may
-not work with network file systems.
+The callback gets two arguments \texttt{(err, fd)}.
+
+The exclusive flag \texttt{'x'} (\texttt{O\_EXCL} flag in open(2))
+ensures that \texttt{path} is newly created. On POSIX systems,
+\texttt{path} is considered to exist even if it is a symlink to a
+non-existent file. The exclusive flag may or may not work with network
+file systems.
 
 On Linux, positional writes don't work when the file is opened in append
 mode. The kernel ignores the position argument and always appends the
@@ -400,7 +400,7 @@ data to the end of the file.
 
 \subsection{fs.openSync(path, flags, {[}mode{]})}
 
-Synchronous open(2).
+Synchronous version of \texttt{fs.open()}.
 
 \subsection{fs.utimes(path, atime, mtime, callback)}
 
@@ -424,7 +424,8 @@ given to the completion callback.
 
 Synchronous fsync(2).
 
-\subsection{fs.write(fd, buffer, offset, length, position, callback)}
+\subsection{fs.write(fd, buffer, offset, length{[}, position{]},
+callback)}
 
 Write \texttt{buffer} to the file specified by \texttt{fd}.
 
@@ -432,9 +433,9 @@ Write \texttt{buffer} to the file specified by \texttt{fd}.
 be written.
 
 \texttt{position} refers to the offset from the beginning of the file
-where this data should be written. If \texttt{position} is
-\texttt{null}, the data will be written at the current position. See
-pwrite(2).
+where this data should be written. If
+\texttt{typeof position !== 'number'}, the data will be written at the
+current position. See pwrite(2).
 
 The callback will be given three arguments
 \texttt{(err, written, buffer)} where \texttt{written} specifies how
@@ -448,9 +449,43 @@ On Linux, positional writes don't work when the file is opened in append
 mode. The kernel ignores the position argument and always appends the
 data to the end of the file.
 
-\subsection{fs.writeSync(fd, buffer, offset, length, position)}
+\subsection{fs.write(fd, data{[}, position{[}, encoding{]}{]},
+callback)}
 
-Synchronous version of \texttt{fs.write()}. Returns the number of bytes
+Write \texttt{data} to the file specified by \texttt{fd}. If
+\texttt{data} is not a Buffer instance then the value will be coerced to
+a string.
+
+\texttt{position} refers to the offset from the beginning of the file
+where this data should be written. If
+\texttt{typeof position !== 'number'} the data will be written at the
+current position. See pwrite(2).
+
+\texttt{encoding} is the expected string encoding.
+
+The callback will receive the arguments \texttt{(err, written, string)}
+where \texttt{written} specifies how many \emph{bytes} the passed string
+required to be written. Note that bytes written is not the same as
+string characters. See
+\href{buffer.html\#buffer\_class\_method\_buffer\_bytelength\_string\_encoding}{Buffer.byteLength}.
+
+Unlike when writing \texttt{buffer}, the entire string must be written.
+No substring may be specified. This is because the byte offset of the
+resulting data may not be the same as the string offset.
+
+Note that it is unsafe to use \texttt{fs.write} multiple times on the
+same file without waiting for the callback. For this scenario,
+\texttt{fs.createWriteStream} is strongly recommended.
+
+On Linux, positional writes don't work when the file is opened in append
+mode. The kernel ignores the position argument and always appends the
+data to the end of the file.
+
+\subsection{fs.writeSync(fd, buffer, offset, length{[}, position{]})}
+
+\subsection{fs.writeSync(fd, data{[}, position{[}, encoding{]}{]})}
+
+Synchronous versions of \texttt{fs.write()}. Returns the number of bytes
 written.
 
 \subsection{fs.read(fd, buffer, offset, length, position, callback)}
@@ -459,7 +494,7 @@ Read data from the file specified by \texttt{fd}.
 
 \texttt{buffer} is the buffer that the data will be written to.
 
-\texttt{offset} is offset within the buffer where reading will start.
+\texttt{offset} is the offset in the buffer to start writing at.
 
 \texttt{length} is an integer specifying the number of bytes to read.
 
@@ -633,7 +668,7 @@ you need to compare \texttt{curr.mtime} and \texttt{prev.mtime}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- }\KeywordTok{Unstable}\NormalTok{.  Use }\KeywordTok{fs}\NormalTok{.}\FunctionTok{watch} \NormalTok{instead, }\KeywordTok{if} \KeywordTok{available}\NormalTok{.}
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- }\KeywordTok{Unstable}\NormalTok{.  Use }\KeywordTok{fs}\NormalTok{.}\FunctionTok{watch} \NormalTok{instead, }\KeywordTok{if} \KeywordTok{possible}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
@@ -655,7 +690,7 @@ watched is a no-op, not an error.
 
 Watch for changes on \texttt{filename}, where \texttt{filename} is
 either a file or a directory. The returned object is a
-\hyperref[fs_class_fs_fswatcher]{fs.FSWatcher}.
+\hyperref[fs\_class\_fs\_fswatcher]{fs.FSWatcher}.
 
 The second argument is optional. The \texttt{options} if provided should
 be an object containing a boolean member \texttt{persistent}, which
@@ -776,12 +811,13 @@ very similar to this:
   \DataTypeTok{blocks}\NormalTok{: }\DecValTok{8}\NormalTok{,}
   \DataTypeTok{atime}\NormalTok{: Mon, }\DecValTok{10} \NormalTok{Oct }\DecValTok{2011} \DecValTok{23}\NormalTok{:}\DecValTok{24}\NormalTok{:}\DecValTok{11} \NormalTok{GMT,}
   \DataTypeTok{mtime}\NormalTok{: Mon, }\DecValTok{10} \NormalTok{Oct }\DecValTok{2011} \DecValTok{23}\NormalTok{:}\DecValTok{24}\NormalTok{:}\DecValTok{11} \NormalTok{GMT,}
-  \DataTypeTok{ctime}\NormalTok{: Mon, }\DecValTok{10} \NormalTok{Oct }\DecValTok{2011} \DecValTok{23}\NormalTok{:}\DecValTok{24}\NormalTok{:}\DecValTok{11} \NormalTok{GMT \}}
+  \DataTypeTok{ctime}\NormalTok{: Mon, }\DecValTok{10} \NormalTok{Oct }\DecValTok{2011} \DecValTok{23}\NormalTok{:}\DecValTok{24}\NormalTok{:}\DecValTok{11} \NormalTok{GMT,}
+  \DataTypeTok{birthtime}\NormalTok{: Mon, }\DecValTok{10} \NormalTok{Oct }\DecValTok{2011} \DecValTok{23}\NormalTok{:}\DecValTok{24}\NormalTok{:}\DecValTok{11} \NormalTok{GMT \}}
 \end{Highlighting}
 \end{Shaded}
 
-Please note that \texttt{atime}, \texttt{mtime} and \texttt{ctime} are
-instances of
+Please note that \texttt{atime}, \texttt{mtime}, \texttt{birthtime}, and
+\texttt{ctime} are instances of
 \href{https://developer.mozilla.org/en/JavaScript/Reference/Global\_Objects/Date}{Date}
 object and to compare the values of these objects you should use
 appropriate methods. For most general uses
@@ -792,6 +828,39 @@ comparison, however there additional methods which can be used for
 displaying fuzzy information. More details can be found in the
 \href{https://developer.mozilla.org/en/JavaScript/Reference/Global\_Objects/Date}{MDN
 JavaScript Reference} page.
+
+\subsubsection{Stat Time Values}
+
+The times in the stat object have the following semantics:
+
+\begin{itemize}
+\item
+  \texttt{atime} ``Access Time'' - Time when file data last accessed.
+  Changed by the \texttt{mknod(2)}, \texttt{utimes(2)}, and
+  \texttt{read(2)} system calls.
+\item
+  \texttt{mtime} ``Modified Time'' - Time when file data last modified.
+  Changed by the \texttt{mknod(2)}, \texttt{utimes(2)}, and
+  \texttt{write(2)} system calls.
+\item
+  \texttt{ctime} ``Change Time'' - Time when file status was last
+  changed (inode data modification). Changed by the \texttt{chmod(2)},
+  \texttt{chown(2)}, \texttt{link(2)}, \texttt{mknod(2)},
+  \texttt{rename(2)}, \texttt{unlink(2)}, \texttt{utimes(2)},
+  \texttt{read(2)}, and \texttt{write(2)} system calls.
+\item
+  \texttt{birthtime} ``Birth Time'' - Time of file creation. Set once
+  when the file is created. On filesystems where birthtime is not
+  available, this field may instead hold either the \texttt{ctime} or
+  \texttt{1970-01-01T00:00Z} (ie, unix epoch timestamp \texttt{0}). On
+  Darwin and other FreeBSD variants, also set if the \texttt{atime} is
+  explicitly set to an earlier value than the current \texttt{birthtime}
+  using the \texttt{utimes(2)} system call.
+\end{itemize}
+
+Prior to Node v0.12, the \texttt{ctime} held the \texttt{birthtime} on
+Windows systems. Note that as of v0.12, \texttt{ctime} is not ``creation
+time'', and on Unix systems, it never was.
 
 \subsection{fs.createReadStream(path, {[}options{]})}
 
@@ -902,7 +971,7 @@ Stop watching for changes on the given \texttt{fs.FSWatcher}.
 
 Emitted when something changes in a watched directory or file. See more
 details in
-\hyperref[fs_fs_watch_filename_options_listener]{fs.watch}.
+\hyperref[fs\_fs\_watch\_filename\_options\_listener]{fs.watch}.
 
 \subsubsection{Event: `error'}
 

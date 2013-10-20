@@ -146,7 +146,9 @@ Return the number of listeners for a given event.
   \texttt{listener} \{Function\} The event handler function
 \end{itemize}
 
-This event is emitted any time someone adds a new listener.
+This event is emitted any time someone adds a new listener. It is
+unspecified if \texttt{listener} is in the list returned by
+\texttt{emitter.listeners(event)}.
 
 \subsubsection{Event: `removeListener'}
 
@@ -157,4 +159,6 @@ This event is emitted any time someone adds a new listener.
   \texttt{listener} \{Function\} The event handler function
 \end{itemize}
 
-This event is emitted any time someone removes a listener.
+This event is emitted any time someone removes a listener. It is
+unspecified if \texttt{listener} is in the list returned by
+\texttt{emitter.listeners(event)}.

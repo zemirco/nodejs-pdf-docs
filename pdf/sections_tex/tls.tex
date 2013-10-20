@@ -73,8 +73,8 @@ denial-of-service attacks.
 
 To mitigate this, renegotiations are limited to three times every 10
 minutes. An error is emitted on the
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} instance
-when the threshold is exceeded. The limits are configurable:
+\hyperref[tls\_class\_tls\_tlssocket]{tls.TLSSocket} instance when the
+threshold is exceeded. The limits are configurable:
 
 \begin{itemize}
 \item
@@ -119,9 +119,9 @@ Example:
 
 \subsection{tls.createServer(options, {[}secureConnectionListener{]})}
 
-Creates a new \hyperref[tls_class_tls_server]{tls.Server}. The
+Creates a new \hyperref[tls\_class\_tls\_server]{tls.Server}. The
 \texttt{connectionListener} argument is automatically set as a listener
-for the \hyperref[tls_event_secureconnection]{secureConnection} event.
+for the \hyperref[tls\_event\_secureconnection]{secureConnection} event.
 The \texttt{options} object has these possibilities:
 
 \begin{itemize}
@@ -141,8 +141,9 @@ The \texttt{options} object has these possibilities:
   key of the server in PEM format. (Required)
 \item
   \texttt{ca}: An array of strings or \texttt{Buffer}s of trusted
-  certificates. If this is omitted several well known ``root'' CAs will
-  be used, like VeriSign. These are used to authorize connections.
+  certificates in PEM format. If this is omitted several well known
+  ``root'' CAs will be used, like VeriSign. These are used to authorize
+  connections.
 \item
   \texttt{crl} : Either a string or list of strings of PEM encoded CRLs
   (Certificate Revocation List)
@@ -155,15 +156,15 @@ The \texttt{options} object has these possibilities:
   with the \texttt{honorCipherOrder} option described below to
   prioritize the non-CBC cipher.
 
-  Defaults to
-  \texttt{ECDHE-RSA-AES128-SHA256:AES128-GCM-SHA256:RC4:HIGH:!MD5:!aNULL:!EDH}.
+  Defaults to \texttt{AES128-GCM-SHA256:RC4:HIGH:!MD5:!aNULL:!EDH}.
   Consult the
   \href{http://www.openssl.org/docs/apps/ciphers.html\#CIPHER\_LIST\_FORMAT}{OpenSSL
-  cipher list format documentation} for details on the format.
+  cipher list format documentation} for details on the format. ECDH
+  (Elliptic Curve Diffie-Hellman) ciphers are not yet supported.
 
-  \texttt{ECDHE-RSA-AES128-SHA256} and \texttt{AES128-GCM-SHA256} are
-  used when node.js is linked against OpenSSL 1.0.1 or newer and the
-  client speaks TLS 1.2, RC4 is used as a secure fallback.
+  \texttt{AES128-GCM-SHA256} is used when node.js is linked against
+  OpenSSL 1.0.1 or newer and the client speaks TLS 1.2, RC4 is used as a
+  secure fallback.
 
   \textbf{NOTE}: Previous revisions of this section suggested
   \texttt{AES256-SHA} as an acceptable cipher. Unfortunately,
@@ -199,13 +200,13 @@ The \texttt{options} object has these possibilities:
   \texttt{NPNProtocols}: An array or \texttt{Buffer} of possible NPN
   protocols. (Protocols should be ordered by their priority).
 \item
-  \texttt{SNICallback}: A function that will be called if client
-  supports SNI TLS extension. Only one argument will be passed to it:
-  \texttt{servername}. And \texttt{SNICallback} should return
-  SecureContext instance. (You can use
-  \texttt{crypto.createCredentials(...).context} to get proper
-  SecureContext). If \texttt{SNICallback} wasn't provided - default
-  callback with high-level API will be used (see below).
+  \texttt{SNICallback(servername, cb)}: A function that will be called
+  if client supports SNI TLS extension. Two argument will be passed to
+  it: \texttt{servername}, and \texttt{cb}. \texttt{SNICallback} should
+  invoke \texttt{cb(null, ctx)}, where \texttt{ctx} is a SecureContext
+  instance. (You can use \texttt{crypto.createCredentials(...).context}
+  to get proper SecureContext). If \texttt{SNICallback} wasn't provided
+  - default callback with high-level API will be used (see below).
 \item
   \texttt{sessionTimeout}: An integer specifying the seconds after which
   TLS session identifiers and TLS session tickets created by the server
@@ -217,6 +218,11 @@ The \texttt{options} object has these possibilities:
   session resumption. If \texttt{requestCert} is \texttt{true}, the
   default is MD5 hash value generated from command-line. Otherwise, the
   default is not provided.
+\item
+  \texttt{secureProtocol}: The SSL method to use, e.g.
+  \texttt{SSLv3\_method} to force SSL version 3. The possible values
+  depend on your installation of OpenSSL and are defined in the constant
+  \href{http://www.openssl.org/docs/ssl/ssl.html\#DEALING\_WITH\_PROTOCOL\_METHODS}{SSL\_METHODS}.
 \end{itemize}
 
 Here is a simple example echo server:
@@ -237,12 +243,12 @@ Here is a simple example echo server:
   \DataTypeTok{ca}\NormalTok{: [ }\KeywordTok{fs}\NormalTok{.}\FunctionTok{readFileSync}\NormalTok{(}\CharTok{'client-cert.pem'}\NormalTok{) ]}
 \NormalTok{\};}
 
-\KeywordTok{var} \NormalTok{server = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(cleartextStream) \{}
+\KeywordTok{var} \NormalTok{server = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(socket) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'server connected'}\NormalTok{,}
-              \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
-  \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"welcome!}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{);}
-  \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
-  \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cleartextStream);}
+              \KeywordTok{socket}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
+  \KeywordTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"welcome!}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{);}
+  \KeywordTok{socket}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
+  \KeywordTok{socket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(socket);}
 \NormalTok{\});}
 \KeywordTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{8000}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'server bound'}\NormalTok{);}
@@ -265,12 +271,12 @@ Or
 
 \NormalTok{\};}
 
-\KeywordTok{var} \NormalTok{server = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(cleartextStream) \{}
+\KeywordTok{var} \NormalTok{server = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(socket) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'server connected'}\NormalTok{,}
-              \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
-  \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"welcome!}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{);}
-  \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
-  \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cleartextStream);}
+              \KeywordTok{socket}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
+  \KeywordTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"welcome!}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{);}
+  \KeywordTok{socket}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
+  \KeywordTok{socket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(socket);}
 \NormalTok{\});}
 \KeywordTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{8000}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'server bound'}\NormalTok{);}
@@ -286,13 +292,6 @@ You can test this server by connecting to it with
 \NormalTok{openssl s_client -connect }\FloatTok{127.0.0.1}\NormalTok{:}\DecValTok{8000}
 \end{Highlighting}
 \end{Shaded}
-
-\subsection{tls.SLAB\_BUFFER\_SIZE}
-
-Size of slab buffer used by all tls servers and clients. Default:
-\texttt{10 * 1024 * 1024}.
-
-Don't change the defaults unless you know what you are doing.
 
 \subsection{tls.connect(options, {[}callback{]})}
 
@@ -328,15 +327,16 @@ specifies:
   key of the client in PEM format.
 \item
   \texttt{ca}: An array of strings or \texttt{Buffer}s of trusted
-  certificates. If this is omitted several well known ``root'' CAs will
-  be used, like VeriSign. These are used to authorize connections.
+  certificates in PEM format. If this is omitted several well known
+  ``root'' CAs will be used, like VeriSign. These are used to authorize
+  connections.
 \item
   \texttt{rejectUnauthorized}: If \texttt{true}, the server certificate
   is verified against the list of supplied CAs. An \texttt{'error'}
   event is emitted if verification fails. Default: \texttt{true}.
 \item
-  \texttt{NPNProtocols}: An array of string or \texttt{Buffer}
-  containing supported NPN protocols. \texttt{Buffer} should have
+  \texttt{NPNProtocols}: An array of strings or \texttt{Buffer}s
+  containing supported NPN protocols. \texttt{Buffer}s should have
   following format: \texttt{0x05hello0x05world}, where first byte is
   next protocol name's length. (Passing array should usually be much
   simpler: \texttt{{[}'hello', 'world'{]}}.)
@@ -351,10 +351,10 @@ specifies:
 \end{itemize}
 
 The \texttt{callback} parameter will be added as a listener for the
-\hyperref[tls_event_secureconnect]{`secureConnect'} event.
+\hyperref[tls\_event\_secureconnect]{`secureConnect'} event.
 
 \texttt{tls.connect()} returns a
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream} object.
+\hyperref[tls\_class\_tls\_tlssocket]{tls.TLSSocket} object.
 
 Here is an example of a client of echo server as described previously:
 
@@ -372,17 +372,17 @@ Here is an example of a client of echo server as described previously:
   \DataTypeTok{ca}\NormalTok{: [ }\KeywordTok{fs}\NormalTok{.}\FunctionTok{readFileSync}\NormalTok{(}\CharTok{'server-cert.pem'}\NormalTok{) ]}
 \NormalTok{\};}
 
-\KeywordTok{var} \NormalTok{cleartextStream = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\DecValTok{8000}\NormalTok{, options, }\KeywordTok{function}\NormalTok{() \{}
+\KeywordTok{var} \NormalTok{socket = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\DecValTok{8000}\NormalTok{, options, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'client connected'}\NormalTok{,}
-              \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
-  \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cleartextStream);}
+              \KeywordTok{socket}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
+  \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(socket);}
   \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 \NormalTok{\});}
-\KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
-\KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(data) \{}
+\KeywordTok{socket}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
+\KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(data) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(data);}
 \NormalTok{\});}
-\KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{server}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
 \NormalTok{\});}
 \end{Highlighting}
@@ -399,24 +399,70 @@ Or
   \DataTypeTok{pfx}\NormalTok{: }\KeywordTok{fs}\NormalTok{.}\FunctionTok{readFileSync}\NormalTok{(}\CharTok{'client.pfx'}\NormalTok{)}
 \NormalTok{\};}
 
-\KeywordTok{var} \NormalTok{cleartextStream = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\DecValTok{8000}\NormalTok{, options, }\KeywordTok{function}\NormalTok{() \{}
+\KeywordTok{var} \NormalTok{socket = }\KeywordTok{tls}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\DecValTok{8000}\NormalTok{, options, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'client connected'}\NormalTok{,}
-              \KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
-  \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cleartextStream);}
+              \KeywordTok{socket}\NormalTok{.}\FunctionTok{authorized} \NormalTok{? }\CharTok{'authorized'} \NormalTok{: }\CharTok{'unauthorized'}\NormalTok{);}
+  \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(socket);}
   \KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 \NormalTok{\});}
-\KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
-\KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(data) \{}
+\KeywordTok{socket}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
+\KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(data) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(data);}
 \NormalTok{\});}
-\KeywordTok{cleartextStream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{server}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{Class: tls.TLSSocket}
+
+Wrapper for instance of
+\href{net.html\#net\_class\_net\_socket}{net.Socket}, replaces internal
+socket read/write routines to perform transparent encryption/decryption
+of incoming/outgoing data.
+
+\subsection{new tls.TLSSocket(socket, options)}
+
+Construct a new TLSSocket object from existing TCP socket.
+
+\texttt{socket} is an instance of
+\href{net.html\#net\_class\_net\_socket}{net.Socket}
+
+\texttt{options} is an object that might contain following properties:
+
+\begin{itemize}
+\item
+  \texttt{credentials}: An optional credentials object from
+  \texttt{crypto.createCredentials( ... )}
+\item
+  \texttt{isServer}: If true - TLS socket will be instantiated in
+  server-mode
+\item
+  \texttt{server}: An optional
+  \href{net.html\#net\_class\_net\_server}{net.Server} instance
+\item
+  \texttt{requestCert}: Optional, see
+  \hyperref[tls\_tls\_createsecurepair\_credentials\_isserver\_requestcert\_rejectunauthorized]{tls.createSecurePair}
+\item
+  \texttt{rejectUnauthorized}: Optional, see
+  \hyperref[tls\_tls\_createsecurepair\_credentials\_isserver\_requestcert\_rejectunauthorized]{tls.createSecurePair}
+\item
+  \texttt{NPNProtocols}: Optional, see
+  \hyperref[tls\_tls\_createserver\_options\_secureconnectionlistener]{tls.createServer}
+\item
+  \texttt{SNICallback}: Optional, see
+  \hyperref[tls\_tls\_createserver\_options\_secureconnectionlistener]{tls.createServer}
+\end{itemize}
+
 \subsection{tls.createSecurePair({[}credentials{]}, {[}isServer{]},
 {[}requestCert{]}, {[}rejectUnauthorized{]})}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\KeywordTok{Deprecated}\NormalTok{. Use }\KeywordTok{tls}\NormalTok{.}\FunctionTok{TLSSocket} \KeywordTok{instead}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
 
 Creates a new secure pair object with two streams, one of which
 reads/writes encrypted data, and one reads/writes cleartext data.
@@ -442,7 +488,10 @@ encrypted stream.
 \end{itemize}
 
 \texttt{tls.createSecurePair()} returns a SecurePair object with
-{[}cleartext{]}{[}{]} and \texttt{encrypted} stream properties.
+\texttt{cleartext} and \texttt{encrypted} stream properties.
+
+NOTE: \texttt{cleartext} has the same APIs as
+\hyperref[tls\_class\_tls\_tlssocket]{tls.TLSSocket}
 
 \subsection{Class: SecurePair}
 
@@ -465,32 +514,32 @@ encrypted connections using TLS or SSL.
 
 \subsubsection{Event: `secureConnection'}
 
-\texttt{function (cleartextStream) \{\}}
+\texttt{function (tlsSocket) \{\}}
 
 This event is emitted after a new connection has been successfully
 handshaked. The argument is a instance of
-\hyperref[tls_class_tls_cleartextstream]{CleartextStream}. It has all
-the common stream methods and events.
+\hyperref[tls\_class\_tls\_tlssocket]{tls.TLSSocket}. It has all the
+common stream methods and events.
 
-\texttt{cleartextStream.authorized} is a boolean value which indicates
-if the client has verified by one of the supplied certificate
-authorities for the server. If \texttt{cleartextStream.authorized} is
-false, then \texttt{cleartextStream.authorizationError} is set to
-describe how authorization failed. Implied but worth mentioning:
-depending on the settings of the TLS server, you unauthorized
-connections may be accepted. \texttt{cleartextStream.npnProtocol} is a
-string containing selected NPN protocol.
-\texttt{cleartextStream.servername} is a string containing servername
+\texttt{socket.authorized} is a boolean value which indicates if the
+client has verified by one of the supplied certificate authorities for
+the server. If \texttt{socket.authorized} is false, then
+\texttt{socket.authorizationError} is set to describe how authorization
+failed. Implied but worth mentioning: depending on the settings of the
+TLS server, you unauthorized connections may be accepted.
+\texttt{socket.npnProtocol} is a string containing selected NPN
+protocol. \texttt{socket.servername} is a string containing servername
 requested with SNI.
 
 \subsubsection{Event: `clientError'}
 
-\texttt{function (exception, securePair) \{ \}}
+\texttt{function (exception, tlsSocket) \{ \}}
 
 When a client connection emits an `error' event before secure connection
 is established - it will be forwarded here.
 
-\texttt{securePair} is the \texttt{tls.SecurePair} that the error
+\texttt{tlsSocket} is the
+\hyperref[tls\_class\_tls\_tlssocket]{tls.TLSSocket} that the error
 originated from.
 
 \subsubsection{Event: `newSession'}
@@ -499,6 +548,9 @@ originated from.
 
 Emitted on creation of TLS session. May be used to store sessions in
 external storage.
+
+NOTE: adding this event listener will have an effect only on connections
+established after addition of event listener.
 
 \subsubsection{Event: `resumeSession'}
 
@@ -510,6 +562,9 @@ and invoke \texttt{callback(null, sessionData)} once finished. If
 session can't be resumed (i.e.~doesn't exist in storage) one may call
 \texttt{callback(null, null)}. Calling \texttt{callback(err)} will
 terminate incoming connection and destroy socket.
+
+NOTE: adding this event listener will have an effect only on connections
+established after addition of event listener.
 
 \subsubsection{server.listen(port, {[}host{]}, {[}callback{]})}
 
@@ -553,6 +608,12 @@ The number of concurrent connections on the server.
 
 \subsection{Class: CryptoStream}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\KeywordTok{Deprecated}\NormalTok{. Use }\KeywordTok{tls}\NormalTok{.}\FunctionTok{TLSSocket} \KeywordTok{instead}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
+
 This is an encrypted stream.
 
 \subsubsection{cryptoStream.bytesWritten}
@@ -561,41 +622,39 @@ A proxy to the underlying socket's bytesWritten accessor, this will
 return the total bytes written to the socket, \emph{including the TLS
 overhead}.
 
-\subsection{Class: tls.CleartextStream}
+\subsection{Class: tls.TLSSocket}
 
-This is a stream on top of the \emph{Encrypted} stream that makes it
-possible to read/write an encrypted data as a cleartext data.
+This is a wrapped version of
+\href{net.html\#net\_class\_net\_socket}{net.Socket} that does
+transparent encryption of written data and all required TLS negotiation.
 
 This instance implements a duplex
 \href{stream.html\#stream\_stream}{Stream} interfaces. It has all the
 common stream methods and events.
-
-A ClearTextStream is the \texttt{clear} member of a SecurePair object.
 
 \subsubsection{Event: `secureConnect'}
 
 This event is emitted after a new connection has been successfully
 handshaked. The listener will be called no matter if the server's
 certificate was authorized or not. It is up to the user to test
-\texttt{cleartextStream.authorized} to see if the server certificate was
+\texttt{tlsSocket.authorized} to see if the server certificate was
 signed by one of the specified CAs. If
-\texttt{cleartextStream.authorized === false} then the error can be
-found in \texttt{cleartextStream.authorizationError}. Also if NPN was
-used - you can check \texttt{cleartextStream.npnProtocol} for negotiated
-protocol.
+\texttt{tlsSocket.authorized === false} then the error can be found in
+\texttt{tlsSocket.authorizationError}. Also if NPN was used - you can
+check \texttt{tlsSocket.npnProtocol} for negotiated protocol.
 
-\subsubsection{cleartextStream.authorized}
+\subsubsection{tlsSocket.authorized}
 
 A boolean that is \texttt{true} if the peer certificate was signed by
 one of the specified CAs, otherwise \texttt{false}
 
-\subsubsection{cleartextStream.authorizationError}
+\subsubsection{tlsSocket.authorizationError}
 
 The reason why the peer's certificate has not been verified. This
 property becomes available only when
-\texttt{cleartextStream.authorized === false}.
+\texttt{tlsSocket.authorized === false}.
 
-\subsubsection{cleartextStream.getPeerCertificate()}
+\subsubsection{tlsSocket.getPeerCertificate()}
 
 Returns an object representing the peer's certificate. The returned
 object has some properties corresponding to the field of the
@@ -628,7 +687,7 @@ Example:
 If the peer does not provide a certificate, it returns \texttt{null} or
 an empty object.
 
-\subsubsection{cleartextStream.getCipher()}
+\subsubsection{tlsSocket.getCipher()}
 
 Returns an object representing the cipher name and the SSL/TLS protocol
 version of the current connection.
@@ -639,27 +698,41 @@ See SSL\_CIPHER\_get\_name() and SSL\_CIPHER\_get\_version() in
 http://www.openssl.org/docs/ssl/ssl.html\#DEALING\_WITH\_CIPHERS for
 more information.
 
-\subsubsection{cleartextStream.address()}
+\subsubsection{tlsSocket.renegotiate(options, callback)}
+
+Initiate TLS renegotiation process. The \texttt{options} may contain the
+following fields: \texttt{rejectUnauthorized}, \texttt{requestCert} (See
+\hyperref[tls\_tls\_createserver\_options\_secureconnectionlistener]{tls.createServer}
+for details). \texttt{callback(err)} will be executed with \texttt{null}
+as \texttt{err}, once the renegotiation is successfully completed.
+
+NOTE: Can be used to request peer's certificate after the secure
+connection has been established.
+
+ANOTHER NOTE: When running as the server, socket will be destroyed with
+an error after \texttt{handshakeTimeout} timeout.
+
+\subsubsection{tlsSocket.address()}
 
 Returns the bound address, the address family name and port of the
 underlying socket as reported by the operating system. Returns an object
 with three properties, e.g.
 \texttt{\{ port: 12346, family: 'IPv4', address: '127.0.0.1' \}}
 
-\subsubsection{cleartextStream.remoteAddress}
+\subsubsection{tlsSocket.remoteAddress}
 
 The string representation of the remote IP address. For example,
 \texttt{'74.125.127.100'} or \texttt{'2001:4860:a005::68'}.
 
-\subsubsection{cleartextStream.remotePort}
+\subsubsection{tlsSocket.remotePort}
 
 The numeric representation of the remote port. For example,
 \texttt{443}.
 
-\subsubsection{cleartextStream.localAddress}
+\subsubsection{tlsSocket.localAddress}
 
 The string representation of the local IP address.
 
-\subsubsection{cleartextStream.localPort}
+\subsubsection{tlsSocket.localPort}
 
 The numeric representation of the local port.

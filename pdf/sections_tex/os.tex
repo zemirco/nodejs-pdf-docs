@@ -33,7 +33,8 @@ Returns the operating system platform.
 
 \subsection{os.arch()}
 
-Returns the operating system CPU architecture.
+Returns the operating system CPU architecture. Possible values are
+\texttt{"x64"}, \texttt{"arm"} and \texttt{"ia32"}.
 
 \subsection{os.release()}
 
@@ -139,24 +140,28 @@ Get a list of network interfaces:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\{ }\DataTypeTok{lo0}\NormalTok{:}
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff::'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.0.0.0'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'::1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\} ],}
-  \DataTypeTok{en1}\NormalTok{:}
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::226:8ff:fedc:1dd'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff::'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'10.0.1.6'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
-  \DataTypeTok{vmnet1}\NormalTok{:}
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'192.168.252.1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ],}
-  \DataTypeTok{vmnet8}\NormalTok{:}
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'192.168.207.1'}\NormalTok{, }\DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{, }\DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ] \}}
+\NormalTok{\{ }\DataTypeTok{lo}\NormalTok{:}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.0.0.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\CharTok{'00:00:00:00:00:00'}\NormalTok{,}
+       \DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'::1'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\CharTok{'00:00:00:00:00:00'}\NormalTok{,}
+       \DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\} ],}
+  \DataTypeTok{eth0}\NormalTok{:}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'192.168.1.108'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\CharTok{'01:02:03:0a:0b:0c'}\NormalTok{,}
+       \DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\},}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::a00:27ff:fe4e:66a1'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff::'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\CharTok{'01:02:03:0a:0b:0c'}\NormalTok{,}
+       \DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ] \}}
 \end{Highlighting}
 \end{Shaded}
 

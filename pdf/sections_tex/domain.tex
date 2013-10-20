@@ -427,21 +427,51 @@ can be replaced with a single error handler in a single place.
 \end{Highlighting}
 \end{Shaded}
 
+\subsubsection{domain.enter()}
+
+The \texttt{enter} method is plumbing used by the \texttt{run},
+\texttt{bind}, and \texttt{intercept} methods to set the active domain.
+It sets \texttt{domain.active} and \texttt{process.domain} to the
+domain, and implicitly pushes the domain onto the domain stack managed
+by the domain module (see \texttt{domain.exit()} for details on the
+domain stack). The call to \texttt{enter} delimits the beginning of a
+chain of asynchronous calls and I/O operations bound to a domain.
+
+Calling \texttt{enter} changes only the active domain, and does not
+alter the domain itself. \texttt{Enter} and \texttt{exit} can be called
+an arbitrary number of times on a single domain.
+
+If the domain on which \texttt{enter} is called has been disposed,
+\texttt{enter} will return without setting the domain.
+
+\subsubsection{domain.exit()}
+
+The \texttt{exit} method exits the current domain, popping it off the
+domain stack. Any time execution is going to switch to the context of a
+different chain of asynchronous calls, it's important to ensure that the
+current domain is exited. The call to \texttt{exit} delimits either the
+end of or an interruption to the chain of asynchronous calls and I/O
+operations bound to a domain.
+
+If there are multiple, nested domains bound to the current execution
+context, \texttt{exit} will exit any domains nested within this domain.
+
+Calling \texttt{exit} changes only the active domain, and does not alter
+the domain itself. \texttt{Enter} and \texttt{exit} can be called an
+arbitrary number of times on a single domain.
+
+If the domain on which \texttt{exit} is called has been disposed,
+\texttt{exit} will return without exiting the domain.
+
 \subsubsection{domain.dispose()}
 
-The dispose method destroys a domain, and makes a best effort attempt to
-clean up any and all IO that is associated with the domain. Streams are
-aborted, ended, closed, and/or destroyed. Timers are cleared. Explicitly
-bound callbacks are no longer called. Any error events that are raised
-as a result of this are ignored.
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\KeywordTok{Deprecated}\NormalTok{.  Please recover from failed IO actions}
+\NormalTok{explicitly via error event handlers set on the }\KeywordTok{domain}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
 
-The intention of calling \texttt{dispose} is generally to prevent
-cascading errors when a critical part of the Domain context is found to
-be in an error state.
-
-Once the domain is disposed the \texttt{dispose} event will emit.
-
-Note that IO might still be performed. However, to the highest degree
-possible, once a domain is disposed, further errors from the emitters in
-that set will be ignored. So, even if some remaining actions are still
-in flight, Node.js will not communicate further about them.
+Once \texttt{dispose} has been called, the domain will no longer be used
+by callbacks bound into the domain via \texttt{run}, \texttt{bind}, or
+\texttt{intercept}, and a \texttt{dispose} event is emitted.

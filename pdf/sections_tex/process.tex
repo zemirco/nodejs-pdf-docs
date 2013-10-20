@@ -4,6 +4,69 @@ The \texttt{process} object is a global object and can be accessed from
 anywhere. It is an instance of
 \href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}.
 
+\subsection{Exit Codes}
+
+Node will normally exit with a \texttt{0} status code when no more async
+operations are pending. The following status codes are used in other
+cases:
+
+\begin{itemize}
+\item
+  \texttt{1} \textbf{Uncaught Fatal Exception} - There was an uncaught
+  exception, and it was not handled by a domain or an
+  \texttt{uncaughtException} event handler.
+\item
+  \texttt{2} - Unused (reserved by Bash for builtin misuse)
+\item
+  \texttt{3} \textbf{Internal JavaScript Parse Error} - The JavaScript
+  source code internal in Node's bootstrapping process caused a parse
+  error. This is extremely rare, and generally can only happen during
+  development of Node itself.
+\item
+  \texttt{4} \textbf{Internal JavaScript Evaluation Failure} - The
+  JavaScript source code internal in Node's bootstrapping process failed
+  to return a function value when evaluated. This is extremely rare, and
+  generally can only happen during development of Node itself.
+\item
+  \texttt{5} \textbf{Fatal Error} - There was a fatal unrecoverable
+  error in V8. Typically a message will be printed to stderr with the
+  prefix \texttt{FATAL   ERROR}.
+\item
+  \texttt{6} \textbf{Non-function Internal Exception Handler} - There
+  was an uncaught exception, but the internal fatal exception handler
+  function was somehow set to a non-function, and could not be called.
+\item
+  \texttt{7} \textbf{Internal Exception Handler Run-Time Failure} -
+  There was an uncaught exception, and the internal fatal exception
+  handler function itself threw an error while attempting to handle it.
+  This can happen, for example, if a
+  \texttt{process.on('uncaughtException')} or
+  \texttt{domain.on('error')} handler throws an error.
+\item
+  \texttt{8} - Unused. In previous versions of Node, exit code 8
+  sometimes indicated an uncaught exception.
+\item
+  \texttt{9} - \textbf{Invalid Argument} - Either an unknown option was
+  specified, or an option requiring a value was provided without a
+  value.
+\item
+  \texttt{10} \textbf{Internal JavaScript Run-Time Failure} - The
+  JavaScript source code internal in Node's bootstrapping process threw
+  an error when the bootstrapping function was called. This is extremely
+  rare, and generally can only happen during development of Node itself.
+\item
+  \texttt{12} \textbf{Invalid Debug Argument} - The \texttt{-{}-debug}
+  and/or \texttt{-{}-debug-brk} options were set, but an invalid port
+  number was chosen.
+\item
+  \texttt{\textgreater{}128} \textbf{Signal Exits} - If Node receives a
+  fatal signal such as \texttt{SIGKILL} or \texttt{SIGHUP}, then its
+  exit code will be \texttt{128} plus the value of the signal code. This
+  is a standard Unix practice, since exit codes are defined to be 7-bit
+  integers, and signal exits set the high-order bit, and then contain
+  the value of the signal code.
+\end{itemize}
+
 \subsection{Event: `exit'}
 
 Emitted when the process is about to exit. This is a good hook to
@@ -68,7 +131,7 @@ You have been warned.
 \subsection{Signal Events}
 
 Emitted when the processes receives a signal. See sigaction(2) for a
-list of standard POSIX signal names such as SIGINT, SIGUSR1, etc.
+list of standard POSIX signal names such as SIGINT, SIGHUP, etc.
 
 Example of listening for \texttt{SIGINT}:
 
@@ -85,6 +148,10 @@ Example of listening for \texttt{SIGINT}:
 
 An easy way to send the \texttt{SIGINT} signal is with
 \texttt{Control-C} in most terminal programs.
+
+Note: SIGUSR1 is reserved by node.js to kickstart the debugger. It's
+possible to install a listener but that won't stop the debugger from
+starting.
 
 \subsection{process.stdout}
 
@@ -200,6 +267,39 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{process.execArgv}
+
+This is the set of node-specific command line options from the
+executable that started the process. These options do not show up in
+\texttt{process.argv}, and do not include the node executable, the name
+of the script, or any options following the script name. These options
+are useful in order to spawn child processes with the same execution
+environment as the parent.
+
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ node --harmony }\KeywordTok{script}\NormalTok{.}\FunctionTok{js} \NormalTok{--version}
+\end{Highlighting}
+\end{Shaded}
+
+results in process.execArgv:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{[}\CharTok{'--harmony'}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+and process.argv:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{[}\CharTok{'/usr/local/bin/node'}\NormalTok{, }\CharTok{'script.js'}\NormalTok{, }\CharTok{'--version'}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
 \subsection{process.abort()}
 
 This causes node to emit an abort. This will cause node to exit and
@@ -252,10 +352,19 @@ To exit with a `failure' code:
 
 The shell that executed node should see the exit code as 1.
 
+\subsection{process.exitCode}
+
+A number which will be the process exit code, when the process either
+exits gracefully, or is exited via \texttt{process.exit()} without
+specifying a code.
+
+Specifying a code to \texttt{process.exit(code)} will override any
+previous setting of \texttt{process.exitCode}.
+
 \subsection{process.getgid()}
 
 Note: this function is only available on POSIX platforms (i.e.~not
-Windows)
+Windows, Android)
 
 Gets the group identity of the process. (See getgid(2).) This is the
 numerical group id, not the group name.
@@ -271,7 +380,7 @@ numerical group id, not the group name.
 \subsection{process.setgid(id)}
 
 Note: this function is only available on POSIX platforms (i.e.~not
-Windows)
+Windows, Android)
 
 Sets the group identity of the process. (See setgid(2).) This accepts
 either a numerical ID or a groupname string. If a groupname is
@@ -295,7 +404,7 @@ specified, this method blocks while resolving it to a numerical ID.
 \subsection{process.getuid()}
 
 Note: this function is only available on POSIX platforms (i.e.~not
-Windows)
+Windows, Android)
 
 Gets the user identity of the process. (See getuid(2).) This is the
 numerical userid, not the username.
@@ -311,7 +420,7 @@ numerical userid, not the username.
 \subsection{process.setuid(id)}
 
 Note: this function is only available on POSIX platforms (i.e.~not
-Windows)
+Windows, Android)
 
 Sets the user identity of the process. (See setuid(2).) This accepts
 either a numerical ID or a username string. If a username is specified,
@@ -335,7 +444,7 @@ this method blocks while resolving it to a numerical ID.
 \subsection{process.getgroups()}
 
 Note: this function is only available on POSIX platforms (i.e.~not
-Windows)
+Windows, Android)
 
 Returns an array with the supplementary group IDs. POSIX leaves it
 unspecified if the effective group ID is included but node.js ensures it
@@ -344,7 +453,7 @@ always is.
 \subsection{process.setgroups(groups)}
 
 Note: this function is only available on POSIX platforms (i.e.~not
-Windows)
+Windows, Android)
 
 Sets the supplementary group IDs. This is a privileged operation,
 meaning you need to be root or have the CAP\_SETGID capability.
@@ -354,7 +463,7 @@ The list can contain group IDs, group names or both.
 \subsection{process.initgroups(user, extra\_group)}
 
 Note: this function is only available on POSIX platforms (i.e.~not
-Windows)
+Windows, Android)
 
 Reads /etc/group and initializes the group access list, using all groups
 of which the user is a member. This is a privileged operation, meaning
@@ -449,8 +558,8 @@ An example of the possible output looks like:
 
 Send a signal to a process. \texttt{pid} is the process id and
 \texttt{signal} is the string describing the signal to send. Signal
-names are strings like `SIGINT' or `SIGUSR1'. If omitted, the signal
-will be `SIGTERM'. See kill(2) for more information.
+names are strings like `SIGINT' or `SIGHUP'. If omitted, the signal will
+be `SIGTERM'. See kill(2) for more information.
 
 Note that just because the name of this function is
 \texttt{process.kill}, it is really just a signal sender, like the
@@ -473,6 +582,9 @@ Example of sending a signal to yourself:
 \KeywordTok{process}\NormalTok{.}\FunctionTok{kill}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{pid}\NormalTok{, }\CharTok{'SIGHUP'}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
+
+Note: SIGUSR1 is reserved by node.js. It can be used to kickstart the
+debugger.
 
 \subsection{process.pid}
 
@@ -548,16 +660,29 @@ This will generate:
 
 \subsection{process.nextTick(callback)}
 
-On the next loop around the event loop call this callback. This is
-\emph{not} a simple alias to \texttt{setTimeout(fn, 0)}, it's much more
-efficient. It typically runs before any other I/O events fire, but there
-are some exceptions. See \texttt{process.maxTickDepth} below.
+\begin{itemize}
+\item
+  \texttt{callback} \{Function\}
+\end{itemize}
+
+Once the current event loop turn runs to completion, call the callback
+function.
+
+This is \emph{not} a simple alias to \texttt{setTimeout(fn, 0)}, it's
+much more efficient. It runs before any additional I/O events (including
+timers) fire in subsequent ticks of the event loop.
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'start'}\NormalTok{);}
 \KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'nextTick callback'}\NormalTok{);}
 \NormalTok{\});}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'scheduled'}\NormalTok{);}
+\CommentTok{// Output:}
+\CommentTok{// start}
+\CommentTok{// scheduled}
+\CommentTok{// nextTick callback}
 \end{Highlighting}
 \end{Shaded}
 
@@ -628,36 +753,10 @@ This approach is much better:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{process.maxTickDepth}
-
-\begin{itemize}
-\item
-  \{Number\} Default = 1000
-\end{itemize}
-
-Callbacks passed to \texttt{process.nextTick} will \emph{usually} be
-called at the end of the current flow of execution, and are thus
-approximately as fast as calling a function synchronously. Left
-unchecked, this would starve the event loop, preventing any I/O from
-occurring.
-
-Consider this code:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function} \NormalTok{foo() \{}
-  \KeywordTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(foo);}
-\NormalTok{\});}
-\end{Highlighting}
-\end{Shaded}
-
-In order to avoid the situation where Node is blocked by an infinite
-loop of recursive series of nextTick calls, it defers to allow some I/O
-to be done every so often.
-
-The \texttt{process.maxTickDepth} value is the maximum depth of
-nextTick-calling nextTick-callbacks that will be evaluated before
-allowing other forms of I/O to occur.
+Note: the nextTick queue is completely drained on each pass of the event
+loop \textbf{before} additional I/O is processed. As a result,
+recursively setting nextTick callbacks will block any I/O from
+happening, just like a \texttt{while(true);} loop.
 
 \subsection{process.umask({[}mask{]})}
 

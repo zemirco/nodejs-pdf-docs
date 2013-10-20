@@ -2,7 +2,7 @@
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{5} \NormalTok{- Locked}
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
 \end{Highlighting}
 \end{Shaded}
 
@@ -72,7 +72,9 @@ value from its corresponding argument. Supported placeholders are:
 \item
   \texttt{\%d} - Number (both integer and float).
 \item
-  \texttt{\%j} - JSON.
+  \texttt{\%j} - JSON. Replaced with the string
+  \texttt{'{[}Circular{]}'} if the argument contains circular
+  references.
 \item
   \texttt{\%\%} - single percent sign (\texttt{'\%'}). This does not
   consume an argument.
@@ -142,8 +144,8 @@ aspects of the formatted string:
   customizable, see below.
 \item
   \texttt{customInspect} - if \texttt{false}, then custom
-  \texttt{inspect()} functions defined on the objects being inspected
-  won't be called. Defaults to \texttt{true}.
+  \texttt{inspect(depth, opts)} functions defined on the objects being
+  inspected won't be called. Defaults to \texttt{true}.
 \end{itemize}
 
 Example of inspecting all properties of the \texttt{util} object:
@@ -155,6 +157,11 @@ Example of inspecting all properties of the \texttt{util} object:
 \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(util, \{ }\DataTypeTok{showHidden}\NormalTok{: }\KeywordTok{true}\NormalTok{, }\DataTypeTok{depth}\NormalTok{: null \}));}
 \end{Highlighting}
 \end{Shaded}
+
+Values may supply their own custom \texttt{inspect(depth, opts)}
+functions, when called they receive the current depth in the recursive
+inspection, as well as the options object passed to
+\texttt{util.inspect()}.
 
 \subsubsection{Customizing \texttt{util.inspect} colors}
 

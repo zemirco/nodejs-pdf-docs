@@ -1,0 +1,96 @@
+\section{console}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\item
+  \{Object\}
+\end{itemize}
+
+For printing to stdout and stderr. Similar to the console object
+functions provided by most web browsers, here the output is sent to
+stdout or stderr.
+
+The console functions are synchronous when the destination is a terminal
+or a file (to avoid lost messages in case of premature exit) and
+asynchronous when it's a pipe (to avoid blocking for long periods of
+time).
+
+That is, in the following example, stdout is non-blocking while stderr
+is blocking:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{$ node }\KeywordTok{script}\NormalTok{.}\FunctionTok{js} \DecValTok{2}\NormalTok{> }\KeywordTok{error}\NormalTok{.}\FunctionTok{log} \NormalTok{\textbar{} tee }\KeywordTok{info}\NormalTok{.}\FunctionTok{log}
+\end{Highlighting}
+\end{Shaded}
+
+In daily use, the blocking/non-blocking dichotomy is not something you
+should worry about unless you log huge amounts of data.
+
+\subsection{console.log({[}data{]}, {[}\ldots{}{]})}
+
+Prints to stdout with newline. This function can take multiple arguments
+in a \texttt{printf()}-like way. Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'count: %d'}\NormalTok{, count);}
+\end{Highlighting}
+\end{Shaded}
+
+If formatting elements are not found in the first string then
+\texttt{util.inspect} is used on each argument. See
+\href{util.html\#util\_util\_format\_format}{util.format()} for more
+information.
+
+\subsection{console.info({[}data{]}, {[}\ldots{}{]})}
+
+Same as \texttt{console.log}.
+
+\subsection{console.error({[}data{]}, {[}\ldots{}{]})}
+
+Same as \texttt{console.log} but prints to stderr.
+
+\subsection{console.warn({[}data{]}, {[}\ldots{}{]})}
+
+Same as \texttt{console.error}.
+
+\subsection{console.dir(obj)}
+
+Uses \texttt{util.inspect} on \texttt{obj} and prints resulting string
+to stdout. This function bypasses any custom \texttt{inspect()} function
+on \texttt{obj}.
+
+\subsection{console.time(label)}
+
+Mark a time.
+
+\subsection{console.timeEnd(label)}
+
+Finish timer, record output. Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{console}\NormalTok{.}\FunctionTok{time}\NormalTok{(}\CharTok{'100-elements'}\NormalTok{);}
+\KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{100}\NormalTok{; i++) \{}
+  \NormalTok{;}
+\NormalTok{\}}
+\KeywordTok{console}\NormalTok{.}\FunctionTok{timeEnd}\NormalTok{(}\CharTok{'100-elements'}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{console.trace(label)}
+
+Print a stack trace to stderr of the current position.
+
+\subsection{console.assert(expression, {[}message{]})}
+
+Same as
+\href{assert.html\#assert\_assert\_value\_message\_assert\_ok\_value\_message}{assert.ok()}
+where if the \texttt{expression} evaluates as \texttt{false} throw an
+AssertionError with \texttt{message}.

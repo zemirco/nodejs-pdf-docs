@@ -71,7 +71,16 @@ should be created via \texttt{dgram.createSocket(type, {[}callback{]})}.
 
 Emitted when a new datagram is available on a socket. \texttt{msg} is a
 \texttt{Buffer} and \texttt{rinfo} is an object with the sender's
-address information and the number of bytes in the datagram.
+address information:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(msg, rinfo) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Received %d bytes from %s:%d\textbackslash{}n'}\NormalTok{,}
+              \KeywordTok{msg}\NormalTok{.}\FunctionTok{length}\NormalTok{, }\KeywordTok{rinfo}\NormalTok{.}\FunctionTok{address}\NormalTok{, }\KeywordTok{rinfo}\NormalTok{.}\FunctionTok{port}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
 
 \subsubsection{Event: `listening'}
 
@@ -132,7 +141,7 @@ Example of sending a UDP packet to a random port on \texttt{localhost};
 \KeywordTok{var} \NormalTok{dgram = require(}\CharTok{'dgram'}\NormalTok{);}
 \KeywordTok{var} \NormalTok{message = }\KeywordTok{new} \NormalTok{Buffer(}\StringTok{"Some bytes"}\NormalTok{);}
 \KeywordTok{var} \NormalTok{client = }\KeywordTok{dgram}\NormalTok{.}\FunctionTok{createSocket}\NormalTok{(}\StringTok{"udp4"}\NormalTok{);}
-\KeywordTok{client}\NormalTok{.}\FunctionTok{send}\NormalTok{(message, }\DecValTok{0}\NormalTok{, }\KeywordTok{message}\NormalTok{.}\FunctionTok{length}\NormalTok{, }\DecValTok{41234}\NormalTok{, }\StringTok{"localhost"}\NormalTok{, }\KeywordTok{function}\NormalTok{(err, bytes) \{}
+\KeywordTok{client}\NormalTok{.}\FunctionTok{send}\NormalTok{(message, }\DecValTok{0}\NormalTok{, }\KeywordTok{message}\NormalTok{.}\FunctionTok{length}\NormalTok{, }\DecValTok{41234}\NormalTok{, }\StringTok{"localhost"}\NormalTok{, }\KeywordTok{function}\NormalTok{(err) \{}
   \KeywordTok{client}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
 \NormalTok{\});}
 \end{Highlighting}
@@ -180,15 +189,23 @@ not reach its intended recipient).
 \item
   \texttt{address} String, Optional
 \item
-  \texttt{callback} Function, Optional
+  \texttt{callback} Function with no parameters, Optional. Callback when
+  binding is done.
 \end{itemize}
 
 For UDP sockets, listen for datagrams on a named \texttt{port} and
 optional \texttt{address}. If \texttt{address} is not specified, the OS
-will try to listen on all addresses.
+will try to listen on all addresses. After binding is done, a
+``listening'' event is emitted and the \texttt{callback}(if specified)
+is called. Specifying both a ``listening'' event listener and
+\texttt{callback} is not harmful but not very useful.
 
-The \texttt{callback} argument, if provided, is added as a one-shot
-\texttt{'listening'} event listener.
+A bound datagram socket keeps the node process running to receive
+datagrams.
+
+If binding fails, an ``error'' event is generated. In rare case
+(e.g.~binding a closed socket), an \texttt{Error} may be thrown by this
+method.
 
 Example of a UDP server listening on port 41234:
 
@@ -197,6 +214,11 @@ Example of a UDP server listening on port 41234:
 \KeywordTok{var} \NormalTok{dgram = require(}\StringTok{"dgram"}\NormalTok{);}
 
 \KeywordTok{var} \NormalTok{server = }\KeywordTok{dgram}\NormalTok{.}\FunctionTok{createSocket}\NormalTok{(}\StringTok{"udp4"}\NormalTok{);}
+
+\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"error"}\NormalTok{, }\KeywordTok{function} \NormalTok{(err) \{}
+  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"server error:}\CharTok{\textbackslash{}n}\StringTok{"} \NormalTok{+ }\KeywordTok{err}\NormalTok{.}\FunctionTok{stack}\NormalTok{);}
+  \KeywordTok{server}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
+\NormalTok{\});}
 
 \KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"message"}\NormalTok{, }\KeywordTok{function} \NormalTok{(msg, rinfo) \{}
   \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"server got: "} \NormalTok{+ msg + }\StringTok{" from "} \NormalTok{+}

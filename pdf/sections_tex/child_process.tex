@@ -42,7 +42,7 @@ instance.
 
 Emitted when:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   The process could not be spawned, or
 \item
@@ -52,9 +52,9 @@ Emitted when:
 \end{enumerate}
 
 See also
-\hyperref[child_process_child_kill_signal]{\texttt{ChildProcess\#kill()}}
+\hyperref[child\_process\_child\_kill\_signal]{\texttt{ChildProcess\#kill()}}
 and
-\hyperref[child_process_child_send_message_sendhandle]{\texttt{ChildProcess\#send()}}.
+\hyperref[child\_process\_child\_send\_message\_sendhandle]{\texttt{ChildProcess\#send()}}.
 
 \subsubsection{Event: `exit'}
 
@@ -502,7 +502,7 @@ The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
 following:
 
-\begin{enumerate}
+\begin{enumerate}[1.]
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as
@@ -612,10 +612,6 @@ This API was not portable to all platforms and therefore removed. With
 \texttt{{[}stdin, stdout, stderr{]}} to existing streams; \texttt{-1}
 meant that a new stream should be created. Use at your own risk.
 
-There are several internal options. In particular \texttt{stdinStream},
-\texttt{stdoutStream}, \texttt{stderrStream}. They are for INTERNAL USE
-ONLY. As with all undocumented APIs in Node, they should not be used.
-
 See also: \texttt{child\_process.exec()} and
 \texttt{child\_process.fork()}
 
@@ -633,6 +629,12 @@ See also: \texttt{child\_process.exec()} and
   \texttt{env} \{Object\} Environment key-value pairs
 \item
   \texttt{encoding} \{String\} (Default: `utf8')
+\item
+  \texttt{shell} \{String\} Shell to execute the command with (Default:
+  `/bin/sh' on UNIX, `cmd.exe' on Windows, The shell should understand
+  the \texttt{-c} switch on UNIX or \texttt{/s /c} on Windows. On
+  Windows, command line parsing should be compatible with
+  \texttt{cmd.exe}.)
 \item
   \texttt{timeout} \{Number\} (Default: 0)
 \item
