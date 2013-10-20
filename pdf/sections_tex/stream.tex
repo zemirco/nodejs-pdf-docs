@@ -16,10 +16,10 @@ readable, writable, or both. All streams are instances of
 
 You can load the Stream base classes by doing
 \texttt{require('stream')}. There are base classes provided for
-\hyperref[stream\_class\_stream\_readable]{Readable} streams,
-\hyperref[stream\_class\_stream\_writable]{Writable} streams,
-\hyperref[stream\_class\_stream\_duplex]{Duplex} streams, and
-\hyperref[stream\_class\_stream\_transform]{Transform} streams.
+\hyperref[stream_class_stream_readable]{Readable} streams,
+\hyperref[stream_class_stream_writable]{Writable} streams,
+\hyperref[stream_class_stream_duplex]{Duplex} streams, and
+\hyperref[stream_class_stream_transform]{Transform} streams.
 
 This document is split up into 3 sections. The first explains the parts
 of the API that you need to be aware of to use streams in your programs.
@@ -36,9 +36,9 @@ not modify unless you definitely know what you are doing.
 \subsection{API for Stream Consumers}
 
 Streams can be either
-\hyperref[stream\_class\_stream\_readable]{Readable},
-\hyperref[stream\_class\_stream\_writable]{Writable}, or both
-(\hyperref[stream\_class\_stream\_duplex]{Duplex}).
+\hyperref[stream_class_stream_readable]{Readable},
+\hyperref[stream_class_stream_writable]{Writable}, or both
+(\hyperref[stream_class_stream_duplex]{Duplex}).
 
 All streams are EventEmitters, but they also have other custom methods
 and properties depending on whether they are Readable, Writable, or
@@ -46,15 +46,15 @@ Duplex.
 
 If a stream is both Readable and Writable, then it implements all of the
 methods and events below. So, a
-\hyperref[stream\_class\_stream\_duplex]{Duplex} or
-\hyperref[stream\_class\_stream\_transform]{Transform} stream is fully
+\hyperref[stream_class_stream_duplex]{Duplex} or
+\hyperref[stream_class_stream_transform]{Transform} stream is fully
 described by this API, though their implementation may be somewhat
 different.
 
 It is not necessary to implement Stream interfaces in order to consume
 streams in your programs. If you \textbf{are} implementing streaming
 interfaces in your own program, please also refer to
-\hyperref[stream\_api\_for\_stream\_implementors]{API for Stream
+\hyperref[stream_api_for_stream_implementors]{API for Stream
 Implementors} below.
 
 Almost all Node programs, no matter how simple, use Streams in some way.
@@ -121,7 +121,7 @@ paused mode, you must explicitly call \texttt{stream.read()} to get
 chunks of data out. Streams start out in paused mode.
 
 \textbf{Note}: If no data event handlers are attached, and there are no
-\hyperref[stream\_readable\_pipe\_destination\_options]{\texttt{pipe()}}
+\hyperref[stream_readable_pipe_destination_options]{\texttt{pipe()}}
 destinations, and the stream is switched into flowing mode, then data
 will be lost.
 
@@ -129,16 +129,16 @@ You can switch to flowing mode by doing any of the following:
 
 \begin{itemize}
 \item
-  Adding a \hyperref[stream\_event\_data]{\texttt{'data'} event} handler
+  Adding a \hyperref[stream_event_data]{\texttt{'data'} event} handler
   to listen for data.
 \item
-  Calling the \hyperref[stream\_readable\_resume]{\texttt{resume()}}
+  Calling the \hyperref[stream_readable_resume]{\texttt{resume()}}
   method to explicitly open the flow.
 \item
   Calling the
-  \hyperref[stream\_readable\_pipe\_destination\_options]{\texttt{pipe()}}
+  \hyperref[stream_readable_pipe_destination_options]{\texttt{pipe()}}
   method to send the data to a
-  \hyperref[stream\_class\_stream\_writable]{Writable}.
+  \hyperref[stream_class_stream_writable]{Writable}.
 \end{itemize}
 
 You can switch back to paused mode by doing either of the following:
@@ -146,12 +146,12 @@ You can switch back to paused mode by doing either of the following:
 \begin{itemize}
 \item
   If there are no pipe destinations, by calling the
-  \hyperref[stream\_readable\_pause]{\texttt{pause()}} method.
+  \hyperref[stream_readable_pause]{\texttt{pause()}} method.
 \item
   If there are pipe destinations, by removing any
-  \hyperref[stream\_event\_data]{\texttt{'data'} event} handlers, and
+  \hyperref[stream_event_data]{\texttt{'data'} event} handlers, and
   removing all pipe destinations by calling the
-  \hyperref[stream\_readable\_unpipe\_destination]{\texttt{unpipe()}}
+  \hyperref[stream_readable_unpipe_destination]{\texttt{unpipe()}}
   method.
 \end{itemize}
 
@@ -295,7 +295,7 @@ method is called automatically until the internal buffer is drained.
 \end{Shaded}
 
 If this method returns a data chunk, then it will also trigger the
-emission of a \hyperref[stream\_event\_data]{\texttt{'data'} event}.
+emission of a \hyperref[stream_event_data]{\texttt{'data'} event}.
 
 \paragraph{readable.setEncoding(encoding)}
 
@@ -342,7 +342,7 @@ This method will cause the readable stream to resume emitting
 This method will switch the stream into flowing mode. If you do
 \emph{not} want to consume the data from a stream, but you \emph{do}
 want to get to its \texttt{end} event, you can call
-\hyperref[stream\_readable\_resume]{\texttt{readable.resume()}} to open
+\hyperref[stream_readable_resume]{\texttt{readable.resume()}} to open
 the flow of data.
 
 \begin{Shaded}
@@ -386,7 +386,7 @@ becomes available will remain in the internal buffer.
 \begin{itemize}
 \item
   \texttt{destination}
-  \{\hyperref[stream\_class\_stream\_writable]{Writable} Stream\} The
+  \{\hyperref[stream_class_stream_writable]{Writable} Stream\} The
   destination for writing data
 \item
   \texttt{options} \{Object\} Pipe options
@@ -431,7 +431,7 @@ For example, emulating the Unix \texttt{cat} command:
 \end{Shaded}
 
 By default
-\hyperref[stream\_writable\_end\_chunk\_encoding\_callback]{\texttt{end()}}
+\hyperref[stream_writable_end_chunk_encoding_callback]{\texttt{end()}}
 is called on the destination when the source stream emits \texttt{end},
 so that \texttt{destination} is no longer writable. Pass
 \texttt{\{ end: false \}} as \texttt{options} to keep the destination
@@ -457,7 +457,7 @@ closed until the process exits, regardless of the specified options.
 \begin{itemize}
 \item
   \texttt{destination}
-  \{\hyperref[stream\_class\_stream\_writable]{Writable} Stream\}
+  \{\hyperref[stream_class_stream_writable]{Writable} Stream\}
   Optional specific stream to unpipe
 \end{itemize}
 
@@ -500,7 +500,7 @@ passed on to some other party.
 
 If you find that you must often call \texttt{stream.unshift(chunk)} in
 your programs, consider implementing a
-\hyperref[stream\_class\_stream\_transform]{Transform} stream instead.
+\hyperref[stream_class_stream_transform]{Transform} stream instead.
 (See API for Stream Implementors, below.)
 
 \begin{Shaded}
@@ -552,9 +552,9 @@ entire Streams API as it is today. (See ``Compatibility'' below for more
 information.)
 
 If you are using an older Node library that emits \texttt{'data'} events
-and has a \hyperref[stream\_readable\_pause]{\texttt{pause()}} method
+and has a \hyperref[stream_readable_pause]{\texttt{pause()}} method
 that is advisory only, then you can use the \texttt{wrap()} method to
-create a \hyperref[stream\_class\_stream\_readable]{Readable} stream
+create a \hyperref[stream_class_stream_readable]{Readable} stream
 that uses the old stream as its data source.
 
 You will very rarely ever need to call this function, but it exists as a
@@ -697,7 +697,7 @@ supplied, the callback is attached as a listener on the \texttt{finish}
 event.
 
 Calling {[}\texttt{write()}{]}{[}{]} after calling
-\hyperref[stream\_writable\_end\_chunk\_encoding\_callback]{\texttt{end()}}
+\hyperref[stream_writable_end_chunk_encoding_callback]{\texttt{end()}}
 will raise an error.
 
 \begin{Shaded}
@@ -714,7 +714,7 @@ will raise an error.
 \paragraph{Event: `finish'}
 
 When the
-\hyperref[stream\_writable\_end\_chunk\_encoding\_callback]{\texttt{end()}}
+\hyperref[stream_writable_end_chunk_encoding_callback]{\texttt{end()}}
 method has been called, and all data has been flushed to the underlying
 system, this event is emitted.
 
@@ -735,7 +735,7 @@ system, this event is emitted.
 
 \begin{itemize}
 \item
-  \texttt{src} \{\hyperref[stream\_class\_stream\_readable]{Readable}
+  \texttt{src} \{\hyperref[stream_class_stream_readable]{Readable}
   Stream\} source stream that is piping to this writable
 \end{itemize}
 
@@ -758,14 +758,14 @@ readable stream, adding this writable to its set of destinations.
 
 \begin{itemize}
 \item
-  \texttt{src} \{\hyperref[stream\_class\_stream\_readable]{Readable}
+  \texttt{src} \{\hyperref[stream_class_stream_readable]{Readable}
   Stream\} The source stream that
-  \hyperref[stream\_readable\_unpipe\_destination]{unpiped} this
+  \hyperref[stream_readable_unpipe_destination]{unpiped} this
   writable
 \end{itemize}
 
 This is emitted whenever the
-\hyperref[stream\_readable\_unpipe\_destination]{\texttt{unpipe()}}
+\hyperref[stream_readable_unpipe_destination]{\texttt{unpipe()}}
 method is called on a readable stream, removing this writable from its
 set of destinations.
 
@@ -785,8 +785,8 @@ set of destinations.
 \subsubsection{Class: stream.Duplex}
 
 Duplex streams are streams that implement both the
-\hyperref[stream\_class\_stream\_readable]{Readable} and
-\hyperref[stream\_class\_stream\_writable]{Writable} interfaces. See
+\hyperref[stream_class_stream_readable]{Readable} and
+\hyperref[stream_class_stream_writable]{Writable} interfaces. See
 above for usage.
 
 Examples of Duplex streams include:
@@ -802,10 +802,10 @@ Examples of Duplex streams include:
 
 \subsubsection{Class: stream.Transform}
 
-Transform streams are \hyperref[stream\_class\_stream\_duplex]{Duplex}
+Transform streams are \hyperref[stream_class_stream_duplex]{Duplex}
 streams where the output is in some way computed from the input. They
-implement both the \hyperref[stream\_class\_stream\_readable]{Readable}
-and \hyperref[stream\_class\_stream\_writable]{Writable} interfaces. See
+implement both the \hyperref[stream_class_stream_readable]{Readable}
+and \hyperref[stream_class_stream_writable]{Writable} interfaces. See
 above for usage.
 
 Examples of Transform streams include:
@@ -844,30 +844,30 @@ Method(s) to implement
 
 Reading only
 
-\hyperref[stream\_class\_stream\_readable\_1]{Readable}
+\hyperref[stream_class_stream_readable_1]{Readable}
 
 {[}\_read{]}{[}{]}
 
 Writing only
 
-\hyperref[stream\_class\_stream\_writable\_1]{Writable}
+\hyperref[stream_class_stream_writable_1]{Writable}
 
 {[}\_write{]}{[}{]}
 
 Reading and writing
 
-\hyperref[stream\_class\_stream\_duplex\_1]{Duplex}
+\hyperref[stream_class_stream_duplex_1]{Duplex}
 
 {[}\emph{read{]}{[}{]}, {[}}write{]}{[}{]}
 
 Operate on written data, then read the result
 
-\hyperref[stream\_class\_stream\_transform\_1]{Transform}
+\hyperref[stream_class_stream_transform_1]{Transform}
 
 \emph{transform, }flush
 
 In your implementation code, it is very important to never call the
-methods described in \hyperref[stream\_api\_for\_stream\_consumers]{API
+methods described in \hyperref[stream_api_for_stream_consumers]{API
 for Stream Consumers} above. Otherwise, you can potentially cause
 adverse side effects in programs that consume your streaming interfaces.
 
@@ -875,11 +875,11 @@ adverse side effects in programs that consume your streaming interfaces.
 
 \texttt{stream.Readable} is an abstract class designed to be extended
 with an underlying implementation of the
-\hyperref[stream\_readable\_read\_size\_1]{\texttt{\_read(size)}}
+\hyperref[stream_readable_read_size_1]{\texttt{\_read(size)}}
 method.
 
 Please see above under
-\hyperref[stream\_api\_for\_stream\_consumers]{API for Stream Consumers}
+\hyperref[stream_api_for_stream_consumers]{API for Stream Consumers}
 for how to consume streams in your programs. What follows is an
 explanation of how to implement Readable streams in your programs.
 
@@ -920,7 +920,7 @@ but implemented as a custom stream. Also, note that this implementation
 does not convert the incoming data to a string.
 
 However, this would be better implemented as a
-\hyperref[stream\_class\_stream\_transform]{Transform} stream. See below
+\hyperref[stream_class_stream_transform]{Transform} stream. See below
 for a better implementation.
 
 \begin{Shaded}
@@ -1079,7 +1079,7 @@ fetch. Implementations where that is not relevant, such as TCP or TLS,
 may ignore this argument, and simply provide data whenever it becomes
 available. There is no need, for example to ``wait'' until \texttt{size}
 bytes are available before calling
-\hyperref[stream\_readable\_push\_chunk\_encoding]{\texttt{stream.push(chunk)}}.
+\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push(chunk)}}.
 
 \paragraph{readable.push(chunk, {[}encoding{]})}
 
@@ -1155,7 +1155,7 @@ with an underlying implementation of the
 {[}\texttt{\_write(chunk, encoding, callback)}{]}{[}{]} method.
 
 Please see above under
-\hyperref[stream\_api\_for\_stream\_consumers]{API for Stream Consumers}
+\hyperref[stream_api_for_stream_consumers]{API for Stream Consumers}
 for how to consume writable streams in your programs. What follows is an
 explanation of how to implement Writable streams in your programs.
 
@@ -1283,7 +1283,7 @@ provided when the input is ended. A zlib stream will produce output that
 is either much smaller or much larger than its input.
 
 Rather than implement the
-\hyperref[stream\_readable\_read\_size\_1]{\texttt{\_read()}} and
+\hyperref[stream_readable_read_size_1]{\texttt{\_read()}} and
 {[}\texttt{\_write()}{]}{[}{]} methods, Transform classes must implement
 the \texttt{\_transform()} method, and may optionally also implement the
 \texttt{\_flush()} method. (See below.)
@@ -1374,7 +1374,7 @@ your own extension classes.
 
 The example above of a simple protocol parser can be implemented simply
 by using the higher level
-\hyperref[stream\_class\_stream\_transform]{Transform} stream class,
+\hyperref[stream_class_stream_transform]{Transform} stream class,
 similar to the \texttt{parseHeader} and \texttt{SimpleProtocol v1}
 examples above.
 
@@ -1455,7 +1455,7 @@ approach.
 \subsubsection{Class: stream.PassThrough}
 
 This is a trivial implementation of a
-\hyperref[stream\_class\_stream\_transform]{Transform} stream that
+\hyperref[stream_class_stream_transform]{Transform} stream that
 simply passes the input bytes across to the output. Its purpose is
 mainly for examples and testing, but there are occasionally use cases
 where it can come in handy as a building block for novel sorts of
@@ -1473,7 +1473,7 @@ The amount of data that will potentially be buffered depends on the
 \texttt{highWaterMark} option which is passed into the constructor.
 
 Buffering in Readable streams happens when the implementation calls
-\hyperref[stream\_readable\_push\_chunk\_encoding]{\texttt{stream.push(chunk)}}.
+\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push(chunk)}}.
 If the consumer of the Stream does not call \texttt{stream.read()}, then
 the data will sit in the internal queue until it is consumed.
 
@@ -1503,9 +1503,9 @@ Readable stream class internals.
 \subsubsection{\texttt{stream.push('')}}
 
 Pushing a zero-byte string or Buffer (when not in
-\hyperref[stream\_object\_mode]{Object mode}) has an interesting side
+\hyperref[stream_object_mode]{Object mode}) has an interesting side
 effect. Because it \emph{is} a call to
-\hyperref[stream\_readable\_push\_chunk\_encoding]{\texttt{stream.push()}},
+\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push()}},
 it will end the \texttt{reading} process. However, it does \emph{not}
 add any data to the readable buffer, so there's nothing for a user to
 consume.
@@ -1533,7 +1533,7 @@ simpler, but also less powerful and less useful.
   to do some I/O to decide how to handle data, then you had to store the
   chunks in some kind of buffer so that they would not be lost.
 \item
-  The \hyperref[stream\_readable\_pause]{\texttt{pause()}} method was
+  The \hyperref[stream_readable_pause]{\texttt{pause()}} method was
   advisory, rather than guaranteed. This meant that you still had to be
   prepared to receive \texttt{'data'} events even when the stream was in
   a paused state.
@@ -1543,7 +1543,7 @@ In Node v0.10, the Readable class described below was added. For
 backwards compatibility with older Node programs, Readable streams
 switch into ``flowing mode'' when a \texttt{'data'} event handler is
 added, or when the
-\hyperref[stream\_readable\_resume]{\texttt{resume()}} method is called.
+\hyperref[stream_readable_resume]{\texttt{resume()}} method is called.
 The effect is that, even if you are not using the new \texttt{read()}
 method and \texttt{'readable'} event, you no longer have to worry about
 losing \texttt{'data'} chunks.
@@ -1553,10 +1553,10 @@ introduces an edge case in the following conditions:
 
 \begin{itemize}
 \item
-  No \hyperref[stream\_event\_data]{\texttt{'data'} event} handler is
+  No \hyperref[stream_event_data]{\texttt{'data'} event} handler is
   added.
 \item
-  The \hyperref[stream\_readable\_resume]{\texttt{resume()}} method is
+  The \hyperref[stream_readable_resume]{\texttt{resume()}} method is
   never called.
 \item
   The stream is not piped to any writable destination.
@@ -1624,7 +1624,7 @@ The special value \texttt{null} still retains its special value for
 object mode streams. That is, for object mode readable streams,
 \texttt{null} as a return value from \texttt{stream.read()} indicates
 that there is no more data, and
-\hyperref[stream\_readable\_push\_chunk\_encoding]{\texttt{stream.push(null)}}
+\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push(null)}}
 will signal the end of stream data (\texttt{EOF}).
 
 No streams in Node core are object mode streams. This pattern is only
@@ -1636,11 +1636,11 @@ mid-stream is not safe.
 
 \subsubsection{State Objects}
 
-\hyperref[stream\_class\_stream\_readable]{Readable} streams have a
+\hyperref[stream_class_stream_readable]{Readable} streams have a
 member object called \texttt{\_readableState}.
-\hyperref[stream\_class\_stream\_writable]{Writable} streams have a
+\hyperref[stream_class_stream_writable]{Writable} streams have a
 member object called \texttt{\_writableState}.
-\hyperref[stream\_class\_stream\_duplex]{Duplex} streams have both.
+\hyperref[stream_class_stream_duplex]{Duplex} streams have both.
 
 \textbf{These objects should generally not be modified in child
 classes.} However, if you have a Duplex or Transform stream that should
