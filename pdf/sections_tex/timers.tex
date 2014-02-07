@@ -1,15 +1,16 @@
-\section{Timers}
+\section{Timers}\label{timers}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{5} \NormalTok{- Locked}
+\NormalTok{Stability: }\DecValTok{5} \NormalTok{- Locked}
 \end{Highlighting}
 \end{Shaded}
 
 All of the timer functions are globals. You do not need to
 \texttt{require()} this module in order to use them.
 
-\subsection{setTimeout(callback, delay, {[}arg{]}, {[}\ldots{}{]})}
+\subsection{setTimeout(callback, delay, {[}arg{]},
+{[}\ldots{}{]})}\label{settimeoutcallback-delay-arg}
 
 To schedule execution of a one-time \texttt{callback} after
 \texttt{delay} milliseconds. Returns a \texttt{timeoutId} for possible
@@ -22,22 +23,23 @@ about the exact timing of when the callback will fire, nor of the
 ordering things will fire in. The callback will be called as close as
 possible to the time specified.
 
-\subsection{clearTimeout(timeoutId)}
+\subsection{clearTimeout(timeoutId)}\label{cleartimeouttimeoutid}
 
 Prevents a timeout from triggering.
 
-\subsection{setInterval(callback, delay, {[}arg{]}, {[}\ldots{}{]})}
+\subsection{setInterval(callback, delay, {[}arg{]},
+{[}\ldots{}{]})}\label{setintervalcallback-delay-arg}
 
 To schedule the repeated execution of \texttt{callback} every
 \texttt{delay} milliseconds. Returns a \texttt{intervalId} for possible
 use with \texttt{clearInterval()}. Optionally you can also pass
 arguments to the callback.
 
-\subsection{clearInterval(intervalId)}
+\subsection{clearInterval(intervalId)}\label{clearintervalintervalid}
 
 Stops a interval from triggering.
 
-\subsection{unref()}
+\subsection{unref()}\label{unref}
 
 The opaque value returned by \texttt{setTimeout} and
 \texttt{setInterval} also has the method \texttt{timer.unref()} which
@@ -50,14 +52,15 @@ In the case of \texttt{setTimeout} when you \texttt{unref} you create a
 separate timer that will wakeup the event loop, creating too many of
 these may adversely effect event loop performance -- use wisely.
 
-\subsection{ref()}
+\subsection{ref()}\label{ref}
 
 If you had previously \texttt{unref()}d a timer you can call
 \texttt{ref()} to explicitly request the timer hold the program open. If
 the timer is already \texttt{ref}d calling \texttt{ref} again will have
 no effect.
 
-\subsection{setImmediate(callback, {[}arg{]}, {[}\ldots{}{]})}
+\subsection{setImmediate(callback, {[}arg{]},
+{[}\ldots{}{]})}\label{setimmediatecallback-arg}
 
 To schedule the ``immediate'' execution of \texttt{callback} after I/O
 events callbacks and before \texttt{setTimeout} and \texttt{setInterval}
@@ -70,6 +73,6 @@ created. The entire callback queue is processed every event loop
 iteration. If you queue an immediate from a inside an executing callback
 that immediate won't fire until the next event loop iteration.
 
-\subsection{clearImmediate(immediateId)}
+\subsection{clearImmediate(immediateId)}\label{clearimmediateimmediateid}
 
 Stops an immediate from triggering.

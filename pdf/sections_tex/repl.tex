@@ -1,8 +1,8 @@
-\section{REPL}
+\section{REPL}\label{repl}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\NormalTok{Stability: }\DecValTok{3} \NormalTok{- Stable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -16,12 +16,12 @@ you will be dropped into the REPL. It has simplistic emacs line-editing.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{mjr}\NormalTok{:~$ node}
-\NormalTok{Type }\CharTok{'.help'} \KeywordTok{for} \KeywordTok{options}\NormalTok{.}
+\NormalTok{mjr:~$ node}
+\NormalTok{Type }\StringTok{'.help'} \KeywordTok{for} \OtherTok{options}\NormalTok{.}
 \NormalTok{> a = [ }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{];}
 \NormalTok{[ }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3} \NormalTok{]}
-\NormalTok{> }\KeywordTok{a}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function} \NormalTok{(v) \{}
-\NormalTok{...   }\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(v);}
+\NormalTok{> }\OtherTok{a}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function} \NormalTok{(v) \{}
+\NormalTok{...   }\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(v);}
 \NormalTok{...   \});}
 \DecValTok{1}
 \DecValTok{2}
@@ -42,7 +42,7 @@ For example, you could add this to your bashrc file:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{repl.start(options)}
+\subsection{repl.start(options)}\label{repl.startoptions}
 
 Returns and starts a \texttt{REPLServer} instance. Accepts an
 ``options'' Object that takes the following values:
@@ -90,8 +90,8 @@ signature:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{function} \NormalTok{eval(cmd, context, filename, callback) \{}
-  \NormalTok{callback(null, result);}
+\KeywordTok{function} \FunctionTok{eval}\NormalTok{(cmd, context, filename, callback) \{}
+  \FunctionTok{callback}\NormalTok{(}\KeywordTok{null}\NormalTok{, result);}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -104,36 +104,36 @@ socket:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{net = require(}\StringTok{"net"}\NormalTok{),}
-    \NormalTok{repl = require(}\StringTok{"repl"}\NormalTok{);}
+\KeywordTok{var} \NormalTok{net = }\FunctionTok{require}\NormalTok{(}\StringTok{"net"}\NormalTok{),}
+    \NormalTok{repl = }\FunctionTok{require}\NormalTok{(}\StringTok{"repl"}\NormalTok{);}
 
 \NormalTok{connections = }\DecValTok{0}\NormalTok{;}
 
-\KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
+\OtherTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
   \DataTypeTok{prompt}\NormalTok{: }\StringTok{"node via stdin> "}\NormalTok{,}
-  \DataTypeTok{input}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
-  \DataTypeTok{output}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}
+  \DataTypeTok{input}\NormalTok{: }\OtherTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
+  \DataTypeTok{output}\NormalTok{: }\OtherTok{process}\NormalTok{.}\FunctionTok{stdout}
 \NormalTok{\});}
 
-\KeywordTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(socket) \{}
+\OtherTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(socket) \{}
   \NormalTok{connections += }\DecValTok{1}\NormalTok{;}
-  \KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
+  \OtherTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
     \DataTypeTok{prompt}\NormalTok{: }\StringTok{"node via Unix socket> "}\NormalTok{,}
     \DataTypeTok{input}\NormalTok{: socket,}
     \DataTypeTok{output}\NormalTok{: socket}
-  \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+  \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\StringTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
   \NormalTok{\})}
 \NormalTok{\}).}\FunctionTok{listen}\NormalTok{(}\StringTok{"/tmp/node-repl-sock"}\NormalTok{);}
 
-\KeywordTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(socket) \{}
+\OtherTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(socket) \{}
   \NormalTok{connections += }\DecValTok{1}\NormalTok{;}
-  \KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
+  \OtherTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{}
     \DataTypeTok{prompt}\NormalTok{: }\StringTok{"node via TCP socket> "}\NormalTok{,}
     \DataTypeTok{input}\NormalTok{: socket,}
     \DataTypeTok{output}\NormalTok{: socket}
-  \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+  \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\StringTok{'exit'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
   \NormalTok{\});}
 \NormalTok{\}).}\FunctionTok{listen}\NormalTok{(}\DecValTok{5001}\NormalTok{);}
 \end{Highlighting}
@@ -154,7 +154,7 @@ https://gist.github.com/2209310
 For an example of running a REPL instance over \texttt{curl(1)}, see:
 https://gist.github.com/2053342
 
-\subsubsection{Event: `exit'}
+\subsubsection{Event: `exit'}\label{event-exit}
 
 \texttt{function () \{\}}
 
@@ -167,14 +167,14 @@ Example of listening for \texttt{exit}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{r}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Got "exit" event from repl!'}\NormalTok{);}
-  \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{();}
+\OtherTok{r}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'exit'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Got "exit" event from repl!'}\NormalTok{);}
+  \OtherTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{();}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `reset'}
+\subsubsection{Event: `reset'}\label{event-reset}
 
 \texttt{function (context) \{\}}
 
@@ -187,18 +187,18 @@ Example of listening for \texttt{reset}:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// Extend the initial repl context.}
-\NormalTok{r = }\KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{ options ... \});}
-\KeywordTok{someExtension}\NormalTok{.}\FunctionTok{extend}\NormalTok{(}\KeywordTok{r}\NormalTok{.}\FunctionTok{context}\NormalTok{);}
+\NormalTok{r = }\OtherTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(\{ }\OtherTok{options} \NormalTok{... \});}
+\OtherTok{someExtension}\NormalTok{.}\FunctionTok{extend}\NormalTok{(}\OtherTok{r}\NormalTok{.}\FunctionTok{context}\NormalTok{);}
 
 \CommentTok{// When a new context is created extend it as well.}
-\KeywordTok{r}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'reset'}\NormalTok{, }\KeywordTok{function} \NormalTok{(context) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'repl has a new context'}\NormalTok{);}
-  \KeywordTok{someExtension}\NormalTok{.}\FunctionTok{extend}\NormalTok{(context);}
+\OtherTok{r}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'reset'}\NormalTok{, }\KeywordTok{function} \NormalTok{(context) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'repl has a new context'}\NormalTok{);}
+  \OtherTok{someExtension}\NormalTok{.}\FunctionTok{extend}\NormalTok{(context);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{REPL Features}
+\subsection{REPL Features}\label{repl-features}
 
 Inside the REPL, Control+D will exit. Multi-line expressions can be
 input. Tab completion is supported for both global and local variables.
@@ -209,9 +209,9 @@ last expression.
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{> [ }\StringTok{"a"}\NormalTok{, }\StringTok{"b"}\NormalTok{, }\StringTok{"c"} \NormalTok{]}
-\NormalTok{[ }\CharTok{'a'}\NormalTok{, }\CharTok{'b'}\NormalTok{, }\CharTok{'c'} \NormalTok{]}
-\NormalTok{> }\KeywordTok{_}\NormalTok{.}\FunctionTok{length}
-\NormalTok{3}
+\NormalTok{[ }\StringTok{'a'}\NormalTok{, }\StringTok{'b'}\NormalTok{, }\StringTok{'c'} \NormalTok{]}
+\NormalTok{> }\OtherTok{_}\NormalTok{.}\FunctionTok{length}
+\DecValTok{3}
 \NormalTok{> _ += }\DecValTok{1}
 \DecValTok{4}
 \end{Highlighting}
@@ -225,10 +225,10 @@ example:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// repl_test.js}
-\KeywordTok{var} \NormalTok{repl = require(}\StringTok{"repl"}\NormalTok{),}
+\KeywordTok{var} \NormalTok{repl = }\FunctionTok{require}\NormalTok{(}\StringTok{"repl"}\NormalTok{),}
     \NormalTok{msg = }\StringTok{"message"}\NormalTok{;}
 
-\KeywordTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(}\StringTok{"> "}\NormalTok{).}\FunctionTok{context}\NormalTok{.}\FunctionTok{m} \NormalTok{= msg;}
+\OtherTok{repl}\NormalTok{.}\FunctionTok{start}\NormalTok{(}\StringTok{"> "}\NormalTok{).}\OtherTok{context}\NormalTok{.}\FunctionTok{m} \NormalTok{= msg;}
 \end{Highlighting}
 \end{Shaded}
 
@@ -236,15 +236,16 @@ Things in the \texttt{context} object appear as local within the REPL:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{mjr}\NormalTok{:~$ node }\KeywordTok{repl_test}\NormalTok{.}\FunctionTok{js}
+\NormalTok{mjr:~$ node }\OtherTok{repl_test}\NormalTok{.}\FunctionTok{js}
 \NormalTok{> m}
-\CharTok{'message'}
+\StringTok{'message'}
 \end{Highlighting}
 \end{Shaded}
 
 There are a few special REPL commands:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{.break} - While inputting a multi-line expression, sometimes
   you get lost or just don't care about completing it. \texttt{.break}
@@ -268,6 +269,7 @@ There are a few special REPL commands:
 The following key combinations in the REPL have these special effects:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{\textless{}ctrl\textgreater{}C} - Similar to the
   \texttt{.break} keyword. Terminates the current command. Press twice

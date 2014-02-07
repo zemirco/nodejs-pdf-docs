@@ -1,8 +1,8 @@
-\section{TTY}
+\section{TTY}\label{tty}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable}
+\NormalTok{Stability: }\DecValTok{2} \NormalTok{- Unstable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -20,57 +20,57 @@ preferred way to check if node is being run in a TTY context is to check
 \begin{Highlighting}[]
 \NormalTok{$ node -p -e }\StringTok{"Boolean(process.stdout.isTTY)"}
 \KeywordTok{true}
-\NormalTok{$ node -p -e }\StringTok{"Boolean(process.stdout.isTTY)"} \NormalTok{\textbar{} cat}
+\NormalTok{$ node -p -e }\StringTok{"Boolean(process.stdout.isTTY)"} \NormalTok{| cat}
 \KeywordTok{false}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{tty.isatty(fd)}
+\subsection{tty.isatty(fd)}\label{tty.isattyfd}
 
 Returns \texttt{true} or \texttt{false} depending on if the \texttt{fd}
 is associated with a terminal.
 
-\subsection{tty.setRawMode(mode)}
+\subsection{tty.setRawMode(mode)}\label{tty.setrawmodemode}
 
 Deprecated. Use \texttt{tty.ReadStream\#setRawMode()} (i.e.
 \texttt{process.stdin.setRawMode()}) instead.
 
-\subsection{Class: ReadStream}
+\subsection{Class: ReadStream}\label{class-readstream}
 
 A \texttt{net.Socket} subclass that represents the readable portion of a
 tty. In normal circumstances, \texttt{process.stdin} will be the only
 \texttt{tty.ReadStream} instance in any node program (only when
 \texttt{isatty(0)} is true).
 
-\subsubsection{rs.isRaw}
+\subsubsection{rs.isRaw}\label{rs.israw}
 
 A \texttt{Boolean} that is initialized to \texttt{false}. It represents
 the current ``raw'' state of the \texttt{tty.ReadStream} instance.
 
-\subsubsection{rs.setRawMode(mode)}
+\subsubsection{rs.setRawMode(mode)}\label{rs.setrawmodemode}
 
 \texttt{mode} should be \texttt{true} or \texttt{false}. This sets the
 properties of the \texttt{tty.ReadStream} to act either as a raw device
 or default. \texttt{isRaw} will be set to the resulting mode.
 
-\subsection{Class: WriteStream}
+\subsection{Class: WriteStream}\label{class-writestream}
 
 A \texttt{net.Socket} subclass that represents the writable portion of a
 tty. In normal circumstances, \texttt{process.stdout} will be the only
 \texttt{tty.WriteStream} instance ever created (and only when
 \texttt{isatty(1)} is true).
 
-\subsubsection{ws.columns}
+\subsubsection{ws.columns}\label{ws.columns}
 
 A \texttt{Number} that gives the number of columns the TTY currently
 has. This property gets updated on ``resize'' events.
 
-\subsubsection{ws.rows}
+\subsubsection{ws.rows}\label{ws.rows}
 
 A \texttt{Number} that gives the number of rows the TTY currently has.
 This property gets updated on ``resize'' events.
 
-\subsubsection{Event: `resize'}
+\subsubsection{Event: `resize'}\label{event-resize}
 
 \texttt{function () \{\}}
 
@@ -79,9 +79,9 @@ Emitted by \texttt{refreshSize()} when either of the \texttt{columns} or
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'resize'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'screen size has changed!'}\NormalTok{);}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{columns} \NormalTok{+ }\CharTok{'x'} \NormalTok{+ }\KeywordTok{process.stdout}\NormalTok{.}\FunctionTok{rows}\NormalTok{);}
+\OtherTok{process}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'resize'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'screen size has changed!'}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{process}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{columns} \NormalTok{+ }\StringTok{'x'} \NormalTok{+ }\OtherTok{process}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{rows}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}

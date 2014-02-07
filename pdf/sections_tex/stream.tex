@@ -1,25 +1,24 @@
-\section{Stream}
+\section{Stream}\label{stream}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable}
+\NormalTok{Stability: }\DecValTok{2} \NormalTok{- Unstable}
 \end{Highlighting}
 \end{Shaded}
 
 A stream is an abstract interface implemented by various objects in
-Node. For example a
-\href{http.html\#http\_http\_incomingmessage}{request to an HTTP server}
-is a stream, as is
-\href{process.html\#process\_process\_stdout}{stdout}. Streams are
+Node. For example a \href{http.html\#http_http_incomingmessage}{request
+to an HTTP server} is a stream, as is
+\href{process.html\#process_process_stdout}{stdout}. Streams are
 readable, writable, or both. All streams are instances of
-\href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}
+\href{events.html\#events_class_events_eventemitter}{EventEmitter}
 
 You can load the Stream base classes by doing
 \texttt{require('stream')}. There are base classes provided for
-\hyperref[stream_class_stream_readable]{Readable} streams,
-\hyperref[stream_class_stream_writable]{Writable} streams,
-\hyperref[stream_class_stream_duplex]{Duplex} streams, and
-\hyperref[stream_class_stream_transform]{Transform} streams.
+\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} streams,
+\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} streams,
+\hyperref[streamux5fclassux5fstreamux5fduplex]{Duplex} streams, and
+\hyperref[streamux5fclassux5fstreamux5ftransform]{Transform} streams.
 
 This document is split up into 3 sections. The first explains the parts
 of the API that you need to be aware of to use streams in your programs.
@@ -33,12 +32,12 @@ The third section goes into more depth about how streams work, including
 some of the internal mechanisms and functions that you should probably
 not modify unless you definitely know what you are doing.
 
-\subsection{API for Stream Consumers}
+\subsection{API for Stream Consumers}\label{api-for-stream-consumers}
 
 Streams can be either
-\hyperref[stream_class_stream_readable]{Readable},
-\hyperref[stream_class_stream_writable]{Writable}, or both
-(\hyperref[stream_class_stream_duplex]{Duplex}).
+\hyperref[streamux5fclassux5fstreamux5freadable]{Readable},
+\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable}, or both
+(\hyperref[streamux5fclassux5fstreamux5fduplex]{Duplex}).
 
 All streams are EventEmitters, but they also have other custom methods
 and properties depending on whether they are Readable, Writable, or
@@ -46,15 +45,15 @@ Duplex.
 
 If a stream is both Readable and Writable, then it implements all of the
 methods and events below. So, a
-\hyperref[stream_class_stream_duplex]{Duplex} or
-\hyperref[stream_class_stream_transform]{Transform} stream is fully
-described by this API, though their implementation may be somewhat
+\hyperref[streamux5fclassux5fstreamux5fduplex]{Duplex} or
+\hyperref[streamux5fclassux5fstreamux5ftransform]{Transform} stream is
+fully described by this API, though their implementation may be somewhat
 different.
 
 It is not necessary to implement Stream interfaces in order to consume
 streams in your programs. If you \textbf{are} implementing streaming
 interfaces in your own program, please also refer to
-\hyperref[stream_api_for_stream_implementors]{API for Stream
+\hyperref[streamux5fapiux5fforux5fstreamux5fimplementors]{API for Stream
 Implementors} below.
 
 Almost all Node programs, no matter how simple, use Streams in some way.
@@ -62,39 +61,39 @@ Here is an example of using Streams in a Node program:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{http = require(}\CharTok{'http'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{http = }\FunctionTok{require}\NormalTok{(}\StringTok{'http'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{server = }\KeywordTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
+\KeywordTok{var} \NormalTok{server = }\OtherTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
   \CommentTok{// req is an http.IncomingMessage, which is a Readable Stream}
   \CommentTok{// res is an http.ServerResponse, which is a Writable Stream}
 
-  \KeywordTok{var} \NormalTok{body = }\CharTok{''}\NormalTok{;}
+  \KeywordTok{var} \NormalTok{body = }\StringTok{''}\NormalTok{;}
   \CommentTok{// we want to get the data as utf8 strings}
   \CommentTok{// If you don't set an encoding, then you'll get Buffer objects}
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
+  \OtherTok{req}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
 
   \CommentTok{// Readable streams emit 'data' events once a listener is added}
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(chunk) \{}
+  \OtherTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(chunk) \{}
     \NormalTok{body += chunk;}
   \NormalTok{\})}
 
   \CommentTok{// the end event tells you that you have entire body}
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
+  \OtherTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
     \KeywordTok{try} \NormalTok{\{}
-      \KeywordTok{var} \NormalTok{data = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(body);}
+      \KeywordTok{var} \NormalTok{data = }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(body);}
     \NormalTok{\} }\KeywordTok{catch} \NormalTok{(er) \{}
       \CommentTok{// uh oh!  bad json!}
-      \KeywordTok{res}\NormalTok{.}\FunctionTok{statusCode} \NormalTok{= }\DecValTok{400}\NormalTok{;}
-      \KeywordTok{return} \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'error: '} \NormalTok{+ }\KeywordTok{er}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
+      \OtherTok{res}\NormalTok{.}\FunctionTok{statusCode} \NormalTok{= }\DecValTok{400}\NormalTok{;}
+      \KeywordTok{return} \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'error: '} \NormalTok{+ }\OtherTok{er}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
     \NormalTok{\}}
 
     \CommentTok{// write back something interesting to the user:}
-    \KeywordTok{res}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\KeywordTok{typeof} \NormalTok{data);}
-    \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+    \OtherTok{res}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\KeywordTok{typeof} \NormalTok{data);}
+    \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
   \NormalTok{\})}
 \NormalTok{\})}
 
-\KeywordTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
 
 \CommentTok{// $ curl localhost:1337 -d '\{\}'}
 \CommentTok{// object}
@@ -105,7 +104,7 @@ Here is an example of using Streams in a Node program:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Class: stream.Readable}
+\subsubsection{Class: stream.Readable}\label{class-stream.readable}
 
 The Readable stream interface is the abstraction for a \emph{source} of
 data that you are reading from. In other words, data comes \emph{out} of
@@ -121,37 +120,39 @@ paused mode, you must explicitly call \texttt{stream.read()} to get
 chunks of data out. Streams start out in paused mode.
 
 \textbf{Note}: If no data event handlers are attached, and there are no
-\hyperref[stream_readable_pipe_destination_options]{\texttt{pipe()}}
+\hyperref[streamux5freadableux5fpipeux5fdestinationux5foptions]{\texttt{pipe()}}
 destinations, and the stream is switched into flowing mode, then data
 will be lost.
 
 You can switch to flowing mode by doing any of the following:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  Adding a \hyperref[stream_event_data]{\texttt{'data'} event} handler
-  to listen for data.
+  Adding a \hyperref[streamux5feventux5fdata]{\texttt{'data'} event}
+  handler to listen for data.
 \item
-  Calling the \hyperref[stream_readable_resume]{\texttt{resume()}}
+  Calling the \hyperref[streamux5freadableux5fresume]{\texttt{resume()}}
   method to explicitly open the flow.
 \item
   Calling the
-  \hyperref[stream_readable_pipe_destination_options]{\texttt{pipe()}}
+  \hyperref[streamux5freadableux5fpipeux5fdestinationux5foptions]{\texttt{pipe()}}
   method to send the data to a
-  \hyperref[stream_class_stream_writable]{Writable}.
+  \hyperref[streamux5fclassux5fstreamux5fwritable]{Writable}.
 \end{itemize}
 
 You can switch back to paused mode by doing either of the following:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   If there are no pipe destinations, by calling the
-  \hyperref[stream_readable_pause]{\texttt{pause()}} method.
+  \hyperref[streamux5freadableux5fpause]{\texttt{pause()}} method.
 \item
   If there are pipe destinations, by removing any
-  \hyperref[stream_event_data]{\texttt{'data'} event} handlers, and
-  removing all pipe destinations by calling the
-  \hyperref[stream_readable_unpipe_destination]{\texttt{unpipe()}}
+  \hyperref[streamux5feventux5fdata]{\texttt{'data'} event} handlers,
+  and removing all pipe destinations by calling the
+  \hyperref[streamux5freadableux5funpipeux5fdestination]{\texttt{unpipe()}}
   method.
 \end{itemize}
 
@@ -164,28 +165,29 @@ destinations drain and ask for more data.
 Examples of readable streams include:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  \href{http.html\#http\_http\_incomingmessage}{http responses, on the
+  \href{http.html\#http_http_incomingmessage}{http responses, on the
   client}
 \item
-  \href{http.html\#http\_http\_incomingmessage}{http requests, on the
+  \href{http.html\#http_http_incomingmessage}{http requests, on the
   server}
 \item
-  \href{fs.html\#fs\_class\_fs\_readstream}{fs read streams}
+  \href{fs.html\#fs_class_fs_readstream}{fs read streams}
 \item
   \href{zlib.html}{zlib streams}
 \item
   \href{crypto.html}{crypto streams}
 \item
-  \href{net.html\#net\_class\_net\_socket}{tcp sockets}
+  \href{net.html\#net_class_net_socket}{tcp sockets}
 \item
-  \href{child\_process.html\#child\_process\_child\_stdout}{child
-  process stdout and stderr}
+  \href{child_process.html\#child_process_child_stdout}{child process
+  stdout and stderr}
 \item
-  \href{process.html\#process\_process\_stdin}{process.stdin}
+  \href{process.html\#process_process_stdin}{process.stdin}
 \end{itemize}
 
-\paragraph{Event: `readable'}
+\paragraph{Event: `readable'}\label{event-readable}
 
 When a chunk of data can be read from the stream, it will emit a
 \texttt{'readable'} event.
@@ -196,8 +198,8 @@ it hadn't already.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \CommentTok{// there is some data to read now}
 \NormalTok{\})}
 \end{Highlighting}
@@ -206,9 +208,10 @@ it hadn't already.
 Once the internal buffer is drained, a \texttt{readable} event will fire
 again when more data is available.
 
-\paragraph{Event: `data'}
+\paragraph{Event: `data'}\label{event-data}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunk} \{Buffer \textbar{} String\} The chunk of data.
 \end{itemize}
@@ -222,14 +225,14 @@ possible, this is the best way to do so.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got %d bytes of data'}\NormalTok{, }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d bytes of data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
 \NormalTok{\})}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `end'}
+\paragraph{Event: `end'}\label{event-end}
 
 This event fires when no more data will be provided.
 
@@ -239,28 +242,29 @@ or by calling \texttt{read()} repeatedly until you get to the end.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got %d bytes of data'}\NormalTok{, }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d bytes of data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
 \NormalTok{\})}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'there will be no more data.'}\NormalTok{);}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'there will be no more data.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `close'}
+\paragraph{Event: `close'}\label{event-close}
 
 Emitted when the underlying resource (for example, the backing file
 descriptor) has been closed. Not all streams will emit this.
 
-\paragraph{Event: `error'}
+\paragraph{Event: `error'}\label{event-error}
 
 Emitted if there was an error receiving data.
 
-\paragraph{readable.read({[}size{]})}
+\paragraph{readable.read({[}size{]})}\label{readable.readsize}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{size} \{Number\} Optional argument to specify how much data to
   read.
@@ -284,22 +288,23 @@ method is called automatically until the internal buffer is drained.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \KeywordTok{var} \NormalTok{chunk;}
-  \KeywordTok{while} \NormalTok{(null !== (chunk = }\KeywordTok{readable}\NormalTok{.}\FunctionTok{read}\NormalTok{())) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got %d bytes of data'}\NormalTok{, }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+  \KeywordTok{while} \NormalTok{(}\KeywordTok{null} \NormalTok{!== (chunk = }\OtherTok{readable}\NormalTok{.}\FunctionTok{read}\NormalTok{())) \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d bytes of data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
   \NormalTok{\}}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
 If this method returns a data chunk, then it will also trigger the
-emission of a \hyperref[stream_event_data]{\texttt{'data'} event}.
+emission of a \hyperref[streamux5feventux5fdata]{\texttt{'data'} event}.
 
-\paragraph{readable.setEncoding(encoding)}
+\paragraph{readable.setEncoding(encoding)}\label{readable.setencodingencoding}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{encoding} \{String\} The encoding to use.
 \item
@@ -320,18 +325,19 @@ strings, always use this method.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
-  \KeywordTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\KeywordTok{typeof} \NormalTok{chunk, }\CharTok{'string'}\NormalTok{);}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got %d characters of string data'}\NormalTok{, }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
+  \OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\KeywordTok{typeof} \NormalTok{chunk, }\StringTok{'string'}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d characters of string data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
 \NormalTok{\})}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{readable.resume()}
+\paragraph{readable.resume()}\label{readable.resume}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Return: \texttt{this}
 \end{itemize}
@@ -342,22 +348,23 @@ This method will cause the readable stream to resume emitting
 This method will switch the stream into flowing mode. If you do
 \emph{not} want to consume the data from a stream, but you \emph{do}
 want to get to its \texttt{end} event, you can call
-\hyperref[stream_readable_resume]{\texttt{readable.resume()}} to open
-the flow of data.
+\hyperref[streamux5freadableux5fresume]{\texttt{readable.resume()}} to
+open the flow of data.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got to the end, but did not read anything'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got to the end, but did not read anything'}\NormalTok{);}
 \NormalTok{\})}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{readable.pause()}
+\paragraph{readable.pause()}\label{readable.pause}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Return: \texttt{this}
 \end{itemize}
@@ -368,26 +375,28 @@ becomes available will remain in the internal buffer.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got %d bytes of data'}\NormalTok{, }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
-  \KeywordTok{readable}\NormalTok{.}\FunctionTok{pause}\NormalTok{();}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'there will be no more data for 1 second'}\NormalTok{);}
-  \NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'now data will start flowing again'}\NormalTok{);}
-    \KeywordTok{readable}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d bytes of data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+  \OtherTok{readable}\NormalTok{.}\FunctionTok{pause}\NormalTok{();}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'there will be no more data for 1 second'}\NormalTok{);}
+  \FunctionTok{setTimeout}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'now data will start flowing again'}\NormalTok{);}
+    \OtherTok{readable}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
   \NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
 \NormalTok{\})}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{readable.pipe(destination, {[}options{]})}
+\paragraph{readable.pipe(destination,
+{[}options{]})}\label{readable.pipedestination-options}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{destination}
-  \{\hyperref[stream_class_stream_writable]{Writable} Stream\} The
-  destination for writing data
+  \{\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} Stream\}
+  The destination for writing data
 \item
   \texttt{options} \{Object\} Pipe options
 \item
@@ -403,10 +412,10 @@ Multiple destinations can be piped to safely.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{var} \NormalTok{writable = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\CharTok{'file.txt'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\KeywordTok{var} \NormalTok{writable = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\StringTok{'file.txt'}\NormalTok{);}
 \CommentTok{// All the data from readable goes into 'file.txt'}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writable);}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writable);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -415,10 +424,10 @@ chains like so:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{r = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createReadStream}\NormalTok{(}\CharTok{'file.txt'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{z = }\KeywordTok{zlib}\NormalTok{.}\FunctionTok{createGzip}\NormalTok{();}
-\KeywordTok{var} \NormalTok{w = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\CharTok{'file.txt.gz'}\NormalTok{);}
-\KeywordTok{r}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(z).}\FunctionTok{pipe}\NormalTok{(w);}
+\KeywordTok{var} \NormalTok{r = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createReadStream}\NormalTok{(}\StringTok{'file.txt'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{z = }\OtherTok{zlib}\NormalTok{.}\FunctionTok{createGzip}\NormalTok{();}
+\KeywordTok{var} \NormalTok{w = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\StringTok{'file.txt.gz'}\NormalTok{);}
+\OtherTok{r}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(z).}\FunctionTok{pipe}\NormalTok{(w);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -426,12 +435,12 @@ For example, emulating the Unix \texttt{cat} command:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process.stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
+\OtherTok{process}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(}\OtherTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
 By default
-\hyperref[stream_writable_end_chunk_encoding_callback]{\texttt{end()}}
+\hyperref[streamux5fwritableux5fendux5fchunkux5fencodingux5fcallback]{\texttt{end()}}
 is called on the destination when the source stream emits \texttt{end},
 so that \texttt{destination} is no longer writable. Pass
 \texttt{\{ end: false \}} as \texttt{options} to keep the destination
@@ -442,9 +451,9 @@ the end.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{reader}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writer, \{ }\DataTypeTok{end}\NormalTok{: }\KeywordTok{false} \NormalTok{\});}
-\KeywordTok{reader}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{writer}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'Goodbye\textbackslash{}n'}\NormalTok{);}
+\OtherTok{reader}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writer, \{ }\DataTypeTok{end}\NormalTok{: }\KeywordTok{false} \NormalTok{\});}
+\OtherTok{reader}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{writer}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'Goodbye}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
@@ -452,12 +461,13 @@ the end.
 Note that \texttt{process.stderr} and \texttt{process.stdout} are never
 closed until the process exits, regardless of the specified options.
 
-\paragraph{readable.unpipe({[}destination{]})}
+\paragraph{readable.unpipe({[}destination{]})}\label{readable.unpipedestination}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{destination}
-  \{\hyperref[stream_class_stream_writable]{Writable} Stream\}
+  \{\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} Stream\}
   Optional specific stream to unpipe
 \end{itemize}
 
@@ -471,23 +481,24 @@ is a no-op.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readable = getReadableStreamSomehow();}
-\KeywordTok{var} \NormalTok{writable = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\CharTok{'file.txt'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\KeywordTok{var} \NormalTok{writable = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\StringTok{'file.txt'}\NormalTok{);}
 \CommentTok{// All the data from readable goes into 'file.txt',}
 \CommentTok{// but only for the first second}
-\KeywordTok{readable}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writable);}
-\NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'stop writing to file.txt'}\NormalTok{);}
-  \KeywordTok{readable}\NormalTok{.}\FunctionTok{unpipe}\NormalTok{(writable);}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'manually close the file stream'}\NormalTok{);}
-  \KeywordTok{writable}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writable);}
+\FunctionTok{setTimeout}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'stop writing to file.txt'}\NormalTok{);}
+  \OtherTok{readable}\NormalTok{.}\FunctionTok{unpipe}\NormalTok{(writable);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'manually close the file stream'}\NormalTok{);}
+  \OtherTok{writable}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 \NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{readable.unshift(chunk)}
+\paragraph{readable.unshift(chunk)}\label{readable.unshiftchunk}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunk} \{Buffer \textbar{} String\} Chunk of data to unshift
   onto the read queue
@@ -500,36 +511,36 @@ passed on to some other party.
 
 If you find that you must often call \texttt{stream.unshift(chunk)} in
 your programs, consider implementing a
-\hyperref[stream_class_stream_transform]{Transform} stream instead.
-(See API for Stream Implementors, below.)
+\hyperref[streamux5fclassux5fstreamux5ftransform]{Transform} stream
+instead. (See API for Stream Implementors, below.)
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// Pull off a header delimited by \textbackslash{}n\textbackslash{}n}
 \CommentTok{// use unshift() if we get too much}
 \CommentTok{// Call the callback with (error, header, stream)}
-\KeywordTok{var} \NormalTok{StringDecoder = require(}\CharTok{'string_decoder'}\NormalTok{).}\FunctionTok{StringDecoder}\NormalTok{;}
-\KeywordTok{function} \NormalTok{parseHeader(stream, callback) \{}
-  \KeywordTok{stream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, callback);}
-  \KeywordTok{stream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'readable'}\NormalTok{, onReadable);}
-  \KeywordTok{var} \NormalTok{decoder = }\KeywordTok{new} \NormalTok{StringDecoder(}\CharTok{'utf8'}\NormalTok{);}
-  \KeywordTok{var} \NormalTok{header = }\CharTok{''}\NormalTok{;}
-  \KeywordTok{function} \NormalTok{onReadable() \{}
+\KeywordTok{var} \NormalTok{StringDecoder = }\FunctionTok{require}\NormalTok{(}\StringTok{'string_decoder'}\NormalTok{).}\FunctionTok{StringDecoder}\NormalTok{;}
+\KeywordTok{function} \FunctionTok{parseHeader}\NormalTok{(stream, callback) \{}
+  \OtherTok{stream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, callback);}
+  \OtherTok{stream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, onReadable);}
+  \KeywordTok{var} \NormalTok{decoder = }\KeywordTok{new} \FunctionTok{StringDecoder}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{header = }\StringTok{''}\NormalTok{;}
+  \KeywordTok{function} \FunctionTok{onReadable}\NormalTok{() \{}
     \KeywordTok{var} \NormalTok{chunk;}
-    \KeywordTok{while} \NormalTok{(null !== (chunk = }\KeywordTok{stream}\NormalTok{.}\FunctionTok{read}\NormalTok{())) \{}
-      \KeywordTok{var} \NormalTok{str = }\KeywordTok{decoder}\NormalTok{.}\FunctionTok{write}\NormalTok{(chunk);}
-      \KeywordTok{if} \NormalTok{(}\KeywordTok{str}\NormalTok{.}\FunctionTok{match}\NormalTok{(}\OtherTok{/}\BaseNTok{\textbackslash{}n\textbackslash{}n}\OtherTok{/}\NormalTok{)) \{}
+    \KeywordTok{while} \NormalTok{(}\KeywordTok{null} \NormalTok{!== (chunk = }\OtherTok{stream}\NormalTok{.}\FunctionTok{read}\NormalTok{())) \{}
+      \KeywordTok{var} \NormalTok{str = }\OtherTok{decoder}\NormalTok{.}\FunctionTok{write}\NormalTok{(chunk);}
+      \KeywordTok{if} \NormalTok{(}\OtherTok{str}\NormalTok{.}\FunctionTok{match}\NormalTok{(}\OtherTok{/}\BaseNTok{\textbackslash{}n\textbackslash{}n}\OtherTok{/}\NormalTok{)) \{}
         \CommentTok{// found the header boundary}
-        \KeywordTok{var} \NormalTok{split = }\KeywordTok{str}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{/}\BaseNTok{\textbackslash{}n\textbackslash{}n}\OtherTok{/}\NormalTok{);}
-        \NormalTok{header += }\KeywordTok{split}\NormalTok{.}\FunctionTok{shift}\NormalTok{();}
-        \KeywordTok{var} \NormalTok{remaining = }\KeywordTok{split}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\CharTok{'\textbackslash{}n\textbackslash{}n'}\NormalTok{);}
-        \KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(remaining, }\CharTok{'utf8'}\NormalTok{);}
-        \KeywordTok{if} \NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{)}
-          \KeywordTok{stream}\NormalTok{.}\FunctionTok{unshift}\NormalTok{(buf);}
-        \KeywordTok{stream}\NormalTok{.}\FunctionTok{removeListener}\NormalTok{(}\CharTok{'error'}\NormalTok{, callback);}
-        \KeywordTok{stream}\NormalTok{.}\FunctionTok{removeListener}\NormalTok{(}\CharTok{'readable'}\NormalTok{, onReadable);}
+        \KeywordTok{var} \NormalTok{split = }\OtherTok{str}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{/}\BaseNTok{\textbackslash{}n\textbackslash{}n}\OtherTok{/}\NormalTok{);}
+        \NormalTok{header += }\OtherTok{split}\NormalTok{.}\FunctionTok{shift}\NormalTok{();}
+        \KeywordTok{var} \NormalTok{remaining = }\OtherTok{split}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\StringTok{'}\CharTok{\textbackslash{}n\textbackslash{}n}\StringTok{'}\NormalTok{);}
+        \KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(remaining, }\StringTok{'utf8'}\NormalTok{);}
+        \KeywordTok{if} \NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{)}
+          \OtherTok{stream}\NormalTok{.}\FunctionTok{unshift}\NormalTok{(buf);}
+        \OtherTok{stream}\NormalTok{.}\FunctionTok{removeListener}\NormalTok{(}\StringTok{'error'}\NormalTok{, callback);}
+        \OtherTok{stream}\NormalTok{.}\FunctionTok{removeListener}\NormalTok{(}\StringTok{'readable'}\NormalTok{, onReadable);}
         \CommentTok{// now the body of the message can be read from the stream.}
-        \NormalTok{callback(null, header, stream);}
+        \FunctionTok{callback}\NormalTok{(}\KeywordTok{null}\NormalTok{, header, stream);}
       \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
         \CommentTok{// still reading the header.}
         \NormalTok{header += str;}
@@ -540,9 +551,10 @@ your programs, consider implementing a
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{readable.wrap(stream)}
+\paragraph{readable.wrap(stream)}\label{readable.wrapstream}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{stream} \{Stream\} An ``old style'' readable stream
 \end{itemize}
@@ -552,10 +564,11 @@ entire Streams API as it is today. (See ``Compatibility'' below for more
 information.)
 
 If you are using an older Node library that emits \texttt{'data'} events
-and has a \hyperref[stream_readable_pause]{\texttt{pause()}} method
-that is advisory only, then you can use the \texttt{wrap()} method to
-create a \hyperref[stream_class_stream_readable]{Readable} stream
-that uses the old stream as its data source.
+and has a \hyperref[streamux5freadableux5fpause]{\texttt{pause()}}
+method that is advisory only, then you can use the \texttt{wrap()}
+method to create a
+\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} stream that
+uses the old stream as its data source.
 
 You will very rarely ever need to call this function, but it exists as a
 convenience for interacting with old Node programs and libraries.
@@ -564,18 +577,18 @@ For example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{OldReader = require(}\CharTok{'./old-api-module.js'}\NormalTok{).}\FunctionTok{OldReader}\NormalTok{;}
+\KeywordTok{var} \NormalTok{OldReader = }\FunctionTok{require}\NormalTok{(}\StringTok{'./old-api-module.js'}\NormalTok{).}\FunctionTok{OldReader}\NormalTok{;}
 \KeywordTok{var} \NormalTok{oreader = }\KeywordTok{new} \NormalTok{OldReader;}
-\KeywordTok{var} \NormalTok{Readable = require(}\CharTok{'stream'}\NormalTok{).}\FunctionTok{Readable}\NormalTok{;}
-\KeywordTok{var} \NormalTok{myReader = }\KeywordTok{new} \NormalTok{Readable().}\FunctionTok{wrap}\NormalTok{(oreader);}
+\KeywordTok{var} \NormalTok{Readable = }\FunctionTok{require}\NormalTok{(}\StringTok{'stream'}\NormalTok{).}\FunctionTok{Readable}\NormalTok{;}
+\KeywordTok{var} \NormalTok{myReader = }\KeywordTok{new} \FunctionTok{Readable}\NormalTok{().}\FunctionTok{wrap}\NormalTok{(oreader);}
 
-\KeywordTok{myReader}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{myReader}\NormalTok{.}\FunctionTok{read}\NormalTok{(); }\CommentTok{// etc.}
+\OtherTok{myReader}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{myReader}\NormalTok{.}\FunctionTok{read}\NormalTok{(); }\CommentTok{// etc.}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Class: stream.Writable}
+\subsubsection{Class: stream.Writable}\label{class-stream.writable}
 
 The Writable stream interface is an abstraction for a \emph{destination}
 that you are writing data \emph{to}.
@@ -583,31 +596,34 @@ that you are writing data \emph{to}.
 Examples of writable streams include:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  \href{http.html\#http\_class\_http\_clientrequest}{http requests, on
-  the client}
+  \href{http.html\#http_class_http_clientrequest}{http requests, on the
+  client}
 \item
-  \href{http.html\#http\_class\_http\_serverresponse}{http responses, on
+  \href{http.html\#http_class_http_serverresponse}{http responses, on
   the server}
 \item
-  \href{fs.html\#fs\_class\_fs\_writestream}{fs write streams}
+  \href{fs.html\#fs_class_fs_writestream}{fs write streams}
 \item
   \href{zlib.html}{zlib streams}
 \item
   \href{crypto.html}{crypto streams}
 \item
-  \href{net.html\#net\_class\_net\_socket}{tcp sockets}
+  \href{net.html\#net_class_net_socket}{tcp sockets}
 \item
-  \href{child\_process.html\#child\_process\_child\_stdin}{child process
+  \href{child_process.html\#child_process_child_stdin}{child process
   stdin}
 \item
-  \href{process.html\#process\_process\_stdout}{process.stdout},
-  \href{process.html\#process\_process\_stderr}{process.stderr}
+  \href{process.html\#process_process_stdout}{process.stdout},
+  \href{process.html\#process_process_stderr}{process.stderr}
 \end{itemize}
 
-\paragraph{writable.write(chunk, {[}encoding{]}, {[}callback{]})}
+\paragraph{writable.write(chunk, {[}encoding{]},
+{[}callback{]})}\label{writable.writechunk-encoding-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunk} \{String \textbar{} Buffer\} The data to write
 \item
@@ -632,17 +648,18 @@ if it returns \texttt{false}. However, writes will be buffered in
 memory, so it is best not to do this excessively. Instead, wait for the
 \texttt{drain} event before writing more data.
 
-\paragraph{Event: `drain'}
+\paragraph{Event: `drain'}\label{event-drain}
 
-If a {[}\texttt{writable.write(chunk)}{]}{[}{]} call returns false, then
-the \texttt{drain} event will indicate when it is appropriate to begin
-writing more data to the stream.
+If a
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallback]{\texttt{writable.write(chunk)}}
+call returns false, then the \texttt{drain} event will indicate when it
+is appropriate to begin writing more data to the stream.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// Write the data to the supplied writable stream 1MM times.}
 \CommentTok{// Be attentive to back-pressure.}
-\KeywordTok{function} \NormalTok{writeOneMillionTimes(writer, data, encoding, callback) \{}
+\KeywordTok{function} \FunctionTok{writeOneMillionTimes}\NormalTok{(writer, data, encoding, callback) \{}
   \KeywordTok{var} \NormalTok{i = }\DecValTok{1000000}\NormalTok{;}
   \FunctionTok{write}\NormalTok{();}
   \KeywordTok{function} \FunctionTok{write}\NormalTok{() \{}
@@ -651,37 +668,39 @@ writing more data to the stream.
       \NormalTok{i -= }\DecValTok{1}\NormalTok{;}
       \KeywordTok{if} \NormalTok{(i === }\DecValTok{0}\NormalTok{) \{}
         \CommentTok{// last time!}
-        \KeywordTok{writer}\NormalTok{.}\FunctionTok{write}\NormalTok{(data, encoding, callback);}
+        \OtherTok{writer}\NormalTok{.}\FunctionTok{write}\NormalTok{(data, encoding, callback);}
       \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
         \CommentTok{// see if we should continue, or wait}
         \CommentTok{// don't pass the callback, because we're not done yet.}
-        \NormalTok{ok = }\KeywordTok{writer}\NormalTok{.}\FunctionTok{write}\NormalTok{(data, encoding);}
+        \NormalTok{ok = }\OtherTok{writer}\NormalTok{.}\FunctionTok{write}\NormalTok{(data, encoding);}
       \NormalTok{\}}
     \NormalTok{\} }\KeywordTok{while} \NormalTok{(i > }\DecValTok{0} \NormalTok{&& ok);}
     \KeywordTok{if} \NormalTok{(i > }\DecValTok{0}\NormalTok{) \{}
       \CommentTok{// had to stop early!}
       \CommentTok{// write some more once it drains}
-      \KeywordTok{writer}\NormalTok{.}\FunctionTok{once}\NormalTok{(}\CharTok{'drain'}\NormalTok{, }\FunctionTok{write}\NormalTok{);}
+      \OtherTok{writer}\NormalTok{.}\FunctionTok{once}\NormalTok{(}\StringTok{'drain'}\NormalTok{, write);}
     \NormalTok{\}}
   \NormalTok{\}}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{writable.cork()}
+\paragraph{writable.cork()}\label{writable.cork}
 
 Forces buffering of all writes.
 
 Buffered data will be flushed either at \texttt{.uncork()} or at
 \texttt{.end()} call.
 
-\paragraph{writable.uncork()}
+\paragraph{writable.uncork()}\label{writable.uncork}
 
 Flush all data, buffered since \texttt{.cork()} call.
 
-\paragraph{writable.end({[}chunk{]}, {[}encoding{]}, {[}callback{]})}
+\paragraph{writable.end({[}chunk{]}, {[}encoding{]},
+{[}callback{]})}\label{writable.endchunk-encoding-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunk} \{String \textbar{} Buffer\} Optional data to write
 \item
@@ -696,47 +715,51 @@ Call this method when no more data will be written to the stream. If
 supplied, the callback is attached as a listener on the \texttt{finish}
 event.
 
-Calling {[}\texttt{write()}{]}{[}{]} after calling
-\hyperref[stream_writable_end_chunk_encoding_callback]{\texttt{end()}}
+Calling
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallback]{\texttt{write()}}
+after calling
+\hyperref[streamux5fwritableux5fendux5fchunkux5fencodingux5fcallback]{\texttt{end()}}
 will raise an error.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// write 'hello, ' and then end with 'world!'}
-\KeywordTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'hello, '}\NormalTok{);}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'world!'}\NormalTok{);}
+\OtherTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'hello, '}\NormalTok{);}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'world!'}\NormalTok{);}
   \CommentTok{// writing more now is not allowed!}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `finish'}
+\paragraph{Event: `finish'}\label{event-finish}
 
 When the
-\hyperref[stream_writable_end_chunk_encoding_callback]{\texttt{end()}}
+\hyperref[streamux5fwritableux5fendux5fchunkux5fencodingux5fcallback]{\texttt{end()}}
 method has been called, and all data has been flushed to the underlying
 system, this event is emitted.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{writer = getWritableStreamSomehow();}
+\KeywordTok{var} \NormalTok{writer = }\FunctionTok{getWritableStreamSomehow}\NormalTok{();}
 \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{100}\NormalTok{; i ++) \{}
-  \KeywordTok{writer}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'hello, #'} \NormalTok{+ i + }\CharTok{'!\textbackslash{}n'}\NormalTok{);}
+  \OtherTok{writer}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'hello, #'} \NormalTok{+ i + }\StringTok{'!}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
 \NormalTok{\}}
-\KeywordTok{writer}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'this is the end\textbackslash{}n'}\NormalTok{);}
-\FunctionTok{write}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'finish'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'all writes are now complete.'}\NormalTok{);}
+\OtherTok{writer}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'this is the end}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+\OtherTok{writer}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'finish'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\StringTok{'all writes are now complete.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `pipe'}
+\paragraph{Event: `pipe'}\label{event-pipe}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  \texttt{src} \{\hyperref[stream_class_stream_readable]{Readable}
-  Stream\} source stream that is piping to this writable
+  \texttt{src}
+  \{\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} Stream\}
+  source stream that is piping to this writable
 \end{itemize}
 
 This is emitted whenever the \texttt{pipe()} method is called on a
@@ -744,87 +767,99 @@ readable stream, adding this writable to its set of destinations.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{writer = getWritableStreamSomehow();}
-\KeywordTok{var} \NormalTok{reader = getReadableStreamSomehow();}
-\KeywordTok{writer}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'pipe'}\NormalTok{, }\KeywordTok{function}\NormalTok{(src) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'something is piping into the writer'}\NormalTok{);}
-  \KeywordTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(src, reader);}
+\KeywordTok{var} \NormalTok{writer = }\FunctionTok{getWritableStreamSomehow}\NormalTok{();}
+\KeywordTok{var} \NormalTok{reader = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{writer}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'pipe'}\NormalTok{, }\KeywordTok{function}\NormalTok{(src) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\StringTok{'something is piping into the writer'}\NormalTok{);}
+  \OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(src, reader);}
 \NormalTok{\});}
-\KeywordTok{reader}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writer);}
+\OtherTok{reader}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writer);}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `unpipe'}
+\paragraph{Event: `unpipe'}\label{event-unpipe}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  \texttt{src} \{\hyperref[stream_class_stream_readable]{Readable}
-  Stream\} The source stream that
-  \hyperref[stream_readable_unpipe_destination]{unpiped} this
+  \texttt{src}
+  \{\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} Stream\}
+  The source stream that
+  \hyperref[streamux5freadableux5funpipeux5fdestination]{unpiped} this
   writable
 \end{itemize}
 
 This is emitted whenever the
-\hyperref[stream_readable_unpipe_destination]{\texttt{unpipe()}}
+\hyperref[streamux5freadableux5funpipeux5fdestination]{\texttt{unpipe()}}
 method is called on a readable stream, removing this writable from its
 set of destinations.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{writer = getWritableStreamSomehow();}
-\KeywordTok{var} \NormalTok{reader = getReadableStreamSomehow();}
-\KeywordTok{writer}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'unpipe'}\NormalTok{, }\KeywordTok{function}\NormalTok{(src) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'something has stopped piping into the writer'}\NormalTok{);}
-  \KeywordTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(src, reader);}
+\KeywordTok{var} \NormalTok{writer = }\FunctionTok{getWritableStreamSomehow}\NormalTok{();}
+\KeywordTok{var} \NormalTok{reader = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
+\OtherTok{writer}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'unpipe'}\NormalTok{, }\KeywordTok{function}\NormalTok{(src) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\StringTok{'something has stopped piping into the writer'}\NormalTok{);}
+  \OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(src, reader);}
 \NormalTok{\});}
-\KeywordTok{reader}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writer);}
-\KeywordTok{reader}\NormalTok{.}\FunctionTok{unpipe}\NormalTok{(writer);}
+\OtherTok{reader}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writer);}
+\OtherTok{reader}\NormalTok{.}\FunctionTok{unpipe}\NormalTok{(writer);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Class: stream.Duplex}
+\paragraph{Event: `error'}\label{event-error-1}
+
+Emitted if there was an error when writing or piping data.
+
+\subsubsection{Class: stream.Duplex}\label{class-stream.duplex}
 
 Duplex streams are streams that implement both the
-\hyperref[stream_class_stream_readable]{Readable} and
-\hyperref[stream_class_stream_writable]{Writable} interfaces. See
-above for usage.
+\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} and
+\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} interfaces.
+See above for usage.
 
 Examples of Duplex streams include:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  \href{net.html\#net\_class\_net\_socket}{tcp sockets}
+  \href{net.html\#net_class_net_socket}{tcp sockets}
 \item
   \href{zlib.html}{zlib streams}
 \item
   \href{crypto.html}{crypto streams}
 \end{itemize}
 
-\subsubsection{Class: stream.Transform}
+\subsubsection{Class: stream.Transform}\label{class-stream.transform}
 
-Transform streams are \hyperref[stream_class_stream_duplex]{Duplex}
-streams where the output is in some way computed from the input. They
-implement both the \hyperref[stream_class_stream_readable]{Readable}
-and \hyperref[stream_class_stream_writable]{Writable} interfaces. See
-above for usage.
+Transform streams are
+\hyperref[streamux5fclassux5fstreamux5fduplex]{Duplex} streams where the
+output is in some way computed from the input. They implement both the
+\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} and
+\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} interfaces.
+See above for usage.
 
 Examples of Transform streams include:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \href{zlib.html}{zlib streams}
 \item
   \href{crypto.html}{crypto streams}
 \end{itemize}
 
-\subsection{API for Stream Implementors}
+\subsection{API for Stream
+Implementors}\label{api-for-stream-implementors}
 
 To implement any sort of stream, the pattern is the same:
 
 \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Extend the appropriate parent class in your own subclass. (The
-  \href{util.html\#util\_util\_inherits\_constructor\_superconstructor}{\texttt{util.inherits}}
+  \href{util.html\#util_util_inherits_constructor_superconstructor}{\texttt{util.inherits}}
   method is particularly helpful for this.)
 \item
   Call the appropriate parent class constructor in your constructor, to
@@ -844,84 +879,87 @@ Method(s) to implement
 
 Reading only
 
-\hyperref[stream_class_stream_readable_1]{Readable}
+\hyperref[streamux5fclassux5fstreamux5freadableux5f1]{Readable}
 
-{[}\_read{]}{[}{]}
+\hyperref[streamux5freadableux5freadux5fsizeux5f1]{\_read}
 
 Writing only
 
-\hyperref[stream_class_stream_writable_1]{Writable}
+\hyperref[streamux5fclassux5fstreamux5fwritableux5f1]{Writable}
 
-{[}\_write{]}{[}{]}
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\_write}
 
 Reading and writing
 
-\hyperref[stream_class_stream_duplex_1]{Duplex}
+\hyperref[streamux5fclassux5fstreamux5fduplexux5f1]{Duplex}
 
-{[}\emph{read{]}{[}{]}, {[}}write{]}{[}{]}
+\hyperref[streamux5freadableux5freadux5fsizeux5f1]{\_read},
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\_write}
 
 Operate on written data, then read the result
 
-\hyperref[stream_class_stream_transform_1]{Transform}
+\hyperref[streamux5fclassux5fstreamux5ftransformux5f1]{Transform}
 
 \emph{transform, }flush
 
 In your implementation code, it is very important to never call the
-methods described in \hyperref[stream_api_for_stream_consumers]{API
-for Stream Consumers} above. Otherwise, you can potentially cause
-adverse side effects in programs that consume your streaming interfaces.
+methods described in
+\hyperref[streamux5fapiux5fforux5fstreamux5fconsumers]{API for Stream
+Consumers} above. Otherwise, you can potentially cause adverse side
+effects in programs that consume your streaming interfaces.
 
-\subsubsection{Class: stream.Readable}
+\subsubsection{Class: stream.Readable}\label{class-stream.readable-1}
 
 \texttt{stream.Readable} is an abstract class designed to be extended
 with an underlying implementation of the
-\hyperref[stream_readable_read_size_1]{\texttt{\_read(size)}}
+\hyperref[streamux5freadableux5freadux5fsizeux5f1]{\texttt{\_read(size)}}
 method.
 
 Please see above under
-\hyperref[stream_api_for_stream_consumers]{API for Stream Consumers}
-for how to consume streams in your programs. What follows is an
-explanation of how to implement Readable streams in your programs.
+\hyperref[streamux5fapiux5fforux5fstreamux5fconsumers]{API for Stream
+Consumers} for how to consume streams in your programs. What follows is
+an explanation of how to implement Readable streams in your programs.
 
-\paragraph{Example: A Counting Stream}
+\paragraph{Example: A Counting Stream}\label{example-a-counting-stream}
 
 This is a basic example of a Readable stream. It emits the numerals from
 1 to 1,000,000 in ascending order, and then ends.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{Readable = require(}\CharTok{'stream'}\NormalTok{).}\FunctionTok{Readable}\NormalTok{;}
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(Counter, Readable);}
+\KeywordTok{var} \NormalTok{Readable = }\FunctionTok{require}\NormalTok{(}\StringTok{'stream'}\NormalTok{).}\FunctionTok{Readable}\NormalTok{;}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(Counter, Readable);}
 
-\KeywordTok{function} \NormalTok{Counter(opt) \{}
-  \KeywordTok{Readable}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, opt);}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{max} \NormalTok{= }\DecValTok{1000000}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{index} \NormalTok{= }\DecValTok{1}\NormalTok{;}
+\KeywordTok{function} \FunctionTok{Counter}\NormalTok{(opt) \{}
+  \OtherTok{Readable}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, opt);}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_max} \NormalTok{= }\DecValTok{1000000}\NormalTok{;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_index} \NormalTok{= }\DecValTok{1}\NormalTok{;}
 \NormalTok{\}}
 
-\KeywordTok{Counter.prototype}\NormalTok{._}\FunctionTok{read} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{var} \NormalTok{i = }\KeywordTok{this}\NormalTok{._}\FunctionTok{index}\NormalTok{++;}
-  \KeywordTok{if} \NormalTok{(i > }\KeywordTok{this}\NormalTok{._}\FunctionTok{max}\NormalTok{)}
-    \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(null);}
+\OtherTok{Counter}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_read} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{var} \NormalTok{i = }\KeywordTok{this}\NormalTok{.}\FunctionTok{_index}\NormalTok{++;}
+  \KeywordTok{if} \NormalTok{(i > }\KeywordTok{this}\NormalTok{.}\FunctionTok{_max}\NormalTok{)}
+    \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\KeywordTok{null}\NormalTok{);}
   \KeywordTok{else} \NormalTok{\{}
-    \KeywordTok{var} \NormalTok{str = }\CharTok{''} \NormalTok{+ i;}
-    \KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(str, }\CharTok{'ascii'}\NormalTok{);}
+    \KeywordTok{var} \NormalTok{str = }\StringTok{''} \NormalTok{+ i;}
+    \KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(str, }\StringTok{'ascii'}\NormalTok{);}
     \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(buf);}
   \NormalTok{\}}
 \NormalTok{\};}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Example: SimpleProtocol v1 (Sub-optimal)}
+\paragraph{Example: SimpleProtocol v1
+(Sub-optimal)}\label{example-simpleprotocol-v1-sub-optimal}
 
 This is similar to the \texttt{parseHeader} function described above,
 but implemented as a custom stream. Also, note that this implementation
 does not convert the incoming data to a string.
 
 However, this would be better implemented as a
-\hyperref[stream_class_stream_transform]{Transform} stream. See below
-for a better implementation.
+\hyperref[streamux5fclassux5fstreamux5ftransform]{Transform} stream. See
+below for a better implementation.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -933,88 +971,88 @@ for a better implementation.
 \CommentTok{// Using Readable directly for this is sub-optimal.  See the}
 \CommentTok{// alternative example below under the Transform section.}
 
-\KeywordTok{var} \NormalTok{Readable = require(}\CharTok{'stream'}\NormalTok{).}\FunctionTok{Readable}\NormalTok{;}
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{Readable = }\FunctionTok{require}\NormalTok{(}\StringTok{'stream'}\NormalTok{).}\FunctionTok{Readable}\NormalTok{;}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(SimpleProtocol, Readable);}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(SimpleProtocol, Readable);}
 
-\KeywordTok{function} \NormalTok{SimpleProtocol(source, options) \{}
-  \KeywordTok{if} \NormalTok{(!(}\KeywordTok{this} \NormalTok{instanceof SimpleProtocol))}
-    \KeywordTok{return} \KeywordTok{new} \NormalTok{SimpleProtocol(options);}
+\KeywordTok{function} \FunctionTok{SimpleProtocol}\NormalTok{(source, options) \{}
+  \KeywordTok{if} \NormalTok{(!(}\KeywordTok{this} \KeywordTok{instanceof} \NormalTok{SimpleProtocol))}
+    \KeywordTok{return} \KeywordTok{new} \FunctionTok{SimpleProtocol}\NormalTok{(source, options);}
 
-  \KeywordTok{Readable}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{inBody} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+  \OtherTok{Readable}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_inBody} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
 
   \CommentTok{// source is a readable stream, such as a socket or file}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{source} \NormalTok{= source;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_source} \NormalTok{= source;}
 
   \KeywordTok{var} \NormalTok{self = }\KeywordTok{this}\NormalTok{;}
-  \KeywordTok{source}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{self}\NormalTok{.}\FunctionTok{push}\NormalTok{(null);}
+  \OtherTok{source}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{self}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\KeywordTok{null}\NormalTok{);}
   \NormalTok{\});}
 
   \CommentTok{// give it a kick whenever the source is readable}
   \CommentTok{// read(0) will not consume any bytes}
-  \KeywordTok{source}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{self}\NormalTok{.}\FunctionTok{read}\NormalTok{(}\DecValTok{0}\NormalTok{);}
+  \OtherTok{source}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{self}\NormalTok{.}\FunctionTok{read}\NormalTok{(}\DecValTok{0}\NormalTok{);}
   \NormalTok{\});}
 
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader} \NormalTok{= [];}
-  \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= null;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_rawHeader} \NormalTok{= [];}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= }\KeywordTok{null}\NormalTok{;}
 \NormalTok{\}}
 
-\KeywordTok{SimpleProtocol.prototype}\NormalTok{._}\FunctionTok{read} \NormalTok{= }\KeywordTok{function}\NormalTok{(n) \{}
-  \KeywordTok{if} \NormalTok{(!}\KeywordTok{this}\NormalTok{._}\FunctionTok{inBody}\NormalTok{) \{}
-    \KeywordTok{var} \NormalTok{chunk = }\KeywordTok{this}\NormalTok{._}\FunctionTok{source}\NormalTok{.}\FunctionTok{read}\NormalTok{();}
+\OtherTok{SimpleProtocol}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_read} \NormalTok{= }\KeywordTok{function}\NormalTok{(n) \{}
+  \KeywordTok{if} \NormalTok{(!}\KeywordTok{this}\NormalTok{.}\FunctionTok{_inBody}\NormalTok{) \{}
+    \KeywordTok{var} \NormalTok{chunk = }\KeywordTok{this}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{read}\NormalTok{();}
 
     \CommentTok{// if the source doesn't have data, we don't have data yet.}
-    \KeywordTok{if} \NormalTok{(chunk === null)}
-      \KeywordTok{return} \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\CharTok{''}\NormalTok{);}
+    \KeywordTok{if} \NormalTok{(chunk === }\KeywordTok{null}\NormalTok{)}
+      \KeywordTok{return} \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\StringTok{''}\NormalTok{);}
 
     \CommentTok{// check if the chunk has a \textbackslash{}n\textbackslash{}n}
     \KeywordTok{var} \NormalTok{split = -}\DecValTok{1}\NormalTok{;}
-    \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{; i++) \{}
+    \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{; i++) \{}
       \KeywordTok{if} \NormalTok{(chunk[i] === }\DecValTok{10}\NormalTok{) \{ }\CommentTok{// '\textbackslash{}n'}
-        \KeywordTok{if} \NormalTok{(}\KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr}\NormalTok{) \{}
+        \KeywordTok{if} \NormalTok{(}\KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr}\NormalTok{) \{}
           \NormalTok{split = i;}
           \KeywordTok{break}\NormalTok{;}
         \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
-          \KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+          \KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
         \NormalTok{\}}
       \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
-        \KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+        \KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
       \NormalTok{\}}
     \NormalTok{\}}
 
     \KeywordTok{if} \NormalTok{(split === -}\DecValTok{1}\NormalTok{) \{}
       \CommentTok{// still waiting for the \textbackslash{}n\textbackslash{}n}
       \CommentTok{// stash the chunk, and try again.}
-      \KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk);}
-      \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\CharTok{''}\NormalTok{);}
+      \KeywordTok{this}\NormalTok{.}\OtherTok{_rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk);}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\StringTok{''}\NormalTok{);}
     \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
-      \KeywordTok{this}\NormalTok{._}\FunctionTok{inBody} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
-      \KeywordTok{var} \NormalTok{h = }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(}\DecValTok{0}\NormalTok{, split);}
-      \KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(h);}
-      \KeywordTok{var} \NormalTok{header = }\KeywordTok{Buffer}\NormalTok{.}\FunctionTok{concat}\NormalTok{(}\KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader}\NormalTok{).}\FunctionTok{toString}\NormalTok{();}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{_inBody} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+      \KeywordTok{var} \NormalTok{h = }\OtherTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(}\DecValTok{0}\NormalTok{, split);}
+      \KeywordTok{this}\NormalTok{.}\OtherTok{_rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(h);}
+      \KeywordTok{var} \NormalTok{header = }\OtherTok{Buffer}\NormalTok{.}\FunctionTok{concat}\NormalTok{(}\KeywordTok{this}\NormalTok{.}\FunctionTok{_rawHeader}\NormalTok{).}\FunctionTok{toString}\NormalTok{();}
       \KeywordTok{try} \NormalTok{\{}
-        \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(header);}
+        \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(header);}
       \NormalTok{\} }\KeywordTok{catch} \NormalTok{(er) \{}
-        \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{new} \NormalTok{Error(}\CharTok{'invalid simple protocol data'}\NormalTok{));}
+        \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{new} \FunctionTok{Error}\NormalTok{(}\StringTok{'invalid simple protocol data'}\NormalTok{));}
         \KeywordTok{return}\NormalTok{;}
       \NormalTok{\}}
       \CommentTok{// now, because we got some extra data, unshift the rest}
       \CommentTok{// back into the read queue so that our consumer will see it.}
-      \KeywordTok{var} \NormalTok{b = }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(split);}
+      \KeywordTok{var} \NormalTok{b = }\OtherTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(split);}
       \KeywordTok{this}\NormalTok{.}\FunctionTok{unshift}\NormalTok{(b);}
 
       \CommentTok{// and let them know that we are done parsing the header.}
-      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'header'}\NormalTok{, }\KeywordTok{this}\NormalTok{.}\FunctionTok{header}\NormalTok{);}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{'header'}\NormalTok{, }\KeywordTok{this}\NormalTok{.}\FunctionTok{header}\NormalTok{);}
     \NormalTok{\}}
   \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
     \CommentTok{// from there on, just provide the data to our consumer.}
     \CommentTok{// careful not to push(null), since that would indicate EOF.}
-    \KeywordTok{var} \NormalTok{chunk = }\KeywordTok{this}\NormalTok{._}\FunctionTok{source}\NormalTok{.}\FunctionTok{read}\NormalTok{();}
+    \KeywordTok{var} \NormalTok{chunk = }\KeywordTok{this}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{read}\NormalTok{();}
     \KeywordTok{if} \NormalTok{(chunk) }\KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk);}
   \NormalTok{\}}
 \NormalTok{\};}
@@ -1026,9 +1064,11 @@ for a better implementation.
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{new stream.Readable({[}options{]})}
+\paragraph{new
+stream.Readable({[}options{]})}\label{new-stream.readableoptions}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{options} \{Object\}
 \item
@@ -1041,16 +1081,17 @@ for a better implementation.
 \item
   \texttt{objectMode} \{Boolean\} Whether this stream should behave as a
   stream of objects. Meaning that stream.read(n) returns a single value
-  instead of a Buffer of size n
+  instead of a Buffer of size n. Default=false
 \end{itemize}
 
 In classes that extend the Readable class, make sure to call the
 Readable constructor so that the buffering settings can be properly
 initialized.
 
-\paragraph{readable.\_read(size)}
+\paragraph{readable.\_read(size)}\label{readable.ux5freadsize}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{size} \{Number\} Number of bytes to read asynchronously
 \end{itemize}
@@ -1079,11 +1120,13 @@ fetch. Implementations where that is not relevant, such as TCP or TLS,
 may ignore this argument, and simply provide data whenever it becomes
 available. There is no need, for example to ``wait'' until \texttt{size}
 bytes are available before calling
-\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push(chunk)}}.
+\hyperref[streamux5freadableux5fpushux5fchunkux5fencoding]{\texttt{stream.push(chunk)}}.
 
-\paragraph{readable.push(chunk, {[}encoding{]})}
+\paragraph{readable.push(chunk,
+{[}encoding{]})}\label{readable.pushchunk-encoding}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunk} \{Buffer \textbar{} null \textbar{} String\} Chunk of
   data to push into the read queue
@@ -1119,67 +1162,75 @@ low-level source object by doing something like this:
 \CommentTok{// and an `ondata` member that gets called when it has data, and}
 \CommentTok{// an `onend` member that gets called when the data is over.}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(SourceWrapper, Readable);}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(SourceWrapper, Readable);}
 
-\KeywordTok{function} \NormalTok{SourceWrapper(options) \{}
-  \KeywordTok{Readable}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
+\KeywordTok{function} \FunctionTok{SourceWrapper}\NormalTok{(options) \{}
+  \OtherTok{Readable}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
 
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{source} \NormalTok{= getLowlevelSourceObject();}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_source} \NormalTok{= }\FunctionTok{getLowlevelSourceObject}\NormalTok{();}
   \KeywordTok{var} \NormalTok{self = }\KeywordTok{this}\NormalTok{;}
 
   \CommentTok{// Every time there's data, we push it into the internal buffer.}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{source}\NormalTok{.}\FunctionTok{ondata} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk) \{}
+  \KeywordTok{this}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{ondata} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk) \{}
     \CommentTok{// if push() returns false, then we need to stop reading from source}
-    \KeywordTok{if} \NormalTok{(!}\KeywordTok{self}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk))}
-      \KeywordTok{self._source}\NormalTok{.}\FunctionTok{readStop}\NormalTok{();}
+    \KeywordTok{if} \NormalTok{(!}\OtherTok{self}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk))}
+      \OtherTok{self}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{readStop}\NormalTok{();}
   \NormalTok{\};}
 
   \CommentTok{// When the source ends, we push the EOF-signalling `null` chunk}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{source}\NormalTok{.}\FunctionTok{onend} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{self}\NormalTok{.}\FunctionTok{push}\NormalTok{(null);}
+  \KeywordTok{this}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{onend} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{self}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\KeywordTok{null}\NormalTok{);}
   \NormalTok{\};}
 \NormalTok{\}}
 
 \CommentTok{// _read will be called when the stream wants to pull more data in}
 \CommentTok{// the advisory size argument is ignored in this case.}
-\KeywordTok{SourceWrapper.prototype}\NormalTok{._}\FunctionTok{read} \NormalTok{= }\KeywordTok{function}\NormalTok{(size) \{}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{source}\NormalTok{.}\FunctionTok{readStart}\NormalTok{();}
+\OtherTok{SourceWrapper}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_read} \NormalTok{= }\KeywordTok{function}\NormalTok{(size) \{}
+  \KeywordTok{this}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{readStart}\NormalTok{();}
 \NormalTok{\};}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Class: stream.Writable}
+\subsubsection{Class: stream.Writable}\label{class-stream.writable-1}
 
 \texttt{stream.Writable} is an abstract class designed to be extended
 with an underlying implementation of the
-{[}\texttt{\_write(chunk, encoding, callback)}{]}{[}{]} method.
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk, encoding, callback)}}
+method.
 
 Please see above under
-\hyperref[stream_api_for_stream_consumers]{API for Stream Consumers}
-for how to consume writable streams in your programs. What follows is an
-explanation of how to implement Writable streams in your programs.
+\hyperref[streamux5fapiux5fforux5fstreamux5fconsumers]{API for Stream
+Consumers} for how to consume writable streams in your programs. What
+follows is an explanation of how to implement Writable streams in your
+programs.
 
-\paragraph{new stream.Writable({[}options{]})}
+\paragraph{new
+stream.Writable({[}options{]})}\label{new-stream.writableoptions}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{options} \{Object\}
 \item
   \texttt{highWaterMark} \{Number\} Buffer level when
-  {[}\texttt{write()}{]}{[}{]} starts returning false. Default=16kb, or
-  16 for \texttt{objectMode} streams
+  \hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallback]{\texttt{write()}}
+  starts returning false. Default=16kb, or 16 for \texttt{objectMode}
+  streams
 \item
   \texttt{decodeStrings} \{Boolean\} Whether or not to decode strings
-  into Buffers before passing them to {[}\texttt{\_write()}{]}{[}{]}.
+  into Buffers before passing them to
+  \hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write()}}.
   Default=true
 \end{itemize}
 
 In classes that extend the Writable class, make sure to call the
 constructor so that the buffering settings can be properly initialized.
 
-\paragraph{writable.\_write(chunk, encoding, callback)}
+\paragraph{writable.\_write(chunk, encoding,
+callback)}\label{writable.ux5fwritechunk-encoding-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunk} \{Buffer \textbar{} String\} The chunk to be written.
   Will always be a buffer unless the \texttt{decodeStrings} option was
@@ -1195,8 +1246,8 @@ constructor so that the buffering settings can be properly initialized.
 \end{itemize}
 
 All Writable stream implementations must provide a
-{[}\texttt{\_write()}{]}{[}{]} method to send data to the underlying
-resource.
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write()}}
+method to send data to the underlying resource.
 
 Note: \textbf{This function MUST NOT be called directly.} It should be
 implemented by child classes, and called by the internal Writable class
@@ -1219,9 +1270,11 @@ class that defines it, and should not be called directly by user
 programs. However, you \textbf{are} expected to override this method in
 your own extension classes.
 
-\subsubsection{writable.\_writev(chunks, callback)}
+\subsubsection{writable.\_writev(chunks,
+callback)}\label{writable.ux5fwritevchunks-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunks} \{Array\} The chunks to be written. Each chunk has
   following format: \texttt{\{ chunk: ..., encoding: ... \}}.
@@ -1238,26 +1291,28 @@ This function is completely optional to implement. In most cases it is
 unnecessary. If implemented, it will be called with all the chunks that
 are buffered in the write queue.
 
-\subsubsection{Class: stream.Duplex}
+\subsubsection{Class: stream.Duplex}\label{class-stream.duplex-1}
 
 A ``duplex'' stream is one that is both Readable and Writable, such as a
 TCP socket connection.
 
 Note that \texttt{stream.Duplex} is an abstract class designed to be
 extended with an underlying implementation of the \texttt{\_read(size)}
-and {[}\texttt{\_write(chunk, encoding, callback)}{]}{[}{]} methods as
-you would with a Readable or Writable stream class.
+and
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk, encoding, callback)}}
+methods as you would with a Readable or Writable stream class.
 
 Since JavaScript doesn't have multiple prototypal inheritance, this
 class prototypally inherits from Readable, and then parasitically from
 Writable. It is thus up to the user to implement both the lowlevel
 \texttt{\_read(n)} method as well as the lowlevel
-{[}\texttt{\_write(chunk, encoding, callback)}{]}{[}{]} method on
-extension duplex classes.
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk, encoding, callback)}}
+method on extension duplex classes.
 
-\paragraph{new stream.Duplex(options)}
+\paragraph{new stream.Duplex(options)}\label{new-stream.duplexoptions}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{options} \{Object\} Passed to both Writable and Readable
   constructors. Also has the following fields:
@@ -1270,7 +1325,7 @@ extension duplex classes.
 In classes that extend the Duplex class, make sure to call the
 constructor so that the buffering settings can be properly initialized.
 
-\subsubsection{Class: stream.Transform}
+\subsubsection{Class: stream.Transform}\label{class-stream.transform-1}
 
 A ``transform'' stream is a duplex stream where the output is causally
 connected in some way to the input, such as a \href{zlib.html}{zlib}
@@ -1283,14 +1338,18 @@ provided when the input is ended. A zlib stream will produce output that
 is either much smaller or much larger than its input.
 
 Rather than implement the
-\hyperref[stream_readable_read_size_1]{\texttt{\_read()}} and
-{[}\texttt{\_write()}{]}{[}{]} methods, Transform classes must implement
-the \texttt{\_transform()} method, and may optionally also implement the
-\texttt{\_flush()} method. (See below.)
+\hyperref[streamux5freadableux5freadux5fsizeux5f1]{\texttt{\_read()}}
+and
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write()}}
+methods, Transform classes must implement the \texttt{\_transform()}
+method, and may optionally also implement the \texttt{\_flush()} method.
+(See below.)
 
-\paragraph{new stream.Transform({[}options{]})}
+\paragraph{new
+stream.Transform({[}options{]})}\label{new-stream.transformoptions}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{options} \{Object\} Passed to both Writable and Readable
   constructors.
@@ -1299,9 +1358,11 @@ the \texttt{\_transform()} method, and may optionally also implement the
 In classes that extend the Transform class, make sure to call the
 constructor so that the buffering settings can be properly initialized.
 
-\paragraph{transform.\_transform(chunk, encoding, callback)}
+\paragraph{transform.\_transform(chunk, encoding,
+callback)}\label{transform.ux5ftransformchunk-encoding-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunk} \{Buffer \textbar{} String\} The chunk to be
   transformed. Will always be a buffer unless the \texttt{decodeStrings}
@@ -1340,9 +1401,10 @@ class that defines it, and should not be called directly by user
 programs. However, you \textbf{are} expected to override this method in
 your own extension classes.
 
-\paragraph{transform.\_flush(callback)}
+\paragraph{transform.\_flush(callback)}\label{transform.ux5fflushcallback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{callback} \{Function\} Call this function (optionally with an
   error argument) when you are done flushing any remaining data.
@@ -1370,13 +1432,14 @@ class that defines it, and should not be called directly by user
 programs. However, you \textbf{are} expected to override this method in
 your own extension classes.
 
-\paragraph{Example: \texttt{SimpleProtocol} parser v2}
+\paragraph{Example: \texttt{SimpleProtocol} parser
+v2}\label{example-simpleprotocol-parser-v2}
 
 The example above of a simple protocol parser can be implemented simply
 by using the higher level
-\hyperref[stream_class_stream_transform]{Transform} stream class,
-similar to the \texttt{parseHeader} and \texttt{SimpleProtocol v1}
-examples above.
+\hyperref[streamux5fclassux5fstreamux5ftransform]{Transform} stream
+class, similar to the \texttt{parseHeader} and
+\texttt{SimpleProtocol v1} examples above.
 
 In this example, rather than providing the input as an argument, it
 would be piped into the parser, which is a more idiomatic Node stream
@@ -1384,64 +1447,64 @@ approach.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{Transform = require(}\CharTok{'stream'}\NormalTok{).}\FunctionTok{Transform}\NormalTok{;}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(SimpleProtocol, Transform);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{Transform = }\FunctionTok{require}\NormalTok{(}\StringTok{'stream'}\NormalTok{).}\FunctionTok{Transform}\NormalTok{;}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(SimpleProtocol, Transform);}
 
-\KeywordTok{function} \NormalTok{SimpleProtocol(options) \{}
-  \KeywordTok{if} \NormalTok{(!(}\KeywordTok{this} \NormalTok{instanceof SimpleProtocol))}
-    \KeywordTok{return} \KeywordTok{new} \NormalTok{SimpleProtocol(options);}
+\KeywordTok{function} \FunctionTok{SimpleProtocol}\NormalTok{(options) \{}
+  \KeywordTok{if} \NormalTok{(!(}\KeywordTok{this} \KeywordTok{instanceof} \NormalTok{SimpleProtocol))}
+    \KeywordTok{return} \KeywordTok{new} \FunctionTok{SimpleProtocol}\NormalTok{(options);}
 
-  \KeywordTok{Transform}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{inBody} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader} \NormalTok{= [];}
-  \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= null;}
+  \OtherTok{Transform}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_inBody} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_rawHeader} \NormalTok{= [];}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= }\KeywordTok{null}\NormalTok{;}
 \NormalTok{\}}
 
-\KeywordTok{SimpleProtocol.prototype}\NormalTok{._}\FunctionTok{transform} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk, encoding, done) \{}
-  \KeywordTok{if} \NormalTok{(!}\KeywordTok{this}\NormalTok{._}\FunctionTok{inBody}\NormalTok{) \{}
+\OtherTok{SimpleProtocol}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_transform} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk, encoding, done) \{}
+  \KeywordTok{if} \NormalTok{(!}\KeywordTok{this}\NormalTok{.}\FunctionTok{_inBody}\NormalTok{) \{}
     \CommentTok{// check if the chunk has a \textbackslash{}n\textbackslash{}n}
     \KeywordTok{var} \NormalTok{split = -}\DecValTok{1}\NormalTok{;}
-    \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{; i++) \{}
+    \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{; i++) \{}
       \KeywordTok{if} \NormalTok{(chunk[i] === }\DecValTok{10}\NormalTok{) \{ }\CommentTok{// '\textbackslash{}n'}
-        \KeywordTok{if} \NormalTok{(}\KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr}\NormalTok{) \{}
+        \KeywordTok{if} \NormalTok{(}\KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr}\NormalTok{) \{}
           \NormalTok{split = i;}
           \KeywordTok{break}\NormalTok{;}
         \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
-          \KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+          \KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
         \NormalTok{\}}
       \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
-        \KeywordTok{this}\NormalTok{._}\FunctionTok{sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+        \KeywordTok{this}\NormalTok{.}\FunctionTok{_sawFirstCr} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
       \NormalTok{\}}
     \NormalTok{\}}
 
     \KeywordTok{if} \NormalTok{(split === -}\DecValTok{1}\NormalTok{) \{}
       \CommentTok{// still waiting for the \textbackslash{}n\textbackslash{}n}
       \CommentTok{// stash the chunk, and try again.}
-      \KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk);}
+      \KeywordTok{this}\NormalTok{.}\OtherTok{_rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk);}
     \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
-      \KeywordTok{this}\NormalTok{._}\FunctionTok{inBody} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
-      \KeywordTok{var} \NormalTok{h = }\KeywordTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(}\DecValTok{0}\NormalTok{, split);}
-      \KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(h);}
-      \KeywordTok{var} \NormalTok{header = }\KeywordTok{Buffer}\NormalTok{.}\FunctionTok{concat}\NormalTok{(}\KeywordTok{this}\NormalTok{._}\FunctionTok{rawHeader}\NormalTok{).}\FunctionTok{toString}\NormalTok{();}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{_inBody} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+      \KeywordTok{var} \NormalTok{h = }\OtherTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(}\DecValTok{0}\NormalTok{, split);}
+      \KeywordTok{this}\NormalTok{.}\OtherTok{_rawHeader}\NormalTok{.}\FunctionTok{push}\NormalTok{(h);}
+      \KeywordTok{var} \NormalTok{header = }\OtherTok{Buffer}\NormalTok{.}\FunctionTok{concat}\NormalTok{(}\KeywordTok{this}\NormalTok{.}\FunctionTok{_rawHeader}\NormalTok{).}\FunctionTok{toString}\NormalTok{();}
       \KeywordTok{try} \NormalTok{\{}
-        \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(header);}
+        \KeywordTok{this}\NormalTok{.}\FunctionTok{header} \NormalTok{= }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(header);}
       \NormalTok{\} }\KeywordTok{catch} \NormalTok{(er) \{}
-        \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{new} \NormalTok{Error(}\CharTok{'invalid simple protocol data'}\NormalTok{));}
+        \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{new} \FunctionTok{Error}\NormalTok{(}\StringTok{'invalid simple protocol data'}\NormalTok{));}
         \KeywordTok{return}\NormalTok{;}
       \NormalTok{\}}
       \CommentTok{// and let them know that we are done parsing the header.}
-      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'header'}\NormalTok{, }\KeywordTok{this}\NormalTok{.}\FunctionTok{header}\NormalTok{);}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{'header'}\NormalTok{, }\KeywordTok{this}\NormalTok{.}\FunctionTok{header}\NormalTok{);}
 
       \CommentTok{// now, because we got some extra data, emit this first.}
-      \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\KeywordTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(split));}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\OtherTok{chunk}\NormalTok{.}\FunctionTok{slice}\NormalTok{(split));}
     \NormalTok{\}}
   \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
     \CommentTok{// from there on, just provide the data to our consumer as-is.}
     \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(chunk);}
   \NormalTok{\}}
-  \NormalTok{done();}
+  \FunctionTok{done}\NormalTok{();}
 \NormalTok{\};}
 
 \CommentTok{// Usage:}
@@ -1452,18 +1515,19 @@ approach.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Class: stream.PassThrough}
+\subsubsection{Class:
+stream.PassThrough}\label{class-stream.passthrough}
 
 This is a trivial implementation of a
-\hyperref[stream_class_stream_transform]{Transform} stream that
+\hyperref[streamux5fclassux5fstreamux5ftransform]{Transform} stream that
 simply passes the input bytes across to the output. Its purpose is
 mainly for examples and testing, but there are occasionally use cases
 where it can come in handy as a building block for novel sorts of
 streams.
 
-\subsection{Streams: Under the Hood}
+\subsection{Streams: Under the Hood}\label{streams-under-the-hood}
 
-\subsubsection{Buffering}
+\subsubsection{Buffering}\label{buffering}
 
 Both Writable and Readable streams will buffer data on an internal
 object called \texttt{\_writableState.buffer} or
@@ -1473,19 +1537,19 @@ The amount of data that will potentially be buffered depends on the
 \texttt{highWaterMark} option which is passed into the constructor.
 
 Buffering in Readable streams happens when the implementation calls
-\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push(chunk)}}.
+\hyperref[streamux5freadableux5fpushux5fchunkux5fencoding]{\texttt{stream.push(chunk)}}.
 If the consumer of the Stream does not call \texttt{stream.read()}, then
 the data will sit in the internal queue until it is consumed.
 
 Buffering in Writable streams happens when the user calls
-{[}\texttt{stream.write(chunk)}{]}{[}{]} repeatedly, even when
-\texttt{write()} returns \texttt{false}.
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallback]{\texttt{stream.write(chunk)}}
+repeatedly, even when \texttt{write()} returns \texttt{false}.
 
 The purpose of streams, especially with the \texttt{pipe()} method, is
 to limit the buffering of data to acceptable levels, so that sources and
 destinations of varying speed will not overwhelm the available memory.
 
-\subsubsection{\texttt{stream.read(0)}}
+\subsubsection{\texttt{stream.read(0)}}\label{stream.read0}
 
 There are some cases where you want to trigger a refresh of the
 underlying readable stream mechanisms, without actually consuming any
@@ -1500,12 +1564,12 @@ There is almost never a need to do this. However, you will see some
 cases in Node's internals where this is done, particularly in the
 Readable stream class internals.
 
-\subsubsection{\texttt{stream.push('')}}
+\subsubsection{\texttt{stream.push('')}}\label{stream.push}
 
 Pushing a zero-byte string or Buffer (when not in
-\hyperref[stream_object_mode]{Object mode}) has an interesting side
-effect. Because it \emph{is} a call to
-\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push()}},
+\hyperref[streamux5fobjectux5fmode]{Object mode}) has an interesting
+side effect. Because it \emph{is} a call to
+\hyperref[streamux5freadableux5fpushux5fchunkux5fencoding]{\texttt{stream.push()}},
 it will end the \texttt{reading} process. However, it does \emph{not}
 add any data to the readable buffer, so there's nothing for a user to
 consume.
@@ -1516,48 +1580,51 @@ will know when to check again, by calling \texttt{stream.read(0)}. In
 those cases, you \emph{may} call \texttt{stream.push('')}.
 
 So far, the only use case for this functionality is in the
-\href{tls.html\#tls\_class\_cryptostream}{tls.CryptoStream} class, which
+\href{tls.html\#tls_class_cryptostream}{tls.CryptoStream} class, which
 is deprecated in Node v0.12. If you find that you have to use
 \texttt{stream.push('')}, please consider another approach, because it
 almost certainly indicates that something is horribly wrong.
 
-\subsubsection{Compatibility with Older Node Versions}
+\subsubsection{Compatibility with Older Node
+Versions}\label{compatibility-with-older-node-versions}
 
 In versions of Node prior to v0.10, the Readable stream interface was
 simpler, but also less powerful and less useful.
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Rather than waiting for you to call the \texttt{read()} method,
   \texttt{'data'} events would start emitting immediately. If you needed
   to do some I/O to decide how to handle data, then you had to store the
   chunks in some kind of buffer so that they would not be lost.
 \item
-  The \hyperref[stream_readable_pause]{\texttt{pause()}} method was
-  advisory, rather than guaranteed. This meant that you still had to be
-  prepared to receive \texttt{'data'} events even when the stream was in
-  a paused state.
+  The \hyperref[streamux5freadableux5fpause]{\texttt{pause()}} method
+  was advisory, rather than guaranteed. This meant that you still had to
+  be prepared to receive \texttt{'data'} events even when the stream was
+  in a paused state.
 \end{itemize}
 
 In Node v0.10, the Readable class described below was added. For
 backwards compatibility with older Node programs, Readable streams
 switch into ``flowing mode'' when a \texttt{'data'} event handler is
 added, or when the
-\hyperref[stream_readable_resume]{\texttt{resume()}} method is called.
-The effect is that, even if you are not using the new \texttt{read()}
-method and \texttt{'readable'} event, you no longer have to worry about
-losing \texttt{'data'} chunks.
+\hyperref[streamux5freadableux5fresume]{\texttt{resume()}} method is
+called. The effect is that, even if you are not using the new
+\texttt{read()} method and \texttt{'readable'} event, you no longer have
+to worry about losing \texttt{'data'} chunks.
 
 Most programs will continue to function normally. However, this
 introduces an edge case in the following conditions:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
-  No \hyperref[stream_event_data]{\texttt{'data'} event} handler is
-  added.
+  No \hyperref[streamux5feventux5fdata]{\texttt{'data'} event} handler
+  is added.
 \item
-  The \hyperref[stream_readable_resume]{\texttt{resume()}} method is
-  never called.
+  The \hyperref[streamux5freadableux5fresume]{\texttt{resume()}} method
+  is never called.
 \item
   The stream is not piped to any writable destination.
 \end{itemize}
@@ -1567,12 +1634,12 @@ For example, consider the following code:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// WARNING!  BROKEN!}
-\KeywordTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(socket) \{}
+\OtherTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(socket) \{}
 
   \CommentTok{// we add an 'end' method, but never consume the data}
-  \KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
     \CommentTok{// It will never get here.}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'I got your message (but didnt read it)\textbackslash{}n'}\NormalTok{);}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'I got your message (but didnt read it)}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
   \NormalTok{\});}
 
 \NormalTok{\}).}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
@@ -1589,14 +1656,14 @@ to start the flow of data:
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// Workaround}
-\KeywordTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(socket) \{}
+\OtherTok{net}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(socket) \{}
 
-  \KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'I got your message (but didnt read it)\textbackslash{}n'}\NormalTok{);}
+  \OtherTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'I got your message (but didnt read it)}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
   \NormalTok{\});}
 
   \CommentTok{// start the flow of data, discarding it.}
-  \KeywordTok{socket}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
+  \OtherTok{socket}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 
 \NormalTok{\}).}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
 \end{Highlighting}
@@ -1606,7 +1673,7 @@ In addition to new Readable streams switching into flowing mode,
 pre-v0.10 style streams can be wrapped in a Readable class using the
 \texttt{wrap()} method.
 
-\subsubsection{Object Mode}
+\subsubsection{Object Mode}\label{object-mode}
 
 Normally, Streams operate on Strings and Buffers exclusively.
 
@@ -1624,7 +1691,7 @@ The special value \texttt{null} still retains its special value for
 object mode streams. That is, for object mode readable streams,
 \texttt{null} as a return value from \texttt{stream.read()} indicates
 that there is no more data, and
-\hyperref[stream_readable_push_chunk_encoding]{\texttt{stream.push(null)}}
+\hyperref[streamux5freadableux5fpushux5fchunkux5fencoding]{\texttt{stream.push(null)}}
 will signal the end of stream data (\texttt{EOF}).
 
 No streams in Node core are object mode streams. This pattern is only
@@ -1634,13 +1701,14 @@ You should set \texttt{objectMode} in your stream child class
 constructor on the options object. Setting \texttt{objectMode}
 mid-stream is not safe.
 
-\subsubsection{State Objects}
+\subsubsection{State Objects}\label{state-objects}
 
-\hyperref[stream_class_stream_readable]{Readable} streams have a
-member object called \texttt{\_readableState}.
-\hyperref[stream_class_stream_writable]{Writable} streams have a
-member object called \texttt{\_writableState}.
-\hyperref[stream_class_stream_duplex]{Duplex} streams have both.
+\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} streams have
+a member object called \texttt{\_readableState}.
+\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} streams have
+a member object called \texttt{\_writableState}.
+\hyperref[streamux5fclassux5fstreamux5fduplex]{Duplex} streams have
+both.
 
 \textbf{These objects should generally not be modified in child
 classes.} However, if you have a Duplex or Transform stream that should
@@ -1651,57 +1719,57 @@ object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{StringDecoder = require(}\CharTok{'string_decoder'}\NormalTok{).}\FunctionTok{StringDecoder}\NormalTok{;}
-\KeywordTok{var} \NormalTok{Transform = require(}\CharTok{'stream'}\NormalTok{).}\FunctionTok{Transform}\NormalTok{;}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(JSONParseStream, Transform);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{StringDecoder = }\FunctionTok{require}\NormalTok{(}\StringTok{'string_decoder'}\NormalTok{).}\FunctionTok{StringDecoder}\NormalTok{;}
+\KeywordTok{var} \NormalTok{Transform = }\FunctionTok{require}\NormalTok{(}\StringTok{'stream'}\NormalTok{).}\FunctionTok{Transform}\NormalTok{;}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(JSONParseStream, Transform);}
 
 \CommentTok{// Gets \textbackslash{}n-delimited JSON string data, and emits the parsed objects}
-\KeywordTok{function} \NormalTok{JSONParseStream(options) \{}
-  \KeywordTok{if} \NormalTok{(!(}\KeywordTok{this} \NormalTok{instanceof JSONParseStream))}
-    \KeywordTok{return} \KeywordTok{new} \NormalTok{JSONParseStream(options);}
+\KeywordTok{function} \FunctionTok{JSONParseStream}\NormalTok{(options) \{}
+  \KeywordTok{if} \NormalTok{(!(}\KeywordTok{this} \KeywordTok{instanceof} \NormalTok{JSONParseStream))}
+    \KeywordTok{return} \KeywordTok{new} \FunctionTok{JSONParseStream}\NormalTok{(options);}
 
-  \KeywordTok{Transform}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{writableState}\NormalTok{.}\FunctionTok{objectMode} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{readableState}\NormalTok{.}\FunctionTok{objectMode} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{buffer} \NormalTok{= }\CharTok{''}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{decoder} \NormalTok{= }\KeywordTok{new} \NormalTok{StringDecoder(}\CharTok{'utf8'}\NormalTok{);}
+  \OtherTok{Transform}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
+  \KeywordTok{this}\NormalTok{.}\OtherTok{_writableState}\NormalTok{.}\FunctionTok{objectMode} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
+  \KeywordTok{this}\NormalTok{.}\OtherTok{_readableState}\NormalTok{.}\FunctionTok{objectMode} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_buffer} \NormalTok{= }\StringTok{''}\NormalTok{;}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_decoder} \NormalTok{= }\KeywordTok{new} \FunctionTok{StringDecoder}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
 \NormalTok{\}}
 
-\KeywordTok{JSONParseStream.prototype}\NormalTok{._}\FunctionTok{transform} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk, encoding, cb) \{}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{buffer} \NormalTok{+= }\KeywordTok{this}\NormalTok{._}\FunctionTok{decoder}\NormalTok{.}\FunctionTok{write}\NormalTok{(chunk);}
+\OtherTok{JSONParseStream}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_transform} \NormalTok{= }\KeywordTok{function}\NormalTok{(chunk, encoding, cb) \{}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_buffer} \NormalTok{+= }\KeywordTok{this}\NormalTok{.}\OtherTok{_decoder}\NormalTok{.}\FunctionTok{write}\NormalTok{(chunk);}
   \CommentTok{// split on newlines}
-  \KeywordTok{var} \NormalTok{lines = }\KeywordTok{this}\NormalTok{._}\FunctionTok{buffer}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{/}\BaseNTok{\textbackslash{}r}\FloatTok{?}\BaseNTok{\textbackslash{}n}\OtherTok{/}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{lines = }\KeywordTok{this}\NormalTok{.}\OtherTok{_buffer}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{/}\BaseNTok{\textbackslash{}r}\FloatTok{?}\BaseNTok{\textbackslash{}n}\OtherTok{/}\NormalTok{);}
   \CommentTok{// keep the last partial line buffered}
-  \KeywordTok{this}\NormalTok{._}\FunctionTok{buffer} \NormalTok{= }\KeywordTok{lines}\NormalTok{.}\FunctionTok{pop}\NormalTok{();}
-  \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{l = }\DecValTok{0}\NormalTok{; l < }\KeywordTok{lines}\NormalTok{.}\FunctionTok{length}\NormalTok{; l++) \{}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{_buffer} \NormalTok{= }\OtherTok{lines}\NormalTok{.}\FunctionTok{pop}\NormalTok{();}
+  \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{l = }\DecValTok{0}\NormalTok{; l < }\OtherTok{lines}\NormalTok{.}\FunctionTok{length}\NormalTok{; l++) \{}
     \KeywordTok{var} \NormalTok{line = lines[l];}
     \KeywordTok{try} \NormalTok{\{}
-      \KeywordTok{var} \NormalTok{obj = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(line);}
+      \KeywordTok{var} \NormalTok{obj = }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(line);}
     \NormalTok{\} }\KeywordTok{catch} \NormalTok{(er) \{}
-      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'error'}\NormalTok{, er);}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{'error'}\NormalTok{, er);}
       \KeywordTok{return}\NormalTok{;}
     \NormalTok{\}}
     \CommentTok{// push the parsed object out to the readable consumer}
     \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(obj);}
   \NormalTok{\}}
-  \NormalTok{cb();}
+  \FunctionTok{cb}\NormalTok{();}
 \NormalTok{\};}
 
-\KeywordTok{JSONParseStream.prototype}\NormalTok{._}\FunctionTok{flush} \NormalTok{= }\KeywordTok{function}\NormalTok{(cb) \{}
+\OtherTok{JSONParseStream}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_flush} \NormalTok{= }\KeywordTok{function}\NormalTok{(cb) \{}
   \CommentTok{// Just handle any leftover}
-  \KeywordTok{var} \NormalTok{rem = }\KeywordTok{this}\NormalTok{._}\FunctionTok{buffer}\NormalTok{.}\FunctionTok{trim}\NormalTok{();}
+  \KeywordTok{var} \NormalTok{rem = }\KeywordTok{this}\NormalTok{.}\OtherTok{_buffer}\NormalTok{.}\FunctionTok{trim}\NormalTok{();}
   \KeywordTok{if} \NormalTok{(rem) \{}
     \KeywordTok{try} \NormalTok{\{}
-      \KeywordTok{var} \NormalTok{obj = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(rem);}
+      \KeywordTok{var} \NormalTok{obj = }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(rem);}
     \NormalTok{\} }\KeywordTok{catch} \NormalTok{(er) \{}
-      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\CharTok{'error'}\NormalTok{, er);}
+      \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{'error'}\NormalTok{, er);}
       \KeywordTok{return}\NormalTok{;}
     \NormalTok{\}}
     \CommentTok{// push the parsed object out to the readable consumer}
     \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(obj);}
   \NormalTok{\}}
-  \NormalTok{cb();}
+  \FunctionTok{cb}\NormalTok{();}
 \NormalTok{\};}
 \end{Highlighting}
 \end{Shaded}

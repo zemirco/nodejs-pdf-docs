@@ -1,9 +1,9 @@
-\section{Crypto}
+\section{Crypto}\label{crypto}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable; API changes are being discussed }\KeywordTok{for}
-\NormalTok{future }\KeywordTok{versions}\NormalTok{.  Breaking changes will be }\KeywordTok{minimized}\NormalTok{.  See }\KeywordTok{below}\NormalTok{.}
+\NormalTok{Stability: }\DecValTok{2} \NormalTok{- Unstable; API changes are being discussed }\KeywordTok{for}
+\NormalTok{future }\OtherTok{versions}\NormalTok{.  }\FunctionTok{Breaking} \FunctionTok{changes} \FunctionTok{will} \FunctionTok{be} \OtherTok{minimized}\NormalTok{.  }\FunctionTok{See} \OtherTok{below}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
@@ -15,7 +15,49 @@ used as part of a secure HTTPS net or http connection.
 It also offers a set of wrappers for OpenSSL's hash, hmac, cipher,
 decipher, sign and verify methods.
 
-\subsection{crypto.getCiphers()}
+\subsection{crypto.setEngine(engine,
+{[}flags{]})}\label{crypto.setengineengine-flags}
+
+Load and set engine for some/all OpenSSL functions (selected by flags).
+
+\texttt{engine} could be either an id or a path to the to the engine's
+shared library.
+
+\texttt{flags} is optional and has \texttt{ENGINE\_METHOD\_ALL} value by
+default. It could take one of or mix of following flags (defined in
+\texttt{constants} module):
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{ENGINE\_METHOD\_RSA}
+\item
+  \texttt{ENGINE\_METHOD\_DSA}
+\item
+  \texttt{ENGINE\_METHOD\_DH}
+\item
+  \texttt{ENGINE\_METHOD\_RAND}
+\item
+  \texttt{ENGINE\_METHOD\_ECDH}
+\item
+  \texttt{ENGINE\_METHOD\_ECDSA}
+\item
+  \texttt{ENGINE\_METHOD\_CIPHERS}
+\item
+  \texttt{ENGINE\_METHOD\_DIGESTS}
+\item
+  \texttt{ENGINE\_METHOD\_STORE}
+\item
+  \texttt{ENGINE\_METHOD\_PKEY\_METH}
+\item
+  \texttt{ENGINE\_METHOD\_PKEY\_ASN1\_METH}
+\item
+  \texttt{ENGINE\_METHOD\_ALL}
+\item
+  \texttt{ENGINE\_METHOD\_NONE}
+\end{itemize}
+
+\subsection{crypto.getCiphers()}\label{crypto.getciphers}
 
 Returns an array with the names of the supported ciphers.
 
@@ -23,12 +65,12 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{ciphers = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{getCiphers}\NormalTok{();}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(ciphers); }\CommentTok{// ['AES-128-CBC', 'AES-128-CBC-HMAC-SHA1', ...]}
+\KeywordTok{var} \NormalTok{ciphers = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{getCiphers}\NormalTok{();}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(ciphers); }\CommentTok{// ['AES-128-CBC', 'AES-128-CBC-HMAC-SHA1', ...]}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{crypto.getHashes()}
+\subsection{crypto.getHashes()}\label{crypto.gethashes}
 
 Returns an array with the names of the supported hash algorithms.
 
@@ -36,17 +78,18 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{hashes = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{getHashes}\NormalTok{();}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(hashes); }\CommentTok{// ['sha', 'sha1', 'sha1WithRSAEncryption', ...]}
+\KeywordTok{var} \NormalTok{hashes = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{getHashes}\NormalTok{();}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(hashes); }\CommentTok{// ['sha', 'sha1', 'sha1WithRSAEncryption', ...]}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{crypto.createCredentials(details)}
+\subsection{crypto.createCredentials(details)}\label{crypto.createcredentialsdetails}
 
 Creates a credentials object, with the optional details being a
 dictionary with keys:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{pfx} : A string or buffer holding the PFX or PKCS12 encoded
   private key, certificate and CA certificates
@@ -66,7 +109,7 @@ dictionary with keys:
 \item
   \texttt{ciphers}: A string describing the ciphers to use or exclude.
   Consult
-  \url{http://www.openssl.org/docs/apps/ciphers.html#CIPHER_LIST_FORMAT}
+  \url{http://www.openssl.org/docs/apps/ciphers.html\#CIPHER_LIST_FORMAT}
   for details on the format.
 \end{itemize}
 
@@ -74,7 +117,7 @@ If no `ca' details are given, then node.js will use the default publicly
 trusted list of CAs as given in
 \url{http://mxr.mozilla.org/mozilla/source/security/nss/lib/ckfw/builtins/certdata.txt}.
 
-\subsection{crypto.createHash(algorithm)}
+\subsection{crypto.createHash(algorithm)}\label{crypto.createhashalgorithm}
 
 Creates and returns a hash object, a cryptographic hash with the given
 algorithm which can be used to generate hash digests.
@@ -89,25 +132,25 @@ Example: this program that takes the sha1 sum of a file
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{filename = }\KeywordTok{process}\NormalTok{.}\FunctionTok{argv}\NormalTok{[}\DecValTok{2}\NormalTok{];}
-\KeywordTok{var} \NormalTok{crypto = require(}\CharTok{'crypto'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{fs = require(}\CharTok{'fs'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{filename = }\OtherTok{process}\NormalTok{.}\FunctionTok{argv}\NormalTok{[}\DecValTok{2}\NormalTok{];}
+\KeywordTok{var} \NormalTok{crypto = }\FunctionTok{require}\NormalTok{(}\StringTok{'crypto'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{fs = }\FunctionTok{require}\NormalTok{(}\StringTok{'fs'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{shasum = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{createHash}\NormalTok{(}\CharTok{'sha1'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{shasum = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{createHash}\NormalTok{(}\StringTok{'sha1'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{s = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{ReadStream}\NormalTok{(filename);}
-\KeywordTok{s}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(d) \{}
-  \KeywordTok{shasum}\NormalTok{.}\FunctionTok{update}\NormalTok{(d);}
+\KeywordTok{var} \NormalTok{s = }\OtherTok{fs}\NormalTok{.}\FunctionTok{ReadStream}\NormalTok{(filename);}
+\OtherTok{s}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(d) \{}
+  \OtherTok{shasum}\NormalTok{.}\FunctionTok{update}\NormalTok{(d);}
 \NormalTok{\});}
 
-\KeywordTok{s}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{var} \NormalTok{d = }\KeywordTok{shasum}\NormalTok{.}\FunctionTok{digest}\NormalTok{(}\CharTok{'hex'}\NormalTok{);}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(d + }\CharTok{'  '} \NormalTok{+ filename);}
+\OtherTok{s}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{var} \NormalTok{d = }\OtherTok{shasum}\NormalTok{.}\FunctionTok{digest}\NormalTok{(}\StringTok{'hex'}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(d + }\StringTok{'  '} \NormalTok{+ filename);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Class: Hash}
+\subsection{Class: Hash}\label{class-hash}
 
 The class for creating hash digests of data.
 
@@ -119,16 +162,19 @@ also supported.
 
 Returned by \texttt{crypto.createHash}.
 
-\subsubsection{hash.update(data, {[}input\_encoding{]})}
+\subsubsection{hash.update(data,
+{[}input\_encoding{]})}\label{hash.updatedata-inputux5fencoding}
 
 Updates the hash content with the given \texttt{data}, the encoding of
 which is given in \texttt{input\_encoding} and can be \texttt{'utf8'},
-\texttt{'ascii'} or \texttt{'binary'}. If no encoding is provided, then
-a buffer is expected.
+\texttt{'ascii'} or \texttt{'binary'}. If no encoding is provided and
+the input is a string an encoding of \texttt{'binary'} is enforced. If
+\texttt{data} is a \texttt{Buffer} then \texttt{input\_encoding} is
+ignored.
 
 This can be called many times with new data as it is streamed.
 
-\subsubsection{hash.digest({[}encoding{]})}
+\subsubsection{hash.digest({[}encoding{]})}\label{hash.digestencoding}
 
 Calculates the digest of all of the passed data to be hashed. The
 \texttt{encoding} can be \texttt{'hex'}, \texttt{'binary'} or
@@ -138,7 +184,8 @@ returned.
 Note: \texttt{hash} object can not be used after \texttt{digest()}
 method has been called.
 
-\subsection{crypto.createHmac(algorithm, key)}
+\subsection{crypto.createHmac(algorithm,
+key)}\label{crypto.createhmacalgorithm-key}
 
 Creates and returns a hmac object, a cryptographic hmac with the given
 algorithm and key.
@@ -152,18 +199,18 @@ supported.
 \texttt{algorithm} is dependent on the available algorithms supported by
 OpenSSL - see createHash above. \texttt{key} is the hmac key to be used.
 
-\subsection{Class: Hmac}
+\subsection{Class: Hmac}\label{class-hmac}
 
 Class for creating cryptographic hmac content.
 
 Returned by \texttt{crypto.createHmac}.
 
-\subsubsection{hmac.update(data)}
+\subsubsection{hmac.update(data)}\label{hmac.updatedata}
 
 Update the hmac content with the given \texttt{data}. This can be called
 many times with new data as it is streamed.
 
-\subsubsection{hmac.digest({[}encoding{]})}
+\subsubsection{hmac.digest({[}encoding{]})}\label{hmac.digestencoding}
 
 Calculates the digest of all of the passed data to the hmac. The
 \texttt{encoding} can be \texttt{'hex'}, \texttt{'binary'} or
@@ -173,7 +220,8 @@ returned.
 Note: \texttt{hmac} object can not be used after \texttt{digest()}
 method has been called.
 
-\subsection{crypto.createCipher(algorithm, password)}
+\subsection{crypto.createCipher(algorithm,
+password)}\label{crypto.createcipheralgorithm-password}
 
 Creates and returns a cipher object, with the given algorithm and
 password.
@@ -191,7 +239,8 @@ the stream is ended, use the \texttt{read()} method to get the computed
 hash digest. The legacy \texttt{update} and \texttt{digest} methods are
 also supported.
 
-\subsection{crypto.createCipheriv(algorithm, key, iv)}
+\subsection{crypto.createCipheriv(algorithm, key,
+iv)}\label{crypto.createcipherivalgorithm-key-iv}
 
 Creates and returns a cipher object, with the given algorithm, key and
 iv.
@@ -199,13 +248,13 @@ iv.
 \texttt{algorithm} is the same as the argument to
 \texttt{createCipher()}. \texttt{key} is the raw key used by the
 algorithm. \texttt{iv} is an
-\href{http://en.wikipedia.org/wiki/Initialization\_vector}{initialization
+\href{http://en.wikipedia.org/wiki/Initialization_vector}{initialization
 vector}.
 
 \texttt{key} and \texttt{iv} must be \texttt{'binary'} encoded strings
 or \href{buffer.html}{buffers}.
 
-\subsection{Class: Cipher}
+\subsection{Class: Cipher}\label{class-cipher}
 
 Class for encrypting data.
 
@@ -218,12 +267,13 @@ encrypted data on the readable side. The legacy \texttt{update} and
 \texttt{final} methods are also supported.
 
 \subsubsection{cipher.update(data, {[}input\_encoding{]},
-{[}output\_encoding{]})}
+{[}output\_encoding{]})}\label{cipher.updatedata-inputux5fencoding-outputux5fencoding}
 
 Updates the cipher with \texttt{data}, the encoding of which is given in
 \texttt{input\_encoding} and can be \texttt{'utf8'}, \texttt{'ascii'} or
 \texttt{'binary'}. If no encoding is provided, then a buffer is
-expected.
+expected. If \texttt{data} is a \texttt{Buffer} then
+\texttt{input\_encoding} is ignored.
 
 The \texttt{output\_encoding} specifies the output format of the
 enciphered data, and can be \texttt{'binary'}, \texttt{'base64'} or
@@ -232,7 +282,7 @@ enciphered data, and can be \texttt{'binary'}, \texttt{'base64'} or
 Returns the enciphered contents, and can be called many times with new
 data as it is streamed.
 
-\subsubsection{cipher.final({[}output\_encoding{]})}
+\subsubsection{cipher.final({[}output\_encoding{]})}\label{cipher.finaloutputux5fencoding}
 
 Returns any remaining enciphered contents, with
 \texttt{output\_encoding} being one of: \texttt{'binary'},
@@ -242,7 +292,7 @@ buffer is returned.
 Note: \texttt{cipher} object can not be used after \texttt{final()}
 method has been called.
 
-\subsubsection{cipher.setAutoPadding(auto\_padding=true)}
+\subsubsection{cipher.setAutoPadding(auto\_padding=true)}\label{cipher.setautopaddingautoux5fpaddingtrue}
 
 You can disable automatic padding of the input data to block size. If
 \texttt{auto\_padding} is false, the length of the entire input data
@@ -250,21 +300,31 @@ must be a multiple of the cipher's block size or \texttt{final} will
 fail. Useful for non-standard padding, e.g.~using \texttt{0x0} instead
 of PKCS padding. You must call this before \texttt{cipher.final}.
 
-\subsection{crypto.createDecipher(algorithm, password)}
+\subsubsection{cipher.getAuthTag()}\label{cipher.getauthtag}
+
+For authenticated encryption modes (currently supported: GCM), this
+method returns a \texttt{Buffer} that represents the
+\emph{authentication tag} that has been computed from the given data.
+Should be called after encryption has been completed using the
+\texttt{final} method!
+
+\subsection{crypto.createDecipher(algorithm,
+password)}\label{crypto.createdecipheralgorithm-password}
 
 Creates and returns a decipher object, with the given algorithm and key.
 This is the mirror of the
-\hyperref[crypto_crypto_createcipher_algorithm_password]{createCipher()}
+\hyperref[cryptoux5fcryptoux5fcreatecipherux5falgorithmux5fpassword]{createCipher()}
 above.
 
-\subsection{crypto.createDecipheriv(algorithm, key, iv)}
+\subsection{crypto.createDecipheriv(algorithm, key,
+iv)}\label{crypto.createdecipherivalgorithm-key-iv}
 
 Creates and returns a decipher object, with the given algorithm, key and
 iv. This is the mirror of the
-\hyperref[crypto_crypto_createcipheriv_algorithm_key_iv]{createCipheriv()}
+\hyperref[cryptoux5fcryptoux5fcreatecipherivux5falgorithmux5fkeyux5fiv]{createCipheriv()}
 above.
 
-\subsection{Class: Decipher}
+\subsection{Class: Decipher}\label{class-decipher}
 
 Class for decrypting data.
 
@@ -277,17 +337,18 @@ plain-text data on the the readable side. The legacy \texttt{update} and
 \texttt{final} methods are also supported.
 
 \subsubsection{decipher.update(data, {[}input\_encoding{]},
-{[}output\_encoding{]})}
+{[}output\_encoding{]})}\label{decipher.updatedata-inputux5fencoding-outputux5fencoding}
 
 Updates the decipher with \texttt{data}, which is encoded in
 \texttt{'binary'}, \texttt{'base64'} or \texttt{'hex'}. If no encoding
-is provided, then a buffer is expected.
+is provided, then a buffer is expected. If \texttt{data} is a
+\texttt{Buffer} then \texttt{input\_encoding} is ignored.
 
 The \texttt{output\_decoding} specifies in what format to return the
 deciphered plaintext: \texttt{'binary'}, \texttt{'ascii'} or
 \texttt{'utf8'}. If no encoding is provided, then a buffer is returned.
 
-\subsubsection{decipher.final({[}output\_encoding{]})}
+\subsubsection{decipher.final({[}output\_encoding{]})}\label{decipher.finaloutputux5fencoding}
 
 Returns any remaining plaintext which is deciphered, with
 \texttt{output\_encoding} being one of: \texttt{'binary'},
@@ -297,7 +358,7 @@ buffer is returned.
 Note: \texttt{decipher} object can not be used after \texttt{final()}
 method has been called.
 
-\subsubsection{decipher.setAutoPadding(auto\_padding=true)}
+\subsubsection{decipher.setAutoPadding(auto\_padding=true)}\label{decipher.setautopaddingautoux5fpaddingtrue}
 
 You can disable auto padding if the data has been encrypted without
 standard block padding to prevent \texttt{decipher.final} from checking
@@ -305,14 +366,22 @@ and removing it. Can only work if the input data's length is a multiple
 of the ciphers block size. You must call this before streaming data to
 \texttt{decipher.update}.
 
-\subsection{crypto.createSign(algorithm)}
+\subsubsection{decipher.setAuthTag(buffer)}\label{decipher.setauthtagbuffer}
+
+For authenticated encryption modes (currently supported: GCM), this
+method must be used to pass in the received \emph{authentication tag}.
+If no tag is provided or if the ciphertext has been tampered with,
+\texttt{final} will throw, thus indicating that the ciphertext should be
+discarded due to failed authentication.
+
+\subsection{crypto.createSign(algorithm)}\label{crypto.createsignalgorithm}
 
 Creates and returns a signing object, with the given algorithm. On
 recent OpenSSL releases, \texttt{openssl list-public-key-algorithms}
 will display the available signing algorithms. Examples are
 \texttt{'RSA-SHA256'}.
 
-\subsection{Class: Sign}
+\subsection{Class: Sign}\label{class-sign}
 
 Class for generating signatures.
 
@@ -323,16 +392,30 @@ is used to generate the signature. Once all of the data has been
 written, the \texttt{sign} method will return the signature. The legacy
 \texttt{update} method is also supported.
 
-\subsubsection{sign.update(data)}
+\subsubsection{sign.update(data)}\label{sign.updatedata}
 
 Updates the sign object with data. This can be called many times with
 new data as it is streamed.
 
-\subsubsection{sign.sign(private\_key, {[}output\_format{]})}
+\subsubsection{sign.sign(private\_key,
+{[}output\_format{]})}\label{sign.signprivateux5fkey-outputux5fformat}
 
 Calculates the signature on all the updated data passed through the
-sign. \texttt{private\_key} is a string containing the PEM encoded
-private key for signing.
+sign.
+
+\texttt{private\_key} can be an object or a string. If
+\texttt{private\_key} is a string, it is treated as the key with no
+passphrase.
+
+\texttt{private\_key}:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{key} : A string holding the PEM encoded private key
+\item
+  \texttt{passphrase} : A string of passphrase for the private key
+\end{itemize}
 
 Returns the signature in \texttt{output\_format} which can be
 \texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
@@ -341,12 +424,12 @@ is provided, then a buffer is returned.
 Note: \texttt{sign} object can not be used after \texttt{sign()} method
 has been called.
 
-\subsection{crypto.createVerify(algorithm)}
+\subsection{crypto.createVerify(algorithm)}\label{crypto.createverifyalgorithm}
 
 Creates and returns a verification object, with the given algorithm.
 This is the mirror of the signing object above.
 
-\subsection{Class: Verify}
+\subsection{Class: Verify}\label{class-verify}
 
 Class for verifying signatures.
 
@@ -358,13 +441,13 @@ data has been written, the \texttt{verify} method will return true if
 the supplied signature is valid. The legacy \texttt{update} method is
 also supported.
 
-\subsubsection{verifier.update(data)}
+\subsubsection{verifier.update(data)}\label{verifier.updatedata}
 
 Updates the verifier object with data. This can be called many times
 with new data as it is streamed.
 
 \subsubsection{verifier.verify(object, signature,
-{[}signature\_format{]})}
+{[}signature\_format{]})}\label{verifier.verifyobject-signature-signatureux5fformat}
 
 Verifies the signed data by using the \texttt{object} and
 \texttt{signature}. \texttt{object} is a string containing a PEM encoded
@@ -380,25 +463,26 @@ data and public key.
 Note: \texttt{verifier} object can not be used after \texttt{verify()}
 method has been called.
 
-\subsection{crypto.createDiffieHellman(prime\_length)}
+\subsection{crypto.createDiffieHellman(prime\_length)}\label{crypto.creatediffiehellmanprimeux5flength}
 
 Creates a Diffie-Hellman key exchange object and generates a prime of
 the given bit length. The generator used is \texttt{2}.
 
-\subsection{crypto.createDiffieHellman(prime, {[}encoding{]})}
+\subsection{crypto.createDiffieHellman(prime,
+{[}encoding{]})}\label{crypto.creatediffiehellmanprime-encoding}
 
 Creates a Diffie-Hellman key exchange object using the supplied prime.
 The generator used is \texttt{2}. Encoding can be \texttt{'binary'},
 \texttt{'hex'}, or \texttt{'base64'}. If no encoding is specified, then
 a buffer is expected.
 
-\subsection{Class: DiffieHellman}
+\subsection{Class: DiffieHellman}\label{class-diffiehellman}
 
 The class for creating Diffie-Hellman key exchanges.
 
 Returned by \texttt{crypto.createDiffieHellman}.
 
-\subsubsection{diffieHellman.generateKeys({[}encoding{]})}
+\subsubsection{diffieHellman.generateKeys({[}encoding{]})}\label{diffiehellman.generatekeysencoding}
 
 Generates private and public Diffie-Hellman key values, and returns the
 public key in the specified encoding. This key should be transferred to
@@ -407,7 +491,8 @@ the other party. Encoding can be \texttt{'binary'}, \texttt{'hex'}, or
 returned.
 
 \subsubsection{diffieHellman.computeSecret(other\_public\_key,
-{[}input\_encoding{]}, {[}output\_encoding{]})}
+{[}input\_encoding{]},
+{[}output\_encoding{]})}\label{diffiehellman.computesecretotherux5fpublicux5fkey-inputux5fencoding-outputux5fencoding}
 
 Computes the shared secret using \texttt{other\_public\_key} as the
 other party's public key and returns the computed shared secret.
@@ -419,44 +504,45 @@ is expected.
 
 If no output encoding is given, then a buffer is returned.
 
-\subsubsection{diffieHellman.getPrime({[}encoding{]})}
+\subsubsection{diffieHellman.getPrime({[}encoding{]})}\label{diffiehellman.getprimeencoding}
 
 Returns the Diffie-Hellman prime in the specified encoding, which can be
 \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no encoding
 is provided, then a buffer is returned.
 
-\subsubsection{diffieHellman.getGenerator({[}encoding{]})}
+\subsubsection{diffieHellman.getGenerator({[}encoding{]})}\label{diffiehellman.getgeneratorencoding}
 
 Returns the Diffie-Hellman prime in the specified encoding, which can be
 \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no encoding
 is provided, then a buffer is returned.
 
-\subsubsection{diffieHellman.getPublicKey({[}encoding{]})}
+\subsubsection{diffieHellman.getPublicKey({[}encoding{]})}\label{diffiehellman.getpublickeyencoding}
 
 Returns the Diffie-Hellman public key in the specified encoding, which
 can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no
 encoding is provided, then a buffer is returned.
 
-\subsubsection{diffieHellman.getPrivateKey({[}encoding{]})}
+\subsubsection{diffieHellman.getPrivateKey({[}encoding{]})}\label{diffiehellman.getprivatekeyencoding}
 
 Returns the Diffie-Hellman private key in the specified encoding, which
 can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no
 encoding is provided, then a buffer is returned.
 
-\subsubsection{diffieHellman.setPublicKey(public\_key, {[}encoding{]})}
+\subsubsection{diffieHellman.setPublicKey(public\_key,
+{[}encoding{]})}\label{diffiehellman.setpublickeypublicux5fkey-encoding}
 
 Sets the Diffie-Hellman public key. Key encoding can be
 \texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
 is provided, then a buffer is expected.
 
 \subsubsection{diffieHellman.setPrivateKey(private\_key,
-{[}encoding{]})}
+{[}encoding{]})}\label{diffiehellman.setprivatekeyprivateux5fkey-encoding}
 
 Sets the Diffie-Hellman private key. Key encoding can be
 \texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
 is provided, then a buffer is expected.
 
-\subsection{crypto.getDiffieHellman(group\_name)}
+\subsection{crypto.getDiffieHellman(group\_name)}\label{crypto.getdiffiehellmangroupux5fname}
 
 Creates a predefined Diffie-Hellman key exchange object. The supported
 groups are: \texttt{'modp1'}, \texttt{'modp2'}, \texttt{'modp5'}
@@ -465,9 +551,9 @@ and \texttt{'modp14'}, \texttt{'modp15'}, \texttt{'modp16'},
 \texttt{'modp17'}, \texttt{'modp18'} (defined in
 \href{http://www.rfc-editor.org/rfc/rfc3526.txt}{RFC 3526}). The
 returned object mimics the interface of objects created by
-\hyperref[crypto_crypto_creatediffiehellman_prime_encoding]{crypto.createDiffieHellman()}
+\hyperref[cryptoux5fcryptoux5fcreatediffiehellmanux5fprimeux5fencoding]{crypto.createDiffieHellman()}
 above, but will not allow to change the keys (with
-\hyperref[crypto_diffiehellman_setpublickey_public_key_encoding]{diffieHellman.setPublicKey()}
+\hyperref[cryptoux5fdiffiehellmanux5fsetpublickeyux5fpublicux5fkeyux5fencoding]{diffieHellman.setPublicKey()}
 for example). The advantage of using this routine is that the parties
 don't have to generate nor exchange group modulus beforehand, saving
 both processor and communication time.
@@ -476,54 +562,81 @@ Example (obtaining a shared secret):
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{crypto = require(}\CharTok{'crypto'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{alice = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{getDiffieHellman}\NormalTok{(}\CharTok{'modp5'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{bob = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{getDiffieHellman}\NormalTok{(}\CharTok{'modp5'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{crypto = }\FunctionTok{require}\NormalTok{(}\StringTok{'crypto'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{alice = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{getDiffieHellman}\NormalTok{(}\StringTok{'modp5'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{bob = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{getDiffieHellman}\NormalTok{(}\StringTok{'modp5'}\NormalTok{);}
 
-\KeywordTok{alice}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
-\KeywordTok{bob}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
+\OtherTok{alice}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
+\OtherTok{bob}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
 
-\KeywordTok{var} \NormalTok{alice_secret = }\KeywordTok{alice}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\KeywordTok{bob}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), null, }\CharTok{'hex'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{bob_secret = }\KeywordTok{bob}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\KeywordTok{alice}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), null, }\CharTok{'hex'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{alice_secret = }\OtherTok{alice}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\OtherTok{bob}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), }\KeywordTok{null}\NormalTok{, }\StringTok{'hex'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{bob_secret = }\OtherTok{bob}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\OtherTok{alice}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), }\KeywordTok{null}\NormalTok{, }\StringTok{'hex'}\NormalTok{);}
 
 \CommentTok{/* alice_secret and bob_secret should be the same */}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(alice_secret == bob_secret);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(alice_secret == bob_secret);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{crypto.pbkdf2(password, salt, iterations, keylen, callback)}
+\subsection{crypto.pbkdf2(password, salt, iterations, keylen,
+{[}digest{]},
+callback)}\label{crypto.pbkdf2password-salt-iterations-keylen-digest-callback}
 
-Asynchronous PBKDF2 applies pseudorandom function HMAC-SHA1 to derive a
-key of given length from the given password, salt and iterations. The
-callback gets two arguments \texttt{(err, derivedKey)}.
+Asynchronous PBKDF2 function. Applies the selected HMAC digest function
+(default: SHA1) to derive a key of the requested length from the
+password, salt and number of iterations. The callback gets two
+arguments: \texttt{(err, derivedKey)}.
 
-\subsection{crypto.pbkdf2Sync(password, salt, iterations, keylen)}
+Example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{crypto}\NormalTok{.}\FunctionTok{pbkdf2}\NormalTok{(}\StringTok{'secret'}\NormalTok{, }\StringTok{'salt'}\NormalTok{, }\DecValTok{4096}\NormalTok{, }\DecValTok{512}\NormalTok{, }\StringTok{'sha256'}\NormalTok{, }\KeywordTok{function}\NormalTok{(err, key) \{}
+  \KeywordTok{if} \NormalTok{(err)}
+    \KeywordTok{throw} \NormalTok{err;}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{key}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\StringTok{'hex'}\NormalTok{));  }\CommentTok{// 'c5e478d...1469e50'}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+You can get a list of supported digest functions with
+\hyperref[cryptoux5fcryptoux5fgethashes]{crypto.getHashes()}.
+
+\subsection{crypto.pbkdf2Sync(password, salt, iterations, keylen,
+{[}digest{]})}\label{crypto.pbkdf2syncpassword-salt-iterations-keylen-digest}
 
 Synchronous PBKDF2 function. Returns derivedKey or throws error.
 
-\subsection{crypto.randomBytes(size, {[}callback{]})}
+\subsection{crypto.randomBytes(size,
+{[}callback{]})}\label{crypto.randombytessize-callback}
 
 Generates cryptographically strong pseudo-random data. Usage:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// async}
-\KeywordTok{crypto}\NormalTok{.}\FunctionTok{randomBytes}\NormalTok{(}\DecValTok{256}\NormalTok{, }\KeywordTok{function}\NormalTok{(ex, buf) \{}
+\OtherTok{crypto}\NormalTok{.}\FunctionTok{randomBytes}\NormalTok{(}\DecValTok{256}\NormalTok{, }\KeywordTok{function}\NormalTok{(ex, buf) \{}
   \KeywordTok{if} \NormalTok{(ex) }\KeywordTok{throw} \NormalTok{ex;}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Have %d bytes of random data: %s'}\NormalTok{, }\KeywordTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{, buf);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Have %d bytes of random data: %s'}\NormalTok{, }\OtherTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{, buf);}
 \NormalTok{\});}
 
 \CommentTok{// sync}
 \KeywordTok{try} \NormalTok{\{}
-  \KeywordTok{var} \NormalTok{buf = }\KeywordTok{crypto}\NormalTok{.}\FunctionTok{randomBytes}\NormalTok{(}\DecValTok{256}\NormalTok{);}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Have %d bytes of random data: %s'}\NormalTok{, }\KeywordTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{, buf);}
+  \KeywordTok{var} \NormalTok{buf = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{randomBytes}\NormalTok{(}\DecValTok{256}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Have %d bytes of random data: %s'}\NormalTok{, }\OtherTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{, buf);}
 \NormalTok{\} }\KeywordTok{catch} \NormalTok{(ex) \{}
   \CommentTok{// handle error}
+  \CommentTok{// most likely, entropy sources are drained}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{crypto.pseudoRandomBytes(size, {[}callback{]})}
+NOTE: Will throw error or invoke callback with error, if there is not
+enough accumulated entropy to generate cryptographically strong data. In
+other words, \texttt{crypto.randomBytes} without callback will not block
+even if all entropy sources are drained.
+
+\subsection{crypto.pseudoRandomBytes(size,
+{[}callback{]})}\label{crypto.pseudorandombytessize-callback}
 
 Generates \emph{non}-cryptographically strong pseudo-random data. The
 data returned will be unique if it is sufficiently long, but is not
@@ -533,7 +646,7 @@ generation of encryption keys.
 
 Usage is otherwise identical to \texttt{crypto.randomBytes}.
 
-\subsection{Class: Certificate}
+\subsection{Class: Certificate}\label{class-certificate}
 
 The class used for working with signed public key \& challenges. The
 most common usage for this series of functions is when dealing with the
@@ -542,19 +655,19 @@ http://www.openssl.org/docs/apps/spkac.html
 
 Returned by \texttt{crypto.Certificate}.
 
-\subsubsection{Certificate.verifySpkac(spkac)}
+\subsubsection{Certificate.verifySpkac(spkac)}\label{certificate.verifyspkacspkac}
 
 Returns true of false based on the validity of the SPKAC.
 
-\subsubsection{Certificate.exportChallenge(spkac)}
+\subsubsection{Certificate.exportChallenge(spkac)}\label{certificate.exportchallengespkac}
 
 Exports the encoded public key from the supplied SPKAC.
 
-\subsubsection{Certificate.exportPublicKey(spkac)}
+\subsubsection{Certificate.exportPublicKey(spkac)}\label{certificate.exportpublickeyspkac}
 
 Exports the encoded challenge associated with the SPKAC.
 
-\subsection{crypto.DEFAULT\_ENCODING}
+\subsection{crypto.DEFAULT\_ENCODING}\label{crypto.defaultux5fencoding}
 
 The default encoding to use for functions that can take either strings
 or buffers. The default value is \texttt{'buffer'}, which makes it
@@ -565,7 +678,7 @@ more easily compatible with legacy programs that expected
 Note that new programs will probably expect buffers, so only use this as
 a temporary measure.
 
-\subsection{Recent API Changes}
+\subsection{Recent API Changes}\label{recent-api-changes}
 
 The Crypto module was added to Node before there was the concept of a
 unified Stream API, and before there were Buffer objects for handling

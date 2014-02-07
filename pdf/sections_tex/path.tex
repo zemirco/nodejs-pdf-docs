@@ -1,8 +1,8 @@
-\section{Path}
+\section{Path}\label{path}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\NormalTok{Stability: }\DecValTok{3} \NormalTok{- Stable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -13,7 +13,7 @@ system is not consulted to check whether paths are valid.
 Use \texttt{require('path')} to use this module. The following methods
 are provided:
 
-\subsection{path.normalize(p)}
+\subsection{path.normalize(p)}\label{path.normalizep}
 
 Normalize a string path, taking care of \texttt{'..'} and \texttt{'.'}
 parts.
@@ -26,13 +26,14 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{normalize}\NormalTok{(}\CharTok{'/foo/bar//baz/asdf/quux/..'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{normalize}\NormalTok{(}\StringTok{'/foo/bar//baz/asdf/quux/..'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'/foo/bar/baz/asdf'}
+\StringTok{'/foo/bar/baz/asdf'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.join({[}path1{]}, {[}path2{]}, {[}\ldots{}{]})}
+\subsection{path.join({[}path1{]}, {[}path2{]},
+{[}\ldots{}{]})}\label{path.joinpath1-path2}
 
 Join all arguments together and normalize the resulting path.
 
@@ -43,17 +44,18 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\CharTok{'/foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz/asdf'}\NormalTok{, }\CharTok{'quux'}\NormalTok{, }\CharTok{'..'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\StringTok{'/foo'}\NormalTok{, }\StringTok{'bar'}\NormalTok{, }\StringTok{'baz/asdf'}\NormalTok{, }\StringTok{'quux'}\NormalTok{, }\StringTok{'..'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'/foo/bar/baz/asdf'}
+\StringTok{'/foo/bar/baz/asdf'}
 
-\KeywordTok{path}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\CharTok{'foo'}\NormalTok{, \{\}, }\CharTok{'bar'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{join}\NormalTok{(}\StringTok{'foo'}\NormalTok{, \{\}, }\StringTok{'bar'}\NormalTok{)}
 \CommentTok{// throws exception}
-\DataTypeTok{TypeError}\NormalTok{: Arguments to }\KeywordTok{path}\NormalTok{.}\FunctionTok{join} \NormalTok{must be strings}
+\NormalTok{TypeError: Arguments to }\OtherTok{path}\NormalTok{.}\FunctionTok{join} \FunctionTok{must} \FunctionTok{be} \FunctionTok{strings}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.resolve({[}from \ldots{}{]}, to)}
+\subsection{path.resolve({[}from \ldots{}{]},
+to)}\label{path.resolvefrom-to}
 
 Resolves \texttt{to} to an absolute path.
 
@@ -69,7 +71,7 @@ shell.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'foo/bar'}\NormalTok{, }\CharTok{'/tmp/file/'}\NormalTok{, }\CharTok{'..'}\NormalTok{, }\CharTok{'a/../subfile'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\StringTok{'foo/bar'}\NormalTok{, }\StringTok{'/tmp/file/'}\NormalTok{, }\StringTok{'..'}\NormalTok{, }\StringTok{'a/../subfile'}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -79,8 +81,8 @@ Is similar to:
 \begin{Highlighting}[]
 \NormalTok{cd foo/bar}
 \NormalTok{cd /tmp/file/}
-\NormalTok{cd ..}
-\FunctionTok{cd} \NormalTok{a/../subfile}
+\OtherTok{cd} \NormalTok{..}
+\NormalTok{cd a/../subfile}
 \NormalTok{pwd}
 \end{Highlighting}
 \end{Shaded}
@@ -92,21 +94,21 @@ Examples:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'/foo/bar'}\NormalTok{, }\CharTok{'./baz'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\StringTok{'/foo/bar'}\NormalTok{, }\StringTok{'./baz'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'/foo/bar/baz'}
+\StringTok{'/foo/bar/baz'}
 
-\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'/foo/bar'}\NormalTok{, }\CharTok{'/tmp/file/'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\StringTok{'/foo/bar'}\NormalTok{, }\StringTok{'/tmp/file/'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'/tmp/file'}
+\StringTok{'/tmp/file'}
 
-\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'wwwroot'}\NormalTok{, }\CharTok{'static_files/png/'}\NormalTok{, }\CharTok{'../gif/image.gif'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\StringTok{'wwwroot'}\NormalTok{, }\StringTok{'static_files/png/'}\NormalTok{, }\StringTok{'../gif/image.gif'}\NormalTok{)}
 \CommentTok{// if currently in /home/myself/node, it returns}
-\CharTok{'/home/myself/node/wwwroot/static_files/gif/image.gif'}
+\StringTok{'/home/myself/node/wwwroot/static_files/gif/image.gif'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.isAbsolute(path)}
+\subsection{path.isAbsolute(path)}\label{path.isabsolutepath}
 
 Determines whether \texttt{path} is an absolute path. An absolute path
 will always resolve to the same location, regardless of the working
@@ -116,10 +118,10 @@ Posix examples:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'/foo/bar'}\NormalTok{) }\CommentTok{// true}
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'/baz/..'}\NormalTok{)  }\CommentTok{// true}
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'qux/'}\NormalTok{)     }\CommentTok{// false}
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'.'}\NormalTok{)        }\CommentTok{// false}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'/foo/bar'}\NormalTok{) }\CommentTok{// true}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'/baz/..'}\NormalTok{)  }\CommentTok{// true}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'qux/'}\NormalTok{)     }\CommentTok{// false}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'.'}\NormalTok{)        }\CommentTok{// false}
 \end{Highlighting}
 \end{Shaded}
 
@@ -127,14 +129,14 @@ Windows examples:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'//server'}\NormalTok{)  }\CommentTok{// true}
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'C:/foo/..'}\NormalTok{) }\CommentTok{// true}
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'bar\textbackslash{}\textbackslash{}baz'}\NormalTok{)   }\CommentTok{// false}
-\KeywordTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\CharTok{'.'}\NormalTok{)         }\CommentTok{// false}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'//server'}\NormalTok{)  }\CommentTok{// true}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'C:/foo/..'}\NormalTok{) }\CommentTok{// true}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'bar}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{baz'}\NormalTok{)   }\CommentTok{// false}
+\OtherTok{path}\NormalTok{.}\FunctionTok{isAbsolute}\NormalTok{(}\StringTok{'.'}\NormalTok{)         }\CommentTok{// false}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.relative(from, to)}
+\subsection{path.relative(from, to)}\label{path.relativefrom-to}
 
 Solve the relative path from \texttt{from} to \texttt{to}.
 
@@ -144,7 +146,7 @@ path from one to the other. This is actually the reverse transform of
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(from, }\KeywordTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(from, to)) == }\KeywordTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(to)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(from, }\OtherTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(from, to)) == }\OtherTok{path}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(to)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -152,17 +154,17 @@ Examples:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(}\CharTok{'C:\textbackslash{}\textbackslash{}orandea\textbackslash{}\textbackslash{}test\textbackslash{}\textbackslash{}aaa'}\NormalTok{, }\CharTok{'C:\textbackslash{}\textbackslash{}orandea\textbackslash{}\textbackslash{}impl\textbackslash{}\textbackslash{}bbb'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(}\StringTok{'C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{orandea}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{test}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{aaa'}\NormalTok{, }\StringTok{'C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{orandea}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{impl}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{bbb'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'..\textbackslash{}\textbackslash{}..\textbackslash{}\textbackslash{}impl\textbackslash{}\textbackslash{}bbb'}
+\StringTok{'..}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{..}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{impl}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{bbb'}
 
-\KeywordTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(}\CharTok{'/data/orandea/test/aaa'}\NormalTok{, }\CharTok{'/data/orandea/impl/bbb'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{relative}\NormalTok{(}\StringTok{'/data/orandea/test/aaa'}\NormalTok{, }\StringTok{'/data/orandea/impl/bbb'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'../../impl/bbb'}
+\StringTok{'../../impl/bbb'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.dirname(p)}
+\subsection{path.dirname(p)}\label{path.dirnamep}
 
 Return the directory name of a path. Similar to the Unix
 \texttt{dirname} command.
@@ -171,13 +173,13 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{dirname}\NormalTok{(}\CharTok{'/foo/bar/baz/asdf/quux'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{dirname}\NormalTok{(}\StringTok{'/foo/bar/baz/asdf/quux'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'/foo/bar/baz/asdf'}
+\StringTok{'/foo/bar/baz/asdf'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.basename(p, {[}ext{]})}
+\subsection{path.basename(p, {[}ext{]})}\label{path.basenamep-ext}
 
 Return the last portion of a path. Similar to the Unix \texttt{basename}
 command.
@@ -186,40 +188,40 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{basename}\NormalTok{(}\CharTok{'/foo/bar/baz/asdf/quux.html'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{basename}\NormalTok{(}\StringTok{'/foo/bar/baz/asdf/quux.html'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'quux.html'}
+\StringTok{'quux.html'}
 
-\KeywordTok{path}\NormalTok{.}\FunctionTok{basename}\NormalTok{(}\CharTok{'/foo/bar/baz/asdf/quux.html'}\NormalTok{, }\CharTok{'.html'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{basename}\NormalTok{(}\StringTok{'/foo/bar/baz/asdf/quux.html'}\NormalTok{, }\StringTok{'.html'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'quux'}
+\StringTok{'quux'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.extname(p)}
+\subsection{path.extname(p)}\label{path.extnamep}
 
-Return the extension of the path, from the last '.' to end of string in
-the last portion of the path. If there is no '.' in the last portion of
-the path or the first character of it is '.', then it returns an empty
+Return the extension of the path, from the last `.' to end of string in
+the last portion of the path. If there is no `.' in the last portion of
+the path or the first character of it is `.', then it returns an empty
 string. Examples:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\CharTok{'index.html'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\StringTok{'index.html'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'.html'}
+\StringTok{'.html'}
 
-\KeywordTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\CharTok{'index.'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\StringTok{'index.'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{'.'}
+\StringTok{'.'}
 
-\KeywordTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\CharTok{'index'}\NormalTok{)}
+\OtherTok{path}\NormalTok{.}\FunctionTok{extname}\NormalTok{(}\StringTok{'index'}\NormalTok{)}
 \CommentTok{// returns}
-\CharTok{''}
+\StringTok{''}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.sep}
+\subsection{path.sep}\label{path.sep}
 
 The platform-specific file separator.
 \texttt{'\textbackslash{}\textbackslash{}'} or \texttt{'/'}.
@@ -228,9 +230,9 @@ An example on *nix:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CharTok{'foo/bar/baz'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{sep}\NormalTok{)}
+\StringTok{'foo/bar/baz'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{path}\NormalTok{.}\FunctionTok{sep}\NormalTok{)}
 \CommentTok{// returns}
-\NormalTok{[}\CharTok{'foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz'}\NormalTok{]}
+\NormalTok{[}\StringTok{'foo'}\NormalTok{, }\StringTok{'bar'}\NormalTok{, }\StringTok{'baz'}\NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -238,13 +240,13 @@ An example on Windows:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CharTok{'foo\textbackslash{}\textbackslash{}bar\textbackslash{}\textbackslash{}baz'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{sep}\NormalTok{)}
+\StringTok{'foo}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{bar}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{baz'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{path}\NormalTok{.}\FunctionTok{sep}\NormalTok{)}
 \CommentTok{// returns}
-\NormalTok{[}\CharTok{'foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz'}\NormalTok{]}
+\NormalTok{[}\StringTok{'foo'}\NormalTok{, }\StringTok{'bar'}\NormalTok{, }\StringTok{'baz'}\NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.delimiter}
+\subsection{path.delimiter}\label{path.delimiter}
 
 The platform-specific path delimiter, \texttt{;} or \texttt{':'}.
 
@@ -252,12 +254,12 @@ An example on *nix:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{process.env}\NormalTok{.}\FunctionTok{PATH}\NormalTok{)}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\FunctionTok{PATH}\NormalTok{)}
 \CommentTok{// '/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin'}
 
-\KeywordTok{process.env.PATH}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{delimiter}\NormalTok{)}
+\OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\OtherTok{PATH}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{path}\NormalTok{.}\FunctionTok{delimiter}\NormalTok{)}
 \CommentTok{// returns}
-\NormalTok{[}\CharTok{'/usr/bin'}\NormalTok{, }\CharTok{'/bin'}\NormalTok{, }\CharTok{'/usr/sbin'}\NormalTok{, }\CharTok{'/sbin'}\NormalTok{, }\CharTok{'/usr/local/bin'}\NormalTok{]}
+\NormalTok{[}\StringTok{'/usr/bin'}\NormalTok{, }\StringTok{'/bin'}\NormalTok{, }\StringTok{'/usr/sbin'}\NormalTok{, }\StringTok{'/sbin'}\NormalTok{, }\StringTok{'/usr/local/bin'}\NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -265,12 +267,12 @@ An example on Windows:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{process.env}\NormalTok{.}\FunctionTok{PATH}\NormalTok{)}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\FunctionTok{PATH}\NormalTok{)}
 \CommentTok{// 'C:\textbackslash{}Windows\textbackslash{}system32;C:\textbackslash{}Windows;C:\textbackslash{}Program Files\textbackslash{}nodejs\textbackslash{}'}
 
-\KeywordTok{process.env.PATH}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\KeywordTok{path}\NormalTok{.}\FunctionTok{delimiter}\NormalTok{)}
+\OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\OtherTok{PATH}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{path}\NormalTok{.}\FunctionTok{delimiter}\NormalTok{)}
 \CommentTok{// returns}
-\NormalTok{[}\CharTok{'C:\textbackslash{}Windows\textbackslash{}system32'}\NormalTok{, }\CharTok{'C:\textbackslash{}Windows'}\NormalTok{, }\CharTok{'C:\textbackslash{}Program Files\textbackslash{}nodejs\textbackslash{}']}
+\NormalTok{[}\StringTok{'C:\textbackslash{}Windows\textbackslash{}system32'}\NormalTok{, }\StringTok{'C:\textbackslash{}Windows'}\NormalTok{, }\StringTok{'C:\textbackslash{}Program Files}\CharTok{\textbackslash{}n}\StringTok{odejs}\CharTok{\textbackslash{}'}\StringTok{]}
 \end{Highlighting}
 \end{Shaded}
 

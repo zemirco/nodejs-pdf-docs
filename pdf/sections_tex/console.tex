@@ -1,12 +1,13 @@
-\section{console}
+\section{console}\label{console}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
+\NormalTok{Stability: }\DecValTok{4} \NormalTok{- API Frozen}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Object\}
 \end{itemize}
@@ -25,72 +26,77 @@ is blocking:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{$ node }\KeywordTok{script}\NormalTok{.}\FunctionTok{js} \DecValTok{2}\NormalTok{> }\KeywordTok{error}\NormalTok{.}\FunctionTok{log} \NormalTok{\textbar{} tee }\KeywordTok{info}\NormalTok{.}\FunctionTok{log}
+\NormalTok{$ node }\OtherTok{script}\NormalTok{.}\FunctionTok{js} \DecValTok{2}\NormalTok{> }\OtherTok{error}\NormalTok{.}\FunctionTok{log} \NormalTok{| tee }\OtherTok{info}\NormalTok{.}\FunctionTok{log}
 \end{Highlighting}
 \end{Shaded}
 
 In daily use, the blocking/non-blocking dichotomy is not something you
 should worry about unless you log huge amounts of data.
 
-\subsection{console.log({[}data{]}, {[}\ldots{}{]})}
+\subsection{console.log({[}data{]},
+{[}\ldots{}{]})}\label{console.logdata}
 
 Prints to stdout with newline. This function can take multiple arguments
 in a \texttt{printf()}-like way. Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'count: %d'}\NormalTok{, count);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'count: %d'}\NormalTok{, count);}
 \end{Highlighting}
 \end{Shaded}
 
 If formatting elements are not found in the first string then
 \texttt{util.inspect} is used on each argument. See
-\href{util.html\#util\_util\_format\_format}{util.format()} for more
+\href{util.html\#util_util_format_format}{util.format()} for more
 information.
 
-\subsection{console.info({[}data{]}, {[}\ldots{}{]})}
+\subsection{console.info({[}data{]},
+{[}\ldots{}{]})}\label{console.infodata}
 
 Same as \texttt{console.log}.
 
-\subsection{console.error({[}data{]}, {[}\ldots{}{]})}
+\subsection{console.error({[}data{]},
+{[}\ldots{}{]})}\label{console.errordata}
 
 Same as \texttt{console.log} but prints to stderr.
 
-\subsection{console.warn({[}data{]}, {[}\ldots{}{]})}
+\subsection{console.warn({[}data{]},
+{[}\ldots{}{]})}\label{console.warndata}
 
 Same as \texttt{console.error}.
 
-\subsection{console.dir(obj)}
+\subsection{console.dir(obj)}\label{console.dirobj}
 
 Uses \texttt{util.inspect} on \texttt{obj} and prints resulting string
 to stdout. This function bypasses any custom \texttt{inspect()} function
 on \texttt{obj}.
 
-\subsection{console.time(label)}
+\subsection{console.time(label)}\label{console.timelabel}
 
 Mark a time.
 
-\subsection{console.timeEnd(label)}
+\subsection{console.timeEnd(label)}\label{console.timeendlabel}
 
 Finish timer, record output. Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{console}\NormalTok{.}\FunctionTok{time}\NormalTok{(}\CharTok{'100-elements'}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{time}\NormalTok{(}\StringTok{'100-elements'}\NormalTok{);}
 \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{100}\NormalTok{; i++) \{}
   \NormalTok{;}
 \NormalTok{\}}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{timeEnd}\NormalTok{(}\CharTok{'100-elements'}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{timeEnd}\NormalTok{(}\StringTok{'100-elements'}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{console.trace(label)}
+\subsection{console.trace(label)}\label{console.tracelabel}
 
 Print a stack trace to stderr of the current position.
 
-\subsection{console.assert(expression, {[}message{]})}
+\subsection{console.assert(expression,
+{[}message{]})}\label{console.assertexpression-message}
 
 Same as
-\href{assert.html\#assert\_assert\_value\_message\_assert\_ok\_value\_message}{assert.ok()}
+\href{assert.html\#assert_assert_value_message_assert_ok_value_message}{assert.ok()}
 where if the \texttt{expression} evaluates as \texttt{false} throw an
 AssertionError with \texttt{message}.

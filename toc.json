@@ -29,6 +29,7 @@
   "string_decoder",
   "timers",
   "tls",
+  "tracing",
   "tty",
   "dgram",
   "url",

@@ -1,8 +1,8 @@
-\section{URL}
+\section{URL}\label{url}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\NormalTok{Stability: }\DecValTok{3} \NormalTok{- Stable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -73,7 +73,7 @@ for the URL
 The following methods are provided by the URL module:
 
 \subsection{url.parse(urlStr, {[}parseQueryString{]},
-{[}slashesDenoteHost{]})}
+{[}slashesDenoteHost{]})}\label{url.parseurlstr-parsequerystring-slashesdenotehost}
 
 Take a URL string, and return an object.
 
@@ -84,11 +84,12 @@ Pass \texttt{true} as the third argument to treat \texttt{//foo/bar} as
 \texttt{\{ host: 'foo', pathname: '/bar' \}} rather than
 \texttt{\{ pathname: '//foo/bar' \}}. Defaults to \texttt{false}.
 
-\subsection{url.format(urlObj)}
+\subsection{url.format(urlObj)}\label{url.formaturlobj}
 
 Take a parsed URL object, and return a formatted URL string.
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{href} will be ignored.
 \item
@@ -127,16 +128,16 @@ Take a parsed URL object, and return a formatted URL string.
   \texttt{\#} (pound sign, anchor)
 \end{itemize}
 
-\subsection{url.resolve(from, to)}
+\subsection{url.resolve(from, to)}\label{url.resolvefrom-to}
 
 Take a base URL, and a href URL, and resolve them as a browser would for
 an anchor tag. Examples:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'/one/two/three'}\NormalTok{, }\CharTok{'four'}\NormalTok{)         }\CommentTok{// '/one/two/four'}
-\KeywordTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'http://example.com/'}\NormalTok{, }\CharTok{'/one'}\NormalTok{)    }\CommentTok{// 'http://example.com/one'}
-\KeywordTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\CharTok{'http://example.com/one'}\NormalTok{, }\CharTok{'/two'}\NormalTok{) }\CommentTok{// 'http://example.com/two'}
+\OtherTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\StringTok{'/one/two/three'}\NormalTok{, }\StringTok{'four'}\NormalTok{)         }\CommentTok{// '/one/two/four'}
+\OtherTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\StringTok{'http://example.com/'}\NormalTok{, }\StringTok{'/one'}\NormalTok{)    }\CommentTok{// 'http://example.com/one'}
+\OtherTok{url}\NormalTok{.}\FunctionTok{resolve}\NormalTok{(}\StringTok{'http://example.com/one'}\NormalTok{, }\StringTok{'/two'}\NormalTok{) }\CommentTok{// 'http://example.com/two'}
 \end{Highlighting}
 \end{Shaded}
 

@@ -52,18 +52,21 @@ cases:
 
 ## Event: 'exit'
 
-Emitted when the process is about to exit.  This is a good hook to perform
-constant time checks of the module's state (like for unit tests).  The main
-event loop will no longer be run after the 'exit' callback finishes, so
-timers may not be scheduled.
+Emitted when the process is about to exit. There is no way to prevent the
+exiting of the event loop at this point, and once all `exit` listeners have
+finished running the process will exit. Therefore you **must** only perform
+**synchronous** operations in this handler. This is a good hook to perform
+checks on the module's state (like for unit tests). The callback takes one
+argument, the code the process is exiting with.
 
 Example of listening for `exit`:
 
-    process.on('exit', function() {
+    process.on('exit', function(code) {
+      // do *NOT* do this
       setTimeout(function() {
         console.log('This will not run');
       }, 0);
-      console.log('About to exit.');
+      console.log('About to exit with code:', code);
     });
 
 ## Event: 'uncaughtException'
@@ -121,8 +124,39 @@ Example of listening for `SIGINT`:
 An easy way to send the `SIGINT` signal is with `Control-C` in most terminal
 programs.
 
-Note: SIGUSR1 is reserved by node.js to kickstart the debugger.  It's possible
-to install a listener but that won't stop the debugger from starting.
+Note:
+
+- `SIGUSR1` is reserved by node.js to start the debugger.  It's possible to
+  install a listener but that won't stop the debugger from starting.
+- `SIGTERM` and `SIGINT` have default handlers on non-Windows platforms that resets
+  the terminal mode before exiting with code `128 + signal number`. If one of
+  these signals has a listener installed, its default behaviour will be removed
+  (node will no longer exit).
+- `SIGPIPE` is ignored by default, it can have a listener installed.
+- `SIGHUP` is generated on Windows when the console window is closed, and on other
+  platforms under various similar conditions, see signal(7). It can have a
+  listener installed, however node will be unconditionally terminated by Windows
+  about 10 seconds later. On non-Windows platforms, the default behaviour of
+  `SIGHUP` is to terminate node, but once a listener has been installed its
+  default behaviour will be removed.
+- `SIGTERM` is not supported on Windows, it can be listened on.
+- `SIGINT` from the terminal is supported on all platforms, and can usually be
+  generated with `CTRL+C` (though this may be configurable). It is not generated
+  when terminal raw mode is enabled.
+- `SIGBREAK` is delivered on Windows when `CTRL+BREAK` is pressed, on non-Windows
+  platforms it can be listened on, but there is no way to send or generate it.
+- `SIGWINCH` is delivered when the console has been resized. On Windows, this will
+  only happen on write to the console when the cursor is being moved, or when a
+  readable tty is used in raw mode.
+- `SIGKILL` cannot have a listener installed, it will unconditionally terminate
+  node on all platforms.
+- `SIGSTOP` cannot have a listener installed.
+
+Note that Windows does not support sending Signals, but node offers some
+emulation with `process.kill()`, and `child_process.kill()`:
+- Sending signal `0` can be used to search for the existence of a process
+- Sending `SIGINT`, `SIGTERM`, and `SIGKILL` cause the unconditional exit of the
+  target process.
 
 ## process.stdout
 
@@ -455,7 +489,10 @@ An example of the possible output looks like:
 Send a signal to a process. `pid` is the process id and `signal` is the
 string describing the signal to send.  Signal names are strings like
 'SIGINT' or 'SIGHUP'.  If omitted, the signal will be 'SIGTERM'.
-See kill(2) for more information.
+See [Signal Events](#process_signal_events) and kill(2) for more information.
+
+Will throw an error if target does not exist, and as a special case, a signal of
+`0` can be used to test for the existence of a process.
 
 Note that just because the name of this function is `process.kill`, it is
 really just a signal sender, like the `kill` system call.  The signal sent
@@ -474,8 +511,8 @@ Example of sending a signal to yourself:
 
     process.kill(process.pid, 'SIGHUP');
 
-Note: SIGUSR1 is reserved by node.js.  It can be used to kickstart the
-debugger.
+Note: When SIGUSR1 is received by Node.js it starts the debugger, see
+[Signal Events](#process_signal_events).
 
 ## process.pid
 

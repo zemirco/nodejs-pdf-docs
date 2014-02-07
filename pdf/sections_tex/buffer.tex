@@ -1,8 +1,8 @@
-\section{Buffer}
+\section{Buffer}\label{buffer}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\NormalTok{Stability: }\DecValTok{3} \NormalTok{- Stable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -46,32 +46,36 @@ explicit encoding method. Here are the different string encodings.
   \texttt{'hex'} - Encode each byte as two hexadecimal characters.
 \end{itemize}
 
-\subsection{Class: Buffer}
+\subsection{Class: Buffer}\label{class-buffer}
 
 The Buffer class is a global type for dealing with binary data directly.
 It can be constructed in a variety of ways.
 
-\subsubsection{new Buffer(size)}
+\subsubsection{new Buffer(size)}\label{new-buffersize}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{size} Number
 \end{itemize}
 
 Allocates a new buffer of \texttt{size} octets.
 
-\subsubsection{new Buffer(array)}
+\subsubsection{new Buffer(array)}\label{new-bufferarray}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{array} Array
 \end{itemize}
 
 Allocates a new buffer using an \texttt{array} of octets.
 
-\subsubsection{new Buffer(str, {[}encoding{]})}
+\subsubsection{new Buffer(str,
+{[}encoding{]})}\label{new-bufferstr-encoding}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{str} String - string to encode.
 \item
@@ -81,9 +85,11 @@ Allocates a new buffer using an \texttt{array} of octets.
 Allocates a new buffer containing the given \texttt{str}.
 \texttt{encoding} defaults to \texttt{'utf8'}.
 
-\subsubsection{Class Method: Buffer.isEncoding(encoding)}
+\subsubsection{Class Method:
+Buffer.isEncoding(encoding)}\label{class-method-buffer.isencodingencoding}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{encoding} \{String\} The encoding string to test
 \end{itemize}
@@ -91,9 +97,11 @@ Allocates a new buffer containing the given \texttt{str}.
 Returns true if the \texttt{encoding} is a valid encoding argument, or
 false otherwise.
 
-\subsubsection{Class Method: Buffer.isBuffer(obj)}
+\subsubsection{Class Method:
+Buffer.isBuffer(obj)}\label{class-method-buffer.isbufferobj}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{obj} Object
 \item
@@ -102,9 +110,11 @@ false otherwise.
 
 Tests if \texttt{obj} is a \texttt{Buffer}.
 
-\subsubsection{Class Method: Buffer.byteLength(string, {[}encoding{]})}
+\subsubsection{Class Method: Buffer.byteLength(string,
+{[}encoding{]})}\label{class-method-buffer.bytelengthstring-encoding}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{string} String
 \item
@@ -122,18 +132,20 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{str = }\CharTok{'\textbackslash{}u00bd + \textbackslash{}u00bc = \textbackslash{}u00be'}\NormalTok{;}
+\NormalTok{str = }\StringTok{'\textbackslash{}u00bd + \textbackslash{}u00bc = \textbackslash{}u00be'}\NormalTok{;}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(str + }\StringTok{": "} \NormalTok{+ }\KeywordTok{str}\NormalTok{.}\FunctionTok{length} \NormalTok{+ }\StringTok{" characters, "} \NormalTok{+}
-  \KeywordTok{Buffer}\NormalTok{.}\FunctionTok{byteLength}\NormalTok{(str, }\CharTok{'utf8'}\NormalTok{) + }\StringTok{" bytes"}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(str + }\StringTok{": "} \NormalTok{+ }\OtherTok{str}\NormalTok{.}\FunctionTok{length} \NormalTok{+ }\StringTok{" characters, "} \NormalTok{+}
+  \OtherTok{Buffer}\NormalTok{.}\FunctionTok{byteLength}\NormalTok{(str, }\StringTok{'utf8'}\NormalTok{) + }\StringTok{" bytes"}\NormalTok{);}
 
 \CommentTok{// ½ + ¼ = ¾: 9 characters, 12 bytes}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Class Method: Buffer.concat(list, {[}totalLength{]})}
+\subsubsection{Class Method: Buffer.concat(list,
+{[}totalLength{]})}\label{class-method-buffer.concatlist-totallength}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{list} \{Array\} List of Buffer objects to concat
 \item
@@ -156,9 +168,10 @@ If totalLength is not provided, it is read from the buffers in the list.
 However, this adds an additional loop to the function, so it is faster
 to provide the length explicitly.
 
-\subsubsection{buf.length}
+\subsubsection{buf.length}\label{buf.length}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Number
 \end{itemize}
@@ -170,11 +183,11 @@ the buffer are changed.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{1234}\NormalTok{);}
+\NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{1234}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"some string"}\NormalTok{, }\DecValTok{0}\NormalTok{, }\StringTok{"ascii"}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"some string"}\NormalTok{, }\DecValTok{0}\NormalTok{, }\StringTok{"ascii"}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
 
 \CommentTok{// 1234}
 \CommentTok{// 1234}
@@ -182,9 +195,10 @@ the buffer are changed.
 \end{Shaded}
 
 \subsubsection{buf.write(string, {[}offset{]}, {[}length{]},
-{[}encoding{]})}
+{[}encoding{]})}\label{buf.writestring-offset-length-encoding}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{string} String - data to be written to buffer
 \item
@@ -207,15 +221,17 @@ characters.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{256}\NormalTok{);}
-\NormalTok{len = }\KeywordTok{buf}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'\textbackslash{}u00bd + \textbackslash{}u00bc = \textbackslash{}u00be'}\NormalTok{, }\DecValTok{0}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(len + }\StringTok{" bytes: "} \NormalTok{+ }\KeywordTok{buf}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\CharTok{'utf8'}\NormalTok{, }\DecValTok{0}\NormalTok{, len));}
+\NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{256}\NormalTok{);}
+\NormalTok{len = }\OtherTok{buf}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'\textbackslash{}u00bd + \textbackslash{}u00bc = \textbackslash{}u00be'}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(len + }\StringTok{" bytes: "} \NormalTok{+ }\OtherTok{buf}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\StringTok{'utf8'}\NormalTok{, }\DecValTok{0}\NormalTok{, len));}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.toString({[}encoding{]}, {[}start{]}, {[}end{]})}
+\subsubsection{buf.toString({[}encoding{]}, {[}start{]},
+{[}end{]})}\label{buf.tostringencoding-start-end}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{encoding} String, Optional, Default: `utf8'
 \item
@@ -231,7 +247,7 @@ Decodes and returns a string from buffer data encoded with
 
 See \texttt{buffer.write()} example, above.
 
-\subsubsection{buf.toJSON()}
+\subsubsection{buf.toJSON()}\label{buf.tojson}
 
 Returns a JSON-representation of the Buffer instance.
 \texttt{JSON.stringify} implicitly calls this function when stringifying
@@ -241,24 +257,24 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\CharTok{'test'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{json = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(buf);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\StringTok{'test'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{json = }\OtherTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(buf);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(json);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(json);}
 \CommentTok{// '\{"type":"Buffer","data":[116,101,115,116]\}'}
 
-\KeywordTok{var} \NormalTok{copy = }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(json, }\KeywordTok{function}\NormalTok{(key, value) \{}
-    \KeywordTok{return} \NormalTok{value && }\KeywordTok{value}\NormalTok{.}\FunctionTok{type} \NormalTok{=== }\CharTok{'Buffer'}
-      \NormalTok{? }\KeywordTok{new} \NormalTok{Buffer(}\KeywordTok{value}\NormalTok{.}\FunctionTok{data}\NormalTok{)}
+\KeywordTok{var} \NormalTok{copy = }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(json, }\KeywordTok{function}\NormalTok{(key, value) \{}
+    \KeywordTok{return} \NormalTok{value && }\OtherTok{value}\NormalTok{.}\FunctionTok{type} \NormalTok{=== }\StringTok{'Buffer'}
+      \NormalTok{? }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\OtherTok{value}\NormalTok{.}\FunctionTok{data}\NormalTok{)}
       \NormalTok{: value;}
   \NormalTok{\});}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(copy);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(copy);}
 \CommentTok{// <Buffer 74 65 73 74>}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf{[}index{]}}
+\subsubsection{buf{[}index{]}}\label{bufindex}
 
 Get and set the octet at \texttt{index}. The values refer to individual
 bytes, so the legal range is between \texttt{0x00} and \texttt{0xFF} hex
@@ -269,22 +285,24 @@ Example: copy an ASCII string into a buffer, one byte at a time:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{str = }\StringTok{"node.js"}\NormalTok{;}
-\NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\KeywordTok{str}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
+\NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\OtherTok{str}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
 
-\KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\KeywordTok{str}\NormalTok{.}\FunctionTok{length} \NormalTok{; i++) \{}
-  \NormalTok{buf[i] = }\KeywordTok{str}\NormalTok{.}\FunctionTok{charCodeAt}\NormalTok{(i);}
+\KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\OtherTok{str}\NormalTok{.}\FunctionTok{length} \NormalTok{; i++) \{}
+  \NormalTok{buf[i] = }\OtherTok{str}\NormalTok{.}\FunctionTok{charCodeAt}\NormalTok{(i);}
 \NormalTok{\}}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
 \CommentTok{// node.js}
 \end{Highlighting}
 \end{Shaded}
 
 \subsubsection{buf.copy(targetBuffer, {[}targetStart{]},
-{[}sourceStart{]}, {[}sourceEnd{]})}
+{[}sourceStart{]},
+{[}sourceEnd{]})}\label{buf.copytargetbuffer-targetstart-sourcestart-sourceend}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{targetBuffer} Buffer object - Buffer to copy into
 \item
@@ -307,24 +325,26 @@ byte 19 into \texttt{buf2}, starting at the 8th byte in \texttt{buf2}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{buf1 = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{26}\NormalTok{);}
-\NormalTok{buf2 = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{26}\NormalTok{);}
+\NormalTok{buf1 = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{26}\NormalTok{);}
+\NormalTok{buf2 = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{26}\NormalTok{);}
 
 \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0} \NormalTok{; i < }\DecValTok{26} \NormalTok{; i++) \{}
   \NormalTok{buf1[i] = i + }\DecValTok{97}\NormalTok{; }\CommentTok{// 97 is ASCII a}
   \NormalTok{buf2[i] = }\DecValTok{33}\NormalTok{; }\CommentTok{// ASCII !}
 \NormalTok{\}}
 
-\KeywordTok{buf1}\NormalTok{.}\FunctionTok{copy}\NormalTok{(buf2, }\DecValTok{8}\NormalTok{, }\DecValTok{16}\NormalTok{, }\DecValTok{20}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf2}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\CharTok{'ascii'}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{25}\NormalTok{));}
+\OtherTok{buf1}\NormalTok{.}\FunctionTok{copy}\NormalTok{(buf2, }\DecValTok{8}\NormalTok{, }\DecValTok{16}\NormalTok{, }\DecValTok{20}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf2}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\StringTok{'ascii'}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{25}\NormalTok{));}
 
 \CommentTok{// !!!!!!!!qrst!!!!!!!!!!!!!}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.slice({[}start{]}, {[}end{]})}
+\subsubsection{buf.slice({[}start{]},
+{[}end{]})}\label{buf.slicestart-end}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{start} Number, Optional, Default: 0
 \item
@@ -344,25 +364,27 @@ modify one byte from the original Buffer.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf1 = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{26}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf1 = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{26}\NormalTok{);}
 
 \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0} \NormalTok{; i < }\DecValTok{26} \NormalTok{; i++) \{}
   \NormalTok{buf1[i] = i + }\DecValTok{97}\NormalTok{; }\CommentTok{// 97 is ASCII a}
 \NormalTok{\}}
 
-\KeywordTok{var} \NormalTok{buf2 = }\KeywordTok{buf1}\NormalTok{.}\FunctionTok{slice}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{3}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf2}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\CharTok{'ascii'}\NormalTok{, }\DecValTok{0}\NormalTok{, }\KeywordTok{buf2}\NormalTok{.}\FunctionTok{length}\NormalTok{));}
+\KeywordTok{var} \NormalTok{buf2 = }\OtherTok{buf1}\NormalTok{.}\FunctionTok{slice}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{3}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf2}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\StringTok{'ascii'}\NormalTok{, }\DecValTok{0}\NormalTok{, }\OtherTok{buf2}\NormalTok{.}\FunctionTok{length}\NormalTok{));}
 \NormalTok{buf1[}\DecValTok{0}\NormalTok{] = }\DecValTok{33}\NormalTok{;}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf2}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\CharTok{'ascii'}\NormalTok{, }\DecValTok{0}\NormalTok{, }\KeywordTok{buf2}\NormalTok{.}\FunctionTok{length}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf2}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\StringTok{'ascii'}\NormalTok{, }\DecValTok{0}\NormalTok{, }\OtherTok{buf2}\NormalTok{.}\FunctionTok{length}\NormalTok{));}
 
 \CommentTok{// abc}
 \CommentTok{// !bc}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.readUInt8(offset, {[}noAssert{]})}
+\subsubsection{buf.readUInt8(offset,
+{[}noAssert{]})}\label{buf.readuint8offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -381,15 +403,15 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
 
-\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\DecValTok{0x3}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\DecValTok{0x4}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\DecValTok{0x23}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\DecValTok{0x42}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\BaseNTok{0x3}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\BaseNTok{0x4}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\BaseNTok{0x23}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\BaseNTok{0x42}\NormalTok{;}
 
-\KeywordTok{for} \NormalTok{(ii = }\DecValTok{0}\NormalTok{; ii < }\KeywordTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{; ii++) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt8}\NormalTok{(ii));}
+\KeywordTok{for} \NormalTok{(ii = }\DecValTok{0}\NormalTok{; ii < }\OtherTok{buf}\NormalTok{.}\FunctionTok{length}\NormalTok{; ii++) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt8}\NormalTok{(ii));}
 \NormalTok{\}}
 
 \CommentTok{// 0x3}
@@ -399,11 +421,14 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.readUInt16LE(offset, {[}noAssert{]})}
+\subsubsection{buf.readUInt16LE(offset,
+{[}noAssert{]})}\label{buf.readuint16leoffset-noassert}
 
-\subsubsection{buf.readUInt16BE(offset, {[}noAssert{]})}
+\subsubsection{buf.readUInt16BE(offset,
+{[}noAssert{]})}\label{buf.readuint16beoffset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -423,19 +448,19 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
 
-\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\DecValTok{0x3}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\DecValTok{0x4}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\DecValTok{0x23}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\DecValTok{0x42}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\BaseNTok{0x3}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\BaseNTok{0x4}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\BaseNTok{0x23}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\BaseNTok{0x42}\NormalTok{;}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt16BE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt16LE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt16BE}\NormalTok{(}\DecValTok{1}\NormalTok{));}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt16LE}\NormalTok{(}\DecValTok{1}\NormalTok{));}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt16BE}\NormalTok{(}\DecValTok{2}\NormalTok{));}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt16LE}\NormalTok{(}\DecValTok{2}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt16BE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt16LE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt16BE}\NormalTok{(}\DecValTok{1}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt16LE}\NormalTok{(}\DecValTok{1}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt16BE}\NormalTok{(}\DecValTok{2}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt16LE}\NormalTok{(}\DecValTok{2}\NormalTok{));}
 
 \CommentTok{// 0x0304}
 \CommentTok{// 0x0403}
@@ -446,11 +471,14 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.readUInt32LE(offset, {[}noAssert{]})}
+\subsubsection{buf.readUInt32LE(offset,
+{[}noAssert{]})}\label{buf.readuint32leoffset-noassert}
 
-\subsubsection{buf.readUInt32BE(offset, {[}noAssert{]})}
+\subsubsection{buf.readUInt32BE(offset,
+{[}noAssert{]})}\label{buf.readuint32beoffset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -470,24 +498,26 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
 
-\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\DecValTok{0x3}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\DecValTok{0x4}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\DecValTok{0x23}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\DecValTok{0x42}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\BaseNTok{0x3}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\BaseNTok{0x4}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\BaseNTok{0x23}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\BaseNTok{0x42}\NormalTok{;}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt32BE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readUInt32LE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt32BE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readUInt32LE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
 
 \CommentTok{// 0x03042342}
 \CommentTok{// 0x42230403}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.readInt8(offset, {[}noAssert{]})}
+\subsubsection{buf.readInt8(offset,
+{[}noAssert{]})}\label{buf.readint8offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -505,11 +535,14 @@ Defaults to \texttt{false}.
 Works as \texttt{buffer.readUInt8}, except buffer contents are treated
 as two's complement signed values.
 
-\subsubsection{buf.readInt16LE(offset, {[}noAssert{]})}
+\subsubsection{buf.readInt16LE(offset,
+{[}noAssert{]})}\label{buf.readint16leoffset-noassert}
 
-\subsubsection{buf.readInt16BE(offset, {[}noAssert{]})}
+\subsubsection{buf.readInt16BE(offset,
+{[}noAssert{]})}\label{buf.readint16beoffset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -528,11 +561,14 @@ Defaults to \texttt{false}.
 Works as \texttt{buffer.readUInt16*}, except buffer contents are treated
 as two's complement signed values.
 
-\subsubsection{buf.readInt32LE(offset, {[}noAssert{]})}
+\subsubsection{buf.readInt32LE(offset,
+{[}noAssert{]})}\label{buf.readint32leoffset-noassert}
 
-\subsubsection{buf.readInt32BE(offset, {[}noAssert{]})}
+\subsubsection{buf.readInt32BE(offset,
+{[}noAssert{]})}\label{buf.readint32beoffset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -551,11 +587,14 @@ Defaults to \texttt{false}.
 Works as \texttt{buffer.readUInt32*}, except buffer contents are treated
 as two's complement signed values.
 
-\subsubsection{buf.readFloatLE(offset, {[}noAssert{]})}
+\subsubsection{buf.readFloatLE(offset,
+{[}noAssert{]})}\label{buf.readfloatleoffset-noassert}
 
-\subsubsection{buf.readFloatBE(offset, {[}noAssert{]})}
+\subsubsection{buf.readFloatBE(offset,
+{[}noAssert{]})}\label{buf.readfloatbeoffset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -575,24 +614,27 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
 
-\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\DecValTok{0x00}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\DecValTok{0x00}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\DecValTok{0x80}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\DecValTok{0x3f}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\BaseNTok{0x00}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\BaseNTok{0x00}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\BaseNTok{0x80}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\BaseNTok{0x3f}\NormalTok{;}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readFloatLE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readFloatLE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
 
 \CommentTok{// 0x01}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.readDoubleLE(offset, {[}noAssert{]})}
+\subsubsection{buf.readDoubleLE(offset,
+{[}noAssert{]})}\label{buf.readdoubleleoffset-noassert}
 
-\subsubsection{buf.readDoubleBE(offset, {[}noAssert{]})}
+\subsubsection{buf.readDoubleBE(offset,
+{[}noAssert{]})}\label{buf.readdoublebeoffset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{offset} Number
 \item
@@ -612,26 +654,28 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{8}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{8}\NormalTok{);}
 
-\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\DecValTok{0x55}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\DecValTok{0x55}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\DecValTok{0x55}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\DecValTok{0x55}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{4}\NormalTok{] = }\DecValTok{0x55}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{5}\NormalTok{] = }\DecValTok{0x55}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{6}\NormalTok{] = }\DecValTok{0xd5}\NormalTok{;}
-\NormalTok{buf[}\DecValTok{7}\NormalTok{] = }\DecValTok{0x3f}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{0}\NormalTok{] = }\BaseNTok{0x55}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{1}\NormalTok{] = }\BaseNTok{0x55}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{2}\NormalTok{] = }\BaseNTok{0x55}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{3}\NormalTok{] = }\BaseNTok{0x55}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{4}\NormalTok{] = }\BaseNTok{0x55}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{5}\NormalTok{] = }\BaseNTok{0x55}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{6}\NormalTok{] = }\BaseNTok{0xd5}\NormalTok{;}
+\NormalTok{buf[}\DecValTok{7}\NormalTok{] = }\BaseNTok{0x3f}\NormalTok{;}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{buf}\NormalTok{.}\FunctionTok{readDoubleLE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{buf}\NormalTok{.}\FunctionTok{readDoubleLE}\NormalTok{(}\DecValTok{0}\NormalTok{));}
 
 \CommentTok{// 0.3333333333333333}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.writeUInt8(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeUInt8(value, offset,
+{[}noAssert{]})}\label{buf.writeuint8value-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -653,23 +697,26 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\DecValTok{0x3}\NormalTok{, }\DecValTok{0}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\DecValTok{0x4}\NormalTok{, }\DecValTok{1}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\DecValTok{0x23}\NormalTok{, }\DecValTok{2}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\DecValTok{0x42}\NormalTok{, }\DecValTok{3}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\BaseNTok{0x3}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\BaseNTok{0x4}\NormalTok{, }\DecValTok{1}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\BaseNTok{0x23}\NormalTok{, }\DecValTok{2}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt8}\NormalTok{(}\BaseNTok{0x42}\NormalTok{, }\DecValTok{3}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
 \CommentTok{// <Buffer 03 04 23 42>}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.writeUInt16LE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeUInt16LE(value, offset,
+{[}noAssert{]})}\label{buf.writeuint16levalue-offset-noassert}
 
-\subsubsection{buf.writeUInt16BE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeUInt16BE(value, offset,
+{[}noAssert{]})}\label{buf.writeuint16bevalue-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -692,27 +739,30 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt16BE}\NormalTok{(}\DecValTok{0xdead}\NormalTok{, }\DecValTok{0}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt16BE}\NormalTok{(}\DecValTok{0xbeef}\NormalTok{, }\DecValTok{2}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt16BE}\NormalTok{(}\BaseNTok{0xdead}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt16BE}\NormalTok{(}\BaseNTok{0xbeef}\NormalTok{, }\DecValTok{2}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt16LE}\NormalTok{(}\DecValTok{0xdead}\NormalTok{, }\DecValTok{0}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt16LE}\NormalTok{(}\DecValTok{0xbeef}\NormalTok{, }\DecValTok{2}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt16LE}\NormalTok{(}\BaseNTok{0xdead}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt16LE}\NormalTok{(}\BaseNTok{0xbeef}\NormalTok{, }\DecValTok{2}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
 \CommentTok{// <Buffer de ad be ef>}
 \CommentTok{// <Buffer ad de ef be>}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.writeUInt32LE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeUInt32LE(value, offset,
+{[}noAssert{]})}\label{buf.writeuint32levalue-offset-noassert}
 
-\subsubsection{buf.writeUInt32BE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeUInt32BE(value, offset,
+{[}noAssert{]})}\label{buf.writeuint32bevalue-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -735,23 +785,25 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt32BE}\NormalTok{(}\DecValTok{0xfeedface}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt32BE}\NormalTok{(}\BaseNTok{0xfeedface}\NormalTok{, }\DecValTok{0}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeUInt32LE}\NormalTok{(}\DecValTok{0xfeedface}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeUInt32LE}\NormalTok{(}\BaseNTok{0xfeedface}\NormalTok{, }\DecValTok{0}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
 \CommentTok{// <Buffer fe ed fa ce>}
 \CommentTok{// <Buffer ce fa ed fe>}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.writeInt8(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeInt8(value, offset,
+{[}noAssert{]})}\label{buf.writeint8value-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -772,11 +824,14 @@ used unless you are certain of correctness. Defaults to \texttt{false}.
 Works as \texttt{buffer.writeUInt8}, except value is written out as a
 two's complement signed integer into \texttt{buffer}.
 
-\subsubsection{buf.writeInt16LE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeInt16LE(value, offset,
+{[}noAssert{]})}\label{buf.writeint16levalue-offset-noassert}
 
-\subsubsection{buf.writeInt16BE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeInt16BE(value, offset,
+{[}noAssert{]})}\label{buf.writeint16bevalue-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -798,11 +853,14 @@ used unless you are certain of correctness. Defaults to \texttt{false}.
 Works as \texttt{buffer.writeUInt16*}, except value is written out as a
 two's complement signed integer into \texttt{buffer}.
 
-\subsubsection{buf.writeInt32LE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeInt32LE(value, offset,
+{[}noAssert{]})}\label{buf.writeint32levalue-offset-noassert}
 
-\subsubsection{buf.writeInt32BE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeInt32BE(value, offset,
+{[}noAssert{]})}\label{buf.writeint32bevalue-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -824,11 +882,14 @@ used unless you are certain of correctness. Defaults to \texttt{false}.
 Works as \texttt{buffer.writeUInt32*}, except value is written out as a
 two's complement signed integer into \texttt{buffer}.
 
-\subsubsection{buf.writeFloatLE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeFloatLE(value, offset,
+{[}noAssert{]})}\label{buf.writefloatlevalue-offset-noassert}
 
-\subsubsection{buf.writeFloatBE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeFloatBE(value, offset,
+{[}noAssert{]})}\label{buf.writefloatbevalue-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -851,25 +912,28 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{4}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeFloatBE}\NormalTok{(}\DecValTok{0xcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeFloatBE}\NormalTok{(}\BaseNTok{0xcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeFloatLE}\NormalTok{(}\DecValTok{0xcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeFloatLE}\NormalTok{(}\BaseNTok{0xcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
 \CommentTok{// <Buffer 4f 4a fe bb>}
 \CommentTok{// <Buffer bb fe 4a 4f>}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.writeDoubleLE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeDoubleLE(value, offset,
+{[}noAssert{]})}\label{buf.writedoublelevalue-offset-noassert}
 
-\subsubsection{buf.writeDoubleBE(value, offset, {[}noAssert{]})}
+\subsubsection{buf.writeDoubleBE(value, offset,
+{[}noAssert{]})}\label{buf.writedoublebevalue-offset-noassert}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value} Number
 \item
@@ -892,23 +956,25 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{8}\NormalTok{);}
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeDoubleBE}\NormalTok{(}\DecValTok{0xdeadbeefcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\KeywordTok{var} \NormalTok{buf = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{8}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeDoubleBE}\NormalTok{(}\BaseNTok{0xdeadbeefcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
-\KeywordTok{buf}\NormalTok{.}\FunctionTok{writeDoubleLE}\NormalTok{(}\DecValTok{0xdeadbeefcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
+\OtherTok{buf}\NormalTok{.}\FunctionTok{writeDoubleLE}\NormalTok{(}\BaseNTok{0xdeadbeefcafebabe}\NormalTok{, }\DecValTok{0}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(buf);}
 
 \CommentTok{// <Buffer 43 eb d5 b7 dd f9 5f d7>}
 \CommentTok{// <Buffer d7 5f f9 dd b7 d5 eb 43>}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.fill(value, {[}offset{]}, {[}end{]})}
+\subsubsection{buf.fill(value, {[}offset{]},
+{[}end{]})}\label{buf.fillvalue-offset-end}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{value}
 \item
@@ -923,19 +989,20 @@ Fills the buffer with the specified value. If the \texttt{offset}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{b = }\KeywordTok{new} \NormalTok{Buffer(}\DecValTok{50}\NormalTok{);}
-\KeywordTok{b}\NormalTok{.}\FunctionTok{fill}\NormalTok{(}\StringTok{"h"}\NormalTok{);}
+\KeywordTok{var} \NormalTok{b = }\KeywordTok{new} \FunctionTok{Buffer}\NormalTok{(}\DecValTok{50}\NormalTok{);}
+\OtherTok{b}\NormalTok{.}\FunctionTok{fill}\NormalTok{(}\StringTok{"h"}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{buf.toArrayBuffer()}
+\subsubsection{buf.toArrayBuffer()}\label{buf.toarraybuffer}
 
 Creates a new \texttt{ArrayBuffer} with the copied memory of the buffer
 instance.
 
-\subsection{buffer.INSPECT\_MAX\_BYTES}
+\subsection{buffer.INSPECT\_MAX\_BYTES}\label{buffer.inspectux5fmaxux5fbytes}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   Number, Default: 50
 \end{itemize}
@@ -947,7 +1014,7 @@ Note that this is a property on the buffer module returned by
 \texttt{require('buffer')}, not on the Buffer global, or a buffer
 instance.
 
-\subsection{Class: SlowBuffer}
+\subsection{Class: SlowBuffer}\label{class-slowbuffer}
 
 Returns an un-pooled \texttt{Buffer}.
 
@@ -967,13 +1034,13 @@ relevant bits.
 \CommentTok{// need to keep around a few small chunks of memory}
 \KeywordTok{var} \NormalTok{store = [];}
 
-\KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{var} \NormalTok{data = }\KeywordTok{socket}\NormalTok{.}\FunctionTok{read}\NormalTok{();}
+\OtherTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{var} \NormalTok{data = }\OtherTok{socket}\NormalTok{.}\FunctionTok{read}\NormalTok{();}
   \CommentTok{// allocate for retained data}
-  \KeywordTok{var} \NormalTok{sb = }\KeywordTok{new} \NormalTok{SlowBuffer(}\DecValTok{10}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{sb = }\KeywordTok{new} \FunctionTok{SlowBuffer}\NormalTok{(}\DecValTok{10}\NormalTok{);}
   \CommentTok{// copy the data into the new allocation}
-  \KeywordTok{data}\NormalTok{.}\FunctionTok{copy}\NormalTok{(sb, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{10}\NormalTok{);}
-  \KeywordTok{store}\NormalTok{.}\FunctionTok{push}\NormalTok{(sb);}
+  \OtherTok{data}\NormalTok{.}\FunctionTok{copy}\NormalTok{(sb, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{10}\NormalTok{);}
+  \OtherTok{store}\NormalTok{.}\FunctionTok{push}\NormalTok{(sb);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}

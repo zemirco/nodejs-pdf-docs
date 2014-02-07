@@ -1,0 +1,24 @@
+{
+  "name": "node-pretty-docs",
+  "version": "0.0.1",
+  "description": "Pretty Node.js docs as PDF, .mobi and .epub",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zeMirco/nodejs-pdf-docs.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zeMirco/nodejs-pdf-docs/issues"
+  },
+  "homepage": "https://github.com/zeMirco/nodejs-pdf-docs",
+  "dependencies": {
+    "mime": "~1.2.11",
+    "async": "~0.2.10",
+    "walk": "~2.3.1"
+  }
+}

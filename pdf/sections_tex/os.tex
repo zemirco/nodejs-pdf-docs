@@ -1,8 +1,8 @@
-\section{os}
+\section{os}\label{os}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
+\NormalTok{Stability: }\DecValTok{4} \NormalTok{- API Frozen}
 \end{Highlighting}
 \end{Shaded}
 
@@ -10,53 +10,62 @@ Provides a few basic operating-system related utility functions.
 
 Use \texttt{require('os')} to access this module.
 
-\subsection{os.tmpdir()}
+\subsection{os.tmpdir()}\label{os.tmpdir}
 
 Returns the operating system's default directory for temp files.
 
-\subsection{os.endianness()}
+\subsection{os.endianness()}\label{os.endianness}
 
 Returns the endianness of the CPU. Possible values are \texttt{"BE"} or
 \texttt{"LE"}.
 
-\subsection{os.hostname()}
+\subsection{os.hostname()}\label{os.hostname}
 
 Returns the hostname of the operating system.
 
-\subsection{os.type()}
+\subsection{os.type()}\label{os.type}
 
 Returns the operating system name.
 
-\subsection{os.platform()}
+\subsection{os.platform()}\label{os.platform}
 
 Returns the operating system platform.
 
-\subsection{os.arch()}
+\subsection{os.arch()}\label{os.arch}
 
 Returns the operating system CPU architecture. Possible values are
 \texttt{"x64"}, \texttt{"arm"} and \texttt{"ia32"}.
 
-\subsection{os.release()}
+\subsection{os.release()}\label{os.release}
 
 Returns the operating system release.
 
-\subsection{os.uptime()}
+\subsection{os.uptime()}\label{os.uptime}
 
 Returns the system uptime in seconds.
 
-\subsection{os.loadavg()}
+\subsection{os.loadavg()}\label{os.loadavg}
 
 Returns an array containing the 1, 5, and 15 minute load averages.
 
-\subsection{os.totalmem()}
+The load average is a measure of system activity, calculated by the
+operating system and expressed as a fractional number. As a rule of
+thumb, the load average should ideally be less than the number of
+logical CPUs in the system.
+
+The load average is a very UNIX-y concept; there is no real equivalent
+on Windows platforms. That is why this function always returns
+\texttt{{[}0, 0, 0{]}} on Windows.
+
+\subsection{os.totalmem()}\label{os.totalmem}
 
 Returns the total amount of system memory in bytes.
 
-\subsection{os.freemem()}
+\subsection{os.freemem()}\label{os.freemem}
 
 Returns the amount of free system memory in bytes.
 
-\subsection{os.cpus()}
+\subsection{os.cpus()}\label{os.cpus}
 
 Returns an array of objects containing information about each CPU/core
 installed: model, speed (in MHz), and times (an object containing the
@@ -67,7 +76,7 @@ Example inspection of os.cpus:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{[ \{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+\NormalTok{[ \{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{252020}\NormalTok{,}
@@ -75,7 +84,7 @@ Example inspection of os.cpus:
        \DataTypeTok{sys}\NormalTok{: }\DecValTok{30340}\NormalTok{,}
        \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070356870}\NormalTok{,}
        \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
-  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{306960}\NormalTok{,}
@@ -83,7 +92,7 @@ Example inspection of os.cpus:
        \DataTypeTok{sys}\NormalTok{: }\DecValTok{26980}\NormalTok{,}
        \DataTypeTok{idle}\NormalTok{: }\DecValTok{1071569080}\NormalTok{,}
        \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
-  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{248450}\NormalTok{,}
@@ -91,7 +100,7 @@ Example inspection of os.cpus:
        \DataTypeTok{sys}\NormalTok{: }\DecValTok{21750}\NormalTok{,}
        \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070919370}\NormalTok{,}
        \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
-  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{256880}\NormalTok{,}
@@ -99,7 +108,7 @@ Example inspection of os.cpus:
        \DataTypeTok{sys}\NormalTok{: }\DecValTok{19430}\NormalTok{,}
        \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070905480}\NormalTok{,}
        \DataTypeTok{irq}\NormalTok{: }\DecValTok{20} \NormalTok{\} \},}
-  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{511580}\NormalTok{,}
@@ -107,7 +116,7 @@ Example inspection of os.cpus:
        \DataTypeTok{sys}\NormalTok{: }\DecValTok{40900}\NormalTok{,}
        \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070842510}\NormalTok{,}
        \DataTypeTok{irq}\NormalTok{: }\DecValTok{0} \NormalTok{\} \},}
-  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{291660}\NormalTok{,}
@@ -115,7 +124,7 @@ Example inspection of os.cpus:
        \DataTypeTok{sys}\NormalTok{: }\DecValTok{34360}\NormalTok{,}
        \DataTypeTok{idle}\NormalTok{: }\DecValTok{1070888000}\NormalTok{,}
        \DataTypeTok{irq}\NormalTok{: }\DecValTok{10} \NormalTok{\} \},}
-  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{308260}\NormalTok{,}
@@ -123,7 +132,7 @@ Example inspection of os.cpus:
        \DataTypeTok{sys}\NormalTok{: }\DecValTok{55410}\NormalTok{,}
        \DataTypeTok{idle}\NormalTok{: }\DecValTok{1071129970}\NormalTok{,}
        \DataTypeTok{irq}\NormalTok{: }\DecValTok{880} \NormalTok{\} \},}
-  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\CharTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{model}\NormalTok{: }\StringTok{'Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz'}\NormalTok{,}
     \DataTypeTok{speed}\NormalTok{: }\DecValTok{2926}\NormalTok{,}
     \DataTypeTok{times}\NormalTok{:}
      \NormalTok{\{ }\DataTypeTok{user}\NormalTok{: }\DecValTok{266450}\NormalTok{,}
@@ -134,38 +143,38 @@ Example inspection of os.cpus:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{os.networkInterfaces()}
+\subsection{os.networkInterfaces()}\label{os.networkinterfaces}
 
 Get a list of network interfaces:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{\{ }\DataTypeTok{lo}\NormalTok{:}
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
-       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.0.0.0'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{,}
-       \DataTypeTok{mac}\NormalTok{: }\CharTok{'00:00:00:00:00:00'}\NormalTok{,}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\StringTok{'127.0.0.1'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\StringTok{'255.0.0.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\StringTok{'IPv4'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\StringTok{'00:00:00:00:00:00'}\NormalTok{,}
        \DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'::1'}\NormalTok{,}
-       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{,}
-       \DataTypeTok{mac}\NormalTok{: }\CharTok{'00:00:00:00:00:00'}\NormalTok{,}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\StringTok{'::1'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\StringTok{'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\StringTok{'IPv6'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\StringTok{'00:00:00:00:00:00'}\NormalTok{,}
        \DataTypeTok{internal}\NormalTok{: }\KeywordTok{true} \NormalTok{\} ],}
   \DataTypeTok{eth0}\NormalTok{:}
-   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'192.168.1.108'}\NormalTok{,}
-       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'255.255.255.0'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv4'}\NormalTok{,}
-       \DataTypeTok{mac}\NormalTok{: }\CharTok{'01:02:03:0a:0b:0c'}\NormalTok{,}
+   \NormalTok{[ \{ }\DataTypeTok{address}\NormalTok{: }\StringTok{'192.168.1.108'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\StringTok{'255.255.255.0'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\StringTok{'IPv4'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\StringTok{'01:02:03:0a:0b:0c'}\NormalTok{,}
        \DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\},}
-     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\CharTok{'fe80::a00:27ff:fe4e:66a1'}\NormalTok{,}
-       \DataTypeTok{netmask}\NormalTok{: }\CharTok{'ffff:ffff:ffff:ffff::'}\NormalTok{,}
-       \DataTypeTok{family}\NormalTok{: }\CharTok{'IPv6'}\NormalTok{,}
-       \DataTypeTok{mac}\NormalTok{: }\CharTok{'01:02:03:0a:0b:0c'}\NormalTok{,}
+     \NormalTok{\{ }\DataTypeTok{address}\NormalTok{: }\StringTok{'fe80::a00:27ff:fe4e:66a1'}\NormalTok{,}
+       \DataTypeTok{netmask}\NormalTok{: }\StringTok{'ffff:ffff:ffff:ffff::'}\NormalTok{,}
+       \DataTypeTok{family}\NormalTok{: }\StringTok{'IPv6'}\NormalTok{,}
+       \DataTypeTok{mac}\NormalTok{: }\StringTok{'01:02:03:0a:0b:0c'}\NormalTok{,}
        \DataTypeTok{internal}\NormalTok{: }\KeywordTok{false} \NormalTok{\} ] \}}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{os.EOL}
+\subsection{os.EOL}\label{os.eol}
 
 A constant defining the appropriate End-of-line marker for the operating
 system.

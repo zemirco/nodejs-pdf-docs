@@ -1,8 +1,8 @@
-\section{Readline}
+\section{Readline}\label{readline}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable}
+\NormalTok{Stability: }\DecValTok{2} \NormalTok{- Unstable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -16,23 +16,23 @@ program to gracefully exit:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readline = require(}\CharTok{'readline'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readline = }\FunctionTok{require}\NormalTok{(}\StringTok{'readline'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{rl = }\KeywordTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(\{}
-  \DataTypeTok{input}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
-  \DataTypeTok{output}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}
+\KeywordTok{var} \NormalTok{rl = }\OtherTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(\{}
+  \DataTypeTok{input}\NormalTok{: }\OtherTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
+  \DataTypeTok{output}\NormalTok{: }\OtherTok{process}\NormalTok{.}\FunctionTok{stdout}
 \NormalTok{\});}
 
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\StringTok{"What do you think of node.js? "}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\StringTok{"What do you think of node.js? "}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
   \CommentTok{// TODO: Log the answer in a database}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Thank you for your valuable feedback:"}\NormalTok{, answer);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Thank you for your valuable feedback:"}\NormalTok{, answer);}
 
-  \KeywordTok{rl}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
+  \OtherTok{rl}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{readline.createInterface(options)}
+\subsection{readline.createInterface(options)}\label{readline.createinterfaceoptions}
 
 Creates a readline \texttt{Interface} instance. Accepts an ``options''
 Object that takes the following values:
@@ -53,10 +53,11 @@ Object that takes the following values:
   \texttt{isTTY} on the \texttt{output} stream upon instantiation.
 \end{itemize}
 
-The \texttt{completer} function is given a the current line entered by
-the user, and is supposed to return an Array with 2 entries:
+The \texttt{completer} function is given the current line entered by the
+user, and is supposed to return an Array with 2 entries:
 
 \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
 \item
   An Array with matching entries for the completion.
 \item
@@ -70,11 +71,11 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{function} \NormalTok{completer(line) \{}
-  \KeywordTok{var} \NormalTok{completions = }\CharTok{'.help .error .exit .quit .q'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\CharTok{' '}\NormalTok{)}
-  \KeywordTok{var} \NormalTok{hits = }\KeywordTok{completions}\NormalTok{.}\FunctionTok{filter}\NormalTok{(}\KeywordTok{function}\NormalTok{(c) \{ }\KeywordTok{return} \KeywordTok{c}\NormalTok{.}\FunctionTok{indexOf}\NormalTok{(line) == }\DecValTok{0} \NormalTok{\})}
+\KeywordTok{function} \FunctionTok{completer}\NormalTok{(line) \{}
+  \KeywordTok{var} \NormalTok{completions = }\StringTok{'.help .error .exit .quit .q'}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\StringTok{' '}\NormalTok{)}
+  \KeywordTok{var} \NormalTok{hits = }\OtherTok{completions}\NormalTok{.}\FunctionTok{filter}\NormalTok{(}\KeywordTok{function}\NormalTok{(c) \{ }\KeywordTok{return} \OtherTok{c}\NormalTok{.}\FunctionTok{indexOf}\NormalTok{(line) == }\DecValTok{0} \NormalTok{\})}
   \CommentTok{// show all completions if none found}
-  \KeywordTok{return} \NormalTok{[}\KeywordTok{hits}\NormalTok{.}\FunctionTok{length} \NormalTok{? }\DataTypeTok{hits }\NormalTok{: completions, line]}
+  \KeywordTok{return} \NormalTok{[}\OtherTok{hits}\NormalTok{.}\FunctionTok{length} \NormalTok{? hits : completions, line]}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -84,8 +85,8 @@ arguments:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{function} \NormalTok{completer(linePartial, callback) \{}
-  \NormalTok{callback(null, [[}\CharTok{'123'}\NormalTok{], linePartial]);}
+\KeywordTok{function} \FunctionTok{completer}\NormalTok{(linePartial, callback) \{}
+  \FunctionTok{callback}\NormalTok{(}\KeywordTok{null}\NormalTok{, [[}\StringTok{'123'}\NormalTok{], linePartial]);}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -95,10 +96,10 @@ and \texttt{process.stdout} in order to accept user input:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readline = require(}\CharTok{'readline'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{rl = }\KeywordTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(\{}
-  \DataTypeTok{input}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
-  \DataTypeTok{output}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}
+\KeywordTok{var} \NormalTok{readline = }\FunctionTok{require}\NormalTok{(}\StringTok{'readline'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{rl = }\OtherTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(\{}
+  \DataTypeTok{input}\NormalTok{: }\OtherTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{,}
+  \DataTypeTok{output}\NormalTok{: }\OtherTok{process}\NormalTok{.}\FunctionTok{stdout}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
@@ -112,17 +113,17 @@ If \texttt{terminal} is \texttt{true} for this instance then the
 the \texttt{output} if/when the columns ever change
 (\texttt{process.stdout} does this automatically when it is a TTY).
 
-\subsection{Class: Interface}
+\subsection{Class: Interface}\label{class-interface}
 
 The class that represents a readline interface with an input and output
 stream.
 
-\subsubsection{rl.setPrompt(prompt)}
+\subsubsection{rl.setPrompt(prompt)}\label{rl.setpromptprompt}
 
 Sets the prompt, for example when you run \texttt{node} on the command
 line, you see \texttt{\textgreater{}}, which is node's prompt.
 
-\subsubsection{rl.prompt({[}preserveCursor{]})}
+\subsubsection{rl.prompt({[}preserveCursor{]})}\label{rl.promptpreservecursor}
 
 Readies readline for input from the user, putting the current
 \texttt{setPrompt} options on a new line, giving the user a new spot to
@@ -132,7 +133,8 @@ cursor placement being reset to \texttt{0}.
 This will also resume the \texttt{input} stream used with
 \texttt{createInterface} if it has been paused.
 
-\subsubsection{rl.question(query, callback)}
+\subsubsection{rl.question(query,
+callback)}\label{rl.questionquery-callback}
 
 Prepends the prompt with \texttt{query} and invokes \texttt{callback}
 with the user's response. Displays the query to the user, and then
@@ -146,28 +148,28 @@ Example usage:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{interface}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\CharTok{'What is your favorite food?'}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Oh, so your favorite food is '} \NormalTok{+ answer);}
+\KeywordTok{interface}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\StringTok{'What is your favorite food?'}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Oh, so your favorite food is '} \NormalTok{+ answer);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{rl.pause()}
+\subsubsection{rl.pause()}\label{rl.pause}
 
 Pauses the readline \texttt{input} stream, allowing it to be resumed
 later if needed.
 
-\subsubsection{rl.resume()}
+\subsubsection{rl.resume()}\label{rl.resume}
 
 Resumes the readline \texttt{input} stream.
 
-\subsubsection{rl.close()}
+\subsubsection{rl.close()}\label{rl.close}
 
 Closes the \texttt{Interface} instance, relinquishing control on the
 \texttt{input} and \texttt{output} streams. The ``close'' event will
 also be emitted.
 
-\subsubsection{rl.write(data, {[}key{]})}
+\subsubsection{rl.write(data, {[}key{]})}\label{rl.writedata-key}
 
 Writes \texttt{data} to \texttt{output} stream. \texttt{key} is an
 object literal to represent a key sequence; available if the terminal is
@@ -179,15 +181,15 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'Delete me!'}\NormalTok{);}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'Delete me!'}\NormalTok{);}
 \CommentTok{// Simulate ctrl+u to delete the line written previously}
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{write}\NormalTok{(null, \{}\DataTypeTok{ctrl}\NormalTok{: }\KeywordTok{true}\NormalTok{, }\DataTypeTok{name}\NormalTok{: }\CharTok{'u'}\NormalTok{\});}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\KeywordTok{null}\NormalTok{, \{}\DataTypeTok{ctrl}\NormalTok{: }\KeywordTok{true}\NormalTok{, }\DataTypeTok{name}\NormalTok{: }\StringTok{'u'}\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Events}
+\subsection{Events}\label{events}
 
-\subsubsection{Event: `line'}
+\subsubsection{Event: `line'}\label{event-line}
 
 \texttt{function (line) \{\}}
 
@@ -199,13 +201,13 @@ Example of listening for \texttt{line}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'line'}\NormalTok{, }\KeywordTok{function} \NormalTok{(cmd) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'You just typed: '}\NormalTok{+cmd);}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'line'}\NormalTok{, }\KeywordTok{function} \NormalTok{(cmd) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'You just typed: '}\NormalTok{+cmd);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `pause'}
+\subsubsection{Event: `pause'}\label{event-pause}
 
 \texttt{function () \{\}}
 
@@ -219,13 +221,13 @@ Example of listening for \texttt{pause}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'pause'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Readline paused.'}\NormalTok{);}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'pause'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Readline paused.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `resume'}
+\subsubsection{Event: `resume'}\label{event-resume}
 
 \texttt{function () \{\}}
 
@@ -235,13 +237,13 @@ Example of listening for \texttt{resume}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'resume'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Readline resumed.'}\NormalTok{);}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'resume'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Readline resumed.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `close'}
+\subsubsection{Event: `close'}\label{event-close}
 
 \texttt{function () \{\}}
 
@@ -256,7 +258,7 @@ This event is also called if there is no \texttt{SIGINT} event listener
 present when the \texttt{input} stream receives a \texttt{\^{}C},
 respectively known as \texttt{SIGINT}.
 
-\subsubsection{Event: `SIGINT'}
+\subsubsection{Event: `SIGINT'}\label{event-sigint}
 
 \texttt{function () \{\}}
 
@@ -269,15 +271,15 @@ Example of listening for \texttt{SIGINT}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGINT'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{rl}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\CharTok{'Are you sure you want to exit?'}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
-    \KeywordTok{if} \NormalTok{(}\KeywordTok{answer}\NormalTok{.}\FunctionTok{match}\NormalTok{(}\OtherTok{/}\FloatTok{^}\OtherTok{y}\FloatTok{(}\OtherTok{es}\FloatTok{)?$}\OtherTok{/i}\NormalTok{)) }\KeywordTok{rl}\NormalTok{.}\FunctionTok{pause}\NormalTok{();}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'SIGINT'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{rl}\NormalTok{.}\FunctionTok{question}\NormalTok{(}\StringTok{'Are you sure you want to exit?'}\NormalTok{, }\KeywordTok{function}\NormalTok{(answer) \{}
+    \KeywordTok{if} \NormalTok{(}\OtherTok{answer}\NormalTok{.}\FunctionTok{match}\NormalTok{(}\OtherTok{/}\FloatTok{^}\OtherTok{y}\FloatTok{(}\OtherTok{es}\FloatTok{)?$}\OtherTok{/i}\NormalTok{)) }\OtherTok{rl}\NormalTok{.}\FunctionTok{pause}\NormalTok{();}
   \NormalTok{\});}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `SIGTSTP'}
+\subsubsection{Event: `SIGTSTP'}\label{event-sigtstp}
 
 \texttt{function () \{\}}
 
@@ -299,15 +301,15 @@ Example of listening for \texttt{SIGTSTP}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGTSTP'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'SIGTSTP'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \CommentTok{// This will override SIGTSTP and prevent the program from going to the}
   \CommentTok{// background.}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Caught SIGTSTP.'}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Caught SIGTSTP.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `SIGCONT'}
+\subsubsection{Event: `SIGCONT'}\label{event-sigcont}
 
 \texttt{function () \{\}}
 
@@ -322,40 +324,69 @@ Example of listening for \texttt{SIGCONT}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'SIGCONT'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'SIGCONT'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \CommentTok{// `prompt` will automatically resume the stream}
-  \KeywordTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
+  \OtherTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Example: Tiny CLI}
+\subsection{Example: Tiny CLI}\label{example-tiny-cli}
 
 Here's an example of how to use all these together to craft a tiny
 command line interface:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{readline = require(}\CharTok{'readline'}\NormalTok{),}
-    \NormalTok{rl = }\KeywordTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(}\KeywordTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{, }\KeywordTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
+\KeywordTok{var} \NormalTok{readline = }\FunctionTok{require}\NormalTok{(}\StringTok{'readline'}\NormalTok{),}
+    \NormalTok{rl = }\OtherTok{readline}\NormalTok{.}\FunctionTok{createInterface}\NormalTok{(}\OtherTok{process}\NormalTok{.}\FunctionTok{stdin}\NormalTok{, }\OtherTok{process}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
 
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{setPrompt}\NormalTok{(}\CharTok{'OHAI> '}\NormalTok{);}
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{setPrompt}\NormalTok{(}\StringTok{'OHAI> '}\NormalTok{);}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
 
-\KeywordTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'line'}\NormalTok{, }\KeywordTok{function}\NormalTok{(line) \{}
-  \KeywordTok{switch}\NormalTok{(}\KeywordTok{line}\NormalTok{.}\FunctionTok{trim}\NormalTok{()) \{}
-    \KeywordTok{case} \CharTok{'hello'}\NormalTok{:}
-      \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'world!'}\NormalTok{);}
+\OtherTok{rl}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'line'}\NormalTok{, }\KeywordTok{function}\NormalTok{(line) \{}
+  \KeywordTok{switch}\NormalTok{(}\OtherTok{line}\NormalTok{.}\FunctionTok{trim}\NormalTok{()) \{}
+    \KeywordTok{case} \StringTok{'hello'}\NormalTok{:}
+      \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'world!'}\NormalTok{);}
       \KeywordTok{break}\NormalTok{;}
-    \DataTypeTok{default}\NormalTok{:}
-      \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Say what? I might have heard `'} \NormalTok{+ }\KeywordTok{line}\NormalTok{.}\FunctionTok{trim}\NormalTok{() + }\CharTok{'`'}\NormalTok{);}
+    \KeywordTok{default}\NormalTok{:}
+      \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Say what? I might have heard `'} \NormalTok{+ }\OtherTok{line}\NormalTok{.}\FunctionTok{trim}\NormalTok{() + }\StringTok{'`'}\NormalTok{);}
       \KeywordTok{break}\NormalTok{;}
   \NormalTok{\}}
-  \KeywordTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
-\NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Have a great day!'}\NormalTok{);}
-  \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}
+  \OtherTok{rl}\NormalTok{.}\FunctionTok{prompt}\NormalTok{();}
+\NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\StringTok{'close'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Have a great day!'}\NormalTok{);}
+  \OtherTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{readline.cursorTo(stream, x,
+y)}\label{readline.cursortostream-x-y}
+
+Move cursor to the specified position in a given TTY stream.
+
+\subsection{readline.moveCursor(stream, dx,
+dy)}\label{readline.movecursorstream-dx-dy}
+
+Move cursor relative to it's current position in a given TTY stream.
+
+\subsection{readline.clearLine(stream,
+dir)}\label{readline.clearlinestream-dir}
+
+Clears current line of given TTY stream in a specified direction.
+\texttt{dir} should have one of following values:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{-1} - to the left from cursor
+\item
+  \texttt{1} - to the right from cursor
+\item
+  \texttt{0} - the entire line
+\end{itemize}
+
+\subsection{readline.clearScreenDown(stream)}\label{readline.clearscreendownstream}
+
+Clears the screen from the current position of the cursor down.

@@ -1,8 +1,8 @@
-\section{Domain}
+\section{Domain}\label{domain}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{2} \NormalTok{- Unstable}
+\NormalTok{Stability: }\DecValTok{2} \NormalTok{- Unstable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -13,7 +13,8 @@ object will be notified, rather than losing the context of the error in
 the \texttt{process.on('uncaughtException')} handler, or causing the
 program to exit immediately with an error code.
 
-\subsection{Warning: Don't Ignore Errors!}
+\subsection{Warning: Don't Ignore
+Errors!}\label{warning-dont-ignore-errors}
 
 Domain error handlers are not a substitute for closing down your process
 when an error occurs.
@@ -44,17 +45,17 @@ For example, this is not a good idea:
 \begin{Highlighting}[]
 \CommentTok{// XXX WARNING!  BAD IDEA!}
 
-\KeywordTok{var} \NormalTok{d = require(}\CharTok{'domain'}\NormalTok{).}\FunctionTok{create}\NormalTok{();}
-\KeywordTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
+\KeywordTok{var} \NormalTok{d = }\FunctionTok{require}\NormalTok{(}\StringTok{'domain'}\NormalTok{).}\FunctionTok{create}\NormalTok{();}
+\OtherTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
   \CommentTok{// The error won't crash the process, but what it does is worse!}
   \CommentTok{// Though we've prevented abrupt process restarting, we are leaking}
   \CommentTok{// resources like crazy if this ever happens.}
   \CommentTok{// This is no better than process.on('uncaughtException')!}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'error, but oh well'}\NormalTok{, }\KeywordTok{er}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'error, but oh well'}\NormalTok{, }\OtherTok{er}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{d}\NormalTok{.}\FunctionTok{run}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
-  \NormalTok{require(}\CharTok{'http'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(req, res) \{}
-    \NormalTok{handleRequest(req, res);}
+\OtherTok{d}\NormalTok{.}\FunctionTok{run}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+  \FunctionTok{require}\NormalTok{(}\StringTok{'http'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(req, res) \{}
+    \FunctionTok{handleRequest}\NormalTok{(req, res);}
   \NormalTok{\}).}\FunctionTok{listen}\NormalTok{(PORT);}
 \NormalTok{\});}
 \end{Highlighting}
@@ -68,10 +69,10 @@ and handle errors with much greater safety.
 \begin{Highlighting}[]
 \CommentTok{// Much better!}
 
-\KeywordTok{var} \NormalTok{cluster = require(}\CharTok{'cluster'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{PORT = +}\KeywordTok{process.env}\NormalTok{.}\FunctionTok{PORT} \NormalTok{\textbar{}\textbar{} }\DecValTok{1337}\NormalTok{;}
+\KeywordTok{var} \NormalTok{cluster = }\FunctionTok{require}\NormalTok{(}\StringTok{'cluster'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{PORT = +}\OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\FunctionTok{PORT} \NormalTok{|| }\DecValTok{1337}\NormalTok{;}
 
-\KeywordTok{if} \NormalTok{(}\KeywordTok{cluster}\NormalTok{.}\FunctionTok{isMaster}\NormalTok{) \{}
+\KeywordTok{if} \NormalTok{(}\OtherTok{cluster}\NormalTok{.}\FunctionTok{isMaster}\NormalTok{) \{}
   \CommentTok{// In real life, you'd probably use more than just 2 workers,}
   \CommentTok{// and perhaps not put the master and worker in the same file.}
   \CommentTok{//}
@@ -84,12 +85,12 @@ and handle errors with much greater safety.
   \CommentTok{// The important thing is that the master does very little,}
   \CommentTok{// increasing our resilience to unexpected errors.}
 
-  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
-  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+  \OtherTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+  \OtherTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
 
-  \KeywordTok{cluster}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'disconnect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(worker) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'disconnect!'}\NormalTok{);}
-    \KeywordTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+  \OtherTok{cluster}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'disconnect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(worker) \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\StringTok{'disconnect!'}\NormalTok{);}
+    \OtherTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
   \NormalTok{\});}
 
 \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
@@ -97,15 +98,15 @@ and handle errors with much greater safety.
   \CommentTok{//}
   \CommentTok{// This is where we put our bugs!}
 
-  \KeywordTok{var} \NormalTok{domain = require(}\CharTok{'domain'}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{domain = }\FunctionTok{require}\NormalTok{(}\StringTok{'domain'}\NormalTok{);}
 
   \CommentTok{// See the cluster documentation for more details about using}
   \CommentTok{// worker processes to serve requests.  How it works, caveats, etc.}
 
-  \KeywordTok{var} \NormalTok{server = require(}\CharTok{'http'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(req, res) \{}
-    \KeywordTok{var} \NormalTok{d = }\KeywordTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
-    \KeywordTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
-      \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{er}\NormalTok{.}\FunctionTok{stack}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{server = }\FunctionTok{require}\NormalTok{(}\StringTok{'http'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function}\NormalTok{(req, res) \{}
+    \KeywordTok{var} \NormalTok{d = }\OtherTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
+    \OtherTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
+      \OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\OtherTok{er}\NormalTok{.}\FunctionTok{stack}\NormalTok{);}
 
       \CommentTok{// Note: we're in dangerous territory!}
       \CommentTok{// By definition, something unexpected occurred,}
@@ -114,68 +115,70 @@ and handle errors with much greater safety.
 
       \KeywordTok{try} \NormalTok{\{}
         \CommentTok{// make sure we close down within 30 seconds}
-        \KeywordTok{var} \NormalTok{killtimer = setTimeout(}\KeywordTok{function}\NormalTok{() \{}
-          \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{1}\NormalTok{);}
+        \KeywordTok{var} \NormalTok{killtimer = }\FunctionTok{setTimeout}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+          \OtherTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{1}\NormalTok{);}
         \NormalTok{\}, }\DecValTok{30000}\NormalTok{);}
         \CommentTok{// But don't keep the process open just for that!}
-        \KeywordTok{killtimer}\NormalTok{.}\FunctionTok{unref}\NormalTok{();}
+        \OtherTok{killtimer}\NormalTok{.}\FunctionTok{unref}\NormalTok{();}
 
         \CommentTok{// stop taking new requests.}
-        \KeywordTok{server}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
+        \OtherTok{server}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
 
         \CommentTok{// Let the master know we're dead.  This will trigger a}
         \CommentTok{// 'disconnect' in the cluster master, and then it will fork}
         \CommentTok{// a new worker.}
-        \KeywordTok{cluster.worker}\NormalTok{.}\FunctionTok{disconnect}\NormalTok{();}
+        \OtherTok{cluster}\NormalTok{.}\OtherTok{worker}\NormalTok{.}\FunctionTok{disconnect}\NormalTok{();}
 
         \CommentTok{// try to send an error to the request that triggered the problem}
-        \KeywordTok{res}\NormalTok{.}\FunctionTok{statusCode} \NormalTok{= }\DecValTok{500}\NormalTok{;}
-        \KeywordTok{res}\NormalTok{.}\FunctionTok{setHeader}\NormalTok{(}\CharTok{'content-type'}\NormalTok{, }\CharTok{'text/plain'}\NormalTok{);}
-        \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'Oops, there was a problem!\textbackslash{}n'}\NormalTok{);}
+        \OtherTok{res}\NormalTok{.}\FunctionTok{statusCode} \NormalTok{= }\DecValTok{500}\NormalTok{;}
+        \OtherTok{res}\NormalTok{.}\FunctionTok{setHeader}\NormalTok{(}\StringTok{'content-type'}\NormalTok{, }\StringTok{'text/plain'}\NormalTok{);}
+        \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'Oops, there was a problem!}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
       \NormalTok{\} }\KeywordTok{catch} \NormalTok{(er2) \{}
         \CommentTok{// oh well, not much we can do at this point.}
-        \KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\CharTok{'Error sending 500!'}\NormalTok{, }\KeywordTok{er2}\NormalTok{.}\FunctionTok{stack}\NormalTok{);}
+        \OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{(}\StringTok{'Error sending 500!'}\NormalTok{, }\OtherTok{er2}\NormalTok{.}\FunctionTok{stack}\NormalTok{);}
       \NormalTok{\}}
     \NormalTok{\});}
 
     \CommentTok{// Because req and res were created before this domain existed,}
     \CommentTok{// we need to explicitly add them.}
     \CommentTok{// See the explanation of implicit vs explicit binding below.}
-    \KeywordTok{d}\NormalTok{.}\FunctionTok{add}\NormalTok{(req);}
-    \KeywordTok{d}\NormalTok{.}\FunctionTok{add}\NormalTok{(res);}
+    \OtherTok{d}\NormalTok{.}\FunctionTok{add}\NormalTok{(req);}
+    \OtherTok{d}\NormalTok{.}\FunctionTok{add}\NormalTok{(res);}
 
     \CommentTok{// Now run the handler function in the domain.}
-    \KeywordTok{d}\NormalTok{.}\FunctionTok{run}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
-      \NormalTok{handleRequest(req, res);}
+    \OtherTok{d}\NormalTok{.}\FunctionTok{run}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+      \FunctionTok{handleRequest}\NormalTok{(req, res);}
     \NormalTok{\});}
   \NormalTok{\});}
-  \KeywordTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(PORT);}
+  \OtherTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(PORT);}
 \NormalTok{\}}
 
 \CommentTok{// This part isn't important.  Just an example routing thing.}
 \CommentTok{// You'd put your fancy application logic here.}
-\KeywordTok{function} \NormalTok{handleRequest(req, res) \{}
-  \KeywordTok{switch}\NormalTok{(}\KeywordTok{req}\NormalTok{.}\FunctionTok{url}\NormalTok{) \{}
-    \KeywordTok{case} \CharTok{'/error'}\NormalTok{:}
+\KeywordTok{function} \FunctionTok{handleRequest}\NormalTok{(req, res) \{}
+  \KeywordTok{switch}\NormalTok{(}\OtherTok{req}\NormalTok{.}\FunctionTok{url}\NormalTok{) \{}
+    \KeywordTok{case} \StringTok{'/error'}\NormalTok{:}
       \CommentTok{// We do some async stuff, and then...}
-      \NormalTok{setTimeout(}\KeywordTok{function}\NormalTok{() \{}
+      \FunctionTok{setTimeout}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
         \CommentTok{// Whoops!}
-        \KeywordTok{flerb}\NormalTok{.}\FunctionTok{bark}\NormalTok{();}
+        \OtherTok{flerb}\NormalTok{.}\FunctionTok{bark}\NormalTok{();}
       \NormalTok{\});}
       \KeywordTok{break}\NormalTok{;}
-    \DataTypeTok{default}\NormalTok{:}
-      \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'ok'}\NormalTok{);}
+    \KeywordTok{default}\NormalTok{:}
+      \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'ok'}\NormalTok{);}
   \NormalTok{\}}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Additions to Error objects}
+\subsection{Additions to Error
+objects}\label{additions-to-error-objects}
 
 Any time an Error object is routed through a domain, a few extra fields
 are added to it.
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{error.domain} The domain that first handled the error.
 \item
@@ -189,7 +192,7 @@ are added to it.
   thrown, emitted, or passed to a bound callback function.
 \end{itemize}
 
-\subsection{Implicit Binding}
+\subsection{Implicit Binding}\label{implicit-binding}
 
 If domains are in use, then all \textbf{new} EventEmitter objects
 (including Stream objects, requests, responses, etc.) will be implicitly
@@ -214,7 +217,7 @@ the Domain, so \texttt{domain.dispose()} will not shut down the
 EventEmitter. Implicit binding only takes care of thrown errors and
 \texttt{'error'} events.
 
-\subsection{Explicit Binding}
+\subsection{Explicit Binding}\label{explicit-binding}
 
 Sometimes, the domain in use is not the one that ought to be used for a
 specific event emitter. Or, the event emitter could have been created in
@@ -254,28 +257,29 @@ serverDomain.run(function() {
 });
 \end{verbatim}
 
-\subsection{domain.create()}
+\subsection{domain.create()}\label{domain.create}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   return: \{Domain\}
 \end{itemize}
 
 Returns a new Domain object.
 
-\subsection{Class: Domain}
+\subsection{Class: Domain}\label{class-domain}
 
 The Domain class encapsulates the functionality of routing errors and
 uncaught exceptions to the active Domain object.
 
 Domain is a child class of
-\href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}.
-To handle the errors that it catches, listen to its \texttt{error}
-event.
+\href{events.html\#events_class_events_eventemitter}{EventEmitter}. To
+handle the errors that it catches, listen to its \texttt{error} event.
 
-\subsubsection{domain.run(fn)}
+\subsubsection{domain.run(fn)}\label{domain.runfn}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{fn} \{Function\}
 \end{itemize}
@@ -308,9 +312,10 @@ d.run(function() {
 In this example, the \texttt{d.on('error')} handler will be triggered,
 rather than crashing the program.
 
-\subsubsection{domain.members}
+\subsubsection{domain.members}\label{domain.members}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Array\}
 \end{itemize}
@@ -318,9 +323,10 @@ rather than crashing the program.
 An array of timers and event emitters that have been explicitly added to
 the domain.
 
-\subsubsection{domain.add(emitter)}
+\subsubsection{domain.add(emitter)}\label{domain.addemitter}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{emitter} \{EventEmitter \textbar{} Timer\} emitter or timer to
   be added to the domain
@@ -338,9 +344,10 @@ caught by the domain `error' handler.
 If the Timer or EventEmitter was already bound to a domain, it is
 removed from that one, and bound to this one instead.
 
-\subsubsection{domain.remove(emitter)}
+\subsubsection{domain.remove(emitter)}\label{domain.removeemitter}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{emitter} \{EventEmitter \textbar{} Timer\} emitter or timer to
   be removed from the domain
@@ -349,9 +356,10 @@ removed from that one, and bound to this one instead.
 The opposite of \texttt{domain.add(emitter)}. Removes domain handling
 from the specified emitter.
 
-\subsubsection{domain.bind(callback)}
+\subsubsection{domain.bind(callback)}\label{domain.bindcallback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{callback} \{Function\} The callback function
 \item
@@ -362,20 +370,20 @@ The returned function will be a wrapper around the supplied callback
 function. When the returned function is called, any errors that are
 thrown will be routed to the domain's \texttt{error} event.
 
-\paragraph{Example}
+\paragraph{Example}\label{example}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{d = }\KeywordTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
+\KeywordTok{var} \NormalTok{d = }\OtherTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
 
-\KeywordTok{function} \NormalTok{readSomeFile(filename, cb) \{}
-  \KeywordTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\CharTok{'utf8'}\NormalTok{, }\KeywordTok{d}\NormalTok{.}\FunctionTok{bind}\NormalTok{(}\KeywordTok{function}\NormalTok{(er, data) \{}
+\KeywordTok{function} \FunctionTok{readSomeFile}\NormalTok{(filename, cb) \{}
+  \OtherTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\StringTok{'utf8'}\NormalTok{, }\OtherTok{d}\NormalTok{.}\FunctionTok{bind}\NormalTok{(}\KeywordTok{function}\NormalTok{(er, data) \{}
     \CommentTok{// if this throws, it will also be passed to the domain}
-    \KeywordTok{return} \NormalTok{cb(er, data ? }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(data) : null);}
+    \KeywordTok{return} \FunctionTok{cb}\NormalTok{(er, data ? }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(data) : }\KeywordTok{null}\NormalTok{);}
   \NormalTok{\}));}
 \NormalTok{\}}
 
-\KeywordTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
+\OtherTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
   \CommentTok{// an error occurred somewhere.}
   \CommentTok{// if we throw it now, it will crash the program}
   \CommentTok{// with the normal line number and stack message.}
@@ -383,9 +391,10 @@ thrown will be routed to the domain's \texttt{error} event.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{domain.intercept(callback)}
+\subsubsection{domain.intercept(callback)}\label{domain.interceptcallback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{callback} \{Function\} The callback function
 \item
@@ -399,14 +408,14 @@ However, in addition to catching thrown errors, it will also intercept
 In this way, the common \texttt{if (er) return callback(er);} pattern
 can be replaced with a single error handler in a single place.
 
-\paragraph{Example}
+\paragraph{Example}\label{example-1}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{d = }\KeywordTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
+\KeywordTok{var} \NormalTok{d = }\OtherTok{domain}\NormalTok{.}\FunctionTok{create}\NormalTok{();}
 
-\KeywordTok{function} \NormalTok{readSomeFile(filename, cb) \{}
-  \KeywordTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\CharTok{'utf8'}\NormalTok{, }\KeywordTok{d}\NormalTok{.}\FunctionTok{intercept}\NormalTok{(}\KeywordTok{function}\NormalTok{(data) \{}
+\KeywordTok{function} \FunctionTok{readSomeFile}\NormalTok{(filename, cb) \{}
+  \OtherTok{fs}\NormalTok{.}\FunctionTok{readFile}\NormalTok{(filename, }\StringTok{'utf8'}\NormalTok{, }\OtherTok{d}\NormalTok{.}\FunctionTok{intercept}\NormalTok{(}\KeywordTok{function}\NormalTok{(data) \{}
     \CommentTok{// note, the first argument is never passed to the}
     \CommentTok{// callback since it is assumed to be the 'Error' argument}
     \CommentTok{// and thus intercepted by the domain.}
@@ -415,11 +424,11 @@ can be replaced with a single error handler in a single place.
     \CommentTok{// so the error-handling logic can be moved to the 'error'}
     \CommentTok{// event on the domain instead of being repeated throughout}
     \CommentTok{// the program.}
-    \KeywordTok{return} \NormalTok{cb(null, }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(data));}
+    \KeywordTok{return} \FunctionTok{cb}\NormalTok{(}\KeywordTok{null}\NormalTok{, }\OtherTok{JSON}\NormalTok{.}\FunctionTok{parse}\NormalTok{(data));}
   \NormalTok{\}));}
 \NormalTok{\}}
 
-\KeywordTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
+\OtherTok{d}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(er) \{}
   \CommentTok{// an error occurred somewhere.}
   \CommentTok{// if we throw it now, it will crash the program}
   \CommentTok{// with the normal line number and stack message.}
@@ -427,7 +436,7 @@ can be replaced with a single error handler in a single place.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{domain.enter()}
+\subsubsection{domain.enter()}\label{domain.enter}
 
 The \texttt{enter} method is plumbing used by the \texttt{run},
 \texttt{bind}, and \texttt{intercept} methods to set the active domain.
@@ -444,7 +453,7 @@ an arbitrary number of times on a single domain.
 If the domain on which \texttt{enter} is called has been disposed,
 \texttt{enter} will return without setting the domain.
 
-\subsubsection{domain.exit()}
+\subsubsection{domain.exit()}\label{domain.exit}
 
 The \texttt{exit} method exits the current domain, popping it off the
 domain stack. Any time execution is going to switch to the context of a
@@ -463,12 +472,12 @@ arbitrary number of times on a single domain.
 If the domain on which \texttt{exit} is called has been disposed,
 \texttt{exit} will return without exiting the domain.
 
-\subsubsection{domain.dispose()}
+\subsubsection{domain.dispose()}\label{domain.dispose}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\KeywordTok{Deprecated}\NormalTok{.  Please recover from failed IO actions}
-\NormalTok{explicitly via error event handlers set on the }\KeywordTok{domain}\NormalTok{.}
+\NormalTok{Stability: }\DecValTok{0} \NormalTok{- }\OtherTok{Deprecated}\NormalTok{.  }\FunctionTok{Please} \FunctionTok{recover} \FunctionTok{from} \FunctionTok{failed} \FunctionTok{IO} \FunctionTok{actions}
+\NormalTok{explicitly via error event handlers set on the }\OtherTok{domain}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 

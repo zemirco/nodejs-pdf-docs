@@ -1,8 +1,8 @@
-\section{Events}
+\section{Events}\label{events}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
+\NormalTok{Stability: }\DecValTok{4} \NormalTok{- API Frozen}
 \end{Highlighting}
 \end{Shaded}
 
@@ -21,7 +21,7 @@ is emitted. These functions are called \emph{listeners}. Inside a
 listener function, \texttt{this} refers to the \texttt{EventEmitter}
 that the listener was attached to.
 
-\subsection{Class: events.EventEmitter}
+\subsection{Class: events.EventEmitter}\label{class-events.eventemitter}
 
 To access the EventEmitter class,
 \texttt{require('events').EventEmitter}.
@@ -35,24 +35,27 @@ All EventEmitters emit the event \texttt{'newListener'} when new
 listeners are added and \texttt{'removeListener'} when a listener is
 removed.
 
-\subsubsection{emitter.addListener(event, listener)}
+\subsubsection{emitter.addListener(event,
+listener)}\label{emitter.addlistenerevent-listener}
 
-\subsubsection{emitter.on(event, listener)}
+\subsubsection{emitter.on(event,
+listener)}\label{emitter.onevent-listener}
 
 Adds a listener to the end of the listeners array for the specified
 event.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'someone connected!'}\NormalTok{);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'someone connected!'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
 Returns emitter, so calls can be chained.
 
-\subsubsection{emitter.once(event, listener)}
+\subsubsection{emitter.once(event,
+listener)}\label{emitter.onceevent-listener}
 
 Adds a \textbf{one time} listener for the event. This listener is
 invoked only the next time the event is fired, after which it is
@@ -60,15 +63,16 @@ removed.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{server}\NormalTok{.}\FunctionTok{once}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Ah, we have our first user!'}\NormalTok{);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{once}\NormalTok{(}\StringTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Ah, we have our first user!'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
 Returns emitter, so calls can be chained.
 
-\subsubsection{emitter.removeListener(event, listener)}
+\subsubsection{emitter.removeListener(event,
+listener)}\label{emitter.removelistenerevent-listener}
 
 Remove a listener from the listener array for the specified event.
 \textbf{Caution}: changes array indices in the listener array behind the
@@ -77,23 +81,23 @@ listener.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{callback = }\KeywordTok{function}\NormalTok{(stream) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'someone connected!'}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'someone connected!'}\NormalTok{);}
 \NormalTok{\};}
-\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, callback);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connection'}\NormalTok{, callback);}
 \CommentTok{// ...}
-\KeywordTok{server}\NormalTok{.}\FunctionTok{removeListener}\NormalTok{(}\CharTok{'connection'}\NormalTok{, callback);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{removeListener}\NormalTok{(}\StringTok{'connection'}\NormalTok{, callback);}
 \end{Highlighting}
 \end{Shaded}
 
 Returns emitter, so calls can be chained.
 
-\subsubsection{emitter.removeAllListeners({[}event{]})}
+\subsubsection{emitter.removeAllListeners({[}event{]})}\label{emitter.removealllistenersevent}
 
 Removes all listeners, or those of the specified event.
 
 Returns emitter, so calls can be chained.
 
-\subsubsection{emitter.setMaxListeners(n)}
+\subsubsection{emitter.setMaxListeners(n)}\label{emitter.setmaxlistenersn}
 
 By default EventEmitters will print a warning if more than 10 listeners
 are added for a particular event. This is a useful default which helps
@@ -103,7 +107,7 @@ unlimited.
 
 Returns emitter, so calls can be chained.
 
-\subsubsection{EventEmitter.defaultMaxListeners}
+\subsubsection{EventEmitter.defaultMaxListeners}\label{eventemitter.defaultmaxlisteners}
 
 \texttt{emitter.setMaxListeners(n)} sets the maximum on a per-instance
 basis. This class property lets you set it for \emph{all}
@@ -113,33 +117,35 @@ immediately. Use with care.
 Note that \texttt{emitter.setMaxListeners(n)} still has precedence over
 \texttt{EventEmitter.defaultMaxListeners}.
 
-\subsubsection{emitter.listeners(event)}
+\subsubsection{emitter.listeners(event)}\label{emitter.listenersevent}
 
 Returns an array of listeners for the specified event.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'someone connected!'}\NormalTok{);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(stream) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'someone connected!'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(}\KeywordTok{server}\NormalTok{.}\FunctionTok{listeners}\NormalTok{(}\CharTok{'connection'}\NormalTok{))); }\CommentTok{// [ [Function] ]}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(}\OtherTok{server}\NormalTok{.}\FunctionTok{listeners}\NormalTok{(}\StringTok{'connection'}\NormalTok{))); }\CommentTok{// [ [Function] ]}
 \end{Highlighting}
 \end{Shaded}
 
 \subsubsection{emitter.emit(event, {[}arg1{]}, {[}arg2{]},
-{[}\ldots{}{]})}
+{[}\ldots{}{]})}\label{emitter.emitevent-arg1-arg2}
 
 Execute each of the listeners in order with the supplied arguments.
 
 Returns \texttt{true} if event had listeners, \texttt{false} otherwise.
 
-\subsubsection{Class Method: EventEmitter.listenerCount(emitter, event)}
+\subsubsection{Class Method: EventEmitter.listenerCount(emitter,
+event)}\label{class-method-eventemitter.listenercountemitter-event}
 
 Return the number of listeners for a given event.
 
-\subsubsection{Event: `newListener'}
+\subsubsection{Event: `newListener'}\label{event-newlistener}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{event} \{String\} The event name
 \item
@@ -150,9 +156,10 @@ This event is emitted any time someone adds a new listener. It is
 unspecified if \texttt{listener} is in the list returned by
 \texttt{emitter.listeners(event)}.
 
-\subsubsection{Event: `removeListener'}
+\subsubsection{Event: `removeListener'}\label{event-removelistener}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{event} \{String\} The event name
 \item

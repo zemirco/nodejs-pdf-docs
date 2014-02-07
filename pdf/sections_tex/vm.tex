@@ -1,8 +1,8 @@
-\section{Executing JavaScript}
+\section{Executing JavaScript}\label{executing-javascript}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\NormalTok{Stability: }\DecValTok{3} \NormalTok{- Stable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -10,14 +10,15 @@ You can access this module with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{vm = }\FunctionTok{require}\NormalTok{(}\StringTok{'vm'}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
 JavaScript code can be compiled and run immediately or compiled, saved,
 and run later.
 
-\subsection{vm.runInThisContext(code, {[}options{]})}
+\subsection{vm.runInThisContext(code,
+{[}options{]})}\label{vm.runinthiscontextcode-options}
 
 \texttt{vm.runInThisContext()} compiles \texttt{code}, runs it and
 returns the result. Running code does not have access to local scope,
@@ -28,15 +29,15 @@ the same code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{localVar = }\CharTok{'initial value'}\NormalTok{;}
+\KeywordTok{var} \NormalTok{localVar = }\StringTok{'initial value'}\NormalTok{;}
 
-\KeywordTok{var} \NormalTok{vmResult = }\KeywordTok{vm}\NormalTok{.}\FunctionTok{runInThisContext}\NormalTok{(}\CharTok{'localVar = "vm";'}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'vmResult: '}\NormalTok{, vmResult);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'localVar: '}\NormalTok{, localVar);}
+\KeywordTok{var} \NormalTok{vmResult = }\OtherTok{vm}\NormalTok{.}\FunctionTok{runInThisContext}\NormalTok{(}\StringTok{'localVar = "vm";'}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'vmResult: '}\NormalTok{, vmResult);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'localVar: '}\NormalTok{, localVar);}
 
-\KeywordTok{var} \NormalTok{evalResult = eval(}\CharTok{'localVar = "eval";'}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'evalResult: '}\NormalTok{, evalResult);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'localVar: '}\NormalTok{, localVar);}
+\KeywordTok{var} \NormalTok{evalResult = }\FunctionTok{eval}\NormalTok{(}\StringTok{'localVar = "eval";'}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'evalResult: '}\NormalTok{, evalResult);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'localVar: '}\NormalTok{, localVar);}
 
 \CommentTok{// vmResult: 'vm', localVar: 'initial value'}
 \CommentTok{// evalResult: 'eval', localVar: 'eval'}
@@ -53,6 +54,7 @@ In this way \texttt{vm.runInThisContext} is much like an
 options:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{filename}: allows you to control the filename that shows up in
   any stack traces produced.
@@ -68,7 +70,7 @@ options:
   \texttt{Error} will be thrown.
 \end{itemize}
 
-\subsection{vm.createContext({[}sandbox{]})}
+\subsection{vm.createContext({[}sandbox{]})}\label{vm.createcontextsandbox}
 
 If given a \texttt{sandbox} object, will ``contextify'' that sandbox so
 that it can be used in calls to \texttt{vm.runInContext} or
@@ -87,12 +89,13 @@ used to create a single sandbox representing a window's global object,
 then run all \texttt{\textless{}script\textgreater{}} tags together
 inside that sandbox.
 
-\subsection{vm.isContext(sandbox)}
+\subsection{vm.isContext(sandbox)}\label{vm.iscontextsandbox}
 
 Returns whether or not a sandbox object has been contextified by calling
 \texttt{vm.createContext} on it.
 
-\subsection{vm.runInContext(code, contextifiedSandbox, {[}options{]})}
+\subsection{vm.runInContext(code, contextifiedSandbox,
+{[}options{]})}\label{vm.runincontextcode-contextifiedsandbox-options}
 
 \texttt{vm.runInContext} compiles \texttt{code}, then runs it in
 \texttt{contextifiedSandbox} and returns the result. Running code does
@@ -108,16 +111,16 @@ context.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{vm = }\FunctionTok{require}\NormalTok{(}\StringTok{'vm'}\NormalTok{);}
 
 \KeywordTok{var} \NormalTok{sandbox = \{ }\DataTypeTok{globalVar}\NormalTok{: }\DecValTok{1} \NormalTok{\};}
-\KeywordTok{vm}\NormalTok{.}\FunctionTok{createContext}\NormalTok{(sandbox);}
+\OtherTok{vm}\NormalTok{.}\FunctionTok{createContext}\NormalTok{(sandbox);}
 
 \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{10}\NormalTok{; ++i) \{}
-    \KeywordTok{vm}\NormalTok{.}\FunctionTok{runInContext}\NormalTok{(}\CharTok{'globalVar *= 2;'}\NormalTok{, sandbox);}
+    \OtherTok{vm}\NormalTok{.}\FunctionTok{runInContext}\NormalTok{(}\StringTok{'globalVar *= 2;'}\NormalTok{, sandbox);}
 \NormalTok{\}}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
 
 \CommentTok{// \{ globalVar: 1024 \}}
 \end{Highlighting}
@@ -127,7 +130,8 @@ Note that running untrusted code is a tricky business requiring great
 care. \texttt{vm.runInContext} is quite useful, but safely running
 untrusted code requires a separate process.
 
-\subsection{vm.runInNewContext(code, {[}sandbox{]}, {[}options{]})}
+\subsection{vm.runInNewContext(code, {[}sandbox{]},
+{[}options{]})}\label{vm.runinnewcontextcode-sandbox-options}
 
 \texttt{vm.runInNewContext} compiles \texttt{code}, contextifies
 \texttt{sandbox} if passed or creates a new contextified sandbox if it's
@@ -142,16 +146,16 @@ sets a new one. These globals are contained in the sandbox.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{),}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{vm = }\FunctionTok{require}\NormalTok{(}\StringTok{'vm'}\NormalTok{),}
 
 \KeywordTok{var} \NormalTok{sandbox = \{}
-  \DataTypeTok{animal}\NormalTok{: }\CharTok{'cat'}\NormalTok{,}
+  \DataTypeTok{animal}\NormalTok{: }\StringTok{'cat'}\NormalTok{,}
   \DataTypeTok{count}\NormalTok{: }\DecValTok{2}
 \NormalTok{\};}
 
-\KeywordTok{vm}\NormalTok{.}\FunctionTok{runInNewContext}\NormalTok{(}\CharTok{'count += 1; name = "kitty"'}\NormalTok{, sandbox);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
+\OtherTok{vm}\NormalTok{.}\FunctionTok{runInNewContext}\NormalTok{(}\StringTok{'count += 1; name = "kitty"'}\NormalTok{, sandbox);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
 
 \CommentTok{// \{ animal: 'cat', count: 3, name: 'kitty' \}}
 \end{Highlighting}
@@ -161,12 +165,13 @@ Note that running untrusted code is a tricky business requiring great
 care. \texttt{vm.runInNewContext} is quite useful, but safely running
 untrusted code requires a separate process.
 
-\subsection{Class: Script}
+\subsection{Class: Script}\label{class-script}
 
 A class for holding precompiled scripts, and running them in specific
 sandboxes.
 
-\subsubsection{new vm.Script(code, options)}
+\subsubsection{new vm.Script(code,
+options)}\label{new-vm.scriptcode-options}
 
 Creating a new \texttt{Script} compiles \texttt{code} but does not run
 it. Instead, the created \texttt{vm.Script} object represents this
@@ -177,6 +182,7 @@ bound before each run, just for that run.
 The options when creating a script are:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{filename}: allows you to control the filename that shows up in
   any stack traces produced from this script.
@@ -188,7 +194,7 @@ The options when creating a script are:
   methods.
 \end{itemize}
 
-\subsubsection{script.runInThisContext({[}options{]})}
+\subsubsection{script.runInThisContext({[}options{]})}\label{script.runinthiscontextoptions}
 
 Similar to \texttt{vm.runInThisContext} but a method of a precompiled
 \texttt{Script} object. \texttt{script.runInThisContext} runs
@@ -201,17 +207,17 @@ and run it multiple times:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{vm = }\FunctionTok{require}\NormalTok{(}\StringTok{'vm'}\NormalTok{);}
 
-\KeywordTok{global}\NormalTok{.}\FunctionTok{globalVar} \NormalTok{= }\DecValTok{0}\NormalTok{;}
+\OtherTok{global}\NormalTok{.}\FunctionTok{globalVar} \NormalTok{= }\DecValTok{0}\NormalTok{;}
 
-\KeywordTok{var} \NormalTok{script = }\KeywordTok{new} \KeywordTok{vm}\NormalTok{.}\FunctionTok{Script}\NormalTok{(}\CharTok{'globalVar += 1'}\NormalTok{, \{ }\DataTypeTok{filename}\NormalTok{: }\CharTok{'myfile.vm'} \NormalTok{\});}
+\KeywordTok{var} \NormalTok{script = }\KeywordTok{new} \OtherTok{vm}\NormalTok{.}\FunctionTok{Script}\NormalTok{(}\StringTok{'globalVar += 1'}\NormalTok{, \{ }\DataTypeTok{filename}\NormalTok{: }\StringTok{'myfile.vm'} \NormalTok{\});}
 
 \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{1000}\NormalTok{; ++i) \{}
-  \KeywordTok{script}\NormalTok{.}\FunctionTok{runInThisContext}\NormalTok{();}
+  \OtherTok{script}\NormalTok{.}\FunctionTok{runInThisContext}\NormalTok{();}
 \NormalTok{\}}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(globalVar);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(globalVar);}
 
 \CommentTok{// 1000}
 \end{Highlighting}
@@ -220,6 +226,7 @@ and run it multiple times:
 The options for running a script are:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{displayErrors}: whether or not to print any runtime errors to
   stderr, with the line of code that caused them highlighted, before
@@ -232,7 +239,8 @@ The options for running a script are:
   \texttt{Error} will be thrown.
 \end{itemize}
 
-\subsubsection{script.runInContext(contextifiedSandbox, {[}options{]})}
+\subsubsection{script.runInContext(contextifiedSandbox,
+{[}options{]})}\label{script.runincontextcontextifiedsandbox-options}
 
 Similar to \texttt{vm.runInContext} but a method of a precompiled
 \texttt{Script} object. \texttt{script.runInContext} runs
@@ -248,21 +256,21 @@ sandbox.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{vm = }\FunctionTok{require}\NormalTok{(}\StringTok{'vm'}\NormalTok{);}
 
 \KeywordTok{var} \NormalTok{sandbox = \{}
-  \DataTypeTok{animal}\NormalTok{: }\CharTok{'cat'}\NormalTok{,}
+  \DataTypeTok{animal}\NormalTok{: }\StringTok{'cat'}\NormalTok{,}
   \DataTypeTok{count}\NormalTok{: }\DecValTok{2}
 \NormalTok{\};}
 
-\KeywordTok{var} \NormalTok{script = }\KeywordTok{new} \KeywordTok{vm}\NormalTok{.}\FunctionTok{Script}\NormalTok{(}\CharTok{'count += 1; name = "kitty"'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{script = }\KeywordTok{new} \OtherTok{vm}\NormalTok{.}\FunctionTok{Script}\NormalTok{(}\StringTok{'count += 1; name = "kitty"'}\NormalTok{);}
 
 \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{10}\NormalTok{; ++i) \{}
-  \KeywordTok{script}\NormalTok{.}\FunctionTok{runInContext}\NormalTok{(sandbox);}
+  \OtherTok{script}\NormalTok{.}\FunctionTok{runInContext}\NormalTok{(sandbox);}
 \NormalTok{\}}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandbox));}
 
 \CommentTok{// \{ animal: 'cat', count: 12, name: 'kitty' \}}
 \end{Highlighting}
@@ -272,7 +280,8 @@ Note that running untrusted code is a tricky business requiring great
 care. \texttt{script.runInContext} is quite useful, but safely running
 untrusted code requires a separate process.
 
-\subsubsection{script.runInNewContext({[}sandbox{]}, {[}options{]})}
+\subsubsection{script.runInNewContext({[}sandbox{]},
+{[}options{]})}\label{script.runinnewcontextsandbox-options}
 
 Similar to \texttt{vm.runInNewContext} but a method of a precompiled
 \texttt{Script} object. \texttt{script.runInNewContext} contextifies
@@ -290,18 +299,18 @@ contained in the sandboxes.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{vm = require(}\CharTok{'vm'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{vm = }\FunctionTok{require}\NormalTok{(}\StringTok{'vm'}\NormalTok{);}
 
 \KeywordTok{var} \NormalTok{sandboxes = [\{\}, \{\}, \{\}];}
 
-\KeywordTok{var} \NormalTok{script = }\KeywordTok{new} \KeywordTok{vm}\NormalTok{.}\FunctionTok{Script}\NormalTok{(}\CharTok{'globalVar = "set"'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{script = }\KeywordTok{new} \OtherTok{vm}\NormalTok{.}\FunctionTok{Script}\NormalTok{(}\StringTok{'globalVar = "set"'}\NormalTok{);}
 
-\KeywordTok{sandboxes}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function} \NormalTok{(sandbox) \{}
-  \KeywordTok{script}\NormalTok{.}\FunctionTok{runInNewContext}\NormalTok{(sandbox);}
+\OtherTok{sandboxes}\NormalTok{.}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function} \NormalTok{(sandbox) \{}
+  \OtherTok{script}\NormalTok{.}\FunctionTok{runInNewContext}\NormalTok{(sandbox);}
 \NormalTok{\});}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandboxes));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(sandboxes));}
 
 \CommentTok{// [\{ globalVar: 'set' \}, \{ globalVar: 'set' \}, \{ globalVar: 'set' \}]}
 \end{Highlighting}

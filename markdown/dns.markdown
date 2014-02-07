@@ -5,7 +5,7 @@
 Use `require('dns')` to access this module. All methods in the dns module
 use C-Ares except for `dns.lookup` which uses `getaddrinfo(3)` in a thread
 pool. C-Ares is much faster than `getaddrinfo` but the system resolver is
-more constant with how other programs operate. When a user does
+more consistent with how other programs operate. When a user does
 `net.connect(80, 'google.com')` or `http.get({ host: 'google.com' })` the
 `dns.lookup` method is used. Users who need to do a large number of lookups
 quickly should use the methods that go through C-Ares.
@@ -52,10 +52,19 @@ such as no available file descriptors.
 ## dns.resolve(hostname, [rrtype], callback)
 
 Resolves a hostname (e.g. `'google.com'`) into an array of the record types
-specified by rrtype. Valid rrtypes are `'A'` (IPV4 addresses, default),
-`'AAAA'` (IPV6 addresses), `'MX'` (mail exchange records), `'TXT'` (text
-records), `'SRV'` (SRV records), `'PTR'` (used for reverse IP lookups),
-`'NS'` (name server records) and `'CNAME'` (canonical name records).
+specified by rrtype.
+
+Valid rrtypes are:
+
+ * `'A'` (IPV4 addresses, default)
+ * `'AAAA'` (IPV6 addresses)
+ * `'MX'` (mail exchange records)
+ * `'TXT'` (text records)
+ * `'SRV'` (SRV records)
+ * `'PTR'` (used for reverse IP lookups)
+ * `'NS'` (name server records)
+ * `'CNAME'` (canonical name records)
+ * `'SOA'` (start of authority record)
 
 The callback has arguments `(err, addresses)`.  The type of each item
 in `addresses` is determined by the record type, and described in the
@@ -95,6 +104,25 @@ The same as `dns.resolve()`, but only for service records (`SRV` records).
 `addresses` is an array of the SRV records available for `hostname`. Properties
 of SRV records are priority, weight, port, and name (e.g.,
 `[{'priority': 10, {'weight': 5, 'port': 21223, 'name': 'service.example.com'}, ...]`).
+
+## dns.resolveSoa(hostname, callback)
+
+The same as `dns.resolve()`, but only for start of authority record queries 
+(`SOA` record).
+
+`addresses` is an object with the following structure:
+
+```
+{
+  nsname: 'ns.example.com',
+  hostmaster: 'root.example.com',
+  serial: 2013101809,
+  refresh: 10000,
+  retry: 2400,
+  expire: 604800,
+  minttl: 3600
+}
+```
 
 ## dns.resolveNs(hostname, callback)
 

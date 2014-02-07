@@ -1,0 +1,311 @@
+\section{Tracing}\label{tracing}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Stability: }\DecValTok{1} \NormalTok{- Experimental}
+\end{Highlighting}
+\end{Shaded}
+
+The tracing module is designed for instrumenting your Node application.
+It is not meant for general purpose use.
+
+\textbf{\emph{Be very careful with callbacks used in conjunction with
+this module}}
+
+Many of these callbacks interact directly with asynchronous subsystems
+in a synchronous fashion. That is to say, you may be in a callback where
+a call to \texttt{console.log()} could result in an infinite recursive
+loop. Also of note, many of these callbacks are in hot execution code
+paths. That is to say your callbacks are executed quite often in the
+normal operation of Node, so be wary of doing CPU bound or synchronous
+workloads in these functions. Consider a ring buffer and a timer to
+defer processing.
+
+\texttt{require('tracing')} to use this module.
+
+\subsection{v8}\label{v8}
+
+The \texttt{v8} property is an
+\href{events.html\#events_class_events_eventemitter}{EventEmitter}, it
+exposes events and interfaces specific to the version of \texttt{v8}
+built with node. These interfaces are subject to change by upstream and
+are therefore not covered under the stability index.
+
+\subsubsection{Event: `gc'}\label{event-gc}
+
+\texttt{function (before, after) \{ \}}
+
+Emitted each time a GC run is completed.
+
+\texttt{before} and \texttt{after} are objects with the following
+properties:
+
+\begin{verbatim}
+{
+  type: 'mark-sweep-compact',
+  flags: 0,
+  timestamp: 905535650119053,
+  total_heap_size: 6295040,
+  total_heap_size_executable: 4194304,
+  total_physical_size: 6295040,
+  used_heap_size: 2855416,
+  heap_size_limit: 1535115264
+}
+\end{verbatim}
+
+\subsubsection{getHeapStatistics()}\label{getheapstatistics}
+
+Returns an object with the following properties
+
+\begin{verbatim}
+{
+  total_heap_size: 7326976,
+  total_heap_size_executable: 4194304,
+  total_physical_size: 7326976,
+  used_heap_size: 3476208,
+  heap_size_limit: 1535115264
+}
+\end{verbatim}
+
+\section{Async Listeners}\label{async-listeners}
+
+The \texttt{AsyncListener} API is the JavaScript interface for the
+\texttt{AsyncWrap} class which allows developers to be notified about
+key events in the lifetime of an asynchronous event. Node performs a lot
+of asynchronous events internally, and significant use of this API may
+have a \textbf{significant performance impact} on your application.
+
+\subsection{tracing.createAsyncListener(callbacksObj{[},
+userData{]})}\label{tracing.createasynclistenercallbacksobj-userdata}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{callbacksObj} \{Object\} Contains optional callbacks that will
+  fire at specific times in the life cycle of the asynchronous event.
+\item
+  \texttt{userData} \{Value\} a value that will be passed to all
+  callbacks.
+\end{itemize}
+
+Returns a constructed \texttt{AsyncListener} object.
+
+To begin capturing asynchronous events pass either the
+\texttt{callbacksObj} or pass an existing \texttt{AsyncListener}
+instance to
+\hyperref[tracingux5ftracingux5faddasynclistenerux5fasynclistener]{\texttt{tracing.addAsyncListener()}}.
+The same \texttt{AsyncListener} instance can only be added once to the
+active queue, and subsequent attempts to add the instance will be
+ignored.
+
+To stop capturing pass the \texttt{AsyncListener} instance to
+\hyperref[tracingux5ftracingux5fremoveasynclistenerux5fasynclistener]{\texttt{tracing.removeAsyncListener()}}.
+This does \emph{not} mean the \texttt{AsyncListener} previously added
+will stop triggering callbacks. Once attached to an asynchronous event
+it will persist with the lifetime of the asynchronous call stack.
+
+Explanation of function parameters:
+
+\texttt{callbacksObj}: An \texttt{Object} which may contain several
+optional fields:
+
+\begin{itemize}
+\item
+  \texttt{create(userData)}: A \texttt{Function} called when an
+  asynchronous event is instantiated. If a \texttt{Value} is returned
+  then it will be attached to the event and overwrite any value that had
+  been passed to \texttt{tracing.createAsyncListener()}'s
+  \texttt{userData} argument. If an initial \texttt{userData} was passed
+  when created, then \texttt{create()} will receive that as a function
+  argument.
+\item
+  \texttt{before(context, userData)}: A \texttt{Function} that is called
+  immediately before the asynchronous callback is about to run. It will
+  be passed both the \texttt{context} (i.e. \texttt{this}) of the
+  calling function and the \texttt{userData} either returned from
+  \texttt{create()} or passed during construction (if either occurred).
+\item
+  \texttt{after(context, userData)}: A \texttt{Function} called
+  immediately after the asynchronous event's callback has run. Note this
+  will not be called if the callback throws and the error is not
+  handled.
+\item
+  \texttt{error(userData, error)}: A \texttt{Function} called if the
+  event's callback threw. If this registered callback returns
+  \texttt{true} then Node will assume the error has been properly
+  handled and resume execution normally. When multiple \texttt{error()}
+  callbacks have been registered only \textbf{one} of those callbacks
+  needs to return \texttt{true} for \texttt{AsyncListener} to accept
+  that the error has been handled, but all \texttt{error()} callbacks
+  will always be run.
+\end{itemize}
+
+\texttt{userData}: A \texttt{Value} (i.e.~anything) that will be, by
+default, attached to all new event instances. This will be overwritten
+if a \texttt{Value} is returned by \texttt{create()}.
+
+Here is an example of overwriting the \texttt{userData}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{tracing}\NormalTok{.}\FunctionTok{createAsyncListener}\NormalTok{(\{}
+  \DataTypeTok{create}\NormalTok{: }\KeywordTok{function} \FunctionTok{listener}\NormalTok{(value) \{}
+    \CommentTok{// value === true}
+    \KeywordTok{return} \KeywordTok{false}\NormalTok{;}
+\NormalTok{\}, \{}
+  \DataTypeTok{before}\NormalTok{: }\KeywordTok{function} \FunctionTok{before}\NormalTok{(context, value) \{}
+    \CommentTok{// value === false}
+  \NormalTok{\}}
+\NormalTok{\}, }\KeywordTok{true}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Note:} The
+\href{events.html\#events_class_events_eventemitter}{EventEmitter},
+while used to emit status of an asynchronous event, is not itself
+asynchronous. So \texttt{create()} will not fire when an event is added,
+and \texttt{before()}/\texttt{after()} will not fire when emitted
+callbacks are called.
+
+\subsection{tracing.addAsyncListener(callbacksObj{[},
+userData{]})}\label{tracing.addasynclistenercallbacksobj-userdata}
+
+\subsection{tracing.addAsyncListener(asyncListener)}\label{tracing.addasynclistenerasynclistener}
+
+Returns a constructed \texttt{AsyncListener} object and immediately adds
+it to the listening queue to begin capturing asynchronous events.
+
+Function parameters can either be the same as
+\hyperref[tracingux5ftracingux5fcreateasynclistenerux5fasynclistenerux5fcallbacksobjux5fstoragevalue]{\texttt{tracing.createAsyncListener()}},
+or a constructed \texttt{AsyncListener} object.
+
+Example usage for capturing errors:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{fs = }\FunctionTok{require}\NormalTok{(}\StringTok{'fs'}\NormalTok{);}
+
+\KeywordTok{var} \NormalTok{cntr = }\DecValTok{0}\NormalTok{;}
+\KeywordTok{var} \NormalTok{key = }\OtherTok{tracing}\NormalTok{.}\FunctionTok{addAsyncListener}\NormalTok{(\{}
+  \DataTypeTok{create}\NormalTok{: }\KeywordTok{function} \FunctionTok{onCreate}\NormalTok{() \{}
+    \KeywordTok{return} \NormalTok{\{ }\DataTypeTok{uid}\NormalTok{: cntr++ \};}
+  \NormalTok{\},}
+  \DataTypeTok{before}\NormalTok{: }\KeywordTok{function} \FunctionTok{onBefore}\NormalTok{(context, storage) \{}
+    \CommentTok{// Write directly to stdout or we'll enter a recursive loop}
+    \OtherTok{fs}\NormalTok{.}\FunctionTok{writeSync}\NormalTok{(}\DecValTok{1}\NormalTok{, }\StringTok{'uid: '} \NormalTok{+ }\OtherTok{storage}\NormalTok{.}\FunctionTok{uid} \NormalTok{+ }\StringTok{' is about to run}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+  \NormalTok{\},}
+  \DataTypeTok{after}\NormalTok{: }\KeywordTok{function} \FunctionTok{onAfter}\NormalTok{(context, storage) \{}
+    \OtherTok{fs}\NormalTok{.}\FunctionTok{writeSync}\NormalTok{(}\DecValTok{1}\NormalTok{, }\StringTok{'uid: '} \NormalTok{+ }\OtherTok{storage}\NormalTok{.}\FunctionTok{uid} \NormalTok{+ }\StringTok{' ran}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+  \NormalTok{\},}
+  \DataTypeTok{error}\NormalTok{: }\KeywordTok{function} \FunctionTok{onError}\NormalTok{(storage, err) \{}
+    \CommentTok{// Handle known errors}
+    \KeywordTok{if} \NormalTok{(}\OtherTok{err}\NormalTok{.}\FunctionTok{message} \NormalTok{=== }\StringTok{'everything is fine'}\NormalTok{) \{}
+      \CommentTok{// Writing to stderr this time.}
+      \OtherTok{fs}\NormalTok{.}\FunctionTok{writeSync}\NormalTok{(}\DecValTok{2}\NormalTok{, }\StringTok{'handled error just threw:}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+      \OtherTok{fs}\NormalTok{.}\FunctionTok{writeSync}\NormalTok{(}\DecValTok{2}\NormalTok{, }\OtherTok{err}\NormalTok{.}\FunctionTok{stack} \NormalTok{+ }\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+      \KeywordTok{return} \KeywordTok{true}\NormalTok{;}
+    \NormalTok{\}}
+  \NormalTok{\}}
+\NormalTok{\});}
+
+\OtherTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{throw} \KeywordTok{new} \FunctionTok{Error}\NormalTok{(}\StringTok{'everything is fine'}\NormalTok{);}
+\NormalTok{\});}
+
+\CommentTok{// Output:}
+\CommentTok{// uid: 0 is about to run}
+\CommentTok{// handled error just threw:}
+\CommentTok{// Error: really, it's ok}
+\CommentTok{//     at /tmp/test2.js:27:9}
+\CommentTok{//     at process._tickCallback (node.js:583:11)}
+\CommentTok{//     at Function.Module.runMain (module.js:492:11)}
+\CommentTok{//     at startup (node.js:123:16)}
+\CommentTok{//     at node.js:1012:3}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{tracing.removeAsyncListener(asyncListener)}\label{tracing.removeasynclistenerasynclistener}
+
+Removes the \texttt{AsyncListener} from the listening queue.
+
+Removing the \texttt{AsyncListener} from the active queue does
+\emph{not} mean the \texttt{asyncListener} callbacks will cease to fire
+on the events they've been registered. Subsequently, any asynchronous
+events fired during the execution of a callback will also have the same
+\texttt{asyncListener} callbacks attached for future execution. For
+example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{fs = }\FunctionTok{require}\NormalTok{(}\StringTok{'fs'}\NormalTok{);}
+
+\KeywordTok{var} \NormalTok{key = }\OtherTok{tracing}\NormalTok{.}\FunctionTok{createAsyncListener}\NormalTok{(\{}
+  \DataTypeTok{create}\NormalTok{: }\KeywordTok{function} \FunctionTok{asyncListener}\NormalTok{() \{}
+    \CommentTok{// Write directly to stdout or we'll enter a recursive loop}
+    \OtherTok{fs}\NormalTok{.}\FunctionTok{writeSync}\NormalTok{(}\DecValTok{1}\NormalTok{, }\StringTok{'You summoned me?}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+  \NormalTok{\}}
+\NormalTok{\});}
+
+\CommentTok{// We want to begin capturing async events some time in the future.}
+\FunctionTok{setTimeout}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{tracing}\NormalTok{.}\FunctionTok{addAsyncListener}\NormalTok{(key);}
+
+  \CommentTok{// Perform a few additional async events.}
+  \FunctionTok{setTimeout}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+    \FunctionTok{setImmediate}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+      \OtherTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{ \});}
+    \NormalTok{\});}
+  \NormalTok{\});}
+
+  \CommentTok{// Removing the listener doesn't mean to stop capturing events that}
+  \CommentTok{// have already been added.}
+  \OtherTok{tracing}\NormalTok{.}\FunctionTok{removeAsyncListener}\NormalTok{(key);}
+\NormalTok{\}, }\DecValTok{100}\NormalTok{);}
+
+\CommentTok{// Output:}
+\CommentTok{// You summoned me?}
+\CommentTok{// You summoned me?}
+\CommentTok{// You summoned me?}
+\CommentTok{// You summoned me?}
+\end{Highlighting}
+\end{Shaded}
+
+The fact that we logged 4 asynchronous events is an implementation
+detail of Node's \href{timers.html}{Timers}.
+
+To stop capturing from a specific asynchronous event stack
+\texttt{tracing.removeAsyncListener()} must be called from within the
+call stack itself. For example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{fs = }\FunctionTok{require}\NormalTok{(}\StringTok{'fs'}\NormalTok{);}
+
+\KeywordTok{var} \NormalTok{key = }\OtherTok{tracing}\NormalTok{.}\FunctionTok{createAsyncListener}\NormalTok{(\{}
+  \DataTypeTok{create}\NormalTok{: }\KeywordTok{function} \FunctionTok{asyncListener}\NormalTok{() \{}
+    \CommentTok{// Write directly to stdout or we'll enter a recursive loop}
+    \OtherTok{fs}\NormalTok{.}\FunctionTok{writeSync}\NormalTok{(}\DecValTok{1}\NormalTok{, }\StringTok{'You summoned me?}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+  \NormalTok{\}}
+\NormalTok{\});}
+
+\CommentTok{// We want to begin capturing async events some time in the future.}
+\FunctionTok{setTimeout}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{tracing}\NormalTok{.}\FunctionTok{addAsyncListener}\NormalTok{(key);}
+
+  \CommentTok{// Perform a few additional async events.}
+  \FunctionTok{setImmediate}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+    \CommentTok{// Stop capturing from this call stack.}
+    \OtherTok{tracing}\NormalTok{.}\FunctionTok{removeAsyncListener}\NormalTok{(key);}
+
+    \OtherTok{process}\NormalTok{.}\FunctionTok{nextTick}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{ \});}
+  \NormalTok{\});}
+\NormalTok{\}, }\DecValTok{100}\NormalTok{);}
+
+\CommentTok{// Output:}
+\CommentTok{// You summoned me?}
+\end{Highlighting}
+\end{Shaded}
+
+The user must be explicit and always pass the \texttt{AsyncListener}
+they wish to remove. It is not possible to simply remove all listeners
+at once.

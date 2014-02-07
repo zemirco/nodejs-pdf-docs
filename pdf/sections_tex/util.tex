@@ -1,8 +1,8 @@
-\section{util}
+\section{util}\label{util}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{4} \NormalTok{- API Frozen}
+\NormalTok{Stability: }\DecValTok{4} \NormalTok{- API Frozen}
 \end{Highlighting}
 \end{Shaded}
 
@@ -16,9 +16,10 @@ purposes, however, you are encouraged to write your own utilities. We
 are not interested in any future additions to the \texttt{util} module
 that are unnecessary for Node's internal functionality.
 
-\subsection{util.debuglog(section)}
+\subsection{util.debuglog(section)}\label{util.debuglogsection}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{section} \{String\} The section of the program to be debugged
 \item
@@ -35,10 +36,10 @@ For example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{debuglog = }\KeywordTok{util}\NormalTok{.}\FunctionTok{debuglog}\NormalTok{(}\CharTok{'foo'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{debuglog = }\OtherTok{util}\NormalTok{.}\FunctionTok{debuglog}\NormalTok{(}\StringTok{'foo'}\NormalTok{);}
 
 \KeywordTok{var} \NormalTok{bar = }\DecValTok{123}\NormalTok{;}
-\NormalTok{debuglog(}\CharTok{'hello from foo [%d]'}\NormalTok{, bar);}
+\FunctionTok{debuglog}\NormalTok{(}\StringTok{'hello from foo [%d]'}\NormalTok{, bar);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -57,7 +58,8 @@ environment variable set, then it will not print anything.
 You may separate multiple \texttt{NODE\_DEBUG} environment variables
 with a comma. For example, \texttt{NODE\_DEBUG=fs,net,tls}.
 
-\subsection{util.format(format, {[}\ldots{}{]})}
+\subsection{util.format(format,
+{[}\ldots{}{]})}\label{util.formatformat}
 
 Returns a formatted string using the first argument as a
 \texttt{printf}-like format.
@@ -67,6 +69,7 @@ The first argument is a string that contains zero or more
 value from its corresponding argument. Supported placeholders are:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{\%s} - String.
 \item
@@ -85,7 +88,7 @@ placeholder is not replaced.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\CharTok{'%s:%s'}\NormalTok{, }\CharTok{'foo'}\NormalTok{); }\CommentTok{// 'foo:%s'}
+\OtherTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\StringTok{'%s:%s'}\NormalTok{, }\StringTok{'foo'}\NormalTok{); }\CommentTok{// 'foo:%s'}
 \end{Highlighting}
 \end{Shaded}
 
@@ -95,7 +98,7 @@ concatenated, delimited by a space.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\CharTok{'%s:%s'}\NormalTok{, }\CharTok{'foo'}\NormalTok{, }\CharTok{'bar'}\NormalTok{, }\CharTok{'baz'}\NormalTok{); }\CommentTok{// 'foo:bar baz'}
+\OtherTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\StringTok{'%s:%s'}\NormalTok{, }\StringTok{'foo'}\NormalTok{, }\StringTok{'bar'}\NormalTok{, }\StringTok{'baz'}\NormalTok{); }\CommentTok{// 'foo:bar baz'}
 \end{Highlighting}
 \end{Shaded}
 
@@ -106,21 +109,22 @@ separated by spaces. Each argument is converted to a string with
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{); }\CommentTok{// '1 2 3'}
+\OtherTok{util}\NormalTok{.}\FunctionTok{format}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{3}\NormalTok{); }\CommentTok{// '1 2 3'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.log(string)}
+\subsection{util.log(string)}\label{util.logstring}
 
 Output with timestamp on \texttt{stdout}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{require(}\CharTok{'util'}\NormalTok{).}\FunctionTok{log}\NormalTok{(}\CharTok{'Timestamped message.'}\NormalTok{);}
+\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{).}\FunctionTok{log}\NormalTok{(}\StringTok{'Timestamped message.'}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.inspect(object, {[}options{]})}
+\subsection{util.inspect(object,
+{[}options{]})}\label{util.inspectobject-options}
 
 Return a string representation of \texttt{object}, which is useful for
 debugging.
@@ -152,9 +156,9 @@ Example of inspecting all properties of the \texttt{util} object:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(util, \{ }\DataTypeTok{showHidden}\NormalTok{: }\KeywordTok{true}\NormalTok{, }\DataTypeTok{depth}\NormalTok{: null \}));}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(util, \{ }\DataTypeTok{showHidden}\NormalTok{: }\KeywordTok{true}\NormalTok{, }\DataTypeTok{depth}\NormalTok{: }\KeywordTok{null} \NormalTok{\}));}
 \end{Highlighting}
 \end{Shaded}
 
@@ -163,7 +167,8 @@ functions, when called they receive the current depth in the recursive
 inspection, as well as the options object passed to
 \texttt{util.inspect()}.
 
-\subsubsection{Customizing \texttt{util.inspect} colors}
+\subsubsection{Customizing \texttt{util.inspect}
+colors}\label{customizing-util.inspect-colors}
 
 Color output (if enabled) of \texttt{util.inspect} is customizable
 globally via \texttt{util.inspect.styles} and
@@ -183,7 +188,8 @@ Predefined color codes are: \texttt{white}, \texttt{grey},
 \texttt{bold}, \texttt{italic}, \texttt{underline} and \texttt{inverse}
 codes.
 
-\subsubsection{Custom \texttt{inspect()} function on Objects}
+\subsubsection{Custom \texttt{inspect()} function on
+Objects}\label{custom-inspect-function-on-objects}
 
 Objects also may define their own \texttt{inspect(depth)} function which
 \texttt{util.inspect()} will invoke and use the result of when
@@ -191,14 +197,14 @@ inspecting the object:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{obj = \{ }\DataTypeTok{name}\NormalTok{: }\CharTok{'nate'} \NormalTok{\};}
-\KeywordTok{obj}\NormalTok{.}\FunctionTok{inspect} \NormalTok{= }\KeywordTok{function}\NormalTok{(depth) \{}
-  \KeywordTok{return} \CharTok{'\{'} \NormalTok{+ }\KeywordTok{this}\NormalTok{.}\FunctionTok{name} \NormalTok{+ }\CharTok{'\}'}\NormalTok{;}
+\KeywordTok{var} \NormalTok{obj = \{ }\DataTypeTok{name}\NormalTok{: }\StringTok{'nate'} \NormalTok{\};}
+\OtherTok{obj}\NormalTok{.}\FunctionTok{inspect} \NormalTok{= }\KeywordTok{function}\NormalTok{(depth) \{}
+  \KeywordTok{return} \StringTok{'\{'} \NormalTok{+ }\KeywordTok{this}\NormalTok{.}\FunctionTok{name} \NormalTok{+ }\StringTok{'\}'}\NormalTok{;}
 \NormalTok{\};}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(obj);}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(obj);}
   \CommentTok{// "\{nate\}"}
 \end{Highlighting}
 \end{Shaded}
@@ -209,92 +215,93 @@ how \texttt{JSON.stringify()} works:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{obj = \{ }\DataTypeTok{foo}\NormalTok{: }\CharTok{'this will not show up in the inspect() output'} \NormalTok{\};}
-\KeywordTok{obj}\NormalTok{.}\FunctionTok{inspect} \NormalTok{= }\KeywordTok{function}\NormalTok{(depth) \{}
-  \KeywordTok{return} \NormalTok{\{ }\DataTypeTok{bar}\NormalTok{: }\CharTok{'baz'} \NormalTok{\};}
+\KeywordTok{var} \NormalTok{obj = \{ }\DataTypeTok{foo}\NormalTok{: }\StringTok{'this will not show up in the inspect() output'} \NormalTok{\};}
+\OtherTok{obj}\NormalTok{.}\FunctionTok{inspect} \NormalTok{= }\KeywordTok{function}\NormalTok{(depth) \{}
+  \KeywordTok{return} \NormalTok{\{ }\DataTypeTok{bar}\NormalTok{: }\StringTok{'baz'} \NormalTok{\};}
 \NormalTok{\};}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(obj);}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inspect}\NormalTok{(obj);}
   \CommentTok{// "\{ bar: 'baz' \}"}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.isArray(object)}
+\subsection{util.isArray(object)}\label{util.isarrayobject}
 
 Returns \texttt{true} if the given ``object'' is an \texttt{Array}.
 \texttt{false} otherwise.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{([])}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{([])}
   \CommentTok{// true}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{(}\KeywordTok{new} \KeywordTok{Array}\NormalTok{)}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{(}\KeywordTok{new} \NormalTok{Array)}
   \CommentTok{// true}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{(\{\})}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isArray}\NormalTok{(\{\})}
   \CommentTok{// false}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.isRegExp(object)}
+\subsection{util.isRegExp(object)}\label{util.isregexpobject}
 
 Returns \texttt{true} if the given ``object'' is a \texttt{RegExp}.
 \texttt{false} otherwise.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(}\OtherTok{/}\FloatTok{some regexp}\OtherTok{/}\NormalTok{)}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(}\OtherTok{/some regexp/}\NormalTok{)}
   \CommentTok{// true}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(}\KeywordTok{new} \KeywordTok{RegExp}\NormalTok{(}\CharTok{'another regexp'}\NormalTok{))}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(}\KeywordTok{new} \FunctionTok{RegExp}\NormalTok{(}\StringTok{'another regexp'}\NormalTok{))}
   \CommentTok{// true}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(\{\})}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isRegExp}\NormalTok{(\{\})}
   \CommentTok{// false}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.isDate(object)}
+\subsection{util.isDate(object)}\label{util.isdateobject}
 
 Returns \texttt{true} if the given ``object'' is a \texttt{Date}.
 \texttt{false} otherwise.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(}\KeywordTok{new} \KeywordTok{Date}\NormalTok{())}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(}\KeywordTok{new} \FunctionTok{Date}\NormalTok{())}
   \CommentTok{// true}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(}\KeywordTok{Date}\NormalTok{())}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(}\FunctionTok{Date}\NormalTok{())}
   \CommentTok{// false (without 'new' returns a String)}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(\{\})}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isDate}\NormalTok{(\{\})}
   \CommentTok{// false}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.isError(object)}
+\subsection{util.isError(object)}\label{util.iserrorobject}
 
 Returns \texttt{true} if the given ``object'' is an \texttt{Error}.
 \texttt{false} otherwise.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\CharTok{'util'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{'util'}\NormalTok{);}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(}\KeywordTok{new} \NormalTok{Error())}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(}\KeywordTok{new} \FunctionTok{Error}\NormalTok{())}
   \CommentTok{// true}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(}\KeywordTok{new} \NormalTok{TypeError())}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(}\KeywordTok{new} \FunctionTok{TypeError}\NormalTok{())}
   \CommentTok{// true}
-\KeywordTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(\{ }\DataTypeTok{name}\NormalTok{: }\CharTok{'Error'}\NormalTok{, }\DataTypeTok{message}\NormalTok{: }\CharTok{'an error occurred'} \NormalTok{\})}
+\OtherTok{util}\NormalTok{.}\FunctionTok{isError}\NormalTok{(\{ }\DataTypeTok{name}\NormalTok{: }\StringTok{'Error'}\NormalTok{, }\DataTypeTok{message}\NormalTok{: }\StringTok{'an error occurred'} \NormalTok{\})}
   \CommentTok{// false}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.inherits(constructor, superConstructor)}
+\subsection{util.inherits(constructor,
+superConstructor)}\label{util.inheritsconstructor-superconstructor}
 
 Inherit the prototype methods from one
-\href{https://developer.mozilla.org/en/JavaScript/Reference/Global\_Objects/Object/constructor}{constructor}
+\href{https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object/constructor}{constructor}
 into another. The prototype of \texttt{constructor} will be set to a new
 object created from \texttt{superConstructor}.
 
@@ -303,76 +310,77 @@ accessible through the \texttt{constructor.super\_} property.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{util = require(}\StringTok{"util"}\NormalTok{);}
-\KeywordTok{var} \NormalTok{events = require(}\StringTok{"events"}\NormalTok{);}
+\KeywordTok{var} \NormalTok{util = }\FunctionTok{require}\NormalTok{(}\StringTok{"util"}\NormalTok{);}
+\KeywordTok{var} \NormalTok{events = }\FunctionTok{require}\NormalTok{(}\StringTok{"events"}\NormalTok{);}
 
-\KeywordTok{function} \NormalTok{MyStream() \{}
-    \KeywordTok{events.EventEmitter}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{);}
+\KeywordTok{function} \FunctionTok{MyStream}\NormalTok{() \{}
+    \OtherTok{events}\NormalTok{.}\OtherTok{EventEmitter}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{);}
 \NormalTok{\}}
 
-\KeywordTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(MyStream, }\KeywordTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{);}
+\OtherTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(MyStream, }\OtherTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{);}
 
-\KeywordTok{MyStream.prototype}\NormalTok{.}\FunctionTok{write} \NormalTok{= }\KeywordTok{function}\NormalTok{(data) \{}
+\OtherTok{MyStream}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{write} \NormalTok{= }\KeywordTok{function}\NormalTok{(data) \{}
     \KeywordTok{this}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{"data"}\NormalTok{, data);}
 \NormalTok{\}}
 
-\KeywordTok{var} \NormalTok{stream = }\KeywordTok{new} \NormalTok{MyStream();}
+\KeywordTok{var} \NormalTok{stream = }\KeywordTok{new} \FunctionTok{MyStream}\NormalTok{();}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(stream instanceof }\KeywordTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{); }\CommentTok{// true}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{MyStream}\NormalTok{.}\FunctionTok{super}\NormalTok{_ === }\KeywordTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{); }\CommentTok{// true}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(stream }\KeywordTok{instanceof} \OtherTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{); }\CommentTok{// true}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{MyStream}\NormalTok{.}\FunctionTok{super_} \NormalTok{=== }\OtherTok{events}\NormalTok{.}\FunctionTok{EventEmitter}\NormalTok{); }\CommentTok{// true}
 
-\KeywordTok{stream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"data"}\NormalTok{, }\KeywordTok{function}\NormalTok{(data) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Received data: "'} \NormalTok{+ data + }\CharTok{'"'}\NormalTok{);}
+\OtherTok{stream}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{"data"}\NormalTok{, }\KeywordTok{function}\NormalTok{(data) \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Received data: "'} \NormalTok{+ data + }\StringTok{'"'}\NormalTok{);}
 \NormalTok{\})}
-\KeywordTok{stream}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"It works!"}\NormalTok{); }\CommentTok{// Received data: "It works!"}
+\OtherTok{stream}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{"It works!"}\NormalTok{); }\CommentTok{// Received data: "It works!"}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.debug(string)}
+\subsection{util.debug(string)}\label{util.debugstring}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: use }\KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{() }\KeywordTok{instead}\NormalTok{.}
-\end{Highlighting}
-\end{Shaded}
-
-Deprecated predecessor of \texttt{console.error}.
-
-\subsection{util.error({[}\ldots{}{]})}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{() }\KeywordTok{instead}\NormalTok{.}
+\NormalTok{Stability: }\DecValTok{0} \NormalTok{- Deprecated: use }\OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{() }\OtherTok{instead}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
 Deprecated predecessor of \texttt{console.error}.
 
-\subsection{util.puts({[}\ldots{}{]})}
+\subsection{util.error({[}\ldots{}{]})}\label{util.error}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{() }\KeywordTok{instead}\NormalTok{.}
+\NormalTok{Stability: }\DecValTok{0} \NormalTok{- Deprecated: Use }\OtherTok{console}\NormalTok{.}\FunctionTok{error}\NormalTok{() }\OtherTok{instead}\NormalTok{.}
+\end{Highlighting}
+\end{Shaded}
+
+Deprecated predecessor of \texttt{console.error}.
+
+\subsection{util.puts({[}\ldots{}{]})}\label{util.puts}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Stability: }\DecValTok{0} \NormalTok{- Deprecated: Use }\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{() }\OtherTok{instead}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
 Deprecated predecessor of \texttt{console.log}.
 
-\subsection{util.print({[}\ldots{}{]})}
+\subsection{util.print({[}\ldots{}{]})}\label{util.print}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use `}\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{` }\KeywordTok{instead}\NormalTok{.}
+\NormalTok{Stability: }\DecValTok{0} \NormalTok{- Deprecated: Use `}\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{` }\OtherTok{instead}\NormalTok{.}
 \end{Highlighting}
 \end{Shaded}
 
 Deprecated predecessor of \texttt{console.log}.
 
-\subsection{util.pump(readableStream, writableStream, {[}callback{]})}
+\subsection{util.pump(readableStream, writableStream,
+{[}callback{]})}\label{util.pumpreadablestream-writablestream-callback}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{0} \NormalTok{- }\DataTypeTok{Deprecated}\NormalTok{: Use }\KeywordTok{readableStream}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writableStream)}
+\NormalTok{Stability: }\DecValTok{0} \NormalTok{- Deprecated: Use }\OtherTok{readableStream}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(writableStream)}
 \end{Highlighting}
 \end{Shaded}
 

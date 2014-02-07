@@ -1,4 +1,4 @@
-\section{Addons}
+\section{Addons}\label{addons}
 
 Addons are dynamically linked shared objects. They can provide glue to C
 and C++ libraries. The API (at the moment) is rather complex, involving
@@ -33,14 +33,14 @@ All of the following examples are available for
 \href{https://github.com/rvagg/node-addon-examples}{download} and may be
 used as a starting-point for your own Addon.
 
-\subsection{Hello world}
+\subsection{Hello world}\label{hello-world}
 
 To get started let's make a small Addon which is the C++ equivalent of
 the following JavaScript code:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{module.exports}\NormalTok{.}\FunctionTok{hello} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{ }\KeywordTok{return} \CharTok{'world'}\NormalTok{; \};}
+\OtherTok{module}\NormalTok{.}\OtherTok{exports}\NormalTok{.}\FunctionTok{hello} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{ }\KeywordTok{return} \StringTok{'world'}\NormalTok{; \};}
 \end{Highlighting}
 \end{Shaded}
 
@@ -48,22 +48,22 @@ First we create a file \texttt{hello.cc}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// hello.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
 \NormalTok{using namespace v8;}
 
-\NormalTok{Handle<Value> Method(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"world"}\NormalTok{));}
+\KeywordTok{void} \FunctionTok{Method}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"world"}\NormalTok{));}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{init(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
-  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"hello"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(Method)->GetFunction());}
+\KeywordTok{void} \FunctionTok{init}\NormalTok{(Handle<Object> exports) \{}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(exports, }\StringTok{"hello"}\NormalTok{, Method);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(hello, init)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, init)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -71,8 +71,8 @@ Note that all Node addons must export an initialization function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{void} \NormalTok{Initialize (Handle<}\KeywordTok{Object}\NormalTok{> exports);}
-\NormalTok{NODE_MODULE(module_name, Initialize)}
+\KeywordTok{void} \FunctionTok{Initialize} \NormalTok{(Handle<Object> exports);}
+\FunctionTok{NODE_MODULE}\NormalTok{(module_name, Initialize)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -82,7 +82,7 @@ function (see \texttt{node.h}).
 The \texttt{module\_name} needs to match the filename of the final
 binary (minus the .node suffix).
 
-The source code needs to be built into \texttt{hello.node}, the binary
+The source code needs to be built into \texttt{addon.node}, the binary
 Addon. To do this we create a file called \texttt{binding.gyp} which
 describes the configuration to build your module in a JSON-like format.
 This file gets compiled by
@@ -93,7 +93,7 @@ This file gets compiled by
 \NormalTok{\{}
   \StringTok{"targets"}\NormalTok{: [}
     \NormalTok{\{}
-      \StringTok{"target_name"}\NormalTok{: }\StringTok{"hello"}\NormalTok{,}
+      \StringTok{"target_name"}\NormalTok{: }\StringTok{"addon"}\NormalTok{,}
       \StringTok{"sources"}\NormalTok{: [ }\StringTok{"hello.cc"} \NormalTok{]}
     \NormalTok{\}}
   \NormalTok{]}
@@ -117,16 +117,17 @@ module:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/hello'}\NormalTok{);}
+\CommentTok{// hello.js}
+\KeywordTok{var} \NormalTok{addon = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{addon}\NormalTok{.}\FunctionTok{hello}\NormalTok{()); }\CommentTok{// 'world'}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{addon}\NormalTok{.}\FunctionTok{hello}\NormalTok{()); }\CommentTok{// 'world'}
 \end{Highlighting}
 \end{Shaded}
 
 Please see patterns below for further information or
 \url{https://github.com/arturadib/node-qt} for an example in production.
 
-\subsection{Addon patterns}
+\subsection{Addon patterns}\label{addon-patterns}
 
 Below are some addon patterns to help you get started. Consult the
 online \href{http://izs.me/v8-docs/main.html}{v8 reference} for help
@@ -169,7 +170,7 @@ build the addon:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Function arguments}
+\subsubsection{Function arguments}\label{function-arguments}
 
 The following pattern illustrates how to read arguments from JavaScript
 function calls and return a result. This is the main and only needed
@@ -177,36 +178,38 @@ source \texttt{addon.cc}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// addon.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
 \NormalTok{using namespace v8;}
 
-\NormalTok{Handle<Value> Add(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \FunctionTok{Add}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \KeywordTok{if} \NormalTok{(}\KeywordTok{args}\NormalTok{.}\FunctionTok{Length}\NormalTok{() < }\DecValTok{2}\NormalTok{) \{}
-    \NormalTok{ThrowException(}\DataTypeTok{Exception}\NormalTok{::TypeError(}
-        \DataTypeTok{String}\NormalTok{::New(}\StringTok{"Wrong number of arguments"}\NormalTok{)));}
-    \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined(isolate));}
+  \KeywordTok{if} \NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{Length}\NormalTok{() < }\DecValTok{2}\NormalTok{) \{}
+    \NormalTok{isolate->}\FunctionTok{ThrowException}\NormalTok{(}\DataTypeTok{Exception}\NormalTok{::}\FunctionTok{TypeError}\NormalTok{(}
+        \DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"Wrong number of arguments"}\NormalTok{)));}
+    \KeywordTok{return}\NormalTok{;}
   \NormalTok{\}}
 
-  \KeywordTok{if} \NormalTok{(!args[}\DecValTok{0}\NormalTok{]->IsNumber() \textbar{}\textbar{} !args[}\DecValTok{1}\NormalTok{]->IsNumber()) \{}
-    \NormalTok{ThrowException(}\DataTypeTok{Exception}\NormalTok{::TypeError(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"Wrong arguments"}\NormalTok{)));}
-    \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined(isolate));}
+  \KeywordTok{if} \NormalTok{(!args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{IsNumber}\NormalTok{() || !args[}\DecValTok{1}\NormalTok{]->}\FunctionTok{IsNumber}\NormalTok{()) \{}
+    \NormalTok{isolate->}\FunctionTok{ThrowException}\NormalTok{(}\DataTypeTok{Exception}\NormalTok{::}\FunctionTok{TypeError}\NormalTok{(}
+        \DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"Wrong arguments"}\NormalTok{)));}
+    \KeywordTok{return}\NormalTok{;}
   \NormalTok{\}}
 
-  \NormalTok{Local<}\FunctionTok{Number}\NormalTok{> num = }\DataTypeTok{Number}\NormalTok{::New(args[}\DecValTok{0}\NormalTok{]->NumberValue() +}
-      \NormalTok{args[}\DecValTok{1}\NormalTok{]->NumberValue());}
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(num);}
+  \NormalTok{Local<Number> num = }\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{() +}
+      \NormalTok{args[}\DecValTok{1}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{());}
+
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(num);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
-  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"add"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(Add)->GetFunction());}
+\KeywordTok{void} \FunctionTok{Init}\NormalTok{(Handle<Object> exports) \{}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(exports, }\StringTok{"add"}\NormalTok{, Add);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(addon, Init)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, Init)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -214,41 +217,40 @@ You can test it with the following JavaScript snippet:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\CommentTok{// test.js}
+\KeywordTok{var} \NormalTok{addon = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\CharTok{'This should be eight:'}\NormalTok{, }\KeywordTok{addon}\NormalTok{.}\FunctionTok{add}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{5}\NormalTok{) );}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\StringTok{'This should be eight:'}\NormalTok{, }\OtherTok{addon}\NormalTok{.}\FunctionTok{add}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{5}\NormalTok{) );}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Callbacks}
+\subsubsection{Callbacks}\label{callbacks}
 
 You can pass JavaScript functions to a C++ function and execute them
 from there. Here's \texttt{addon.cc}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// addon.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
 \NormalTok{using namespace v8;}
 
-\NormalTok{Handle<Value> RunCallback(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \FunctionTok{RunCallback}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{Local<}\KeywordTok{Function}\NormalTok{> cb = Local<}\KeywordTok{Function}\NormalTok{>::Cast(args[}\DecValTok{0}\NormalTok{]);}
+  \NormalTok{Local<Function> cb = Local<Function>::}\FunctionTok{Cast}\NormalTok{(args[}\DecValTok{0}\NormalTok{]);}
   \KeywordTok{const} \NormalTok{unsigned argc = }\DecValTok{1}\NormalTok{;}
-  \NormalTok{Local<Value> argv[argc] = \{ }\DataTypeTok{String}\NormalTok{::New(}\StringTok{"hello world"}\NormalTok{) \};}
-  \NormalTok{cb->Call(}\DataTypeTok{Context}\NormalTok{::GetCurrent()->Global(), argc, argv);}
-
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(Undefined(isolate));}
+  \NormalTok{Local<Value> argv[argc] = \{ }\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"hello world"}\NormalTok{) \};}
+  \NormalTok{cb->}\FunctionTok{Call}\NormalTok{(}\DataTypeTok{Context}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{()->}\FunctionTok{Global}\NormalTok{(), argc, argv);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
-  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(RunCallback)->GetFunction());}
+\KeywordTok{void} \FunctionTok{Init}\NormalTok{(Handle<Object> exports, Handle<Object> module) \{}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(module, }\StringTok{"exports"}\NormalTok{, RunCallback);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(addon, Init)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, Init)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -262,15 +264,16 @@ To test it run the following JavaScript snippet:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\CommentTok{// test.js}
+\KeywordTok{var} \NormalTok{addon = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\NormalTok{addon(}\KeywordTok{function}\NormalTok{(msg)\{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(msg); }\CommentTok{// 'hello world'}
+\FunctionTok{addon}\NormalTok{(}\KeywordTok{function}\NormalTok{(msg)\{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(msg); }\CommentTok{// 'hello world'}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Object factory}
+\subsubsection{Object factory}\label{object-factory}
 
 You can create and return new objects from within a C++ function with
 this \texttt{addon.cc} pattern, which returns an object with property
@@ -278,26 +281,26 @@ this \texttt{addon.cc} pattern, which returns an object with property
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// addon.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
 \NormalTok{using namespace v8;}
 
-\NormalTok{Handle<Value> CreateObject(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \FunctionTok{CreateObject}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{Local<}\KeywordTok{Object}\NormalTok{> obj = }\DataTypeTok{Object}\NormalTok{::New();}
-  \NormalTok{obj->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"msg"}\NormalTok{), args[}\DecValTok{0}\NormalTok{]->ToString());}
+  \NormalTok{Local<Object> obj = }\DataTypeTok{Object}\NormalTok{::}\FunctionTok{New}\NormalTok{();}
+  \NormalTok{obj->}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"msg"}\NormalTok{), args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{ToString}\NormalTok{());}
 
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(obj);}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(obj);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
-  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateObject)->GetFunction());}
+\KeywordTok{void} \FunctionTok{Init}\NormalTok{(Handle<Object> exports, Handle<Object> module) \{}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(module, }\StringTok{"exports"}\NormalTok{, CreateObject);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(addon, Init)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, Init)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -305,50 +308,51 @@ To test it in JavaScript:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\CommentTok{// test.js}
+\KeywordTok{var} \NormalTok{addon = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{obj1 = addon(}\CharTok{'hello'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{obj2 = addon(}\CharTok{'world'}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{obj1}\NormalTok{.}\FunctionTok{msg}\NormalTok{+}\CharTok{' '}\NormalTok{+}\KeywordTok{obj2}\NormalTok{.}\FunctionTok{msg}\NormalTok{); }\CommentTok{// 'hello world'}
+\KeywordTok{var} \NormalTok{obj1 = }\FunctionTok{addon}\NormalTok{(}\StringTok{'hello'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{obj2 = }\FunctionTok{addon}\NormalTok{(}\StringTok{'world'}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{obj1}\NormalTok{.}\FunctionTok{msg}\NormalTok{+}\StringTok{' '}\NormalTok{+}\OtherTok{obj2}\NormalTok{.}\FunctionTok{msg}\NormalTok{); }\CommentTok{// 'hello world'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Function factory}
+\subsubsection{Function factory}\label{function-factory}
 
 This pattern illustrates how to create and return a JavaScript function
 that wraps a C++ function:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// addon.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
 \NormalTok{using namespace v8;}
 
-\NormalTok{Handle<Value> MyFunction(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{String}\NormalTok{::New(}\StringTok{"hello world"}\NormalTok{));}
+\KeywordTok{void} \FunctionTok{MyFunction}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"hello world"}\NormalTok{));}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> CreateFunction(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \FunctionTok{CreateFunction}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::New(MyFunction);}
-  \NormalTok{Local<}\KeywordTok{Function}\NormalTok{> fn = tpl->GetFunction();}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(MyFunction);}
+  \NormalTok{Local<Function> fn = tpl->}\FunctionTok{GetFunction}\NormalTok{();}
 
   \CommentTok{// omit this to make it anonymous}
-  \NormalTok{fn->SetName(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"theFunction"}\NormalTok{));}
+  \NormalTok{fn->}\FunctionTok{SetName}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"theFunction"}\NormalTok{));}
 
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(fn);}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(fn);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{Init(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
-  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateFunction)->GetFunction());}
+\KeywordTok{void} \FunctionTok{Init}\NormalTok{(Handle<Object> exports, Handle<Object> module) \{}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(module, }\StringTok{"exports"}\NormalTok{, CreateFunction);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(addon, Init)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, Init)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -356,14 +360,15 @@ To test:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\CommentTok{// test.js}
+\KeywordTok{var} \NormalTok{addon = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{fn = addon();}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(fn()); }\CommentTok{// 'hello world'}
+\KeywordTok{var} \NormalTok{fn = }\FunctionTok{addon}\NormalTok{();}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\FunctionTok{fn}\NormalTok{()); }\CommentTok{// 'hello world'}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Wrapping C++ objects}
+\subsubsection{Wrapping C++ objects}\label{wrapping-c-objects}
 
 Here we will create a wrapper for a C++ object/class \texttt{MyObject}
 that can be instantiated in JavaScript through the \texttt{new}
@@ -371,16 +376,17 @@ operator. First prepare the main module \texttt{addon.cc}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// addon.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
 \NormalTok{using namespace v8;}
 
-\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
-  \DataTypeTok{MyObject}\NormalTok{::Init(exports);}
+\KeywordTok{void} \FunctionTok{InitAll}\NormalTok{(Handle<Object> exports) \{}
+  \DataTypeTok{MyObject}\NormalTok{::}\FunctionTok{Init}\NormalTok{(exports);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(addon, InitAll)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, InitAll)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -389,22 +395,25 @@ Then in \texttt{myobject.h} make your wrapper inherit from
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{// myobject.h}
 \NormalTok{#ifndef MYOBJECT_H}
 \NormalTok{#define MYOBJECT_H}
 
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\NormalTok{#include <}\OtherTok{node_object_wrap}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
-\NormalTok{class }\DataTypeTok{MyObject }\NormalTok{: public }\DataTypeTok{node}\NormalTok{::ObjectWrap \{}
+\KeywordTok{class} \NormalTok{MyObject : }\KeywordTok{public} \NormalTok{node::ObjectWrap \{}
  \DataTypeTok{public}\NormalTok{:}
-  \NormalTok{static }\KeywordTok{void} \NormalTok{Init(}\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::}\KeywordTok{Object}\NormalTok{> exports);}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{Init}\NormalTok{(}\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Object> exports);}
 
  \DataTypeTok{private}\NormalTok{:}
-  \NormalTok{MyObject();}
-  \NormalTok{~MyObject();}
+  \NormalTok{explicit }\FunctionTok{MyObject}\NormalTok{(double value = }\DecValTok{0}\NormalTok{);}
+  \NormalTok{~}\FunctionTok{MyObject}\NormalTok{();}
 
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Value> New(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::Arguments& args);}
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Value> PlusOne(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::Arguments& args);}
-  \NormalTok{double counter_;}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{New}\NormalTok{(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::FunctionCallbackInfo<}\DataTypeTok{v8}\NormalTok{::Value>& args);}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{PlusOne}\NormalTok{(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::FunctionCallbackInfo<}\DataTypeTok{v8}\NormalTok{::Value>& args);}
+  \KeywordTok{static} \DataTypeTok{v8}\NormalTok{::Persistent<}\DataTypeTok{v8}\NormalTok{::Function> constructor;}
+  \NormalTok{double value_;}
 \NormalTok{\};}
 
 \NormalTok{#endif}
@@ -417,51 +426,62 @@ the constructor's prototype:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// myobject.cc}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
 \NormalTok{using namespace v8;}
 
-\DataTypeTok{MyObject}\NormalTok{::MyObject() \{\};}
-\DataTypeTok{MyObject}\NormalTok{::~MyObject() \{\};}
+\NormalTok{Persistent<Function> MyObject::constructor;}
 
-\KeywordTok{void} \DataTypeTok{MyObject}\NormalTok{::Init(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+\NormalTok{MyObject::}\FunctionTok{MyObject}\NormalTok{(double value) : }\FunctionTok{value_}\NormalTok{(value) \{}
+\NormalTok{\}}
+
+\NormalTok{MyObject::~}\FunctionTok{MyObject}\NormalTok{() \{}
+\NormalTok{\}}
+
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{Init}\NormalTok{(Handle<Object> exports) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
 
   \CommentTok{// Prepare constructor template}
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::New(New);}
-  \NormalTok{tpl->SetClassName(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{));}
-  \NormalTok{tpl->InstanceTemplate()->SetInternalFieldCount(}\DecValTok{1}\NormalTok{);}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(New);}
+  \NormalTok{tpl->}\FunctionTok{SetClassName}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"MyObject"}\NormalTok{));}
+  \NormalTok{tpl->}\FunctionTok{InstanceTemplate}\NormalTok{()->}\FunctionTok{SetInternalFieldCount}\NormalTok{(}\DecValTok{1}\NormalTok{);}
 
   \CommentTok{// Prototype}
-  \NormalTok{tpl->PrototypeTemplate()->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"plusOne"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(PlusOne)->GetFunction());}
+  \FunctionTok{NODE_SET_PROTOTYPE_METHOD}\NormalTok{(tpl, }\StringTok{"plusOne"}\NormalTok{, PlusOne);}
 
-  \NormalTok{Persistent<}\KeywordTok{Function}\NormalTok{> constructor}
-      \NormalTok{= Persistent<}\KeywordTok{Function}\NormalTok{>::New(isolate, tpl->GetFunction());}
-
-  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{), constructor);}
+  \OtherTok{constructor}\NormalTok{.}\FunctionTok{Reset}\NormalTok{(isolate, tpl->}\FunctionTok{GetFunction}\NormalTok{());}
+  \NormalTok{exports->}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"MyObject"}\NormalTok{),}
+               \NormalTok{tpl->}\FunctionTok{GetFunction}\NormalTok{());}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::New(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{New}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{MyObject* obj = }\KeywordTok{new} \NormalTok{MyObject();}
-  \NormalTok{obj->counter_ = args[}\DecValTok{0}\NormalTok{]->IsUndefined() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->NumberValue();}
-  \NormalTok{obj->Wrap(}\KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
-
-  \KeywordTok{return} \KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{();}
+  \KeywordTok{if} \NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{IsConstructCall}\NormalTok{()) \{}
+    \CommentTok{// Invoked as constructor: `new MyObject(...)`}
+    \NormalTok{double value = args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{IsUndefined}\NormalTok{() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{();}
+    \NormalTok{MyObject* obj = }\KeywordTok{new} \FunctionTok{MyObject}\NormalTok{(value);}
+    \NormalTok{obj->}\FunctionTok{Wrap}\NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+    \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+  \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
+    \CommentTok{// Invoked as plain function `MyObject(...)`, turn into construct call.}
+    \KeywordTok{const} \NormalTok{int argc = }\DecValTok{1}\NormalTok{;}
+    \NormalTok{Local<Value> argv[argc] = \{ args[}\DecValTok{0}\NormalTok{] \};}
+    \NormalTok{Local<Function> cons = Local<Function>::}\FunctionTok{New}\NormalTok{(isolate, constructor);}
+    \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(cons->}\FunctionTok{NewInstance}\NormalTok{(argc, argv));}
+  \NormalTok{\}}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::PlusOne(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{PlusOne}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
-  \NormalTok{obj->counter_ += }\DecValTok{1}\NormalTok{;}
+  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+  \NormalTok{obj->value_ += }\DecValTok{1}\NormalTok{;}
 
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::New(obj->counter_));}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(obj->value_));}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -470,16 +490,18 @@ Test it with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\CommentTok{// test.js}
+\KeywordTok{var} \NormalTok{addon = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{obj = }\KeywordTok{new} \KeywordTok{addon}\NormalTok{.}\FunctionTok{MyObject}\NormalTok{(}\DecValTok{10}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 11}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 12}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 13}
+\KeywordTok{var} \NormalTok{obj = }\KeywordTok{new} \OtherTok{addon}\NormalTok{.}\FunctionTok{MyObject}\NormalTok{(}\DecValTok{10}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 11}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 12}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 13}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Factory of wrapped objects}
+\subsubsection{Factory of wrapped
+objects}\label{factory-of-wrapped-objects}
 
 This is useful when you want to be able to create native objects without
 explicitly instantiating them with the \texttt{new} operator in
@@ -487,7 +509,7 @@ JavaScript, e.g.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{obj = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{();}
+\KeywordTok{var} \NormalTok{obj = }\OtherTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{();}
 \CommentTok{// instead of:}
 \CommentTok{// var obj = new addon.Object();}
 \end{Highlighting}
@@ -497,25 +519,25 @@ Let's register our \texttt{createObject} method in \texttt{addon.cc}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// addon.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
 \NormalTok{using namespace v8;}
 
-\NormalTok{Handle<Value> CreateObject(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{MyObject}\NormalTok{::NewInstance(args));}
+\KeywordTok{void} \FunctionTok{CreateObject}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
+  \DataTypeTok{MyObject}\NormalTok{::}\FunctionTok{NewInstance}\NormalTok{(args);}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> exports, Handle<}\KeywordTok{Object}\NormalTok{> module) \{}
-  \DataTypeTok{MyObject}\NormalTok{::Init();}
+\KeywordTok{void} \FunctionTok{InitAll}\NormalTok{(Handle<Object> exports, Handle<Object> module) \{}
+  \DataTypeTok{MyObject}\NormalTok{::}\FunctionTok{Init}\NormalTok{();}
 
-  \NormalTok{module->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"exports"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateObject)->GetFunction());}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(module, }\StringTok{"exports"}\NormalTok{, CreateObject);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(addon, InitAll)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, InitAll)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -525,24 +547,26 @@ In \texttt{myobject.h} we now introduce the static method
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{// myobject.h}
 \NormalTok{#ifndef MYOBJECT_H}
 \NormalTok{#define MYOBJECT_H}
 
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\NormalTok{#include <}\OtherTok{node_object_wrap}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
-\NormalTok{class }\DataTypeTok{MyObject }\NormalTok{: public }\DataTypeTok{node}\NormalTok{::ObjectWrap \{}
+\KeywordTok{class} \NormalTok{MyObject : }\KeywordTok{public} \NormalTok{node::ObjectWrap \{}
  \DataTypeTok{public}\NormalTok{:}
-  \NormalTok{static }\KeywordTok{void} \NormalTok{Init();}
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Value> NewInstance(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::Arguments& args);}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{Init}\NormalTok{();}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{NewInstance}\NormalTok{(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::FunctionCallbackInfo<}\DataTypeTok{v8}\NormalTok{::Value>& args);}
 
  \DataTypeTok{private}\NormalTok{:}
-  \NormalTok{MyObject();}
-  \NormalTok{~MyObject();}
+  \NormalTok{explicit }\FunctionTok{MyObject}\NormalTok{(double value = }\DecValTok{0}\NormalTok{);}
+  \NormalTok{~}\FunctionTok{MyObject}\NormalTok{();}
 
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Persistent<}\DataTypeTok{v8}\NormalTok{::}\KeywordTok{Function}\NormalTok{> constructor;}
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Value> New(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::Arguments& args);}
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Value> PlusOne(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::Arguments& args);}
-  \NormalTok{double counter_;}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{New}\NormalTok{(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::FunctionCallbackInfo<}\DataTypeTok{v8}\NormalTok{::Value>& args);}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{PlusOne}\NormalTok{(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::FunctionCallbackInfo<}\DataTypeTok{v8}\NormalTok{::Value>& args);}
+  \KeywordTok{static} \DataTypeTok{v8}\NormalTok{::Persistent<}\DataTypeTok{v8}\NormalTok{::Function> constructor;}
+  \NormalTok{double value_;}
 \NormalTok{\};}
 
 \NormalTok{#endif}
@@ -553,60 +577,72 @@ The implementation is similar to the above in \texttt{myobject.cc}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// myobject.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
 \NormalTok{using namespace v8;}
 
-\DataTypeTok{MyObject}\NormalTok{::MyObject() \{\};}
-\DataTypeTok{MyObject}\NormalTok{::~MyObject() \{\};}
+\NormalTok{Persistent<Function> MyObject::constructor;}
 
-\NormalTok{Persistent<}\KeywordTok{Function}\NormalTok{> }\DataTypeTok{MyObject}\NormalTok{::constructor;}
+\NormalTok{MyObject::}\FunctionTok{MyObject}\NormalTok{(double value) : }\FunctionTok{value_}\NormalTok{(value) \{}
+\NormalTok{\}}
 
-\KeywordTok{void} \DataTypeTok{MyObject}\NormalTok{::Init() \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+\NormalTok{MyObject::~}\FunctionTok{MyObject}\NormalTok{() \{}
+\NormalTok{\}}
+
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{Init}\NormalTok{() \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
   \CommentTok{// Prepare constructor template}
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::New(New);}
-  \NormalTok{tpl->SetClassName(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{));}
-  \NormalTok{tpl->InstanceTemplate()->SetInternalFieldCount(}\DecValTok{1}\NormalTok{);}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(New);}
+  \NormalTok{tpl->}\FunctionTok{SetClassName}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"MyObject"}\NormalTok{));}
+  \NormalTok{tpl->}\FunctionTok{InstanceTemplate}\NormalTok{()->}\FunctionTok{SetInternalFieldCount}\NormalTok{(}\DecValTok{1}\NormalTok{);}
 
   \CommentTok{// Prototype}
-  \NormalTok{tpl->PrototypeTemplate()->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"plusOne"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(PlusOne)->GetFunction());}
+  \FunctionTok{NODE_SET_PROTOTYPE_METHOD}\NormalTok{(tpl, }\StringTok{"plusOne"}\NormalTok{, PlusOne);}
 
-  \NormalTok{constructor = Persistent<}\KeywordTok{Function}\NormalTok{>::New(isolate, tpl->GetFunction());}
+  \OtherTok{constructor}\NormalTok{.}\FunctionTok{Reset}\NormalTok{(isolate, tpl->}\FunctionTok{GetFunction}\NormalTok{());}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::New(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{New}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{MyObject* obj = }\KeywordTok{new} \NormalTok{MyObject();}
-  \NormalTok{obj->counter_ = args[}\DecValTok{0}\NormalTok{]->IsUndefined() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->NumberValue();}
-  \NormalTok{obj->Wrap(}\KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
-
-  \KeywordTok{return} \KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{();}
+  \KeywordTok{if} \NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{IsConstructCall}\NormalTok{()) \{}
+    \CommentTok{// Invoked as constructor: `new MyObject(...)`}
+    \NormalTok{double value = args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{IsUndefined}\NormalTok{() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{();}
+    \NormalTok{MyObject* obj = }\KeywordTok{new} \FunctionTok{MyObject}\NormalTok{(value);}
+    \NormalTok{obj->}\FunctionTok{Wrap}\NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+    \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+  \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
+    \CommentTok{// Invoked as plain function `MyObject(...)`, turn into construct call.}
+    \KeywordTok{const} \NormalTok{int argc = }\DecValTok{1}\NormalTok{;}
+    \NormalTok{Local<Value> argv[argc] = \{ args[}\DecValTok{0}\NormalTok{] \};}
+    \NormalTok{Local<Function> cons = Local<Function>::}\FunctionTok{New}\NormalTok{(isolate, constructor);}
+    \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(cons->}\FunctionTok{NewInstance}\NormalTok{(argc, argv));}
+  \NormalTok{\}}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::NewInstance(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{NewInstance}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
   \KeywordTok{const} \NormalTok{unsigned argc = }\DecValTok{1}\NormalTok{;}
   \NormalTok{Handle<Value> argv[argc] = \{ args[}\DecValTok{0}\NormalTok{] \};}
-  \NormalTok{Local<}\KeywordTok{Object}\NormalTok{> instance = constructor->NewInstance(argc, argv);}
+  \NormalTok{Local<Function> cons = Local<Function>::}\FunctionTok{New}\NormalTok{(isolate, constructor);}
+  \NormalTok{Local<Object> instance = cons->}\FunctionTok{NewInstance}\NormalTok{(argc, argv);}
 
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(instance);}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(instance);}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::PlusOne(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{PlusOne}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
-  \NormalTok{obj->counter_ += }\DecValTok{1}\NormalTok{;}
+  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+  \NormalTok{obj->value_ += }\DecValTok{1}\NormalTok{;}
 
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::New(obj->counter_));}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(obj->value_));}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -615,21 +651,23 @@ Test it with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{createObject = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\CommentTok{// test.js}
+\KeywordTok{var} \NormalTok{createObject = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{obj = createObject(}\DecValTok{10}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 11}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 12}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 13}
+\KeywordTok{var} \NormalTok{obj = }\FunctionTok{createObject}\NormalTok{(}\DecValTok{10}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 11}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 12}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 13}
 
-\KeywordTok{var} \NormalTok{obj2 = createObject(}\DecValTok{20}\NormalTok{);}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 21}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 22}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\KeywordTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 23}
+\KeywordTok{var} \NormalTok{obj2 = }\FunctionTok{createObject}\NormalTok{(}\DecValTok{20}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 21}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 22}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{( }\OtherTok{obj2}\NormalTok{.}\FunctionTok{plusOne}\NormalTok{() ); }\CommentTok{// 23}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Passing wrapped objects around}
+\subsubsection{Passing wrapped objects
+around}\label{passing-wrapped-objects-around}
 
 In addition to wrapping and returning C++ objects, you can pass them
 around by unwrapping them with Node's \texttt{node::ObjectWrap::Unwrap}
@@ -638,41 +676,40 @@ function \texttt{add()} that can take on two \texttt{MyObject} objects:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// addon.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\NormalTok{#include <}\OtherTok{node_object_wrap}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
 \NormalTok{using namespace v8;}
 
-\NormalTok{Handle<Value> CreateObject(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{MyObject}\NormalTok{::NewInstance(args));}
+\KeywordTok{void} \FunctionTok{CreateObject}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
+  \DataTypeTok{MyObject}\NormalTok{::}\FunctionTok{NewInstance}\NormalTok{(args);}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> Add(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \FunctionTok{Add}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
   \NormalTok{MyObject* obj1 = }\DataTypeTok{node}\NormalTok{::}\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}
-      \NormalTok{args[}\DecValTok{0}\NormalTok{]->ToObject());}
+      \NormalTok{args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{ToObject}\NormalTok{());}
   \NormalTok{MyObject* obj2 = }\DataTypeTok{node}\NormalTok{::}\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}
-      \NormalTok{args[}\DecValTok{1}\NormalTok{]->ToObject());}
+      \NormalTok{args[}\DecValTok{1}\NormalTok{]->}\FunctionTok{ToObject}\NormalTok{());}
 
-  \NormalTok{double sum = obj1->Val() + obj2->Val();}
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::New(sum));}
+  \NormalTok{double sum = obj1->}\FunctionTok{value}\NormalTok{() + obj2->}\FunctionTok{value}\NormalTok{();}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(sum));}
 \NormalTok{\}}
 
-\KeywordTok{void} \NormalTok{InitAll(Handle<}\KeywordTok{Object}\NormalTok{> exports) \{}
-  \DataTypeTok{MyObject}\NormalTok{::Init();}
+\KeywordTok{void} \FunctionTok{InitAll}\NormalTok{(Handle<Object> exports) \{}
+  \DataTypeTok{MyObject}\NormalTok{::}\FunctionTok{Init}\NormalTok{();}
 
-  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"createObject"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(CreateObject)->GetFunction());}
-
-  \NormalTok{exports->Set(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"add"}\NormalTok{),}
-      \DataTypeTok{FunctionTemplate}\NormalTok{::New(Add)->GetFunction());}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(exports, }\StringTok{"createObject"}\NormalTok{, CreateObject);}
+  \FunctionTok{NODE_SET_METHOD}\NormalTok{(exports, }\StringTok{"add"}\NormalTok{, Add);}
 \NormalTok{\}}
 
-\NormalTok{NODE_MODULE(addon, InitAll)}
+\FunctionTok{NODE_MODULE}\NormalTok{(addon, InitAll)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -682,24 +719,26 @@ object:
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\CommentTok{// myobject.h}
 \NormalTok{#ifndef MYOBJECT_H}
 \NormalTok{#define MYOBJECT_H}
 
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\NormalTok{#include <}\OtherTok{node_object_wrap}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 
-\NormalTok{class }\DataTypeTok{MyObject }\NormalTok{: public }\DataTypeTok{node}\NormalTok{::ObjectWrap \{}
+\KeywordTok{class} \NormalTok{MyObject : }\KeywordTok{public} \NormalTok{node::ObjectWrap \{}
  \DataTypeTok{public}\NormalTok{:}
-  \NormalTok{static }\KeywordTok{void} \NormalTok{Init();}
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Value> NewInstance(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::Arguments& args);}
-  \NormalTok{double Val() }\KeywordTok{const} \NormalTok{\{ }\KeywordTok{return} \NormalTok{val_; \}}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{Init}\NormalTok{();}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{NewInstance}\NormalTok{(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::FunctionCallbackInfo<}\DataTypeTok{v8}\NormalTok{::Value>& args);}
+  \NormalTok{inline double }\FunctionTok{value}\NormalTok{() }\KeywordTok{const} \NormalTok{\{ }\KeywordTok{return} \NormalTok{value_; \}}
 
  \DataTypeTok{private}\NormalTok{:}
-  \NormalTok{MyObject();}
-  \NormalTok{~MyObject();}
+  \NormalTok{explicit }\FunctionTok{MyObject}\NormalTok{(double value = }\DecValTok{0}\NormalTok{);}
+  \NormalTok{~}\FunctionTok{MyObject}\NormalTok{();}
 
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Persistent<}\DataTypeTok{v8}\NormalTok{::}\KeywordTok{Function}\NormalTok{> constructor;}
-  \NormalTok{static }\DataTypeTok{v8}\NormalTok{::Handle<}\DataTypeTok{v8}\NormalTok{::Value> New(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::Arguments& args);}
-  \NormalTok{double val_;}
+  \KeywordTok{static} \KeywordTok{void} \FunctionTok{New}\NormalTok{(}\KeywordTok{const} \DataTypeTok{v8}\NormalTok{::FunctionCallbackInfo<}\DataTypeTok{v8}\NormalTok{::Value>& args);}
+  \KeywordTok{static} \DataTypeTok{v8}\NormalTok{::Persistent<}\DataTypeTok{v8}\NormalTok{::Function> constructor;}
+  \NormalTok{double value_;}
 \NormalTok{\};}
 
 \NormalTok{#endif}
@@ -710,47 +749,60 @@ The implementation of \texttt{myobject.cc} is similar as before:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{#include <}\KeywordTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
+\CommentTok{// myobject.cc}
+\NormalTok{#include <}\OtherTok{node}\NormalTok{.}\FunctionTok{h}\NormalTok{>}
 \NormalTok{#include }\StringTok{"myobject.h"}
 
 \NormalTok{using namespace v8;}
 
-\DataTypeTok{MyObject}\NormalTok{::MyObject() \{\};}
-\DataTypeTok{MyObject}\NormalTok{::~MyObject() \{\};}
+\NormalTok{Persistent<Function> MyObject::constructor;}
 
-\NormalTok{Persistent<}\KeywordTok{Function}\NormalTok{> }\DataTypeTok{MyObject}\NormalTok{::constructor;}
+\NormalTok{MyObject::}\FunctionTok{MyObject}\NormalTok{(double value) : }\FunctionTok{value_}\NormalTok{(value) \{}
+\NormalTok{\}}
 
-\KeywordTok{void} \DataTypeTok{MyObject}\NormalTok{::Init() \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
+\NormalTok{MyObject::~}\FunctionTok{MyObject}\NormalTok{() \{}
+\NormalTok{\}}
+
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{Init}\NormalTok{() \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
 
   \CommentTok{// Prepare constructor template}
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::New(New);}
-  \NormalTok{tpl->SetClassName(}\DataTypeTok{String}\NormalTok{::NewSymbol(}\StringTok{"MyObject"}\NormalTok{));}
-  \NormalTok{tpl->InstanceTemplate()->SetInternalFieldCount(}\DecValTok{1}\NormalTok{);}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(New);}
+  \NormalTok{tpl->}\FunctionTok{SetClassName}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"MyObject"}\NormalTok{));}
+  \NormalTok{tpl->}\FunctionTok{InstanceTemplate}\NormalTok{()->}\FunctionTok{SetInternalFieldCount}\NormalTok{(}\DecValTok{1}\NormalTok{);}
 
-  \NormalTok{constructor = Persistent<}\KeywordTok{Function}\NormalTok{>::New(isolate, tpl->GetFunction());}
+  \OtherTok{constructor}\NormalTok{.}\FunctionTok{Reset}\NormalTok{(isolate, tpl->}\FunctionTok{GetFunction}\NormalTok{());}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::New(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{New}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{MyObject* obj = }\KeywordTok{new} \NormalTok{MyObject();}
-  \NormalTok{obj->val_ = args[}\DecValTok{0}\NormalTok{]->IsUndefined() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->NumberValue();}
-  \NormalTok{obj->Wrap(}\KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
-
-  \KeywordTok{return} \KeywordTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{();}
+  \KeywordTok{if} \NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{IsConstructCall}\NormalTok{()) \{}
+    \CommentTok{// Invoked as constructor: `new MyObject(...)`}
+    \NormalTok{double value = args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{IsUndefined}\NormalTok{() ? }\DecValTok{0} \NormalTok{: args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{();}
+    \NormalTok{MyObject* obj = }\KeywordTok{new} \FunctionTok{MyObject}\NormalTok{(value);}
+    \NormalTok{obj->}\FunctionTok{Wrap}\NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+    \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+  \NormalTok{\} }\KeywordTok{else} \NormalTok{\{}
+    \CommentTok{// Invoked as plain function `MyObject(...)`, turn into construct call.}
+    \KeywordTok{const} \NormalTok{int argc = }\DecValTok{1}\NormalTok{;}
+    \NormalTok{Local<Value> argv[argc] = \{ args[}\DecValTok{0}\NormalTok{] \};}
+    \NormalTok{Local<Function> cons = Local<Function>::}\FunctionTok{New}\NormalTok{(isolate, constructor);}
+    \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(cons->}\FunctionTok{NewInstance}\NormalTok{(argc, argv));}
+  \NormalTok{\}}
 \NormalTok{\}}
 
-\NormalTok{Handle<Value> }\DataTypeTok{MyObject}\NormalTok{::NewInstance(}\KeywordTok{const} \NormalTok{Arguments& args) \{}
-  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::GetCurrent();}
-  \NormalTok{HandleScope scope(isolate);}
+\KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{NewInstance}\NormalTok{(}\KeywordTok{const} \NormalTok{FunctionCallbackInfo<Value>& args) \{}
+  \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
+  \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
   \KeywordTok{const} \NormalTok{unsigned argc = }\DecValTok{1}\NormalTok{;}
   \NormalTok{Handle<Value> argv[argc] = \{ args[}\DecValTok{0}\NormalTok{] \};}
-  \NormalTok{Local<}\KeywordTok{Object}\NormalTok{> instance = constructor->NewInstance(argc, argv);}
+  \NormalTok{Local<Function> cons = Local<Function>::}\FunctionTok{New}\NormalTok{(isolate, constructor);}
+  \NormalTok{Local<Object> instance = cons->}\FunctionTok{NewInstance}\NormalTok{(argc, argv);}
 
-  \KeywordTok{return} \KeywordTok{scope}\NormalTok{.}\FunctionTok{Close}\NormalTok{(instance);}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(instance);}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -759,13 +811,14 @@ Test it with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{addon = require(}\CharTok{'./build/Release/addon'}\NormalTok{);}
+\CommentTok{// test.js}
+\KeywordTok{var} \NormalTok{addon = }\FunctionTok{require}\NormalTok{(}\StringTok{'./build/Release/addon'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{obj1 = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\DecValTok{10}\NormalTok{);}
-\KeywordTok{var} \NormalTok{obj2 = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\DecValTok{20}\NormalTok{);}
-\KeywordTok{var} \NormalTok{result = }\KeywordTok{addon}\NormalTok{.}\FunctionTok{add}\NormalTok{(obj1, obj2);}
+\KeywordTok{var} \NormalTok{obj1 = }\OtherTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\DecValTok{10}\NormalTok{);}
+\KeywordTok{var} \NormalTok{obj2 = }\OtherTok{addon}\NormalTok{.}\FunctionTok{createObject}\NormalTok{(}\DecValTok{20}\NormalTok{);}
+\KeywordTok{var} \NormalTok{result = }\OtherTok{addon}\NormalTok{.}\FunctionTok{add}\NormalTok{(obj1, obj2);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(result); }\CommentTok{// 30}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(result); }\CommentTok{// 30}
 \end{Highlighting}
 \end{Shaded}
 

@@ -1,8 +1,8 @@
-\section{Child Process}
+\section{Child Process}\label{child-process}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\NormalTok{Stability: }\DecValTok{3} \NormalTok{- Stable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -19,10 +19,10 @@ To create a child process use \texttt{require('child\_process').spawn()}
 or \texttt{require('child\_process').fork()}. The semantics of each are
 slightly different, and explained below.
 
-\subsection{Class: ChildProcess}
+\subsection{Class: ChildProcess}\label{class-childprocess}
 
 \texttt{ChildProcess} is an
-\href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}.
+\href{events.html\#events_class_events_eventemitter}{EventEmitter}.
 
 Child processes always have three streams associated with them.
 \texttt{child.stdin}, \texttt{child.stdout}, and \texttt{child.stderr}.
@@ -33,9 +33,10 @@ The ChildProcess class is not intended to be used directly. Use the
 \texttt{spawn()} or \texttt{fork()} methods to create a Child Process
 instance.
 
-\subsubsection{Event: `error'}
+\subsubsection{Event: `error'}\label{event-error}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{err} \{Error Object\} the error.
 \end{itemize}
@@ -43,6 +44,8 @@ instance.
 Emitted when:
 
 \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   The process could not be spawned, or
 \item
@@ -51,14 +54,19 @@ Emitted when:
   Sending a message to the child process failed for whatever reason.
 \end{enumerate}
 
-See also
-\hyperref[child_process_child_kill_signal]{\texttt{ChildProcess\#kill()}}
-and
-\hyperref[child_process_child_send_message_sendhandle]{\texttt{ChildProcess\#send()}}.
+Note that the \texttt{exit}-event may or may not fire after an error has
+occured. If you are listening on both events to fire a function,
+remember to guard against calling your function twice.
 
-\subsubsection{Event: `exit'}
+See also
+\hyperref[childux5fprocessux5fchildux5fkillux5fsignal]{\texttt{ChildProcess\#kill()}}
+and
+\hyperref[childux5fprocessux5fchildux5fsendux5fmessageux5fsendhandle]{\texttt{ChildProcess\#send()}}.
+
+\subsubsection{Event: `exit'}\label{event-exit}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{code} \{Number\} the exit code, if it exited normally.
 \item
@@ -74,11 +82,16 @@ otherwise \texttt{null}.
 
 Note that the child process stdio streams might still be open.
 
+Also, note that node establishes signal handlers for \texttt{'SIGINT'}
+and \texttt{'SIGTERM}', so it will not terminate due to receipt of those
+signals, it will exit.
+
 See \texttt{waitpid(2)}.
 
-\subsubsection{Event: `close'}
+\subsubsection{Event: `close'}\label{event-close}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{code} \{Number\} the exit code, if it exited normally.
 \item
@@ -90,16 +103,16 @@ This event is emitted when the stdio streams of a child process have all
 terminated. This is distinct from `exit', since multiple processes might
 share the same stdio streams.
 
-\subsubsection{Event: `disconnect'}
+\subsubsection{Event: `disconnect'}\label{event-disconnect}
 
-This event is emitted after using the \texttt{.disconnect()} method in
+This event is emitted after calling the \texttt{.disconnect()} method in
 the parent or in the child. After disconnecting it is no longer possible
-to send messages. An alternative way to check if you can send messages
-is to see if the \texttt{child.connected} property is \texttt{true}.
+to send messages, and the \texttt{.connected} property is false.
 
-\subsubsection{Event: `message'}
+\subsubsection{Event: `message'}\label{event-message}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{message} \{Object\} a parsed JSON object or primitive value
 \item
@@ -109,9 +122,10 @@ is to see if the \texttt{child.connected} property is \texttt{true}.
 Messages send by \texttt{.send(message, {[}sendHandle{]})} are obtained
 using the \texttt{message} event.
 
-\subsubsection{child.stdin}
+\subsubsection{child.stdin}\label{child.stdin}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Stream object\}
 \end{itemize}
@@ -123,9 +137,10 @@ child process to terminate.
 If the child stdio streams are shared with the parent, then this will
 not be set.
 
-\subsubsection{child.stdout}
+\subsubsection{child.stdout}\label{child.stdout}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Stream object\}
 \end{itemize}
@@ -136,9 +151,10 @@ A \texttt{Readable Stream} that represents the child process's
 If the child stdio streams are shared with the parent, then this will
 not be set.
 
-\subsubsection{child.stderr}
+\subsubsection{child.stderr}\label{child.stderr}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Stream object\}
 \end{itemize}
@@ -149,9 +165,10 @@ A \texttt{Readable Stream} that represents the child process's
 If the child stdio streams are shared with the parent, then this will
 not be set.
 
-\subsubsection{child.pid}
+\subsubsection{child.pid}\label{child.pid}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Integer\}
 \end{itemize}
@@ -162,17 +179,29 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
-    \NormalTok{grep  = spawn(}\CharTok{'grep'}\NormalTok{, [}\CharTok{'ssh'}\NormalTok{]);}
+\KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+    \NormalTok{grep  = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'grep'}\NormalTok{, [}\StringTok{'ssh'}\NormalTok{]);}
 
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Spawned child pid: '} \NormalTok{+ }\KeywordTok{grep}\NormalTok{.}\FunctionTok{pid}\NormalTok{);}
-\KeywordTok{grep.stdin}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Spawned child pid: '} \NormalTok{+ }\OtherTok{grep}\NormalTok{.}\FunctionTok{pid}\NormalTok{);}
+\OtherTok{grep}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{child.kill({[}signal{]})}
+\subsubsection{child.connected}\label{child.connected}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \{Boolean\} Set to false after `.disconnect' is called
+\end{itemize}
+
+If \texttt{.connected} is false, it is no longer possible to send
+messages.
+
+\subsubsection{child.kill({[}signal{]})}\label{child.killsignal}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{signal} \{String\}
 \end{itemize}
@@ -183,15 +212,15 @@ available signals.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
-    \NormalTok{grep  = spawn(}\CharTok{'grep'}\NormalTok{, [}\CharTok{'ssh'}\NormalTok{]);}
+\KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+    \NormalTok{grep  = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'grep'}\NormalTok{, [}\StringTok{'ssh'}\NormalTok{]);}
 
-\KeywordTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code, signal) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'child process terminated due to receipt of signal '}\NormalTok{+signal);}
+\OtherTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code, signal) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'child process terminated due to receipt of signal '}\NormalTok{+signal);}
 \NormalTok{\});}
 
 \CommentTok{// send SIGHUP to process}
-\KeywordTok{grep}\NormalTok{.}\FunctionTok{kill}\NormalTok{(}\CharTok{'SIGHUP'}\NormalTok{);}
+\OtherTok{grep}\NormalTok{.}\FunctionTok{kill}\NormalTok{(}\StringTok{'SIGHUP'}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -207,9 +236,11 @@ really just sends a signal to a process.
 
 See \texttt{kill(2)}
 
-\subsubsection{child.send(message, {[}sendHandle{]})}
+\subsubsection{child.send(message,
+{[}sendHandle{]})}\label{child.sendmessage-sendhandle}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{message} \{Object\}
 \item
@@ -224,15 +255,15 @@ For example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{cp = require(}\CharTok{'child_process'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{cp = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{n = }\KeywordTok{cp}\NormalTok{.}\FunctionTok{fork}\NormalTok{(__dirname + }\CharTok{'/sub.js'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{n = }\OtherTok{cp}\NormalTok{.}\FunctionTok{fork}\NormalTok{(__dirname + }\StringTok{'/sub.js'}\NormalTok{);}
 
-\KeywordTok{n}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'PARENT got message:'}\NormalTok{, m);}
+\OtherTok{n}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'PARENT got message:'}\NormalTok{, m);}
 \NormalTok{\});}
 
-\KeywordTok{n}\NormalTok{.}\FunctionTok{send}\NormalTok{(\{ }\DataTypeTok{hello}\NormalTok{: }\CharTok{'world'} \NormalTok{\});}
+\OtherTok{n}\NormalTok{.}\FunctionTok{send}\NormalTok{(\{ }\DataTypeTok{hello}\NormalTok{: }\StringTok{'world'} \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -240,17 +271,22 @@ And then the child script, \texttt{'sub.js'} might look like this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'CHILD got message:'}\NormalTok{, m);}
+\OtherTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'CHILD got message:'}\NormalTok{, m);}
 \NormalTok{\});}
 
-\KeywordTok{process}\NormalTok{.}\FunctionTok{send}\NormalTok{(\{ }\DataTypeTok{foo}\NormalTok{: }\CharTok{'bar'} \NormalTok{\});}
+\OtherTok{process}\NormalTok{.}\FunctionTok{send}\NormalTok{(\{ }\DataTypeTok{foo}\NormalTok{: }\StringTok{'bar'} \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
 In the child the \texttt{process} object will have a \texttt{send()}
 method, and \texttt{process} will emit objects each time it receives a
 message on its channel.
+
+Please note that the \texttt{send()} method on both the parent and child
+are synchronous - sending large chunks of data is not advised (pipes can
+be used instead, see
+\hyperref[childux5fprocessux5fchildux5fprocessux5fspawnux5fcommandux5fargsux5foptions]{\texttt{child\_process.spawn}}).
 
 There is a special case when sending a \texttt{\{cmd: 'NODE\_foo'\}}
 message. All messages containing a \texttt{NODE\_} prefix in its
@@ -267,21 +303,22 @@ the object as its second argument to the \texttt{message} event.
 Emits an \texttt{'error'} event if the message cannot be sent, for
 example because the child process has already exited.
 
-\paragraph{Example: sending server object}
+\paragraph{Example: sending server
+object}\label{example-sending-server-object}
 
 Here is an example of sending a server:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{child = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{fork}\NormalTok{(}\CharTok{'child.js'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{child = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{fork}\NormalTok{(}\StringTok{'child.js'}\NormalTok{);}
 
 \CommentTok{// Open up the server object and send the handle.}
-\KeywordTok{var} \NormalTok{server = require(}\CharTok{'net'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{();}
-\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(socket) \{}
-  \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'handled by parent'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{server = }\FunctionTok{require}\NormalTok{(}\StringTok{'net'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{();}
+\OtherTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(socket) \{}
+  \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'handled by parent'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-  \KeywordTok{child}\NormalTok{.}\FunctionTok{send}\NormalTok{(}\CharTok{'server'}\NormalTok{, server);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \OtherTok{child}\NormalTok{.}\FunctionTok{send}\NormalTok{(}\StringTok{'server'}\NormalTok{, server);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
@@ -290,10 +327,10 @@ And the child would the receive the server object as:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m, server) \{}
-  \KeywordTok{if} \NormalTok{(m === }\CharTok{'server'}\NormalTok{) \{}
-    \KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(socket) \{}
-      \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'handled by child'}\NormalTok{);}
+\OtherTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m, server) \{}
+  \KeywordTok{if} \NormalTok{(m === }\StringTok{'server'}\NormalTok{) \{}
+    \OtherTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(socket) \{}
+      \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'handled by child'}\NormalTok{);}
     \NormalTok{\});}
   \NormalTok{\}}
 \NormalTok{\});}
@@ -309,7 +346,8 @@ listen on a \texttt{message} event instead of \texttt{connection} and
 use \texttt{server.bind} instead of \texttt{server.listen}. (Currently
 only supported on UNIX platforms.)
 
-\paragraph{Example: sending socket object}
+\paragraph{Example: sending socket
+object}\label{example-sending-socket-object}
 
 Here is an example of sending a socket. It will spawn two children and
 handle connections with the remote address \texttt{74.125.127.100} as
@@ -318,22 +356,22 @@ will go to a ``normal'' process.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{normal = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{fork}\NormalTok{(}\CharTok{'child.js'}\NormalTok{, [}\CharTok{'normal'}\NormalTok{]);}
-\KeywordTok{var} \NormalTok{special = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{fork}\NormalTok{(}\CharTok{'child.js'}\NormalTok{, [}\CharTok{'special'}\NormalTok{]);}
+\KeywordTok{var} \NormalTok{normal = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{fork}\NormalTok{(}\StringTok{'child.js'}\NormalTok{, [}\StringTok{'normal'}\NormalTok{]);}
+\KeywordTok{var} \NormalTok{special = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{fork}\NormalTok{(}\StringTok{'child.js'}\NormalTok{, [}\StringTok{'special'}\NormalTok{]);}
 
 \CommentTok{// Open up the server and send sockets to child}
-\KeywordTok{var} \NormalTok{server = require(}\CharTok{'net'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{();}
-\KeywordTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(socket) \{}
+\KeywordTok{var} \NormalTok{server = }\FunctionTok{require}\NormalTok{(}\StringTok{'net'}\NormalTok{).}\FunctionTok{createServer}\NormalTok{();}
+\OtherTok{server}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connection'}\NormalTok{, }\KeywordTok{function} \NormalTok{(socket) \{}
 
   \CommentTok{// if this is a VIP}
-  \KeywordTok{if} \NormalTok{(}\KeywordTok{socket}\NormalTok{.}\FunctionTok{remoteAddress} \NormalTok{=== }\CharTok{'74.125.127.100'}\NormalTok{) \{}
-    \KeywordTok{special}\NormalTok{.}\FunctionTok{send}\NormalTok{(}\CharTok{'socket'}\NormalTok{, socket);}
+  \KeywordTok{if} \NormalTok{(}\OtherTok{socket}\NormalTok{.}\FunctionTok{remoteAddress} \NormalTok{=== }\StringTok{'74.125.127.100'}\NormalTok{) \{}
+    \OtherTok{special}\NormalTok{.}\FunctionTok{send}\NormalTok{(}\StringTok{'socket'}\NormalTok{, socket);}
     \KeywordTok{return}\NormalTok{;}
   \NormalTok{\}}
   \CommentTok{// just the usual dudes}
-  \KeywordTok{normal}\NormalTok{.}\FunctionTok{send}\NormalTok{(}\CharTok{'socket'}\NormalTok{, socket);}
+  \OtherTok{normal}\NormalTok{.}\FunctionTok{send}\NormalTok{(}\StringTok{'socket'}\NormalTok{, socket);}
 \NormalTok{\});}
-\KeywordTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
+\OtherTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -341,9 +379,9 @@ The \texttt{child.js} could look like this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m, socket) \{}
-  \KeywordTok{if} \NormalTok{(m === }\CharTok{'socket'}\NormalTok{) \{}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'You were handled as a '} \NormalTok{+ }\KeywordTok{process}\NormalTok{.}\FunctionTok{argv}\NormalTok{[}\DecValTok{2}\NormalTok{] + }\CharTok{' person'}\NormalTok{);}
+\OtherTok{process}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'message'}\NormalTok{, }\KeywordTok{function}\NormalTok{(m, socket) \{}
+  \KeywordTok{if} \NormalTok{(m === }\StringTok{'socket'}\NormalTok{) \{}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'You were handled as a '} \NormalTok{+ }\OtherTok{process}\NormalTok{.}\FunctionTok{argv}\NormalTok{[}\DecValTok{2}\NormalTok{] + }\StringTok{' person'}\NormalTok{);}
   \NormalTok{\}}
 \NormalTok{\});}
 \end{Highlighting}
@@ -355,19 +393,25 @@ condition the \texttt{.connections} property becomes \texttt{null}. It
 is also recommended not to use \texttt{.maxConnections} in this
 condition.
 
-\subsubsection{child.disconnect()}
+\subsubsection{child.disconnect()}\label{child.disconnect}
 
-To close the IPC connection between parent and child use the
-\texttt{child.disconnect()} method. This allows the child to exit
-gracefully since there is no IPC channel keeping it alive. When calling
-this method the \texttt{disconnect} event will be emitted in both parent
-and child, and the \texttt{connected} flag will be set to
-\texttt{false}. Please note that you can also call
-\texttt{process.disconnect()} in the child process.
+Close the IPC channel between parent and child, allowing the child to
+exit gracefully once there are no other connections keeping it alive.
+After calling this method the \texttt{.connected} flag will be set to
+\texttt{false} in both the parent and child, and it is no longer
+possible to send messages.
 
-\subsection{child\_process.spawn(command, {[}args{]}, {[}options{]})}
+The `disconnect' event will be emitted when there are no messages in the
+process of being received, most likely immediately.
+
+Note that you can also call \texttt{process.disconnect()} in the child
+process.
+
+\subsection{child\_process.spawn(command, {[}args{]},
+{[}options{]})}\label{childux5fprocess.spawncommand-args-options}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{command} \{String\} The command to run
 \item
@@ -406,8 +450,8 @@ to:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\{ }\DataTypeTok{cwd}\NormalTok{: undefined,}
-  \DataTypeTok{env}\NormalTok{: }\KeywordTok{process}\NormalTok{.}\FunctionTok{env}
+\NormalTok{\{ }\DataTypeTok{cwd}\NormalTok{: }\KeywordTok{undefined}\NormalTok{,}
+  \DataTypeTok{env}\NormalTok{: }\OtherTok{process}\NormalTok{.}\FunctionTok{env}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -421,19 +465,19 @@ Example of running \texttt{ls -lh /usr}, capturing \texttt{stdout},
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
-    \NormalTok{ls    = spawn(}\CharTok{'ls'}\NormalTok{, [}\CharTok{'-lh'}\NormalTok{, }\CharTok{'/usr'}\NormalTok{]);}
+\KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+    \NormalTok{ls    = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'ls'}\NormalTok{, [}\StringTok{'-lh'}\NormalTok{, }\StringTok{'/usr'}\NormalTok{]);}
 
-\KeywordTok{ls.stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'stdout: '} \NormalTok{+ data);}
+\OtherTok{ls}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'stdout: '} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{ls.stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'stderr: '} \NormalTok{+ data);}
+\OtherTok{ls}\NormalTok{.}\OtherTok{stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'stderr: '} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{ls}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'child process exited with code '} \NormalTok{+ code);}
+\OtherTok{ls}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'child process exited with code '} \NormalTok{+ code);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
@@ -442,36 +486,36 @@ Example: A very elaborate way to run `ps ax \textbar{} grep ssh'
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
-    \NormalTok{ps    = spawn(}\CharTok{'ps'}\NormalTok{, [}\CharTok{'ax'}\NormalTok{]),}
-    \NormalTok{grep  = spawn(}\CharTok{'grep'}\NormalTok{, [}\CharTok{'ssh'}\NormalTok{]);}
+\KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+    \NormalTok{ps    = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'ps'}\NormalTok{, [}\StringTok{'ax'}\NormalTok{]),}
+    \NormalTok{grep  = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'grep'}\NormalTok{, [}\StringTok{'ssh'}\NormalTok{]);}
 
-\KeywordTok{ps.stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
-  \KeywordTok{grep.stdin}\NormalTok{.}\FunctionTok{write}\NormalTok{(data);}
+\OtherTok{ps}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
+  \OtherTok{grep}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{write}\NormalTok{(data);}
 \NormalTok{\});}
 
-\KeywordTok{ps.stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'ps stderr: '} \NormalTok{+ data);}
+\OtherTok{ps}\NormalTok{.}\OtherTok{stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'ps stderr: '} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{ps}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
+\OtherTok{ps}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
   \KeywordTok{if} \NormalTok{(code !== }\DecValTok{0}\NormalTok{) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'ps process exited with code '} \NormalTok{+ code);}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'ps process exited with code '} \NormalTok{+ code);}
   \NormalTok{\}}
-  \KeywordTok{grep.stdin}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+  \OtherTok{grep}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 \NormalTok{\});}
 
-\KeywordTok{grep.stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{''} \NormalTok{+ data);}
+\OtherTok{grep}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{''} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{grep.stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'grep stderr: '} \NormalTok{+ data);}
+\OtherTok{grep}\NormalTok{.}\OtherTok{stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'grep stderr: '} \NormalTok{+ data);}
 \NormalTok{\});}
 
-\KeywordTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
+\OtherTok{grep}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'close'}\NormalTok{, }\KeywordTok{function} \NormalTok{(code) \{}
   \KeywordTok{if} \NormalTok{(code !== }\DecValTok{0}\NormalTok{) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'grep process exited with code '} \NormalTok{+ code);}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'grep process exited with code '} \NormalTok{+ code);}
   \NormalTok{\}}
 \NormalTok{\});}
 \end{Highlighting}
@@ -481,13 +525,13 @@ Example of checking for failed exec:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
-    \NormalTok{child = spawn(}\CharTok{'bad_command'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+    \NormalTok{child = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'bad_command'}\NormalTok{);}
 
-\KeywordTok{child.stderr}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
-\KeywordTok{child.stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
+\OtherTok{child}\NormalTok{.}\OtherTok{stderr}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
+\OtherTok{child}\NormalTok{.}\OtherTok{stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
   \KeywordTok{if} \NormalTok{(}\OtherTok{/}\FloatTok{^}\OtherTok{execvp}\FloatTok{\textbackslash{}(\textbackslash{})}\OtherTok{/}\NormalTok{.}\FunctionTok{test}\NormalTok{(data)) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'Failed to start child process.'}\NormalTok{);}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Failed to start child process.'}\NormalTok{);}
   \NormalTok{\}}
 \NormalTok{\});}
 \end{Highlighting}
@@ -503,6 +547,8 @@ each index corresponds to a fd in the child. The value is one of the
 following:
 
 \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{'pipe'} - Create a pipe between the child process and the
   parent process. The parent end of the pipe is exposed to the parent as
@@ -528,6 +574,8 @@ following:
   refers to a tty, file, socket, or a pipe with the child process. The
   stream's underlying file descriptor is duplicated in the child process
   to the fd that corresponds to the index in the \texttt{stdio} array.
+  Note that the stream must have an underlying descriptor (file streams
+  do not until the \texttt{'open'} event has occurred).
 \item
   Positive integer - The integer value is interpreted as a file
   descriptor that is is currently open in the parent process. It is
@@ -543,6 +591,7 @@ As a shorthand, the \texttt{stdio} argument may also be one of the
 following strings, rather than an array:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{ignore} - \texttt{{[}'ignore', 'ignore', 'ignore'{]}}
 \item
@@ -557,17 +606,17 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{;}
+\KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{;}
 
 \CommentTok{// Child will use parent's stdios}
-\NormalTok{spawn(}\CharTok{'prg'}\NormalTok{, [], \{ }\DataTypeTok{stdio}\NormalTok{: }\CharTok{'inherit'} \NormalTok{\});}
+\FunctionTok{spawn}\NormalTok{(}\StringTok{'prg'}\NormalTok{, [], \{ }\DataTypeTok{stdio}\NormalTok{: }\StringTok{'inherit'} \NormalTok{\});}
 
 \CommentTok{// Spawn child sharing only stderr}
-\NormalTok{spawn(}\CharTok{'prg'}\NormalTok{, [], \{ }\DataTypeTok{stdio}\NormalTok{: [}\CharTok{'pipe'}\NormalTok{, }\CharTok{'pipe'}\NormalTok{, }\KeywordTok{process}\NormalTok{.}\FunctionTok{stderr}\NormalTok{] \});}
+\FunctionTok{spawn}\NormalTok{(}\StringTok{'prg'}\NormalTok{, [], \{ }\DataTypeTok{stdio}\NormalTok{: [}\StringTok{'pipe'}\NormalTok{, }\StringTok{'pipe'}\NormalTok{, }\OtherTok{process}\NormalTok{.}\FunctionTok{stderr}\NormalTok{] \});}
 
 \CommentTok{// Open an extra fd=4, to interact with programs present a}
 \CommentTok{// startd-style interface.}
-\NormalTok{spawn(}\CharTok{'prg'}\NormalTok{, [], \{ }\DataTypeTok{stdio}\NormalTok{: [}\CharTok{'pipe'}\NormalTok{, null, null, null, }\CharTok{'pipe'}\NormalTok{] \});}
+\FunctionTok{spawn}\NormalTok{(}\StringTok{'prg'}\NormalTok{, [], \{ }\DataTypeTok{stdio}\NormalTok{: [}\StringTok{'pipe'}\NormalTok{, }\KeywordTok{null}\NormalTok{, }\KeywordTok{null}\NormalTok{, }\KeywordTok{null}\NormalTok{, }\StringTok{'pipe'}\NormalTok{] \});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -585,17 +634,17 @@ to a file:
 
 \begin{Shaded}
 \begin{Highlighting}[]
- \KeywordTok{var} \NormalTok{fs = require(}\CharTok{'fs'}\NormalTok{),}
-     \NormalTok{spawn = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
-     \NormalTok{out = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{openSync}\NormalTok{(}\CharTok{'./out.log'}\NormalTok{, }\CharTok{'a'}\NormalTok{),}
-     \NormalTok{err = }\KeywordTok{fs}\NormalTok{.}\FunctionTok{openSync}\NormalTok{(}\CharTok{'./out.log'}\NormalTok{, }\CharTok{'a'}\NormalTok{);}
+ \KeywordTok{var} \NormalTok{fs = }\FunctionTok{require}\NormalTok{(}\StringTok{'fs'}\NormalTok{),}
+     \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
+     \NormalTok{out = }\OtherTok{fs}\NormalTok{.}\FunctionTok{openSync}\NormalTok{(}\StringTok{'./out.log'}\NormalTok{, }\StringTok{'a'}\NormalTok{),}
+     \NormalTok{err = }\OtherTok{fs}\NormalTok{.}\FunctionTok{openSync}\NormalTok{(}\StringTok{'./out.log'}\NormalTok{, }\StringTok{'a'}\NormalTok{);}
 
- \KeywordTok{var} \NormalTok{child = spawn(}\CharTok{'prg'}\NormalTok{, [], \{}
+ \KeywordTok{var} \NormalTok{child = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'prg'}\NormalTok{, [], \{}
    \DataTypeTok{detached}\NormalTok{: }\KeywordTok{true}\NormalTok{,}
-   \DataTypeTok{stdio}\NormalTok{: [ }\CharTok{'ignore'}\NormalTok{, out, err ]}
+   \DataTypeTok{stdio}\NormalTok{: [ }\StringTok{'ignore'}\NormalTok{, out, err ]}
  \NormalTok{\});}
 
- \KeywordTok{child}\NormalTok{.}\FunctionTok{unref}\NormalTok{();}
+ \OtherTok{child}\NormalTok{.}\FunctionTok{unref}\NormalTok{();}
 \end{Highlighting}
 \end{Shaded}
 
@@ -615,9 +664,11 @@ meant that a new stream should be created. Use at your own risk.
 See also: \texttt{child\_process.exec()} and
 \texttt{child\_process.fork()}
 
-\subsection{child\_process.exec(command, {[}options{]}, callback)}
+\subsection{child\_process.exec(command, {[}options{]},
+callback)}\label{childux5fprocess.execcommand-options-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{command} \{String\} The command to run, with space-separated
   arguments
@@ -638,7 +689,7 @@ See also: \texttt{child\_process.exec()} and
 \item
   \texttt{timeout} \{Number\} (Default: 0)
 \item
-  \texttt{maxBuffer} \{Number\} (Default: 200*1024)
+  \texttt{maxBuffer} \{Number\} (Default: \texttt{200*1024})
 \item
   \texttt{killSignal} \{String\} (Default: `SIGTERM')
 \item
@@ -658,15 +709,15 @@ Runs a command in a shell and buffers the output.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{exec = require(}\CharTok{'child_process'}\NormalTok{).}\FunctionTok{exec}\NormalTok{,}
+\KeywordTok{var} \NormalTok{exec = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{exec}\NormalTok{,}
     \NormalTok{child;}
 
-\NormalTok{child = exec(}\CharTok{'cat *.js bad_file \textbar{} wc -l'}\NormalTok{,}
+\NormalTok{child = }\FunctionTok{exec}\NormalTok{(}\StringTok{'cat *.js bad_file | wc -l'}\NormalTok{,}
   \KeywordTok{function} \NormalTok{(error, stdout, stderr) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'stdout: '} \NormalTok{+ stdout);}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'stderr: '} \NormalTok{+ stderr);}
-    \KeywordTok{if} \NormalTok{(error !== null) \{}
-      \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'exec error: '} \NormalTok{+ error);}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'stdout: '} \NormalTok{+ stdout);}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'stderr: '} \NormalTok{+ stderr);}
+    \KeywordTok{if} \NormalTok{(error !== }\KeywordTok{null}\NormalTok{) \{}
+      \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'exec error: '} \NormalTok{+ error);}
     \NormalTok{\}}
 \NormalTok{\});}
 \end{Highlighting}
@@ -683,12 +734,12 @@ default options are
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\{ }\DataTypeTok{encoding}\NormalTok{: }\CharTok{'utf8'}\NormalTok{,}
+\NormalTok{\{ }\DataTypeTok{encoding}\NormalTok{: }\StringTok{'utf8'}\NormalTok{,}
   \DataTypeTok{timeout}\NormalTok{: }\DecValTok{0}\NormalTok{,}
   \DataTypeTok{maxBuffer}\NormalTok{: }\DecValTok{200}\NormalTok{*}\DecValTok{1024}\NormalTok{,}
-  \DataTypeTok{killSignal}\NormalTok{: }\CharTok{'SIGTERM'}\NormalTok{,}
-  \DataTypeTok{cwd}\NormalTok{: null,}
-  \DataTypeTok{env}\NormalTok{: null \}}
+  \DataTypeTok{killSignal}\NormalTok{: }\StringTok{'SIGTERM'}\NormalTok{,}
+  \DataTypeTok{cwd}\NormalTok{: }\KeywordTok{null}\NormalTok{,}
+  \DataTypeTok{env}\NormalTok{: }\KeywordTok{null} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -699,9 +750,11 @@ process is killed with \texttt{killSignal} (default:
 data allowed on stdout or stderr - if this value is exceeded then the
 child process is killed.
 
-\subsection{child\_process.execFile(file, args, options, callback)}
+\subsection{child\_process.execFile(file, {[}args{]}, {[}options{]},
+{[}callback{]})}\label{childux5fprocess.execfilefile-args-options-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{file} \{String\} The filename of the program to run
 \item
@@ -738,9 +791,11 @@ execute a subshell but rather the specified file directly. This makes it
 slightly leaner than \texttt{child\_process.exec}. It has the same
 options.
 
-\subsection{child\_process.fork(modulePath, {[}args{]}, {[}options{]})}
+\subsection{child\_process.fork(modulePath, {[}args{]},
+{[}options{]})}\label{childux5fprocess.forkmodulepath-args-options}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{modulePath} \{String\} The module to run in the child
 \item
@@ -757,6 +812,14 @@ options.
   \texttt{execPath} \{String\} Executable used to create the child
   process
 \item
+  \texttt{execArgv} \{Array\} List of string arguments passed to the
+  executable (Default: \texttt{process.execArgv})
+\item
+  \texttt{silent} \{Boolean\} If true, stdin, stdout, and stderr of the
+  child will be piped to the parent, otherwise they will be inherited
+  from the parent, see the ``pipe'' and ``inherit'' options for
+  \texttt{spawn()}'s \texttt{stdio} for more details (default is false)
+\item
   Return: ChildProcess object
 \end{itemize}
 
@@ -765,15 +828,6 @@ spawning Node processes. In addition to having all the methods in a
 normal ChildProcess instance, the returned object has a communication
 channel built-in. See \texttt{child.send(message, {[}sendHandle{]})} for
 details.
-
-By default the spawned Node process will have the stdout, stderr
-associated with the parent's. To change this behavior set the
-\texttt{silent} property in the \texttt{options} object to
-\texttt{true}.
-
-The child process does not automatically exit once it's done, you need
-to call \texttt{process.exit()} explicitly. This limitation may be
-lifted in the future.
 
 These child Nodes are still whole new instances of V8. Assume at least
 30ms startup and 10mb memory for each new Node. That is, you cannot

@@ -1,8 +1,8 @@
-\section{HTTP}
+\section{HTTP}\label{http}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DataTypeTok{Stability}\NormalTok{: }\DecValTok{3} \NormalTok{- Stable}
+\NormalTok{Stability: }\DecValTok{3} \NormalTok{- Stable}
 \end{Highlighting}
 \end{Shaded}
 
@@ -18,11 +18,11 @@ HTTP message headers are represented by an object like this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\{ }\CharTok{'content-length'}\NormalTok{: }\CharTok{'123'}\NormalTok{,}
-  \CharTok{'content-type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{,}
-  \CharTok{'connection'}\NormalTok{: }\CharTok{'keep-alive'}\NormalTok{,}
-  \CharTok{'host'}\NormalTok{: }\CharTok{'mysite.com'}\NormalTok{,}
-  \CharTok{'accept'}\NormalTok{: }\CharTok{'*/*'} \NormalTok{\}}
+\NormalTok{\{ }\StringTok{'content-length'}\NormalTok{: }\StringTok{'123'}\NormalTok{,}
+  \StringTok{'content-type'}\NormalTok{: }\StringTok{'text/plain'}\NormalTok{,}
+  \StringTok{'connection'}\NormalTok{: }\StringTok{'keep-alive'}\NormalTok{,}
+  \StringTok{'host'}\NormalTok{: }\StringTok{'mysite.com'}\NormalTok{,}
+  \StringTok{'accept'}\NormalTok{: }\StringTok{'*/*'} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -48,18 +48,29 @@ following:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{[ }\CharTok{'ConTent-Length'}\NormalTok{, }\CharTok{'123456'}\NormalTok{,}
-  \CharTok{'content-LENGTH'}\NormalTok{, }\CharTok{'123'}\NormalTok{,}
-  \CharTok{'content-type'}\NormalTok{, }\CharTok{'text/plain'}\NormalTok{,}
-  \CharTok{'CONNECTION'}\NormalTok{, }\CharTok{'keep-alive'}\NormalTok{,}
-  \CharTok{'Host'}\NormalTok{, }\CharTok{'mysite.com'}\NormalTok{,}
-  \CharTok{'accepT'}\NormalTok{, }\CharTok{'*/*'} \NormalTok{]}
+\NormalTok{[ }\StringTok{'ConTent-Length'}\NormalTok{, }\StringTok{'123456'}\NormalTok{,}
+  \StringTok{'content-LENGTH'}\NormalTok{, }\StringTok{'123'}\NormalTok{,}
+  \StringTok{'content-type'}\NormalTok{, }\StringTok{'text/plain'}\NormalTok{,}
+  \StringTok{'CONNECTION'}\NormalTok{, }\StringTok{'keep-alive'}\NormalTok{,}
+  \StringTok{'Host'}\NormalTok{, }\StringTok{'mysite.com'}\NormalTok{,}
+  \StringTok{'accepT'}\NormalTok{, }\StringTok{'*/*'} \NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{http.STATUS\_CODES}
+\subsection{http.METHODS}\label{http.methods}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \{Array\}
+\end{itemize}
+
+A list of the HTTP methods that are supported by the parser.
+
+\subsection{http.STATUS\_CODES}\label{http.statusux5fcodes}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Object\}
 \end{itemize}
@@ -68,36 +79,39 @@ A collection of all the standard HTTP response status codes, and the
 short description of each. For example,
 \texttt{http.STATUS\_CODES{[}404{]} === 'Not Found'}.
 
-\subsection{http.createServer({[}requestListener{]})}
+\subsection{http.createServer({[}requestListener{]})}\label{http.createserverrequestlistener}
 
 Returns a new web server object.
 
 The \texttt{requestListener} is a function which is automatically added
 to the \texttt{'request'} event.
 
-\subsection{http.createClient({[}port{]}, {[}host{]})}
+\subsection{http.createClient({[}port{]},
+{[}host{]})}\label{http.createclientport-host}
 
 This function is \textbf{deprecated}; please use
-\hyperref[http_http_request_options_callback]{http.request()}
+\hyperref[httpux5fhttpux5frequestux5foptionsux5fcallback]{http.request()}
 instead. Constructs a new HTTP client. \texttt{port} and \texttt{host}
 refer to the server to be connected to.
 
-\subsection{Class: http.Server}
+\subsection{Class: http.Server}\label{class-http.server}
 
 This is an
-\href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}
-with the following events:
+\href{events.html\#events_class_events_eventemitter}{EventEmitter} with
+the following events:
 
-\subsubsection{Event: `request'}
+\subsubsection{Event: `request'}\label{event-request}
 
 \texttt{function (request, response) \{ \}}
 
 Emitted each time there is a request. Note that there may be multiple
 requests per connection (in the case of keep-alive connections).
-\texttt{request} is an instance of \texttt{http.IncomingMessage} and
-\texttt{response} is an instance of \texttt{http.ServerResponse}
+\texttt{request} is an instance of
+\hyperref[httpux5fhttpux5fincomingmessage]{http.IncomingMessage} and
+\texttt{response} is an instance of
+\hyperref[httpux5fclassux5fhttpux5fserverresponse]{http.ServerResponse}.
 
-\subsubsection{Event: `connection'}
+\subsubsection{Event: `connection'}\label{event-connection}
 
 \texttt{function (socket) \{ \}}
 
@@ -107,13 +121,13 @@ event. In particular, the socket will not emit \texttt{readable} events
 because of how the protocol parser attaches to the socket. The
 \texttt{socket} can also be accessed at \texttt{request.connection}.
 
-\subsubsection{Event: `close'}
+\subsubsection{Event: `close'}\label{event-close}
 
 \texttt{function () \{ \}}
 
 Emitted when the server closes.
 
-\subsubsection{Event: `checkContinue'}
+\subsubsection{Event: `checkContinue'}\label{event-checkcontinue}
 
 \texttt{function (request, response) \{ \}}
 
@@ -121,15 +135,16 @@ Emitted each time a request with an http Expect: 100-continue is
 received. If this event isn't listened for, the server will
 automatically respond with a 100 Continue as appropriate.
 
-Handling this event involves calling \texttt{response.writeContinue} if
-the client should continue to send the request body, or generating an
+Handling this event involves calling
+\hyperref[httpux5fresponseux5fwritecontinue]{response.writeContinue()}
+if the client should continue to send the request body, or generating an
 appropriate HTTP response (e.g., 400 Bad Request) if the client should
 not continue to send the request body.
 
 Note that when this event is emitted and handled, the \texttt{request}
 event will not be emitted.
 
-\subsubsection{Event: `connect'}
+\subsubsection{Event: `connect'}\label{event-connect}
 
 \texttt{function (request, socket, head) \{ \}}
 
@@ -138,6 +153,7 @@ isn't listened for, then clients requesting a CONNECT method will have
 their connections closed.
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{request} is the arguments for the http request, as it is in
   the request event.
@@ -152,7 +168,7 @@ After this event is emitted, the request's socket will not have a
 \texttt{data} event listener, meaning you will need to bind to it in
 order to handle data sent to the server on that socket.
 
-\subsubsection{Event: `upgrade'}
+\subsubsection{Event: `upgrade'}\label{event-upgrade}
 
 \texttt{function (request, socket, head) \{ \}}
 
@@ -161,6 +177,7 @@ listened for, then clients requesting an upgrade will have their
 connections closed.
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{request} is the arguments for the http request, as it is in
   the request event.
@@ -175,7 +192,7 @@ After this event is emitted, the request's socket will not have a
 \texttt{data} event listener, meaning you will need to bind to it in
 order to handle data sent to the server on that socket.
 
-\subsubsection{Event: `clientError'}
+\subsubsection{Event: `clientError'}\label{event-clienterror}
 
 \texttt{function (exception, socket) \{ \}}
 
@@ -185,7 +202,7 @@ If a client connection emits an `error' event - it will forwarded here.
 originated from.
 
 \subsubsection{server.listen(port, {[}hostname{]}, {[}backlog{]},
-{[}callback{]})}
+{[}callback{]})}\label{server.listenport-hostname-backlog-callback}
 
 Begin accepting connections on the specified port and hostname. If the
 hostname is omitted, the server will accept connections directed to any
@@ -201,22 +218,25 @@ default value of this parameter is 511 (not 512).
 
 This function is asynchronous. The last parameter \texttt{callback} will
 be added as a listener for the
-\href{net.html\#net\_event\_listening}{`listening'} event. See also
-\href{net.html\#net\_server\_listen\_port\_host\_backlog\_callback}{net.Server.listen(port)}.
+\href{net.html\#net_event_listening}{`listening'} event. See also
+\href{net.html\#net_server_listen_port_host_backlog_callback}{net.Server.listen(port)}.
 
-\subsubsection{server.listen(path, {[}callback{]})}
+\subsubsection{server.listen(path,
+{[}callback{]})}\label{server.listenpath-callback}
 
 Start a UNIX socket server listening for connections on the given
 \texttt{path}.
 
 This function is asynchronous. The last parameter \texttt{callback} will
 be added as a listener for the
-\href{net.html\#net\_event\_listening}{`listening'} event. See also
-\href{net.html\#net\_server\_listen\_path\_callback}{net.Server.listen(path)}.
+\href{net.html\#net_event_listening}{`listening'} event. See also
+\href{net.html\#net_server_listen_path_callback}{net.Server.listen(path)}.
 
-\subsubsection{server.listen(handle, {[}callback{]})}
+\subsubsection{server.listen(handle,
+{[}callback{]})}\label{server.listenhandle-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{handle} \{Object\}
 \item
@@ -235,22 +255,24 @@ Listening on a file descriptor is not supported on Windows.
 
 This function is asynchronous. The last parameter \texttt{callback} will
 be added as a listener for the
-\href{net.html\#event\_listening\_}{`listening'} event. See also
-\href{net.html\#net\_server\_listen\_handle\_callback}{net.Server.listen()}.
+\href{net.html\#event_listening_}{`listening'} event. See also
+\href{net.html\#net_server_listen_handle_callback}{net.Server.listen()}.
 
-\subsubsection{server.close({[}callback{]})}
+\subsubsection{server.close({[}callback{]})}\label{server.closecallback}
 
 Stops the server from accepting new connections. See
-\href{net.html\#net\_server\_close\_callback}{net.Server.close()}.
+\href{net.html\#net_server_close_callback}{net.Server.close()}.
 
-\subsubsection{server.maxHeadersCount}
+\subsubsection{server.maxHeadersCount}\label{server.maxheaderscount}
 
 Limits maximum incoming headers count, equal to 1000 by default. If set
 to 0 - no limit will be applied.
 
-\subsubsection{server.setTimeout(msecs, callback)}
+\subsubsection{server.setTimeout(msecs,
+callback)}\label{server.settimeoutmsecs-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{msecs} \{Number\}
 \item
@@ -269,9 +291,10 @@ destroyed automatically if they time out. However, if you assign a
 callback to the Server's \texttt{'timeout'} event, then you are
 responsible for handling socket timeouts.
 
-\subsubsection{server.timeout}
+\subsubsection{server.timeout}\label{server.timeout}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \{Number\} Default = 120000 (2 minutes)
 \end{itemize}
@@ -286,33 +309,45 @@ existing connections.
 Set to 0 to disable any kind of automatic timeout behavior on incoming
 connections.
 
-\subsection{Class: http.ServerResponse}
+\subsection{Class: http.ServerResponse}\label{class-http.serverresponse}
 
 This object is created internally by a HTTP server--not by the user. It
 is passed as the second parameter to the \texttt{'request'} event.
 
 The response implements the
-\href{stream.html\#stream\_writable\_stream}{Writable Stream} interface.
+\href{stream.html\#stream_writable_stream}{Writable Stream} interface.
 This is an
-\href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}
-with the following events:
+\href{events.html\#events_class_events_eventemitter}{EventEmitter} with
+the following events:
 
-\subsubsection{Event: `close'}
+\subsubsection{Event: `close'}\label{event-close-1}
 
 \texttt{function () \{ \}}
 
 Indicates that the underlying connection was terminated before
-\texttt{response.end()} was called or able to flush.
+\hyperref[httpux5fresponseux5fendux5fdataux5fencoding]{response.end()}
+was called or able to flush.
 
-\subsubsection{response.writeContinue()}
+\subsubsection{Event: `finish'}\label{event-finish}
+
+\texttt{function () \{ \}}
+
+Emitted when the response has been sent. More specifically, this event
+is emitted when the last segment of the response headers and body have
+been handed off to the operating system for transmission over the
+network. It does not imply that the client has received anything yet.
+
+After this event, no more events will be emitted on the response object.
+
+\subsubsection{response.writeContinue()}\label{response.writecontinue}
 
 Sends a HTTP/1.1 100 Continue message to the client, indicating that the
 request body should be sent. See the
-\hyperref[http_event_checkcontinue]{`checkContinue'} event on
+\hyperref[httpux5feventux5fcheckcontinue]{`checkContinue'} event on
 \texttt{Server}.
 
 \subsubsection{response.writeHead(statusCode, {[}statusMessage{]},
-{[}headers{]})}
+{[}headers{]})}\label{response.writeheadstatuscode-statusmessage-headers}
 
 Sends a response header to the request. The status code is a 3-digit
 HTTP status code, like \texttt{404}. The last argument,
@@ -323,19 +358,24 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{body = }\CharTok{'hello world'}\NormalTok{;}
-\KeywordTok{response}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}
-  \CharTok{'Content-Length'}\NormalTok{: }\KeywordTok{body}\NormalTok{.}\FunctionTok{length}\NormalTok{,}
-  \CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'} \NormalTok{\});}
+\KeywordTok{var} \NormalTok{body = }\StringTok{'hello world'}\NormalTok{;}
+\OtherTok{response}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}
+  \StringTok{'Content-Length'}\NormalTok{: }\OtherTok{body}\NormalTok{.}\FunctionTok{length}\NormalTok{,}
+  \StringTok{'Content-Type'}\NormalTok{: }\StringTok{'text/plain'} \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
 This method must only be called once on a message and it must be called
-before \texttt{response.end()} is called.
+before
+\hyperref[httpux5fresponseux5fendux5fdataux5fencoding]{response.end()}
+is called.
 
-If you call \texttt{response.write()} or \texttt{response.end()} before
-calling this, the implicit/mutable headers will be calculated and call
-this function for you.
+If you call
+\hyperref[httpux5fresponseux5fwriteux5fchunkux5fencoding]{response.write()}
+or
+\hyperref[httpux5fresponseux5fendux5fdataux5fencoding]{response.end()}
+before calling this, the implicit/mutable headers will be calculated and
+call this function for you.
 
 Note: that Content-Length is given in bytes not characters. The above
 example works because the string \texttt{'hello world'} contains only
@@ -345,9 +385,11 @@ of bytes in a given encoding. And Node does not check whether
 Content-Length and the length of the body which has been transmitted are
 equal or not.
 
-\subsubsection{response.setTimeout(msecs, callback)}
+\subsubsection{response.setTimeout(msecs,
+callback)}\label{response.settimeoutmsecs-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{msecs} \{Number\}
 \item
@@ -364,9 +406,10 @@ assign a handler on the request, the response, or the server's
 \texttt{'timeout'} events, then it is your responsibility to handle
 timed out sockets.
 
-\subsubsection{response.statusCode}
+\subsubsection{response.statusCode}\label{response.statuscode}
 
-When using implicit headers (not calling \texttt{response.writeHead()}
+When using implicit headers (not calling
+\hyperref[httpux5fresponseux5fwriteheadux5fstatuscodeux5freasonphraseux5fheaders]{response.writeHead()}
 explicitly), this property controls the status code that will be sent to
 the client when the headers get flushed.
 
@@ -374,14 +417,14 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{response}\NormalTok{.}\FunctionTok{statusCode} \NormalTok{= }\DecValTok{404}\NormalTok{;}
+\OtherTok{response}\NormalTok{.}\FunctionTok{statusCode} \NormalTok{= }\DecValTok{404}\NormalTok{;}
 \end{Highlighting}
 \end{Shaded}
 
 After response header was sent to the client, this property indicates
 the status code which was sent out.
 
-\subsubsection{response.statusMessage}
+\subsubsection{response.statusMessage}\label{response.statusmessage}
 
 When using implicit headers (not calling \texttt{response.writeHead()}
 explicitly), this property controls the status message that will be sent
@@ -393,14 +436,15 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{response}\NormalTok{.}\FunctionTok{statusMessage} \NormalTok{= }\CharTok{'Not found'}\NormalTok{;}
+\OtherTok{response}\NormalTok{.}\FunctionTok{statusMessage} \NormalTok{= }\StringTok{'Not found'}\NormalTok{;}
 \end{Highlighting}
 \end{Shaded}
 
 After response header was sent to the client, this property indicates
 the status message which was sent out.
 
-\subsubsection{response.setHeader(name, value)}
+\subsubsection{response.setHeader(name,
+value)}\label{response.setheadername-value}
 
 Sets a single header value for implicit headers. If this header already
 exists in the to-be-sent headers, its value will be replaced. Use an
@@ -411,7 +455,7 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{response}\NormalTok{.}\FunctionTok{setHeader}\NormalTok{(}\StringTok{"Content-Type"}\NormalTok{, }\StringTok{"text/html"}\NormalTok{);}
+\OtherTok{response}\NormalTok{.}\FunctionTok{setHeader}\NormalTok{(}\StringTok{"Content-Type"}\NormalTok{, }\StringTok{"text/html"}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -419,15 +463,15 @@ or
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{response}\NormalTok{.}\FunctionTok{setHeader}\NormalTok{(}\StringTok{"Set-Cookie"}\NormalTok{, [}\StringTok{"type=ninja"}\NormalTok{, }\StringTok{"language=javascript"}\NormalTok{]);}
+\OtherTok{response}\NormalTok{.}\FunctionTok{setHeader}\NormalTok{(}\StringTok{"Set-Cookie"}\NormalTok{, [}\StringTok{"type=ninja"}\NormalTok{, }\StringTok{"language=javascript"}\NormalTok{]);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{response.headersSent}
+\subsubsection{response.headersSent}\label{response.headerssent}
 
 Boolean (read-only). True if headers were sent, false otherwise.
 
-\subsubsection{response.sendDate}
+\subsubsection{response.sendDate}\label{response.senddate}
 
 When true, the Date header will be automatically generated and sent in
 the response if it is not already present in the headers. Defaults to
@@ -436,7 +480,7 @@ true.
 This should only be disabled for testing; HTTP requires the Date header
 in responses.
 
-\subsubsection{response.getHeader(name)}
+\subsubsection{response.getHeader(name)}\label{response.getheadername}
 
 Reads out a header that's already been queued but not sent to the
 client. Note that the name is case insensitive. This can only be called
@@ -446,11 +490,11 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{contentType = }\KeywordTok{response}\NormalTok{.}\FunctionTok{getHeader}\NormalTok{(}\CharTok{'content-type'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{contentType = }\OtherTok{response}\NormalTok{.}\FunctionTok{getHeader}\NormalTok{(}\StringTok{'content-type'}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{response.removeHeader(name)}
+\subsubsection{response.removeHeader(name)}\label{response.removeheadername}
 
 Removes a header that's queued for implicit sending.
 
@@ -458,15 +502,17 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{response}\NormalTok{.}\FunctionTok{removeHeader}\NormalTok{(}\StringTok{"Content-Encoding"}\NormalTok{);}
+\OtherTok{response}\NormalTok{.}\FunctionTok{removeHeader}\NormalTok{(}\StringTok{"Content-Encoding"}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{response.write(chunk, {[}encoding{]})}
+\subsubsection{response.write(chunk,
+{[}encoding{]})}\label{response.writechunk-encoding}
 
-If this method is called and \texttt{response.writeHead()} has not been
-called, it will switch to implicit header mode and flush the implicit
-headers.
+If this method is called and
+\hyperref[httpux5fresponseux5fwriteheadux5fstatuscodeux5freasonphraseux5fheaders]{response.writeHead()}
+has not been called, it will switch to implicit header mode and flush
+the implicit headers.
 
 This sends a chunk of the response body. This method may be called
 multiple times to provide successive parts of the body.
@@ -489,7 +535,7 @@ kernel buffer. Returns \texttt{false} if all or part of the data was
 queued in user memory. \texttt{'drain'} will be emitted when the buffer
 is again free.
 
-\subsubsection{response.addTrailers(headers)}
+\subsubsection{response.addTrailers(headers)}\label{response.addtrailersheaders}
 
 This method adds HTTP trailing headers (a header but at the end of the
 message) to the response.
@@ -504,15 +550,16 @@ E.g.,
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{response}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{ }\CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{,}
-                          \CharTok{'Trailer'}\NormalTok{: }\CharTok{'Content-MD5'} \NormalTok{\});}
-\KeywordTok{response}\NormalTok{.}\FunctionTok{write}\NormalTok{(fileData);}
-\KeywordTok{response}\NormalTok{.}\FunctionTok{addTrailers}\NormalTok{(\{}\CharTok{'Content-MD5'}\NormalTok{: }\StringTok{"7895bf4b8828b55ceaf47747b4bca667"}\NormalTok{\});}
-\KeywordTok{response}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+\OtherTok{response}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{ }\StringTok{'Content-Type'}\NormalTok{: }\StringTok{'text/plain'}\NormalTok{,}
+                          \StringTok{'Trailer'}\NormalTok{: }\StringTok{'Content-MD5'} \NormalTok{\});}
+\OtherTok{response}\NormalTok{.}\FunctionTok{write}\NormalTok{(fileData);}
+\OtherTok{response}\NormalTok{.}\FunctionTok{addTrailers}\NormalTok{(\{}\StringTok{'Content-MD5'}\NormalTok{: }\StringTok{"7895bf4b8828b55ceaf47747b4bca667"}\NormalTok{\});}
+\OtherTok{response}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{response.end({[}data{]}, {[}encoding{]})}
+\subsubsection{response.end({[}data{]},
+{[}encoding{]})}\label{response.enddata-encoding}
 
 This method signals to the server that all of the response headers and
 body have been sent; that server should consider this message complete.
@@ -522,18 +569,20 @@ If \texttt{data} is specified, it is equivalent to calling
 \texttt{response.write(data, encoding)} followed by
 \texttt{response.end()}.
 
-\subsection{http.request(options, callback)}
+\subsection{http.request(options,
+{[}callback{]})}\label{http.requestoptions-callback}
 
 Node maintains several connections per server to make HTTP requests.
 This function allows one to transparently issue requests.
 
 \texttt{options} can be an object or a string. If \texttt{options} is a
 string, it is automatically parsed with
-\href{url.html\#url\_url\_parse\_urlstr\_parsequerystring\_slashesdenotehost}{url.parse()}.
+\href{url.html\#url_url_parse_urlstr_parsequerystring_slashesdenotehost}{url.parse()}.
 
 Options:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{host}: A domain name or IP address of the server to issue the
   request to. Defaults to \texttt{'localhost'}.
@@ -562,12 +611,13 @@ Options:
   \texttt{auth}: Basic authentication i.e. \texttt{'user:password'} to
   compute an Authorization header.
 \item
-  \texttt{agent}: Controls \hyperref[http_class_http_agent]{Agent}
-  behavior. When an Agent is used request will default to
-  \texttt{Connection: keep-alive}. Possible values:
+  \texttt{agent}: Controls
+  \hyperref[httpux5fclassux5fhttpux5fagent]{Agent} behavior. When an
+  Agent is used request will default to \texttt{Connection: keep-alive}.
+  Possible values:
 \item
   \texttt{undefined} (default): use
-  \hyperref[http_http_globalagent]{global Agent} for this host and
+  \hyperref[httpux5fhttpux5fglobalagent]{global Agent} for this host and
   port.
 \item
   \texttt{Agent} object: explicitly use the passed in \texttt{Agent}.
@@ -584,39 +634,43 @@ Options:
   \texttt{true}.
 \end{itemize}
 
+The optional \texttt{callback} parameter will be added as a one time
+listener for the \hyperref[httpux5feventux5fresponse]{`response'} event.
+
 \texttt{http.request()} returns an instance of the
-\texttt{http.ClientRequest} class. The \texttt{ClientRequest} instance
-is a writable stream. If one needs to upload a file with a POST request,
-then write to the \texttt{ClientRequest} object.
+\hyperref[httpux5fclassux5fhttpux5fclientrequest]{http.ClientRequest}
+class. The \texttt{ClientRequest} instance is a writable stream. If one
+needs to upload a file with a POST request, then write to the
+\texttt{ClientRequest} object.
 
 Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{options = \{}
-  \DataTypeTok{hostname}\NormalTok{: }\CharTok{'www.google.com'}\NormalTok{,}
+  \DataTypeTok{hostname}\NormalTok{: }\StringTok{'www.google.com'}\NormalTok{,}
   \DataTypeTok{port}\NormalTok{: }\DecValTok{80}\NormalTok{,}
-  \DataTypeTok{path}\NormalTok{: }\CharTok{'/upload'}\NormalTok{,}
-  \DataTypeTok{method}\NormalTok{: }\CharTok{'POST'}
+  \DataTypeTok{path}\NormalTok{: }\StringTok{'/upload'}\NormalTok{,}
+  \DataTypeTok{method}\NormalTok{: }\StringTok{'POST'}
 \NormalTok{\};}
 
-\KeywordTok{var} \NormalTok{req = }\KeywordTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(res) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'STATUS: '} \NormalTok{+ }\KeywordTok{res}\NormalTok{.}\FunctionTok{statusCode}\NormalTok{);}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'HEADERS: '} \NormalTok{+ }\KeywordTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(}\KeywordTok{res}\NormalTok{.}\FunctionTok{headers}\NormalTok{));}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\CharTok{'utf8'}\NormalTok{);}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(chunk) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'BODY: '} \NormalTok{+ chunk);}
+\KeywordTok{var} \NormalTok{req = }\OtherTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(res) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'STATUS: '} \NormalTok{+ }\OtherTok{res}\NormalTok{.}\FunctionTok{statusCode}\NormalTok{);}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'HEADERS: '} \NormalTok{+ }\OtherTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(}\OtherTok{res}\NormalTok{.}\FunctionTok{headers}\NormalTok{));}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(chunk) \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'BODY: '} \NormalTok{+ chunk);}
   \NormalTok{\});}
 \NormalTok{\});}
 
-\KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(e) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'problem with request: '} \NormalTok{+ }\KeywordTok{e}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
+\OtherTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(e) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'problem with request: '} \NormalTok{+ }\OtherTok{e}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
 \NormalTok{\});}
 
 \CommentTok{// write data to request body}
-\KeywordTok{req}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'data\textbackslash{}n'}\NormalTok{);}
-\KeywordTok{req}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'data\textbackslash{}n'}\NormalTok{);}
-\KeywordTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+\OtherTok{req}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'data}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+\OtherTok{req}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'data}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+\OtherTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 \end{Highlighting}
 \end{Shaded}
 
@@ -648,7 +702,8 @@ There are a few special headers that should be noted.
   option to compute basic authentication.
 \end{itemize}
 
-\subsection{http.get(options, callback)}
+\subsection{http.get(options,
+{[}callback{]})}\label{http.getoptions-callback}
 
 Since most requests are GET requests without bodies, Node provides this
 convenience method. The only difference between this method and
@@ -659,15 +714,15 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(}\StringTok{"http://www.google.com/index.html"}\NormalTok{, }\KeywordTok{function}\NormalTok{(res) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Got response: "} \NormalTok{+ }\KeywordTok{res}\NormalTok{.}\FunctionTok{statusCode}\NormalTok{);}
-\NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\CharTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(e) \{}
-  \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Got error: "} \NormalTok{+ }\KeywordTok{e}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
+\OtherTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(}\StringTok{"http://www.google.com/index.html"}\NormalTok{, }\KeywordTok{function}\NormalTok{(res) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Got response: "} \NormalTok{+ }\OtherTok{res}\NormalTok{.}\FunctionTok{statusCode}\NormalTok{);}
+\NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(e) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Got error: "} \NormalTok{+ }\OtherTok{e}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Class: http.Agent}
+\subsection{Class: http.Agent}\label{class-http.agent}
 
 The HTTP Agent is used for pooling sockets used in HTTP client requests.
 
@@ -679,11 +734,11 @@ developers to manually close the HTTP clients using KeepAlive.
 
 If you opt into using HTTP KeepAlive, you can create an Agent object
 with that flag set to \texttt{true}. (See the
-\hyperref[http_new_agent_options]{constructor options} below.) Then,
-the Agent will keep unused sockets in a pool for later use. They will be
-explicitly marked so as to not keep the Node process running. However,
-it is still a good idea to explicitly
-\hyperref[http_agent_destroy]{\texttt{destroy()}} KeepAlive agents
+\hyperref[httpux5fnewux5fagentux5foptions]{constructor options} below.)
+Then, the Agent will keep unused sockets in a pool for later use. They
+will be explicitly marked so as to not keep the Node process running.
+However, it is still a good idea to explicitly
+\hyperref[httpux5fagentux5fdestroy]{\texttt{destroy()}} KeepAlive agents
 when they are no longer in use, so that the Sockets will be shut down.
 
 Sockets are removed from the agent's pool when the socket emits either a
@@ -693,10 +748,10 @@ it to stay in the pool you can do something along the lines of:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(res) \{}
+\OtherTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(options, }\KeywordTok{function}\NormalTok{(res) \{}
   \CommentTok{// Do stuff}
 \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\StringTok{"socket"}\NormalTok{, }\KeywordTok{function} \NormalTok{(socket) \{}
-  \KeywordTok{socket}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{"agentRemove"}\NormalTok{);}
+  \OtherTok{socket}\NormalTok{.}\FunctionTok{emit}\NormalTok{(}\StringTok{"agentRemove"}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
@@ -706,10 +761,10 @@ Alternatively, you could just opt out of pooling entirely using
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(\{}
-  \DataTypeTok{hostname}\NormalTok{: }\CharTok{'localhost'}\NormalTok{,}
+\OtherTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(\{}
+  \DataTypeTok{hostname}\NormalTok{: }\StringTok{'localhost'}\NormalTok{,}
   \DataTypeTok{port}\NormalTok{: }\DecValTok{80}\NormalTok{,}
-  \DataTypeTok{path}\NormalTok{: }\CharTok{'/'}\NormalTok{,}
+  \DataTypeTok{path}\NormalTok{: }\StringTok{'/'}\NormalTok{,}
   \DataTypeTok{agent}\NormalTok{: }\KeywordTok{false}  \CommentTok{// create a new agent just for this one request}
 \NormalTok{\}, }\KeywordTok{function} \NormalTok{(res) \{}
   \CommentTok{// Do stuff with response}
@@ -717,9 +772,10 @@ Alternatively, you could just opt out of pooling entirely using
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{new Agent({[}options{]})}
+\subsubsection{new Agent({[}options{]})}\label{new-agentoptions}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{options} \{Object\} Set of configurable options to set on the
   agent. Can have the following fields:
@@ -749,38 +805,38 @@ object.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{http = require(}\CharTok{'http'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{keepAliveAgent = }\KeywordTok{new} \KeywordTok{http}\NormalTok{.}\FunctionTok{Agent}\NormalTok{(\{ }\DataTypeTok{keepAlive}\NormalTok{: }\KeywordTok{true} \NormalTok{\});}
-\KeywordTok{keepAliveAgent}\NormalTok{.}\FunctionTok{request}\NormalTok{(options, onResponseCallback);}
+\KeywordTok{var} \NormalTok{http = }\FunctionTok{require}\NormalTok{(}\StringTok{'http'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{keepAliveAgent = }\KeywordTok{new} \OtherTok{http}\NormalTok{.}\FunctionTok{Agent}\NormalTok{(\{ }\DataTypeTok{keepAlive}\NormalTok{: }\KeywordTok{true} \NormalTok{\});}
+\OtherTok{keepAliveAgent}\NormalTok{.}\FunctionTok{request}\NormalTok{(options, onResponseCallback);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{agent.maxSockets}
+\subsubsection{agent.maxSockets}\label{agent.maxsockets}
 
 By default set to Infinity. Determines how many concurrent sockets the
 agent can have open per host.
 
-\subsubsection{agent.maxFreeSockets}
+\subsubsection{agent.maxFreeSockets}\label{agent.maxfreesockets}
 
 By default set to 256. For Agents supporting HTTP KeepAlive, this sets
 the maximum number of sockets that will be left open in the free state.
 
-\subsubsection{agent.sockets}
+\subsubsection{agent.sockets}\label{agent.sockets}
 
 An object which contains arrays of sockets currently in use by the
 Agent. Do not modify.
 
-\subsubsection{agent.freeSockets}
+\subsubsection{agent.freeSockets}\label{agent.freesockets}
 
 An object which contains arrays of sockets currently awaiting use by the
 Agent when HTTP KeepAlive is used. Do not modify.
 
-\subsubsection{agent.requests}
+\subsubsection{agent.requests}\label{agent.requests}
 
 An object which contains queues of requests that have not yet been
 assigned to sockets. Do not modify.
 
-\subsubsection{agent.destroy()}
+\subsubsection{agent.destroy()}\label{agent.destroy}
 
 Destroy any sockets that are currently in use by the agent.
 
@@ -790,7 +846,7 @@ the agent when you know that it will no longer be used. Otherwise,
 sockets may hang open for quite a long time before the server terminates
 them.
 
-\subsubsection{agent.getName(options)}
+\subsubsection{agent.getName(options)}\label{agent.getnameoptions}
 
 Get a unique name for a set of request options, to determine whether a
 connection can be reused. In the http agent, this returns
@@ -798,12 +854,12 @@ connection can be reused. In the http agent, this returns
 the CA, cert, ciphers, and other HTTPS/TLS-specific options that
 determine socket reusability.
 
-\subsection{http.globalAgent}
+\subsection{http.globalAgent}\label{http.globalagent}
 
 Global instance of Agent which is used as the default for all http
 client requests.
 
-\subsection{Class: http.ClientRequest}
+\subsection{Class: http.ClientRequest}\label{class-http.clientrequest}
 
 This object is created internally and returned from
 \texttt{http.request()}. It represents an \emph{in-progress} request
@@ -816,7 +872,8 @@ To get the response, add a listener for \texttt{'response'} to the
 request object. \texttt{'response'} will be emitted from the request
 object when the response headers have been received. The
 \texttt{'response'} event is executed with one argument which is an
-instance of \texttt{http.IncomingMessage}.
+instance of
+\hyperref[httpux5fhttpux5fincomingmessage]{http.IncomingMessage}.
 
 During the \texttt{'response'} event, one can add listeners to the
 response object; particularly to listen for the \texttt{'data'} event.
@@ -835,22 +892,23 @@ Note: Node does not check whether Content-Length and the length of the
 body which has been transmitted are equal or not.
 
 The request implements the
-\href{stream.html\#stream\_writable\_stream}{Writable Stream} interface.
+\href{stream.html\#stream_writable_stream}{Writable Stream} interface.
 This is an
-\href{events.html\#events\_class\_events\_eventemitter}{EventEmitter}
-with the following events:
+\href{events.html\#events_class_events_eventemitter}{EventEmitter} with
+the following events:
 
-\subsubsection{Event `response'}
+\subsubsection{Event: `response'}\label{event-response}
 
 \texttt{function (response) \{ \}}
 
 Emitted when a response is received to this request. This event is
 emitted only once. The \texttt{response} argument will be an instance of
-\texttt{http.IncomingMessage}.
+\hyperref[httpux5fhttpux5fincomingmessage]{http.IncomingMessage}.
 
 Options:
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{host}: A domain name or IP address of the server to issue the
   request to.
@@ -861,13 +919,13 @@ Options:
   socketPath)
 \end{itemize}
 
-\subsubsection{Event: `socket'}
+\subsubsection{Event: `socket'}\label{event-socket}
 
 \texttt{function (socket) \{ \}}
 
 Emitted after a socket is assigned to this request.
 
-\subsubsection{Event: `connect'}
+\subsubsection{Event: `connect'}\label{event-connect-1}
 
 \texttt{function (response, socket, head) \{ \}}
 
@@ -880,62 +938,62 @@ A client server pair that show you how to listen for the
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{http = require(}\CharTok{'http'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{net = require(}\CharTok{'net'}\NormalTok{);}
-\KeywordTok{var} \NormalTok{url = require(}\CharTok{'url'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{http = }\FunctionTok{require}\NormalTok{(}\StringTok{'http'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{net = }\FunctionTok{require}\NormalTok{(}\StringTok{'net'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{url = }\FunctionTok{require}\NormalTok{(}\StringTok{'url'}\NormalTok{);}
 
 \CommentTok{// Create an HTTP tunneling proxy}
-\KeywordTok{var} \NormalTok{proxy = }\KeywordTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{\});}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'okay'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{proxy = }\OtherTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\StringTok{'Content-Type'}\NormalTok{: }\StringTok{'text/plain'}\NormalTok{\});}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'okay'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{proxy}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, cltSocket, head) \{}
+\OtherTok{proxy}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, cltSocket, head) \{}
   \CommentTok{// connect to an origin server}
-  \KeywordTok{var} \NormalTok{srvUrl = }\KeywordTok{url}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\CharTok{'http://'} \NormalTok{+ }\KeywordTok{req}\NormalTok{.}\FunctionTok{url}\NormalTok{);}
-  \KeywordTok{var} \NormalTok{srvSocket = }\KeywordTok{net}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\KeywordTok{srvUrl}\NormalTok{.}\FunctionTok{port}\NormalTok{, }\KeywordTok{srvUrl}\NormalTok{.}\FunctionTok{hostname}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-    \KeywordTok{cltSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'HTTP/1.1 200 Connection Established\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-                    \CharTok{'Proxy-agent: Node-Proxy\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-                    \CharTok{'\textbackslash{}r\textbackslash{}n'}\NormalTok{);}
-    \KeywordTok{srvSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(head);}
-    \KeywordTok{srvSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cltSocket);}
-    \KeywordTok{cltSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(srvSocket);}
+  \KeywordTok{var} \NormalTok{srvUrl = }\OtherTok{url}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\StringTok{'http://'} \NormalTok{+ }\OtherTok{req}\NormalTok{.}\FunctionTok{url}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{srvSocket = }\OtherTok{net}\NormalTok{.}\FunctionTok{connect}\NormalTok{(}\OtherTok{srvUrl}\NormalTok{.}\FunctionTok{port}\NormalTok{, }\OtherTok{srvUrl}\NormalTok{.}\FunctionTok{hostname}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{cltSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'HTTP/1.1 200 Connection Established}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+                    \StringTok{'Proxy-agent: Node-Proxy}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+                    \StringTok{'}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'}\NormalTok{);}
+    \OtherTok{srvSocket}\NormalTok{.}\FunctionTok{write}\NormalTok{(head);}
+    \OtherTok{srvSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(cltSocket);}
+    \OtherTok{cltSocket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(srvSocket);}
   \NormalTok{\});}
 \NormalTok{\});}
 
 \CommentTok{// now that proxy is running}
-\KeywordTok{proxy}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{, }\CharTok{'127.0.0.1'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\OtherTok{proxy}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{, }\StringTok{'127.0.0.1'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
 
   \CommentTok{// make a request to a tunneling proxy}
   \KeywordTok{var} \NormalTok{options = \{}
     \DataTypeTok{port}\NormalTok{: }\DecValTok{1337}\NormalTok{,}
-    \DataTypeTok{hostname}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
-    \DataTypeTok{method}\NormalTok{: }\CharTok{'CONNECT'}\NormalTok{,}
-    \DataTypeTok{path}\NormalTok{: }\CharTok{'www.google.com:80'}
+    \DataTypeTok{hostname}\NormalTok{: }\StringTok{'127.0.0.1'}\NormalTok{,}
+    \DataTypeTok{method}\NormalTok{: }\StringTok{'CONNECT'}\NormalTok{,}
+    \DataTypeTok{path}\NormalTok{: }\StringTok{'www.google.com:80'}
   \NormalTok{\};}
 
-  \KeywordTok{var} \NormalTok{req = }\KeywordTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+  \KeywordTok{var} \NormalTok{req = }\OtherTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
+  \OtherTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, head) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got connected!'}\NormalTok{);}
+  \OtherTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'connect'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, head) \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got connected!'}\NormalTok{);}
 
     \CommentTok{// make a request over an HTTP tunnel}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'GET / HTTP/1.1\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-                 \CharTok{'Host: www.google.com:80\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-                 \CharTok{'Connection: close\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-                 \CharTok{'\textbackslash{}r\textbackslash{}n'}\NormalTok{);}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
-      \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{chunk}\NormalTok{.}\FunctionTok{toString}\NormalTok{());}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'GET / HTTP/1.1}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+                 \StringTok{'Host: www.google.com:80}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+                 \StringTok{'Connection: close}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+                 \StringTok{'}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'}\NormalTok{);}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
+      \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{chunk}\NormalTok{.}\FunctionTok{toString}\NormalTok{());}
     \NormalTok{\});}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
-      \KeywordTok{proxy}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+      \OtherTok{proxy}\NormalTok{.}\FunctionTok{close}\NormalTok{();}
     \NormalTok{\});}
   \NormalTok{\});}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `upgrade'}
+\subsubsection{Event: `upgrade'}\label{event-upgrade-1}
 
 \texttt{function (response, socket, head) \{ \}}
 
@@ -948,48 +1006,48 @@ A client server pair that show you how to listen for the
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{http = require(}\CharTok{'http'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{http = }\FunctionTok{require}\NormalTok{(}\StringTok{'http'}\NormalTok{);}
 
 \CommentTok{// Create an HTTP server}
-\KeywordTok{var} \NormalTok{srv = }\KeywordTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\CharTok{'Content-Type'}\NormalTok{: }\CharTok{'text/plain'}\NormalTok{\});}
-  \KeywordTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\CharTok{'okay'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{srv = }\OtherTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{writeHead}\NormalTok{(}\DecValTok{200}\NormalTok{, \{}\StringTok{'Content-Type'}\NormalTok{: }\StringTok{'text/plain'}\NormalTok{\});}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'okay'}\NormalTok{);}
 \NormalTok{\});}
-\KeywordTok{srv}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, socket, head) \{}
-  \KeywordTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\CharTok{'HTTP/1.1 101 Web Socket Protocol Handshake\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-               \CharTok{'Upgrade: WebSocket\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-               \CharTok{'Connection: Upgrade\textbackslash{}r\textbackslash{}n'} \NormalTok{+}
-               \CharTok{'\textbackslash{}r\textbackslash{}n'}\NormalTok{);}
+\OtherTok{srv}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(req, socket, head) \{}
+  \OtherTok{socket}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'HTTP/1.1 101 Web Socket Protocol Handshake}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+               \StringTok{'Upgrade: WebSocket}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+               \StringTok{'Connection: Upgrade}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'} \NormalTok{+}
+               \StringTok{'}\CharTok{\textbackslash{}r\textbackslash{}n}\StringTok{'}\NormalTok{);}
 
-  \KeywordTok{socket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(socket); }\CommentTok{// echo back}
+  \OtherTok{socket}\NormalTok{.}\FunctionTok{pipe}\NormalTok{(socket); }\CommentTok{// echo back}
 \NormalTok{\});}
 
 \CommentTok{// now that server is running}
-\KeywordTok{srv}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{, }\CharTok{'127.0.0.1'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+\OtherTok{srv}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{, }\StringTok{'127.0.0.1'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
 
   \CommentTok{// make a request}
   \KeywordTok{var} \NormalTok{options = \{}
     \DataTypeTok{port}\NormalTok{: }\DecValTok{1337}\NormalTok{,}
-    \DataTypeTok{hostname}\NormalTok{: }\CharTok{'127.0.0.1'}\NormalTok{,}
+    \DataTypeTok{hostname}\NormalTok{: }\StringTok{'127.0.0.1'}\NormalTok{,}
     \DataTypeTok{headers}\NormalTok{: \{}
-      \CharTok{'Connection'}\NormalTok{: }\CharTok{'Upgrade'}\NormalTok{,}
-      \CharTok{'Upgrade'}\NormalTok{: }\CharTok{'websocket'}
+      \StringTok{'Connection'}\NormalTok{: }\StringTok{'Upgrade'}\NormalTok{,}
+      \StringTok{'Upgrade'}\NormalTok{: }\StringTok{'websocket'}
     \NormalTok{\}}
   \NormalTok{\};}
 
-  \KeywordTok{var} \NormalTok{req = }\KeywordTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+  \KeywordTok{var} \NormalTok{req = }\OtherTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options);}
+  \OtherTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 
-  \KeywordTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\CharTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, upgradeHead) \{}
-    \KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\CharTok{'got upgraded!'}\NormalTok{);}
-    \KeywordTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
-    \KeywordTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}
+  \OtherTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'upgrade'}\NormalTok{, }\KeywordTok{function}\NormalTok{(res, socket, upgradeHead) \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got upgraded!'}\NormalTok{);}
+    \OtherTok{socket}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
+    \OtherTok{process}\NormalTok{.}\FunctionTok{exit}\NormalTok{(}\DecValTok{0}\NormalTok{);}
   \NormalTok{\});}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `continue'}
+\subsubsection{Event: `continue'}\label{event-continue}
 
 \texttt{function () \{ \}}
 
@@ -997,7 +1055,8 @@ Emitted when the server sends a `100 Continue' HTTP response, usually
 because the request contained `Expect: 100-continue'. This is an
 instruction that the client should send the request body.
 
-\subsubsection{request.write(chunk, {[}encoding{]})}
+\subsubsection{request.write(chunk,
+{[}encoding{]})}\label{request.writechunk-encoding}
 
 Sends a chunk of the body. By calling this method many times, the user
 can stream a request body to a server--in that case it is suggested to
@@ -1005,12 +1064,13 @@ use the \texttt{{[}'Transfer-Encoding', 'chunked'{]}} header line when
 creating the request.
 
 The \texttt{chunk} argument should be a
-\href{buffer.html\#buffer\_buffer}{Buffer} or a string.
+\href{buffer.html\#buffer_buffer}{Buffer} or a string.
 
 The \texttt{encoding} argument is optional and only applies when
 \texttt{chunk} is a string. Defaults to \texttt{'utf8'}.
 
-\subsubsection{request.end({[}data{]}, {[}encoding{]})}
+\subsubsection{request.end({[}data{]},
+{[}encoding{]})}\label{request.enddata-encoding}
 
 Finishes sending the request. If any parts of the body are unsent, it
 will flush them to the stream. If the request is chunked, this will send
@@ -1021,52 +1081,51 @@ If \texttt{data} is specified, it is equivalent to calling
 \texttt{request.write(data, encoding)} followed by
 \texttt{request.end()}.
 
-\subsubsection{request.abort()}
+\subsubsection{request.abort()}\label{request.abort}
 
 Aborts a request. (New since v0.3.8.)
 
-\subsubsection{request.setTimeout(timeout, {[}callback{]})}
+\subsubsection{request.setTimeout(timeout,
+{[}callback{]})}\label{request.settimeouttimeout-callback}
 
 Once a socket is assigned to this request and is connected
-\href{net.html\#net\_socket\_settimeout\_timeout\_callback}{socket.setTimeout()}
+\href{net.html\#net_socket_settimeout_timeout_callback}{socket.setTimeout()}
 will be called.
 
-\subsubsection{request.setNoDelay({[}noDelay{]})}
+\subsubsection{request.setNoDelay({[}noDelay{]})}\label{request.setnodelaynodelay}
 
 Once a socket is assigned to this request and is connected
-\href{net.html\#net\_socket\_setnodelay\_nodelay}{socket.setNoDelay()}
-will be called.
+\href{net.html\#net_socket_setnodelay_nodelay}{socket.setNoDelay()} will
+be called.
 
 \subsubsection{request.setSocketKeepAlive({[}enable{]},
-{[}initialDelay{]})}
+{[}initialDelay{]})}\label{request.setsocketkeepaliveenable-initialdelay}
 
 Once a socket is assigned to this request and is connected
-\href{net.html\#net\_socket\_setkeepalive\_enable\_initialdelay}{socket.setKeepAlive()}
+\href{net.html\#net_socket_setkeepalive_enable_initialdelay}{socket.setKeepAlive()}
 will be called.
 
-\subsection{http.IncomingMessage}
+\subsection{http.IncomingMessage}\label{http.incomingmessage}
 
-An \texttt{IncomingMessage} object is created by \texttt{http.Server} or
-\texttt{http.ClientRequest} and passed as the first argument to the
-\texttt{'request'} and \texttt{'response'} event respectively. It may be
-used to access response status, headers and data.
+An \texttt{IncomingMessage} object is created by
+\hyperref[httpux5fclassux5fhttpux5fserver]{http.Server} or
+\hyperref[httpux5fclassux5fhttpux5fclientrequest]{http.ClientRequest}
+and passed as the first argument to the \texttt{'request'} and
+\texttt{'response'} event respectively. It may be used to access
+response status, headers and data.
 
-It implements the \href{stream.html\#stream\_readable\_stream}{Readable
+It implements the \href{stream.html\#stream_readable_stream}{Readable
 Stream} interface, as well as the following additional events, methods,
 and properties.
 
-\subsubsection{Event: `close'}
+\subsubsection{Event: `close'}\label{event-close-2}
 
 \texttt{function () \{ \}}
 
-Indicates that the underlaying connection was terminated before
-\texttt{response.end()} was called or able to flush.
+Indicates that the underlaying connection was closed. Just like
+\texttt{'end'}, this event occurs only once per response.
 
-Just like \texttt{'end'}, this event occurs only once per response. See
-{[}http.ServerResponse{]}{[}{]}'s \texttt{'close'} event for more
-information.
-
-\subsubsection{message.httpVersion}
+\subsubsection{message.httpVersion}\label{message.httpversion}
 
 In case of server request, the HTTP version sent by the client. In the
 case of client response, the HTTP version of the connected-to server.
@@ -1075,7 +1134,7 @@ Probably either \texttt{'1.1'} or \texttt{'1.0'}.
 Also \texttt{response.httpVersionMajor} is the first integer and
 \texttt{response.httpVersionMinor} is the second.
 
-\subsubsection{message.headers}
+\subsubsection{message.headers}\label{message.headers}
 
 The request/response headers object.
 
@@ -1089,11 +1148,11 @@ Example:
 \CommentTok{// \{ 'user-agent': 'curl/7.22.0',}
 \CommentTok{//   host: '127.0.0.1:8000',}
 \CommentTok{//   accept: '*/*' \}}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{request}\NormalTok{.}\FunctionTok{headers}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{request}\NormalTok{.}\FunctionTok{headers}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{message.rawHeaders}
+\subsubsection{message.rawHeaders}\label{message.rawheaders}
 
 The raw request/response headers list exactly as they were received.
 
@@ -1115,22 +1174,24 @@ Header names are not lowercased, and duplicates are not merged.
 \CommentTok{//   '127.0.0.1:8000',}
 \CommentTok{//   'ACCEPT',}
 \CommentTok{//   '*/*' ]}
-\KeywordTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\KeywordTok{request}\NormalTok{.}\FunctionTok{rawHeaders}\NormalTok{);}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{request}\NormalTok{.}\FunctionTok{rawHeaders}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{message.trailers}
+\subsubsection{message.trailers}\label{message.trailers}
 
 The request/response trailers object. Only populated at the `end' event.
 
-\subsubsection{message.rawTrailers}
+\subsubsection{message.rawTrailers}\label{message.rawtrailers}
 
 The raw request/response trailer keys and values exactly as they were
 received. Only populated at the `end' event.
 
-\subsubsection{message.setTimeout(msecs, callback)}
+\subsubsection{message.setTimeout(msecs,
+callback)}\label{message.settimeoutmsecs-callback}
 
 \begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{msecs} \{Number\}
 \item
@@ -1139,16 +1200,18 @@ received. Only populated at the `end' event.
 
 Calls \texttt{message.connection.setTimeout(msecs, callback)}.
 
-\subsubsection{message.method}
+\subsubsection{message.method}\label{message.method}
 
-\textbf{Only valid for request obtained from \texttt{http.Server}.}
+\textbf{Only valid for request obtained from
+\hyperref[httpux5fclassux5fhttpux5fserver]{http.Server}.}
 
 The request method as a string. Read only. Example: \texttt{'GET'},
 \texttt{'DELETE'}.
 
-\subsubsection{message.url}
+\subsubsection{message.url}\label{message.url}
 
-\textbf{Only valid for request obtained from \texttt{http.Server}.}
+\textbf{Only valid for request obtained from
+\hyperref[httpux5fclassux5fhttpux5fserver]{http.Server}.}
 
 Request URL string. This contains only the URL that is present in the
 actual HTTP request. If the request is:
@@ -1156,7 +1219,7 @@ actual HTTP request. If the request is:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{GET /status?name=ryan HTTP/}\FloatTok{1.1}\NormalTok{\textbackslash{}r\textbackslash{}n}
-\DataTypeTok{Accept}\NormalTok{: text/plain\textbackslash{}r\textbackslash{}n}
+\NormalTok{Accept: text/plain\textbackslash{}r\textbackslash{}n}
 \NormalTok{\textbackslash{}r\textbackslash{}n}
 \end{Highlighting}
 \end{Shaded}
@@ -1165,7 +1228,7 @@ Then \texttt{request.url} will be:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CharTok{'/status?name=ryan'}
+\StringTok{'/status?name=ryan'}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1174,11 +1237,11 @@ If you would like to parse the URL into its parts, you can use
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{node> require(}\CharTok{'url'}\NormalTok{).}\FunctionTok{parse}\NormalTok{(}\CharTok{'/status?name=ryan'}\NormalTok{)}
-\NormalTok{\{ }\DataTypeTok{href}\NormalTok{: }\CharTok{'/status?name=ryan'}\NormalTok{,}
-  \DataTypeTok{search}\NormalTok{: }\CharTok{'?name=ryan'}\NormalTok{,}
-  \DataTypeTok{query}\NormalTok{: }\CharTok{'name=ryan'}\NormalTok{,}
-  \DataTypeTok{pathname}\NormalTok{: }\CharTok{'/status'} \NormalTok{\}}
+\NormalTok{node> }\FunctionTok{require}\NormalTok{(}\StringTok{'url'}\NormalTok{).}\FunctionTok{parse}\NormalTok{(}\StringTok{'/status?name=ryan'}\NormalTok{)}
+\NormalTok{\{ }\DataTypeTok{href}\NormalTok{: }\StringTok{'/status?name=ryan'}\NormalTok{,}
+  \DataTypeTok{search}\NormalTok{: }\StringTok{'?name=ryan'}\NormalTok{,}
+  \DataTypeTok{query}\NormalTok{: }\StringTok{'name=ryan'}\NormalTok{,}
+  \DataTypeTok{pathname}\NormalTok{: }\StringTok{'/status'} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1189,22 +1252,30 @@ Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{node> require(}\CharTok{'url'}\NormalTok{).}\FunctionTok{parse}\NormalTok{(}\CharTok{'/status?name=ryan'}\NormalTok{, }\KeywordTok{true}\NormalTok{)}
-\NormalTok{\{ }\DataTypeTok{href}\NormalTok{: }\CharTok{'/status?name=ryan'}\NormalTok{,}
-  \DataTypeTok{search}\NormalTok{: }\CharTok{'?name=ryan'}\NormalTok{,}
-  \DataTypeTok{query}\NormalTok{: \{ }\DataTypeTok{name}\NormalTok{: }\CharTok{'ryan'} \NormalTok{\},}
-  \DataTypeTok{pathname}\NormalTok{: }\CharTok{'/status'} \NormalTok{\}}
+\NormalTok{node> }\FunctionTok{require}\NormalTok{(}\StringTok{'url'}\NormalTok{).}\FunctionTok{parse}\NormalTok{(}\StringTok{'/status?name=ryan'}\NormalTok{, }\KeywordTok{true}\NormalTok{)}
+\NormalTok{\{ }\DataTypeTok{href}\NormalTok{: }\StringTok{'/status?name=ryan'}\NormalTok{,}
+  \DataTypeTok{search}\NormalTok{: }\StringTok{'?name=ryan'}\NormalTok{,}
+  \DataTypeTok{query}\NormalTok{: \{ }\DataTypeTok{name}\NormalTok{: }\StringTok{'ryan'} \NormalTok{\},}
+  \DataTypeTok{pathname}\NormalTok{: }\StringTok{'/status'} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{message.statusCode}
+\subsubsection{message.statusCode}\label{message.statuscode}
 
 \textbf{Only valid for response obtained from
 \texttt{http.ClientRequest}.}
 
 The 3-digit HTTP response status code. E.G. \texttt{404}.
 
-\subsubsection{message.socket}
+\subsubsection{message.statusMessage}\label{message.statusmessage}
+
+\textbf{Only valid for response obtained from
+\texttt{http.ClientRequest}.}
+
+The HTTP response status message (reason phrase). E.G. \texttt{OK} or
+\texttt{Internal Server Error}.
+
+\subsubsection{message.socket}\label{message.socket}
 
 The \texttt{net.Socket} object associated with the connection.
 
