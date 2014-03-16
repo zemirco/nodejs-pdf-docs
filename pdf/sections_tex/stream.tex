@@ -1221,6 +1221,11 @@ stream.Writable({[}options{]})}\label{new-stream.writableoptions}
   into Buffers before passing them to
   \hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write()}}.
   Default=true
+\item
+  \texttt{objectMode} \{Boolean\} Whether or not the
+  \texttt{write(anyObj)} is a valid operation. If set you can write
+  arbitrary data instead of only \texttt{Buffer} / \texttt{String} data.
+  Default=false
 \end{itemize}
 
 In classes that extend the Writable class, make sure to call the

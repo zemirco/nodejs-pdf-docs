@@ -92,6 +92,18 @@ Example of listening for \texttt{exit}:
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{Event: `beforeExit'}\label{event-beforeexit}
+
+This event is emitted when node empties it's event loop and has nothing
+else to schedule. Normally, node exits when there is no work scheduled,
+but a listener for `beforeExit' can make asynchronous calls, and cause
+node to continue.
+
+`beforeExit' is not emitted for conditions causing explicit termination,
+such as \texttt{process.exit()} or uncaught exceptions, and should not
+be used as an alternative to the `exit' event unless the intention is to
+schedule more work.
+
 \subsection{Event: `uncaughtException'}\label{event-uncaughtexception}
 
 Emitted when an exception bubbles all the way back to the event loop. If
@@ -222,10 +234,20 @@ Example: the definition of \texttt{console.log}
 \end{Shaded}
 
 \texttt{process.stderr} and \texttt{process.stdout} are unlike other
-streams in Node in that writes to them are usually blocking. They are
-blocking in the case that they refer to regular files or TTY file
-descriptors. In the case they refer to pipes, they are non-blocking like
-other streams.
+streams in Node in that writes to them are usually blocking.
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  They are blocking in the case that they refer to regular files or TTY
+  file descriptors.
+\item
+  In the case they refer to pipes:
+\item
+  They are blocking in Linux/Unix.
+\item
+  They are non-blocking like other streams in Windows.
+\end{itemize}
 
 To check if Node is being run in a TTY context, read the \texttt{isTTY}
 property on \texttt{process.stderr}, \texttt{process.stdout}, or
@@ -252,26 +274,36 @@ See \href{tty.html\#tty_tty}{the tty docs} for more information.
 A writable stream to stderr.
 
 \texttt{process.stderr} and \texttt{process.stdout} are unlike other
-streams in Node in that writes to them are usually blocking. They are
-blocking in the case that they refer to regular files or TTY file
-descriptors. In the case they refer to pipes, they are non-blocking like
-other streams.
+streams in Node in that writes to them are usually blocking.
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  They are blocking in the case that they refer to regular files or TTY
+  file descriptors.
+\item
+  In the case they refer to pipes:
+\item
+  They are blocking in Linux/Unix.
+\item
+  They are non-blocking like other streams in Windows.
+\end{itemize}
 
 \subsection{process.stdin}\label{process.stdin}
 
-A \texttt{Readable Stream} for stdin. The stdin stream is paused by
-default, so one must call \texttt{process.stdin.resume()} to read from
-it.
+A \texttt{Readable Stream} for stdin.
 
 Example of opening standard input and listening for both events:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\OtherTok{process}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 \OtherTok{process}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
 
-\OtherTok{process}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
-  \OtherTok{process}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'data: '} \NormalTok{+ chunk);}
+\OtherTok{process}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{var} \NormalTok{chunk = }\OtherTok{process}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{read}\NormalTok{();}
+  \KeywordTok{if} \NormalTok{(chunk !== }\KeywordTok{null}\NormalTok{) \{}
+    \OtherTok{process}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'data: '} \NormalTok{+ chunk);}
+  \NormalTok{\}}
 \NormalTok{\});}
 
 \OtherTok{process}\NormalTok{.}\OtherTok{stdin}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
@@ -279,6 +311,20 @@ Example of opening standard input and listening for both events:
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
+
+As a Stream, \texttt{process.stdin} can also be used in ``old'' mode
+that is compatible with scripts written for node prior v0.10. For more
+information see
+\href{stream.html\#stream_compatibility_with_older_node_versions}{Stream
+compatibility}.
+
+In ``old'' Streams mode the stdin stream is paused by default, so one
+must call \texttt{process.stdin.resume()} to read from it. Note also
+that calling \texttt{process.stdin.resume()} itself would switch stream
+to ``old'' mode.
+
+If you are starting a new project you should prefer a more recent
+``new'' Streams mode over ``old'' one.
 
 \subsection{process.argv}\label{process.argv}
 

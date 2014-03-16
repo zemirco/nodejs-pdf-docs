@@ -59,7 +59,7 @@ operator ( \texttt{!==} )
 {[}message{]})}\label{assert.throwsblock-error-message}
 
 Expects \texttt{block} to throw an error. \texttt{error} can be
-constructor, regexp or validation function.
+constructor, \texttt{RegExp} or validation function.
 
 Validate instanceof using constructor:
 
@@ -108,8 +108,8 @@ Custom error validation:
 \subsection{assert.doesNotThrow(block,
 {[}message{]})}\label{assert.doesnotthrowblock-message}
 
-Expects \texttt{block} not to throw an error, see assert.throws for
-details.
+Expects \texttt{block} not to throw an error, see \texttt{assert.throws}
+for details.
 
 \subsection{assert.ifError(value)}\label{assert.iferrorvalue}
 

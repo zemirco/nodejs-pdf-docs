@@ -199,8 +199,8 @@ source \texttt{addon.cc}:
     \KeywordTok{return}\NormalTok{;}
   \NormalTok{\}}
 
-  \NormalTok{Local<Number> num = }\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{() +}
-      \NormalTok{args[}\DecValTok{1}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{());}
+  \NormalTok{double value = args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{() + args[}\DecValTok{1}\NormalTok{]->}\FunctionTok{NumberValue}\NormalTok{();}
+  \NormalTok{Local<Number> num = }\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, value);}
 
   \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(num);}
 \NormalTok{\}}
@@ -243,7 +243,7 @@ from there. Here's \texttt{addon.cc}:
   \NormalTok{Local<Function> cb = Local<Function>::}\FunctionTok{Cast}\NormalTok{(args[}\DecValTok{0}\NormalTok{]);}
   \KeywordTok{const} \NormalTok{unsigned argc = }\DecValTok{1}\NormalTok{;}
   \NormalTok{Local<Value> argv[argc] = \{ }\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"hello world"}\NormalTok{) \};}
-  \NormalTok{cb->}\FunctionTok{Call}\NormalTok{(}\DataTypeTok{Context}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{()->}\FunctionTok{Global}\NormalTok{(), argc, argv);}
+  \NormalTok{cb->}\FunctionTok{Call}\NormalTok{(isolate->}\FunctionTok{GetCurrentContext}\NormalTok{()->}\FunctionTok{Global}\NormalTok{(), argc, argv);}
 \NormalTok{\}}
 
 \KeywordTok{void} \FunctionTok{Init}\NormalTok{(Handle<Object> exports, Handle<Object> module) \{}
@@ -290,7 +290,7 @@ this \texttt{addon.cc} pattern, which returns an object with property
   \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
   \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{Local<Object> obj = }\DataTypeTok{Object}\NormalTok{::}\FunctionTok{New}\NormalTok{();}
+  \NormalTok{Local<Object> obj = }\DataTypeTok{Object}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate);}
   \NormalTok{obj->}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"msg"}\NormalTok{), args[}\DecValTok{0}\NormalTok{]->}\FunctionTok{ToString}\NormalTok{());}
 
   \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(obj);}
@@ -339,7 +339,7 @@ that wraps a C++ function:
   \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
   \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(MyFunction);}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, MyFunction);}
   \NormalTok{Local<Function> fn = tpl->}\FunctionTok{GetFunction}\NormalTok{();}
 
   \CommentTok{// omit this to make it anonymous}
@@ -443,7 +443,7 @@ the constructor's prototype:
   \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
 
   \CommentTok{// Prepare constructor template}
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(New);}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, New);}
   \NormalTok{tpl->}\FunctionTok{SetClassName}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"MyObject"}\NormalTok{));}
   \NormalTok{tpl->}\FunctionTok{InstanceTemplate}\NormalTok{()->}\FunctionTok{SetInternalFieldCount}\NormalTok{(}\DecValTok{1}\NormalTok{);}
 
@@ -481,7 +481,7 @@ the constructor's prototype:
   \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
   \NormalTok{obj->value_ += }\DecValTok{1}\NormalTok{;}
 
-  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(obj->value_));}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, obj->value_));}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -594,7 +594,7 @@ The implementation is similar to the above in \texttt{myobject.cc}:
 \KeywordTok{void} \NormalTok{MyObject::}\FunctionTok{Init}\NormalTok{() \{}
   \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
   \CommentTok{// Prepare constructor template}
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(New);}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, New);}
   \NormalTok{tpl->}\FunctionTok{SetClassName}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"MyObject"}\NormalTok{));}
   \NormalTok{tpl->}\FunctionTok{InstanceTemplate}\NormalTok{()->}\FunctionTok{SetInternalFieldCount}\NormalTok{(}\DecValTok{1}\NormalTok{);}
 
@@ -642,7 +642,7 @@ The implementation is similar to the above in \texttt{myobject.cc}:
   \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
   \NormalTok{obj->value_ += }\DecValTok{1}\NormalTok{;}
 
-  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(obj->value_));}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, obj->value_));}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -699,7 +699,7 @@ function \texttt{add()} that can take on two \texttt{MyObject} objects:
       \NormalTok{args[}\DecValTok{1}\NormalTok{]->}\FunctionTok{ToObject}\NormalTok{());}
 
   \NormalTok{double sum = obj1->}\FunctionTok{value}\NormalTok{() + obj2->}\FunctionTok{value}\NormalTok{();}
-  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(sum));}
+  \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, sum));}
 \NormalTok{\}}
 
 \KeywordTok{void} \FunctionTok{InitAll}\NormalTok{(Handle<Object> exports) \{}
@@ -767,7 +767,7 @@ The implementation of \texttt{myobject.cc} is similar as before:
   \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
 
   \CommentTok{// Prepare constructor template}
-  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(New);}
+  \NormalTok{Local<FunctionTemplate> tpl = }\DataTypeTok{FunctionTemplate}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, New);}
   \NormalTok{tpl->}\FunctionTok{SetClassName}\NormalTok{(}\DataTypeTok{String}\NormalTok{::}\FunctionTok{NewFromUtf8}\NormalTok{(isolate, }\StringTok{"MyObject"}\NormalTok{));}
   \NormalTok{tpl->}\FunctionTok{InstanceTemplate}\NormalTok{()->}\FunctionTok{SetInternalFieldCount}\NormalTok{(}\DecValTok{1}\NormalTok{);}
 

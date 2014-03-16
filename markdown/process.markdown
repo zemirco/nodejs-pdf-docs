@@ -69,6 +69,18 @@ Example of listening for `exit`:
       console.log('About to exit with code:', code);
     });
 
+
+## Event: 'beforeExit'
+
+This event is emitted when node empties it's event loop and has nothing else to
+schedule. Normally, node exits when there is no work scheduled, but a listener
+for 'beforeExit' can make asynchronous calls, and cause node to continue.
+
+'beforeExit' is not emitted for conditions causing explicit termination, such as
+`process.exit()` or uncaught exceptions, and should not be used as an
+alternative to the 'exit' event unless the intention is to schedule more work.
+
+
 ## Event: 'uncaughtException'
 
 Emitted when an exception bubbles all the way back to the event loop. If a
@@ -169,9 +181,13 @@ Example: the definition of `console.log`
     };
 
 `process.stderr` and `process.stdout` are unlike other streams in Node in
-that writes to them are usually blocking.  They are blocking in the case
-that they refer to regular files or TTY file descriptors. In the case they
-refer to pipes, they are non-blocking like other streams.
+that writes to them are usually blocking.
+
+- They are blocking in the case that they refer to regular files or TTY file
+  descriptors.
+- In the case they refer to pipes:
+  - They are blocking in Linux/Unix.
+  - They are non-blocking like other streams in Windows.
 
 To check if Node is being run in a TTY context, read the `isTTY` property
 on `process.stderr`, `process.stdout`, or `process.stdin`:
@@ -193,29 +209,45 @@ See [the tty docs](tty.html#tty_tty) for more information.
 A writable stream to stderr.
 
 `process.stderr` and `process.stdout` are unlike other streams in Node in
-that writes to them are usually blocking.  They are blocking in the case
-that they refer to regular files or TTY file descriptors. In the case they
-refer to pipes, they are non-blocking like other streams.
+that writes to them are usually blocking.
+
+- They are blocking in the case that they refer to regular files or TTY file
+  descriptors.
+- In the case they refer to pipes:
+  - They are blocking in Linux/Unix.
+  - They are non-blocking like other streams in Windows.
 
 
 ## process.stdin
 
-A `Readable Stream` for stdin. The stdin stream is paused by default, so one
-must call `process.stdin.resume()` to read from it.
+A `Readable Stream` for stdin. 
 
 Example of opening standard input and listening for both events:
 
-    process.stdin.resume();
     process.stdin.setEncoding('utf8');
 
-    process.stdin.on('data', function(chunk) {
-      process.stdout.write('data: ' + chunk);
+    process.stdin.on('readable', function() {
+      var chunk = process.stdin.read();
+      if (chunk !== null) {
+        process.stdout.write('data: ' + chunk);
+      }
     });
 
     process.stdin.on('end', function() {
       process.stdout.write('end');
     });
 
+As a Stream, `process.stdin` can also be used in "old" mode that is compatible
+with scripts written for node prior v0.10.
+For more information see
+[Stream compatibility](stream.html#stream_compatibility_with_older_node_versions).
+
+In "old" Streams mode the stdin stream is paused by default, so one
+must call `process.stdin.resume()` to read from it. Note also that calling
+`process.stdin.resume()` itself would switch stream to "old" mode.
+
+If you are starting a new project you should prefer a more recent "new" Streams
+mode over "old" one.
 
 ## process.argv
 

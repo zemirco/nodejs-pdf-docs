@@ -250,6 +250,12 @@ method returns a `Buffer` that represents the _authentication tag_ that
 has been computed from the given data. Should be called after
 encryption has been completed using the `final` method!
 
+### cipher.setAAD(buffer)
+
+For authenticated encryption modes (currently supported: GCM), this
+method sets the value used for the additional authenticated data (AAD) input
+parameter.
+
 
 ## crypto.createDecipher(algorithm, password)
 
@@ -307,6 +313,12 @@ method must be used to pass in the received _authentication tag_.
 If no tag is provided or if the ciphertext has been tampered with,
 `final` will throw, thus indicating that the ciphertext should
 be discarded due to failed authentication.
+
+### decipher.setAAD(buffer)
+
+For authenticated encryption modes (currently supported: GCM), this
+method sets the value used for the additional authenticated data (AAD) input
+parameter.
 
 
 ## crypto.createSign(algorithm)
@@ -388,22 +400,38 @@ the data and public key.
 Note: `verifier` object can not be used after `verify()` method has been
 called.
 
-## crypto.createDiffieHellman(prime_length)
+## crypto.createDiffieHellman(prime_length, [generator])
 
 Creates a Diffie-Hellman key exchange object and generates a prime of
-the given bit length. The generator used is `2`.
+`prime_length` bits and using an optional specific numeric `generator`.
+If no `generator` is specified, then `2` is used.
 
-## crypto.createDiffieHellman(prime, [encoding])
+## crypto.createDiffieHellman(prime, [prime_encoding], [generator], [generator_encoding])
 
-Creates a Diffie-Hellman key exchange object using the supplied prime.
-The generator used is `2`. Encoding can be `'binary'`, `'hex'`, or
-`'base64'`.  If no encoding is specified, then a buffer is expected.
+Creates a Diffie-Hellman key exchange object using the supplied `prime` and an
+optional specific `generator`.
+`generator` can be a number, string, or Buffer.
+If no `generator` is specified, then `2` is used.
+`prime_encoding` and `generator_encoding` can be `'binary'`, `'hex'`, or `'base64'`.
+If no `prime_encoding` is specified, then a Buffer is expected for `prime`.
+If no `generator_encoding` is specified, then a Buffer is expected for `generator`.
 
 ## Class: DiffieHellman
 
 The class for creating Diffie-Hellman key exchanges.
 
 Returned by `crypto.createDiffieHellman`.
+
+### diffieHellman.verifyError
+
+A bit field containing any warnings and/or errors as a result of a check performed
+during initialization. The following values are valid for this property
+(defined in `constants` module):
+
+* `DH_CHECK_P_NOT_SAFE_PRIME`
+* `DH_CHECK_P_NOT_PRIME`
+* `DH_UNABLE_TO_CHECK_GENERATOR`
+* `DH_NOT_SUITABLE_GENERATOR`
 
 ### diffieHellman.generateKeys([encoding])
 
@@ -431,7 +459,7 @@ then a buffer is returned.
 
 ### diffieHellman.getGenerator([encoding])
 
-Returns the Diffie-Hellman prime in the specified encoding, which can
+Returns the Diffie-Hellman generator in the specified encoding, which can
 be `'binary'`, `'hex'`, or `'base64'`. If no encoding is provided,
 then a buffer is returned.
 

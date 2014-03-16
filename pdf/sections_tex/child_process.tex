@@ -725,9 +725,9 @@ Runs a command in a shell and buffers the output.
 
 The callback gets the arguments \texttt{(error, stdout, stderr)}. On
 success, \texttt{error} will be \texttt{null}. On error, \texttt{error}
-will be an instance of \texttt{Error} and \texttt{err.code} will be the
-exit code of the child process, and \texttt{err.signal} will be set to
-the signal that terminated the process.
+will be an instance of \texttt{Error} and \texttt{error.code} will be
+the exit code of the child process, and \texttt{error.signal} will be
+set to the signal that terminated the process.
 
 There is a second optional argument to specify several options. The
 default options are
@@ -839,3 +839,203 @@ a process to be created for the child rather than the current
 will talk over the fd represented an environmental variable
 \texttt{NODE\_CHANNEL\_FD} on the child process. The input and output on
 this fd is expected to be line delimited JSON objects.
+
+\subsection{child\_process.spawnSync(command, {[}args{]},
+{[}options{]})}\label{childux5fprocess.spawnsynccommand-args-options}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{command} \{String\} The command to run
+\item
+  \texttt{args} \{Array\} List of string arguments
+\item
+  \texttt{options} \{Object\}
+\item
+  \texttt{cwd} \{String\} Current working directory of the child process
+\item
+  \texttt{input} \{String\textbar{}Buffer\} The value which will be
+  passed as stdin to the spawned process
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    supplying this value will override \texttt{stdio{[}0{]}}
+  \end{itemize}
+\item
+  \texttt{stdio} \{Array\} Child's stdio configuration.
+\item
+  \texttt{env} \{Object\} Environment key-value pairs
+\item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
+\item
+  \texttt{timeout} \{Number\} In milliseconds the maximum amount of time
+  the process is allowed to run. (Default: undefined)
+\item
+  \texttt{killSignal} \{String\} The signal value to be used when the
+  spawned process will be killed. (Default: `SIGTERM')
+\item
+  \texttt{maxBuffer} \{Number\}
+\item
+  \texttt{encoding} \{String\} The encoding used for all stdio inputs
+  and outputs. (Default: `buffer')
+\item
+  return: \{Object\}
+\item
+  \texttt{pid} \{Number\} Pid of the child process
+\item
+  \texttt{output} \{Array\} Array of results from stdio output
+\item
+  \texttt{stdout} \{Buffer\textbar{}String\} The contents of
+  \texttt{output{[}1{]}}
+\item
+  \texttt{stderr} \{Buffer\textbar{}String\} The contents of
+  \texttt{output{[}2{]}}
+\item
+  \texttt{status} \{Number\} The exit code of the child process
+\item
+  \texttt{signal} \{String\} The signal used to kill the child process
+\item
+  \texttt{error} \{Error\} The error object if the child process failed
+  or timedout
+\end{itemize}
+
+\texttt{spawnSync} will not return until the child process has fully
+closed. When a timeout has been encountered and \texttt{killSignal} is
+sent, the method won't return until the process has completely exited.
+That is to say, if the process handles the \texttt{SIGTERM} signal and
+doesn't exit, your process will wait until the child process has exited.
+
+\subsection{child\_process.execFileSync(command, {[}args{]},
+{[}options{]})}\label{childux5fprocess.execfilesynccommand-args-options}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{command} \{String\} The command to run
+\item
+  \texttt{args} \{Array\} List of string arguments
+\item
+  \texttt{options} \{Object\}
+\item
+  \texttt{cwd} \{String\} Current working directory of the child process
+\item
+  \texttt{input} \{String\textbar{}Buffer\} The value which will be
+  passed as stdin to the spawned process
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    supplying this value will override \texttt{stdio{[}0{]}}
+  \end{itemize}
+\item
+  \texttt{stdio} \{Array\} Child's stdio configuration. (Default:
+  `pipe')
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    \texttt{stderr} by default will be output to the parent process'
+    stderr unless \texttt{stdio} is specified
+  \end{itemize}
+\item
+  \texttt{env} \{Object\} Environment key-value pairs
+\item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
+\item
+  \texttt{timeout} \{Number\} In milliseconds the maximum amount of time
+  the process is allowed to run. (Default: undefined)
+\item
+  \texttt{killSignal} \{String\} The signal value to be used when the
+  spawned process will be killed. (Default: `SIGTERM')
+\item
+  \texttt{maxBuffer} \{Number\}
+\item
+  \texttt{encoding} \{String\} The encoding used for all stdio inputs
+  and outputs. (Default: `buffer')
+\item
+  return: \{Buffer\textbar{}String\} The stdout from the command
+\end{itemize}
+
+\texttt{execFileSync} will not return until the child process has fully
+closed. When a timeout has been encountered and \texttt{killSignal} is
+sent, the method won't return until the process has completely exited.
+That is to say, if the process handles the \texttt{SIGTERM} signal and
+doesn't exit, your process will wait until the child process has exited.
+
+If the process times out, or has a non-zero exit code, this method
+\textbf{\emph{will}} throw. The \texttt{Error} object will contain the
+entire result from
+\hyperref[childux5fprocessux5fchildux5fprocessux5fspawnsyncux5fcommandux5fargsux5foptions]{\texttt{child\_process.spawnSync}}
+
+\subsection{child\_process.execSync(command,
+{[}options{]})}\label{childux5fprocess.execsynccommand-options}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{command} \{String\} The command to run
+\item
+  \texttt{options} \{Object\}
+\item
+  \texttt{cwd} \{String\} Current working directory of the child process
+\item
+  \texttt{input} \{String\textbar{}Buffer\} The value which will be
+  passed as stdin to the spawned process
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    supplying this value will override \texttt{stdio{[}0{]}}
+  \end{itemize}
+\item
+  \texttt{stdio} \{Array\} Child's stdio configuration. (Default:
+  `pipe')
+
+  \begin{itemize}
+  \itemsep1pt\parskip0pt\parsep0pt
+  \item
+    \texttt{stderr} by default will be output to the parent process'
+    stderr unless \texttt{stdio} is specified
+  \end{itemize}
+\item
+  \texttt{env} \{Object\} Environment key-value pairs
+\item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
+\item
+  \texttt{timeout} \{Number\} In milliseconds the maximum amount of time
+  the process is allowed to run. (Default: undefined)
+\item
+  \texttt{killSignal} \{String\} The signal value to be used when the
+  spawned process will be killed. (Default: `SIGTERM')
+\item
+  \texttt{maxBuffer} \{Number\}
+\item
+  \texttt{encoding} \{String\} The encoding used for all stdio inputs
+  and outputs. (Default: `buffer')
+\item
+  return: \{Buffer\textbar{}String\} The stdout from the command
+\end{itemize}
+
+\texttt{execSync} will not return until the child process has fully
+closed. When a timeout has been encountered and \texttt{killSignal} is
+sent, the method won't return until the process has completely exited.
+That is to say, if the process handles the \texttt{SIGTERM} signal and
+doesn't exit, your process will wait until the child process has exited.
+
+If the process times out, or has a non-zero exit code, this method
+\textbf{\emph{will}} throw. The \texttt{Error} object will contain the
+entire result from
+\hyperref[childux5fprocessux5fchildux5fprocessux5fspawnsyncux5fcommandux5fargsux5foptions]{\texttt{child\_process.spawnSync}}

@@ -308,6 +308,12 @@ method returns a \texttt{Buffer} that represents the
 Should be called after encryption has been completed using the
 \texttt{final} method!
 
+\subsubsection{cipher.setAAD(buffer)}\label{cipher.setaadbuffer}
+
+For authenticated encryption modes (currently supported: GCM), this
+method sets the value used for the additional authenticated data (AAD)
+input parameter.
+
 \subsection{crypto.createDecipher(algorithm,
 password)}\label{crypto.createdecipheralgorithm-password}
 
@@ -373,6 +379,12 @@ method must be used to pass in the received \emph{authentication tag}.
 If no tag is provided or if the ciphertext has been tampered with,
 \texttt{final} will throw, thus indicating that the ciphertext should be
 discarded due to failed authentication.
+
+\subsubsection{decipher.setAAD(buffer)}\label{decipher.setaadbuffer}
+
+For authenticated encryption modes (currently supported: GCM), this
+method sets the value used for the additional authenticated data (AAD)
+input parameter.
 
 \subsection{crypto.createSign(algorithm)}\label{crypto.createsignalgorithm}
 
@@ -463,24 +475,51 @@ data and public key.
 Note: \texttt{verifier} object can not be used after \texttt{verify()}
 method has been called.
 
-\subsection{crypto.createDiffieHellman(prime\_length)}\label{crypto.creatediffiehellmanprimeux5flength}
+\subsection{crypto.createDiffieHellman(prime\_length,
+{[}generator{]})}\label{crypto.creatediffiehellmanprimeux5flength-generator}
 
 Creates a Diffie-Hellman key exchange object and generates a prime of
-the given bit length. The generator used is \texttt{2}.
+\texttt{prime\_length} bits and using an optional specific numeric
+\texttt{generator}. If no \texttt{generator} is specified, then
+\texttt{2} is used.
 
-\subsection{crypto.createDiffieHellman(prime,
-{[}encoding{]})}\label{crypto.creatediffiehellmanprime-encoding}
+\subsection{crypto.createDiffieHellman(prime, {[}prime\_encoding{]},
+{[}generator{]},
+{[}generator\_encoding{]})}\label{crypto.creatediffiehellmanprime-primeux5fencoding-generator-generatorux5fencoding}
 
-Creates a Diffie-Hellman key exchange object using the supplied prime.
-The generator used is \texttt{2}. Encoding can be \texttt{'binary'},
-\texttt{'hex'}, or \texttt{'base64'}. If no encoding is specified, then
-a buffer is expected.
+Creates a Diffie-Hellman key exchange object using the supplied
+\texttt{prime} and an optional specific \texttt{generator}.
+\texttt{generator} can be a number, string, or Buffer. If no
+\texttt{generator} is specified, then \texttt{2} is used.
+\texttt{prime\_encoding} and \texttt{generator\_encoding} can be
+\texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no
+\texttt{prime\_encoding} is specified, then a Buffer is expected for
+\texttt{prime}. If no \texttt{generator\_encoding} is specified, then a
+Buffer is expected for \texttt{generator}.
 
 \subsection{Class: DiffieHellman}\label{class-diffiehellman}
 
 The class for creating Diffie-Hellman key exchanges.
 
 Returned by \texttt{crypto.createDiffieHellman}.
+
+\subsubsection{diffieHellman.verifyError}\label{diffiehellman.verifyerror}
+
+A bit field containing any warnings and/or errors as a result of a check
+performed during initialization. The following values are valid for this
+property (defined in \texttt{constants} module):
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{DH\_CHECK\_P\_NOT\_SAFE\_PRIME}
+\item
+  \texttt{DH\_CHECK\_P\_NOT\_PRIME}
+\item
+  \texttt{DH\_UNABLE\_TO\_CHECK\_GENERATOR}
+\item
+  \texttt{DH\_NOT\_SUITABLE\_GENERATOR}
+\end{itemize}
 
 \subsubsection{diffieHellman.generateKeys({[}encoding{]})}\label{diffiehellman.generatekeysencoding}
 
@@ -512,9 +551,9 @@ is provided, then a buffer is returned.
 
 \subsubsection{diffieHellman.getGenerator({[}encoding{]})}\label{diffiehellman.getgeneratorencoding}
 
-Returns the Diffie-Hellman prime in the specified encoding, which can be
-\texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no encoding
-is provided, then a buffer is returned.
+Returns the Diffie-Hellman generator in the specified encoding, which
+can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If no
+encoding is provided, then a buffer is returned.
 
 \subsubsection{diffieHellman.getPublicKey({[}encoding{]})}\label{diffiehellman.getpublickeyencoding}
 

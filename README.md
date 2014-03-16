@@ -6,9 +6,7 @@ file and an .epub (iOS, Android and more) file.
 
 Of course the whole creation and conversion process is written in node.js.
 
-Current version of node.js in the docs: **0.10.25**
-
-Check out the other branches for older versions (incomplete).
+Current version of node.js in the docs: **0.10.26**
 
 ## How to use
 
@@ -46,7 +44,7 @@ The .mobi version is created from the .epub file which gives better results comp
 
 ## License
 
-Copyright (C) 2012 [Mirco Zeiss](mailto: mirco.zeiss@gmail.com)
+Copyright (C) 2014 [Mirco Zeiss](mailto: mirco.zeiss@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
