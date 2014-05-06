@@ -168,6 +168,28 @@ If totalLength is not provided, it is read from the buffers in the list.
 However, this adds an additional loop to the function, so it is faster
 to provide the length explicitly.
 
+\subsubsection{Class Method: Buffer.compare(buf1,
+buf2)}\label{class-method-buffer.comparebuf1-buf2}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{buf1} \{Buffer\}
+\item
+  \texttt{buf2} \{Buffer\}
+\end{itemize}
+
+The same as
+\hyperref[bufferux5fbufux5fcompareux5fotherbuffer]{\texttt{buf1.compare(buf2)}}.
+Useful for sorting an Array of Buffers:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{arr = [}\FunctionTok{Buffer}\NormalTok{(}\StringTok{'1234'}\NormalTok{), }\FunctionTok{Buffer}\NormalTok{(}\StringTok{'0123'}\NormalTok{)];}
+\OtherTok{arr}\NormalTok{.}\FunctionTok{sort}\NormalTok{(}\OtherTok{Buffer}\NormalTok{.}\FunctionTok{compare}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
 \subsubsection{buf.length}\label{buf.length}
 
 \begin{itemize}
@@ -296,6 +318,28 @@ Example: copy an ASCII string into a buffer, one byte at a time:
 \CommentTok{// node.js}
 \end{Highlighting}
 \end{Shaded}
+
+\subsubsection{buf.equals(otherBuffer)}\label{buf.equalsotherbuffer}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{otherBuffer} \{Buffer\}
+\end{itemize}
+
+Returns a boolean of whether \texttt{this} and \texttt{otherBuffer} have
+the same bytes.
+
+\subsubsection{buf.compare(otherBuffer)}\label{buf.compareotherbuffer}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{otherBuffer} \{Buffer\}
+\end{itemize}
+
+Returns a number indicating whether \texttt{this} comes before or after
+or is the same as the \texttt{otherBuffer} in sort order.
 
 \subsubsection{buf.copy(targetBuffer, {[}targetStart{]},
 {[}sourceStart{]},

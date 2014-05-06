@@ -351,17 +351,13 @@ a child with \texttt{child\_process.fork()}.
 \subsubsection{server.connections}\label{server.connections}
 
 This function is \textbf{deprecated}; please use
-{[}server.getConnections(){]}{[}{]} instead. The number of concurrent
-connections on the server.
+\hyperref[netux5fserverux5fgetconnectionsux5fcallback]{server.getConnections()}
+instead. The number of concurrent connections on the server.
 
 This becomes \texttt{null} when sending a socket to a child with
 \texttt{child\_process.fork()}. To poll forks and get current number of
 active connections use asynchronous \texttt{server.getConnections}
 instead.
-
-\texttt{net.Server} is an
-\href{events.html\#events_class_events_eventemitter}{EventEmitter} with
-the following events:
 
 \subsubsection{server.getConnections(callback)}\label{server.getconnectionscallback}
 
@@ -369,6 +365,10 @@ Asynchronously get the number of concurrent connections on the server.
 Works when sockets were sent to forks.
 
 Callback should take two arguments \texttt{err} and \texttt{count}.
+
+\texttt{net.Server} is an
+\href{events.html\#events_class_events_eventemitter}{EventEmitter} with
+the following events:
 
 \subsubsection{Event: `listening'}\label{event-listening}
 

@@ -8,11 +8,11 @@ The `tls` module uses OpenSSL to provide Transport Layer Security and/or
 Secure Socket Layer: encrypted stream communication.
 
 TLS/SSL is a public/private key infrastructure. Each client and each
-server must have a private key. A private key is created like this
+server must have a private key. A private key is created like this:
 
     openssl genrsa -out ryans-key.pem 1024
 
-All severs and some clients need to have a certificate. Certificates are public
+All servers and some clients need to have a certificate. Certificates are public
 keys signed by a Certificate Authority or self-signed. The first step to
 getting a certificate is to create a "Certificate Signing Request" (CSR)
 file. This is done with:
@@ -197,7 +197,7 @@ automatically set as a listener for the [secureConnection][] event.  The
     supports SNI TLS extension. Two argument will be passed to it: `servername`,
     and `cb`. `SNICallback` should invoke `cb(null, ctx)`, where `ctx` is a
     SecureContext instance.
-    (You can use `crypto.createCredentials(...).context` to get proper
+    (You can use `tls.createSecureContext(...)` to get proper
     SecureContext). If `SNICallback` wasn't provided - default callback with
     high-level API will be used (see below).
 
@@ -290,8 +290,11 @@ Creates a new client connection to the given `port` and `host` (old API) or
     creating a new socket. If this option is specified, `host` and `port`
     are ignored.
 
+  - `path`: Creates unix socket connection to path. If this option is
+    specified, `host` and `port` are ignored.
+
   - `pfx`: A string or `Buffer` containing the private key, certificate and
-    CA certs of the server in PFX or PKCS12 format.
+    CA certs of the client in PFX or PKCS12 format.
 
   - `key`: A string or `Buffer` containing the private key of the client in
     PEM format.
@@ -391,8 +394,8 @@ Construct a new TLSSocket object from existing TCP socket.
 
 `options` is an object that might contain following properties:
 
-  - `credentials`: An optional credentials object from
-     `crypto.createCredentials( ... )`
+  - `secureContext`: An optional TLS context object from
+     `tls.createSecureContext( ... )`
 
   - `isServer`: If true - TLS socket will be instantiated in server-mode
 
@@ -408,7 +411,11 @@ Construct a new TLSSocket object from existing TCP socket.
 
   - `session`: Optional, a `Buffer` instance, containing TLS session
 
-## tls.createSecurePair([credentials], [isServer], [requestCert], [rejectUnauthorized])
+  - `requestOCSP`: Optional, if `true` - OCSP status request extension would
+    be added to client hello, and `OCSPResponse` event will be emitted on socket
+    before establishing secure communication
+
+## tls.createSecurePair([context], [isServer], [requestCert], [rejectUnauthorized])
 
     Stability: 0 - Deprecated. Use tls.TLSSocket instead.
 
@@ -417,7 +424,7 @@ encrypted data, and one reads/writes cleartext data.
 Generally the encrypted one is piped to/from an incoming encrypted data stream,
 and the cleartext one is used as a replacement for the initial encrypted stream.
 
- - `credentials`: A credentials object from crypto.createCredentials( ... )
+ - `credentials`: A secure context object from tls.createSecureContext( ... )
 
  - `isServer`: A boolean indicating whether this tls connection should be
    opened as a server or a client.
@@ -508,6 +515,44 @@ NOTE: adding this event listener will have an effect only on connections
 established after addition of event listener.
 
 
+### Event: 'OCSPRequest'
+
+`function (certificate, issuer, callback) { }`
+
+Emitted when the client sends a certificate status request. You could parse
+server's current certificate to obtain OCSP url and certificate id, and after
+obtaining OCSP response invoke `callback(null, resp)`, where `resp` is a
+`Buffer` instance. Both `certificate` and `issuer` are a `Buffer`
+DER-representations of the primary and issuer's certificates. They could be used
+to obtain OCSP certificate id and OCSP endpoint url.
+
+Alternatively, `callback(null, null)` could be called, meaning that there is no
+OCSP response.
+
+Calling `callback(err)` will result in a `socket.destroy(err)` call.
+
+Typical flow:
+
+1. Client connects to server and sends `OCSPRequest` to it (via status info
+   extension in ClientHello.)
+2. Server receives request and invokes `OCSPRequest` event listener if present
+3. Server grabs OCSP url from either `certificate` or `issuer` and performs an
+   [OCSP request] to the CA
+4. Server receives `OCSPResponse` from CA and sends it back to client via
+   `callback` argument
+5. Client validates the response and either destroys socket or performs a
+   handshake.
+
+NOTE: `issuer` could be null, if certficiate is self-signed or if issuer is not
+in the root certificates list. (You could provide an issuer via `ca` option.)
+
+NOTE: adding this event listener will have an effect only on connections
+established after addition of event listener.
+
+NOTE: you may want to use some npm module like [asn1.js] to parse the
+certificates.
+
+
 ### server.listen(port, [host], [callback])
 
 Begin accepting connections on the specified `port` and `host`.  If the
@@ -532,10 +577,10 @@ Returns the bound address, the address family name and port of the
 server as reported by the operating system.  See [net.Server.address()][] for
 more information.
 
-### server.addContext(hostname, credentials)
+### server.addContext(hostname, context)
 
 Add secure context that will be used if client request's SNI hostname is
-matching passed `hostname` (wildcards can be used). `credentials` can contain
+matching passed `hostname` (wildcards can be used). `context` can contain
 `key`, `cert` and `ca`.
 
 ### server.maxConnections
@@ -577,6 +622,16 @@ If `tlsSocket.authorized === false` then the error can be found in
 `tlsSocket.authorizationError`. Also if NPN was used - you can check
 `tlsSocket.npnProtocol` for negotiated protocol.
 
+### Event: 'OCSPResponse'
+
+`function (response) { }`
+
+This event will be emitted if `requestOCSP` option was set. `response` is a
+buffer object, containing server's OCSP response.
+
+Traditionally, the `response` is a signed object from the server's CA that
+contains information about server's certificate revocation status.
+
 ### tlsSocket.encrypted
 
 Static boolean value, always `true`. May be used to distinguish TLS sockets
@@ -592,27 +647,32 @@ specified CAs, otherwise `false`
 The reason why the peer's certificate has not been verified. This property
 becomes available only when `tlsSocket.authorized === false`.
 
-### tlsSocket.getPeerCertificate()
+### tlsSocket.getPeerCertificate([ detailed ])
 
 Returns an object representing the peer's certificate. The returned object has
-some properties corresponding to the field of the certificate.
+some properties corresponding to the field of the certificate. If `detailed`
+argument is `true` - the full chain with `issuer` property will be returned,
+if `false` - only the top certificate without `issuer` property.
 
 Example:
 
-    { subject: 
+    { subject:
        { C: 'UK',
          ST: 'Acknack Ltd',
          L: 'Rhys Jones',
          O: 'node.js',
          OU: 'Test TLS Certificate',
          CN: 'localhost' },
-      issuer: 
+      issuerInfo:
        { C: 'UK',
          ST: 'Acknack Ltd',
          L: 'Rhys Jones',
          O: 'node.js',
          OU: 'Test TLS Certificate',
          CN: 'localhost' },
+      issuer:
+       { ... another certificate ... },
+      raw: < RAW DER buffer >,
       valid_from: 'Nov 11 09:52:22 2009 GMT',
       valid_to: 'Nov  6 09:52:22 2029 GMT',
       fingerprint: '2A:7A:C2:DD:E5:F9:CC:53:72:35:99:7A:02:5A:71:38:52:EC:8A:DF',
@@ -711,3 +771,5 @@ The numeric representation of the local port.
 [Forward secrecy]: http://en.wikipedia.org/wiki/Perfect_forward_secrecy
 [DHE]: https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange
 [ECDHE]: https://en.wikipedia.org/wiki/Elliptic_curve_Diffie%E2%80%93Hellman
+[asn1.js]: http://npmjs.org/package/asn1.js
+[OCSP request]: http://en.wikipedia.org/wiki/OCSP_stapling

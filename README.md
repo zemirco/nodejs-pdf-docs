@@ -6,7 +6,7 @@ file and an .epub (iOS, Android and more) file.
 
 Of course the whole creation and conversion process is written in node.js.
 
-Current version of node.js in the docs: **0.10.26**
+Current version of node.js in the docs: **0.10.28**
 
 ## How to use
 
@@ -24,7 +24,7 @@ You need to have [pandoc](http://johnmacfarlane.net/pandoc/) installed on your s
 ### Create .pdf
 
 1. Use `node app.js` to create the .tex files
-2. Manually edit the few files as shown in all.tex (or run `node cleanTex.js`)
+2. ~~Manually edit the few files as shown in all.tex (or run `node cleanTex.js`)~~
 3. Create the pdf with pdfLaTeX
 
 #### Customizing

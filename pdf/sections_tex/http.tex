@@ -315,8 +315,8 @@ This object is created internally by a HTTP server--not by the user. It
 is passed as the second parameter to the \texttt{'request'} event.
 
 The response implements the
-\href{stream.html\#stream_writable_stream}{Writable Stream} interface.
-This is an
+\href{stream.html\#stream_class_stream_writable}{Writable Stream}
+interface. This is an
 \href{events.html\#events_class_events_eventemitter}{EventEmitter} with
 the following events:
 
@@ -807,7 +807,8 @@ object.
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{http = }\FunctionTok{require}\NormalTok{(}\StringTok{'http'}\NormalTok{);}
 \KeywordTok{var} \NormalTok{keepAliveAgent = }\KeywordTok{new} \OtherTok{http}\NormalTok{.}\FunctionTok{Agent}\NormalTok{(\{ }\DataTypeTok{keepAlive}\NormalTok{: }\KeywordTok{true} \NormalTok{\});}
-\OtherTok{keepAliveAgent}\NormalTok{.}\FunctionTok{request}\NormalTok{(options, onResponseCallback);}
+\OtherTok{options}\NormalTok{.}\FunctionTok{agent} \NormalTok{= keepAliveAgent;}
+\OtherTok{http}\NormalTok{.}\FunctionTok{request}\NormalTok{(options, onResponseCallback);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -893,8 +894,8 @@ Note: Node does not check whether Content-Length and the length of the
 body which has been transmitted are equal or not.
 
 The request implements the
-\href{stream.html\#stream_writable_stream}{Writable Stream} interface.
-This is an
+\href{stream.html\#stream_class_stream_writable}{Writable Stream}
+interface. This is an
 \href{events.html\#events_class_events_eventemitter}{EventEmitter} with
 the following events:
 
@@ -1056,6 +1057,20 @@ Emitted when the server sends a `100 Continue' HTTP response, usually
 because the request contained `Expect: 100-continue'. This is an
 instruction that the client should send the request body.
 
+\subsubsection{request.flush()}\label{request.flush}
+
+Flush the request headers.
+
+For effiency reasons, node.js normally buffers the request headers until
+you call \texttt{request.end()} or write the first chunk of request
+data. It then tries hard to pack the request headers and data into a
+single TCP packet.
+
+That's usually what you want (it saves a TCP round-trip) but not when
+the first data isn't sent until possibly much later.
+\texttt{request.flush()} lets you bypass the optimization and kickstart
+the request.
+
 \subsubsection{request.write(chunk,
 {[}encoding{]})}\label{request.writechunk-encoding}
 
@@ -1115,9 +1130,10 @@ and passed as the first argument to the \texttt{'request'} and
 \texttt{'response'} event respectively. It may be used to access
 response status, headers and data.
 
-It implements the \href{stream.html\#stream_readable_stream}{Readable
-Stream} interface, as well as the following additional events, methods,
-and properties.
+It implements the
+\href{stream.html\#stream_class_stream_readable}{Readable Stream}
+interface, as well as the following additional events, methods, and
+properties.
 
 \subsubsection{Event: `close'}\label{event-close-2}
 

@@ -34,10 +34,19 @@ You have to change it to this:
 \subsection{dgram.createSocket(type,
 {[}callback{]})}\label{dgram.createsockettype-callback}
 
+\subsection{dgram.createSocket(options,
+{[}callback{]})}\label{dgram.createsocketoptions-callback}
+
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{type} String. Either `udp4' or `udp6'
+\item
+  \texttt{options} Object. Should contain a \texttt{type} property and
+  could contain \texttt{reuseAddr} property. \texttt{false} by default.
+  When \texttt{reuseAddr} is \texttt{true} - \texttt{socket.bind()} will
+  reuse address, even if the other process has already bound a socket on
+  it.
 \item
   \texttt{callback} Function. Attached as a listener to \texttt{message}
   events. Optional
@@ -60,7 +69,7 @@ random port (it does the right thing for both \texttt{udp4} and
 \subsection{Class: dgram.Socket}\label{class-dgram.socket}
 
 The dgram Socket class encapsulates the datagram functionality. It
-should be created via \texttt{dgram.createSocket(type, {[}callback{]})}.
+should be created via \texttt{dgram.createSocket(...)}
 
 \subsubsection{Event: `message'}\label{event-message}
 

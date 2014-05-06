@@ -126,9 +126,11 @@ an exchange attribute (e.g.
 callback)}\label{dns.resolvetxthostname-callback}
 
 The same as \texttt{dns.resolve()}, but only for text queries
-(\texttt{TXT} records). \texttt{addresses} is an array of the text
+(\texttt{TXT} records). \texttt{addresses} is an 2-d array of the text
 records available for \texttt{hostname} (e.g.,
-\texttt{{[}'v=spf1 ip4:0.0.0.0 \textasciitilde{}all'{]}}).
+\texttt{{[} {[}'v=spf1 ip4:0.0.0.0 ', '\textasciitilde{}all' {]} {]}}).
+Each sub-array contains TXT chunks of one record. Depending on the use
+case, the could be either joined together or treated separately.
 
 \subsection{dns.resolveSrv(hostname,
 callback)}\label{dns.resolvesrvhostname-callback}

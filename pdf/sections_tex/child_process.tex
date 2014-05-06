@@ -528,11 +528,8 @@ Example of checking for failed exec:
 \KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
     \NormalTok{child = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'bad_command'}\NormalTok{);}
 
-\OtherTok{child}\NormalTok{.}\OtherTok{stderr}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
-\OtherTok{child}\NormalTok{.}\OtherTok{stderr}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(data) \{}
-  \KeywordTok{if} \NormalTok{(}\OtherTok{/}\FloatTok{^}\OtherTok{execvp}\FloatTok{\textbackslash{}(\textbackslash{})}\OtherTok{/}\NormalTok{.}\FunctionTok{test}\NormalTok{(data)) \{}
-    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Failed to start child process.'}\NormalTok{);}
-  \NormalTok{\}}
+\OtherTok{child}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function} \NormalTok{(err) \{}
+  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Failed to start child process.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}

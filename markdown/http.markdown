@@ -619,7 +619,8 @@ To configure any of them, you must create your own `Agent` object.
 ```javascript
 var http = require('http');
 var keepAliveAgent = new http.Agent({ keepAlive: true });
-keepAliveAgent.request(options, onResponseCallback);
+options.agent = keepAliveAgent;
+http.request(options, onResponseCallback);
 ```
 
 ### agent.maxSockets
@@ -844,6 +845,18 @@ Emitted when the server sends a '100 Continue' HTTP response, usually because
 the request contained 'Expect: 100-continue'. This is an instruction that
 the client should send the request body.
 
+### request.flush()
+
+Flush the request headers.
+
+For effiency reasons, node.js normally buffers the request headers until you
+call `request.end()` or write the first chunk of request data.  It then tries
+hard to pack the request headers and data into a single TCP packet.
+
+That's usually what you want (it saves a TCP round-trip) but not when the first
+data isn't sent until possibly much later.  `request.flush()` lets you bypass
+the optimization and kickstart the request.
+
 ### request.write(chunk, [encoding])
 
 Sends a chunk of the body.  By calling this method
@@ -1033,8 +1046,8 @@ authentication details.
 [Agent]: #http_class_http_agent
 [Buffer]: buffer.html#buffer_buffer
 [EventEmitter]: events.html#events_class_events_eventemitter
-[Readable Stream]: stream.html#stream_readable_stream
-[Writable Stream]: stream.html#stream_writable_stream
+[Readable Stream]: stream.html#stream_class_stream_readable
+[Writable Stream]: stream.html#stream_class_stream_writable
 [global Agent]: #http_http_globalagent
 [http.ClientRequest]: #http_class_http_clientrequest
 [http.IncomingMessage]: #http_http_incomingmessage

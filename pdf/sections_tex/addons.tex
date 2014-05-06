@@ -478,7 +478,7 @@ the constructor's prototype:
   \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
   \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{Holder}\NormalTok{());}
   \NormalTok{obj->value_ += }\DecValTok{1}\NormalTok{;}
 
   \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, obj->value_));}
@@ -639,7 +639,7 @@ The implementation is similar to the above in \texttt{myobject.cc}:
   \NormalTok{Isolate* isolate = }\DataTypeTok{Isolate}\NormalTok{::}\FunctionTok{GetCurrent}\NormalTok{();}
   \NormalTok{HandleScope }\FunctionTok{scope}\NormalTok{(isolate);}
 
-  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{This}\NormalTok{());}
+  \NormalTok{MyObject* obj = }\DataTypeTok{ObjectWrap}\NormalTok{::Unwrap<MyObject>(}\OtherTok{args}\NormalTok{.}\FunctionTok{Holder}\NormalTok{());}
   \NormalTok{obj->value_ += }\DecValTok{1}\NormalTok{;}
 
   \OtherTok{args}\NormalTok{.}\FunctionTok{GetReturnValue}\NormalTok{().}\FunctionTok{Set}\NormalTok{(}\DataTypeTok{Number}\NormalTok{::}\FunctionTok{New}\NormalTok{(isolate, obj->value_));}

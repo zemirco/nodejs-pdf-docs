@@ -1325,6 +1325,14 @@ method on extension duplex classes.
   \texttt{allowHalfOpen} \{Boolean\} Default=true. If set to
   \texttt{false}, then the stream will automatically end the readable
   side when the writable side ends and vice versa.
+\item
+  \texttt{readableObjectMode} \{Boolean\} Default=false. Sets
+  \texttt{objectMode} for readable side of the stream. Has no effect if
+  \texttt{objectMode} is \texttt{true}.
+\item
+  \texttt{writableObjectMode} \{Boolean\} Default=false. Sets
+  \texttt{objectMode} for writable side of the stream. Has no effect if
+  \texttt{objectMode} is \texttt{true}.
 \end{itemize}
 
 In classes that extend the Duplex class, make sure to call the
@@ -1706,21 +1714,10 @@ You should set \texttt{objectMode} in your stream child class
 constructor on the options object. Setting \texttt{objectMode}
 mid-stream is not safe.
 
-\subsubsection{State Objects}\label{state-objects}
-
-\hyperref[streamux5fclassux5fstreamux5freadable]{Readable} streams have
-a member object called \texttt{\_readableState}.
-\hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} streams have
-a member object called \texttt{\_writableState}.
-\hyperref[streamux5fclassux5fstreamux5fduplex]{Duplex} streams have
-both.
-
-\textbf{These objects should generally not be modified in child
-classes.} However, if you have a Duplex or Transform stream that should
-be in \texttt{objectMode} on the readable side, and not in
-\texttt{objectMode} on the writable side, then you may do this in the
-constructor by setting the flag explicitly on the appropriate state
-object.
+For Duplex streams \texttt{objectMode} can be set exclusively for
+readable or writable side with \texttt{readableObjectMode} and
+\texttt{writableObjectMode} respectivly. These options can be used to
+implement parsers and serializers with Transform streams.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1730,13 +1727,12 @@ object.
 \OtherTok{util}\NormalTok{.}\FunctionTok{inherits}\NormalTok{(JSONParseStream, Transform);}
 
 \CommentTok{// Gets \textbackslash{}n-delimited JSON string data, and emits the parsed objects}
-\KeywordTok{function} \FunctionTok{JSONParseStream}\NormalTok{(options) \{}
+\KeywordTok{function} \FunctionTok{JSONParseStream}\NormalTok{() \{}
   \KeywordTok{if} \NormalTok{(!(}\KeywordTok{this} \KeywordTok{instanceof} \NormalTok{JSONParseStream))}
-    \KeywordTok{return} \KeywordTok{new} \FunctionTok{JSONParseStream}\NormalTok{(options);}
+    \KeywordTok{return} \KeywordTok{new} \FunctionTok{JSONParseStream}\NormalTok{();}
 
-  \OtherTok{Transform}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, options);}
-  \KeywordTok{this}\NormalTok{.}\OtherTok{_writableState}\NormalTok{.}\FunctionTok{objectMode} \NormalTok{= }\KeywordTok{false}\NormalTok{;}
-  \KeywordTok{this}\NormalTok{.}\OtherTok{_readableState}\NormalTok{.}\FunctionTok{objectMode} \NormalTok{= }\KeywordTok{true}\NormalTok{;}
+  \OtherTok{Transform}\NormalTok{.}\FunctionTok{call}\NormalTok{(}\KeywordTok{this}\NormalTok{, \{ }\DataTypeTok{readableObjectMode }\NormalTok{: }\KeywordTok{true} \NormalTok{\});}
+
   \KeywordTok{this}\NormalTok{.}\FunctionTok{_buffer} \NormalTok{= }\StringTok{''}\NormalTok{;}
   \KeywordTok{this}\NormalTok{.}\FunctionTok{_decoder} \NormalTok{= }\KeywordTok{new} \FunctionTok{StringDecoder}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
 \NormalTok{\}}
@@ -1779,7 +1775,3 @@ object.
 \end{Highlighting}
 \end{Shaded}
 
-The state objects contain other useful information for debugging the
-state of streams in your programs. It is safe to look at them, but
-beyond setting option flags in the constructor, it is \textbf{not} safe
-to modify them.

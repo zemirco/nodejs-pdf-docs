@@ -12,7 +12,7 @@ The \texttt{tls} module uses OpenSSL to provide Transport Layer Security
 and/or Secure Socket Layer: encrypted stream communication.
 
 TLS/SSL is a public/private key infrastructure. Each client and each
-server must have a private key. A private key is created like this
+server must have a private key. A private key is created like this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -20,9 +20,9 @@ server must have a private key. A private key is created like this
 \end{Highlighting}
 \end{Shaded}
 
-All severs and some clients need to have a certificate. Certificates are
-public keys signed by a Certificate Authority or self-signed. The first
-step to getting a certificate is to create a ``Certificate Signing
+All servers and some clients need to have a certificate. Certificates
+are public keys signed by a Certificate Authority or self-signed. The
+first step to getting a certificate is to create a ``Certificate Signing
 Request'' (CSR) file. This is done with:
 
 \begin{Shaded}
@@ -259,9 +259,9 @@ event. The \texttt{options} object has these possibilities:
   if client supports SNI TLS extension. Two argument will be passed to
   it: \texttt{servername}, and \texttt{cb}. \texttt{SNICallback} should
   invoke \texttt{cb(null, ctx)}, where \texttt{ctx} is a SecureContext
-  instance. (You can use \texttt{crypto.createCredentials(...).context}
-  to get proper SecureContext). If \texttt{SNICallback} wasn't provided
-  - default callback with high-level API will be used (see below).
+  instance. (You can use \texttt{tls.createSecureContext(...)} to get
+  proper SecureContext). If \texttt{SNICallback} wasn't provided -
+  default callback with high-level API will be used (see below).
 \item
   \texttt{sessionTimeout}: An integer specifying the seconds after which
   TLS session identifiers and TLS session tickets created by the server
@@ -376,8 +376,11 @@ specifies:
   than creating a new socket. If this option is specified, \texttt{host}
   and \texttt{port} are ignored.
 \item
+  \texttt{path}: Creates unix socket connection to path. If this option
+  is specified, \texttt{host} and \texttt{port} are ignored.
+\item
   \texttt{pfx}: A string or \texttt{Buffer} containing the private key,
-  certificate and CA certs of the server in PFX or PKCS12 format.
+  certificate and CA certs of the client in PFX or PKCS12 format.
 \item
   \texttt{key}: A string or \texttt{Buffer} containing the private key
   of the client in PEM format.
@@ -499,8 +502,8 @@ Construct a new TLSSocket object from existing TCP socket.
 
 \begin{itemize}
 \item
-  \texttt{credentials}: An optional credentials object from
-  \texttt{crypto.createCredentials( ... )}
+  \texttt{secureContext}: An optional TLS context object from
+  \texttt{tls.createSecureContext( ... )}
 \item
   \texttt{isServer}: If true - TLS socket will be instantiated in
   server-mode
@@ -522,11 +525,16 @@ Construct a new TLSSocket object from existing TCP socket.
 \item
   \texttt{session}: Optional, a \texttt{Buffer} instance, containing TLS
   session
+\item
+  \texttt{requestOCSP}: Optional, if \texttt{true} - OCSP status request
+  extension would be added to client hello, and \texttt{OCSPResponse}
+  event will be emitted on socket before establishing secure
+  communication
 \end{itemize}
 
-\subsection{tls.createSecurePair({[}credentials{]}, {[}isServer{]},
+\subsection{tls.createSecurePair({[}context{]}, {[}isServer{]},
 {[}requestCert{]},
-{[}rejectUnauthorized{]})}\label{tls.createsecurepaircredentials-isserver-requestcert-rejectunauthorized}
+{[}rejectUnauthorized{]})}\label{tls.createsecurepaircontext-isserver-requestcert-rejectunauthorized}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -542,8 +550,8 @@ encrypted stream.
 
 \begin{itemize}
 \item
-  \texttt{credentials}: A credentials object from
-  crypto.createCredentials( \ldots{} )
+  \texttt{credentials}: A secure context object from
+  tls.createSecureContext( \ldots{} )
 \item
   \texttt{isServer}: A boolean indicating whether this tls connection
   should be opened as a server or a client.
@@ -637,6 +645,60 @@ terminate incoming connection and destroy socket.
 NOTE: adding this event listener will have an effect only on connections
 established after addition of event listener.
 
+\subsubsection{Event: `OCSPRequest'}\label{event-ocsprequest}
+
+\texttt{function (certificate, issuer, callback) \{ \}}
+
+Emitted when the client sends a certificate status request. You could
+parse server's current certificate to obtain OCSP url and certificate
+id, and after obtaining OCSP response invoke
+\texttt{callback(null, resp)}, where \texttt{resp} is a \texttt{Buffer}
+instance. Both \texttt{certificate} and \texttt{issuer} are a
+\texttt{Buffer} DER-representations of the primary and issuer's
+certificates. They could be used to obtain OCSP certificate id and OCSP
+endpoint url.
+
+Alternatively, \texttt{callback(null, null)} could be called, meaning
+that there is no OCSP response.
+
+Calling \texttt{callback(err)} will result in a
+\texttt{socket.destroy(err)} call.
+
+Typical flow:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Client connects to server and sends \texttt{OCSPRequest} to it (via
+  status info extension in ClientHello.)
+\item
+  Server receives request and invokes \texttt{OCSPRequest} event
+  listener if present
+\item
+  Server grabs OCSP url from either \texttt{certificate} or
+  \texttt{issuer} and performs an
+  \href{http://en.wikipedia.org/wiki/OCSP_stapling}{OCSP request} to the
+  CA
+\item
+  Server receives \texttt{OCSPResponse} from CA and sends it back to
+  client via \texttt{callback} argument
+\item
+  Client validates the response and either destroys socket or performs a
+  handshake.
+\end{enumerate}
+
+NOTE: \texttt{issuer} could be null, if certficiate is self-signed or if
+issuer is not in the root certificates list. (You could provide an
+issuer via \texttt{ca} option.)
+
+NOTE: adding this event listener will have an effect only on connections
+established after addition of event listener.
+
+NOTE: you may want to use some npm module like
+\href{http://npmjs.org/package/asn1.js}{asn1.js} to parse the
+certificates.
+
 \subsubsection{server.listen(port, {[}host{]},
 {[}callback{]})}\label{server.listenport-host-callback}
 
@@ -663,11 +725,11 @@ server as reported by the operating system. See
 information.
 
 \subsubsection{server.addContext(hostname,
-credentials)}\label{server.addcontexthostname-credentials}
+context)}\label{server.addcontexthostname-context}
 
 Add secure context that will be used if client request's SNI hostname is
 matching passed \texttt{hostname} (wildcards can be used).
-\texttt{credentials} can contain \texttt{key}, \texttt{cert} and
+\texttt{context} can contain \texttt{key}, \texttt{cert} and
 \texttt{ca}.
 
 \subsubsection{server.maxConnections}\label{server.maxconnections}
@@ -716,6 +778,17 @@ signed by one of the specified CAs. If
 \texttt{tlsSocket.authorizationError}. Also if NPN was used - you can
 check \texttt{tlsSocket.npnProtocol} for negotiated protocol.
 
+\subsubsection{Event: `OCSPResponse'}\label{event-ocspresponse}
+
+\texttt{function (response) \{ \}}
+
+This event will be emitted if \texttt{requestOCSP} option was set.
+\texttt{response} is a buffer object, containing server's OCSP response.
+
+Traditionally, the \texttt{response} is a signed object from the
+server's CA that contains information about server's certificate
+revocation status.
+
 \subsubsection{tlsSocket.encrypted}\label{tlssocket.encrypted}
 
 Static boolean value, always \texttt{true}. May be used to distinguish
@@ -732,30 +805,36 @@ The reason why the peer's certificate has not been verified. This
 property becomes available only when
 \texttt{tlsSocket.authorized === false}.
 
-\subsubsection{tlsSocket.getPeerCertificate()}\label{tlssocket.getpeercertificate}
+\subsubsection{tlsSocket.getPeerCertificate({[} detailed
+{]})}\label{tlssocket.getpeercertificate-detailed}
 
 Returns an object representing the peer's certificate. The returned
 object has some properties corresponding to the field of the
-certificate.
+certificate. If \texttt{detailed} argument is \texttt{true} - the full
+chain with \texttt{issuer} property will be returned, if \texttt{false}
+- only the top certificate without \texttt{issuer} property.
 
 Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{\{ }\DataTypeTok{subject}\NormalTok{: }
+\NormalTok{\{ }\DataTypeTok{subject}\NormalTok{:}
    \NormalTok{\{ }\DataTypeTok{C}\NormalTok{: }\StringTok{'UK'}\NormalTok{,}
      \DataTypeTok{ST}\NormalTok{: }\StringTok{'Acknack Ltd'}\NormalTok{,}
      \DataTypeTok{L}\NormalTok{: }\StringTok{'Rhys Jones'}\NormalTok{,}
      \DataTypeTok{O}\NormalTok{: }\StringTok{'node.js'}\NormalTok{,}
      \DataTypeTok{OU}\NormalTok{: }\StringTok{'Test TLS Certificate'}\NormalTok{,}
      \DataTypeTok{CN}\NormalTok{: }\StringTok{'localhost'} \NormalTok{\},}
-  \DataTypeTok{issuer}\NormalTok{: }
+  \DataTypeTok{issuerInfo}\NormalTok{:}
    \NormalTok{\{ }\DataTypeTok{C}\NormalTok{: }\StringTok{'UK'}\NormalTok{,}
      \DataTypeTok{ST}\NormalTok{: }\StringTok{'Acknack Ltd'}\NormalTok{,}
      \DataTypeTok{L}\NormalTok{: }\StringTok{'Rhys Jones'}\NormalTok{,}
      \DataTypeTok{O}\NormalTok{: }\StringTok{'node.js'}\NormalTok{,}
      \DataTypeTok{OU}\NormalTok{: }\StringTok{'Test TLS Certificate'}\NormalTok{,}
      \DataTypeTok{CN}\NormalTok{: }\StringTok{'localhost'} \NormalTok{\},}
+  \DataTypeTok{issuer}\NormalTok{:}
+   \NormalTok{\{ ... }\FunctionTok{another} \OtherTok{certificate} \NormalTok{... \},}
+  \DataTypeTok{raw}\NormalTok{: < RAW DER buffer >,}
   \DataTypeTok{valid_from}\NormalTok{: }\StringTok{'Nov 11 09:52:22 2009 GMT'}\NormalTok{,}
   \DataTypeTok{valid_to}\NormalTok{: }\StringTok{'Nov  6 09:52:22 2029 GMT'}\NormalTok{,}
   \DataTypeTok{fingerprint}\NormalTok{: }\StringTok{'2A:7A:C2:DD:E5:F9:CC:53:72:35:99:7A:02:5A:71:38:52:EC:8A:DF'}\NormalTok{,}
