@@ -65,11 +65,29 @@ Same as \texttt{console.log} but prints to stderr.
 
 Same as \texttt{console.error}.
 
-\subsection{console.dir(obj)}\label{console.dirobj}
+\subsection{console.dir(obj,
+{[}options{]})}\label{console.dirobj-options}
 
 Uses \texttt{util.inspect} on \texttt{obj} and prints resulting string
 to stdout. This function bypasses any custom \texttt{inspect()} function
-on \texttt{obj}.
+on \texttt{obj}. An optional \emph{options} object may be passed that
+alters certain aspects of the formatted string:
+
+\begin{itemize}
+\item
+  \texttt{showHidden} - if \texttt{true} then the object's
+  non-enumerable properties will be shown too. Defaults to
+  \texttt{false}.
+\item
+  \texttt{depth} - tells \texttt{inspect} how many times to recurse
+  while formatting the object. This is useful for inspecting large
+  complicated objects. Defaults to \texttt{2}. To make it recurse
+  indefinitely pass \texttt{null}.
+\item
+  \texttt{colors} - if \texttt{true}, then the output will be styled
+  with ANSI color codes. Defaults to \texttt{false}. Colors are
+  customizable, see below.
+\end{itemize}
 
 \subsection{console.time(label)}\label{console.timelabel}
 

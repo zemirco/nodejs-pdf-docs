@@ -337,6 +337,26 @@ accessible through the \texttt{constructor.super\_} property.
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{util.deprecate(function,
+string)}\label{util.deprecatefunction-string}
+
+Marks that a method should not be used any more.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{exports}\NormalTok{.}\FunctionTok{puts} \NormalTok{= }\OtherTok{exports}\NormalTok{.}\FunctionTok{deprecate}\NormalTok{(}\KeywordTok{function}\NormalTok{() \{}
+  \KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{, len = }\OtherTok{arguments}\NormalTok{.}\FunctionTok{length}\NormalTok{; i < len; ++i) \{}
+    \OtherTok{process}\NormalTok{.}\OtherTok{stdout}\NormalTok{.}\FunctionTok{write}\NormalTok{(arguments[i] + }\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{);}
+  \NormalTok{\}}
+\NormalTok{\}, }\StringTok{'util.puts: Use console.log instead'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+It returns a modified function which warns once by default. If
+\texttt{-{}-no-deprecation} is set then this function is a NO-OP. If
+\texttt{-{}-throw-deprecation} is set then the application will throw an
+exception if the deprecated API is used.
+
 \subsection{util.debug(string)}\label{util.debugstring}
 
 \begin{Shaded}

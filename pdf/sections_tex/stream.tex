@@ -234,7 +234,7 @@ possible, this is the best way to do so.
 
 \paragraph{Event: `end'}\label{event-end}
 
-This event fires when no more data will be provided.
+This event fires when there will be no more data to read.
 
 Note that the \texttt{end} event \textbf{will not fire} unless the data
 is completely consumed. This can be done by switching into flowing mode,
@@ -1445,6 +1445,16 @@ class that defines it, and should not be called directly by user
 programs. However, you \textbf{are} expected to override this method in
 your own extension classes.
 
+\paragraph{Events: `finish' and `end'}\label{events-finish-and-end}
+
+The \hyperref[streamux5feventux5ffinish]{\texttt{finish}} and
+\hyperref[streamux5feventux5fend]{\texttt{end}} events are from the
+parent Writable and Readable classes respectively. The \texttt{finish}
+event is fired after \texttt{.end()} is called and all chunks have been
+processed by \texttt{\_transform}, \texttt{end} is fired after all data
+has been output which is after the callback in \texttt{\_flush} has been
+called.
+
 \paragraph{Example: \texttt{SimpleProtocol} parser
 v2}\label{example-simpleprotocol-parser-v2}
 
@@ -1716,7 +1726,7 @@ mid-stream is not safe.
 
 For Duplex streams \texttt{objectMode} can be set exclusively for
 readable or writable side with \texttt{readableObjectMode} and
-\texttt{writableObjectMode} respectivly. These options can be used to
+\texttt{writableObjectMode} respectively. These options can be used to
 implement parsers and serializers with Transform streams.
 
 \begin{Shaded}

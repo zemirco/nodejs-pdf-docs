@@ -9,11 +9,15 @@
 This module provides utilities for dealing with query strings. It
 provides the following methods:
 
-\subsection{querystring.stringify(obj, {[}sep{]},
-{[}eq{]})}\label{querystring.stringifyobj-sep-eq}
+\subsection{querystring.stringify(obj, {[}sep{]}, {[}eq{]},
+{[}options{]})}\label{querystring.stringifyobj-sep-eq-options}
 
 Serialize an object to a query string. Optionally override the default
 separator (\texttt{'\&'}) and assignment (\texttt{'='}) characters.
+
+Options object may contain \texttt{encodeURIComponent} property
+(\texttt{querystring.escape} by default), it can be used to encode
+string with \texttt{non-utf8} encoding if necessary.
 
 Example:
 
@@ -26,6 +30,13 @@ Example:
 \OtherTok{querystring}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(\{}\DataTypeTok{foo}\NormalTok{: }\StringTok{'bar'}\NormalTok{, }\DataTypeTok{baz}\NormalTok{: }\StringTok{'qux'}\NormalTok{\}, }\StringTok{';'}\NormalTok{, }\StringTok{':'}\NormalTok{)}
 \CommentTok{// returns}
 \StringTok{'foo:bar;baz:qux'}
+
+\CommentTok{// Suppose gbkEncodeURIComponent function already exists,}
+\CommentTok{// it can encode string with `gbk` encoding}
+\OtherTok{querystring}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(\{ }\DataTypeTok{w}\NormalTok{: }\StringTok{'中文'}\NormalTok{, }\DataTypeTok{foo}\NormalTok{: }\StringTok{'bar'} \NormalTok{\}, }\KeywordTok{null}\NormalTok{, }\KeywordTok{null}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{encodeURIComponent}\NormalTok{: gbkEncodeURIComponent \})}
+\CommentTok{// returns}
+\StringTok{'w=%D6%D0%CE%C4&foo=bar'}
 \end{Highlighting}
 \end{Shaded}
 
@@ -39,6 +50,10 @@ Options object may contain \texttt{maxKeys} property (equal to 1000 by
 default), it'll be used to limit processed keys. Set it to 0 to remove
 key count limitation.
 
+Options object may contain \texttt{decodeURIComponent} property
+(\texttt{decodeURIComponent} by default), it can be used to decode
+\texttt{non-utf8} encoding string if necessary.
+
 Example:
 
 \begin{Shaded}
@@ -46,6 +61,13 @@ Example:
 \OtherTok{querystring}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\StringTok{'foo=bar&baz=qux&baz=quux&corge'}\NormalTok{)}
 \CommentTok{// returns}
 \NormalTok{\{ }\DataTypeTok{foo}\NormalTok{: }\StringTok{'bar'}\NormalTok{, }\DataTypeTok{baz}\NormalTok{: [}\StringTok{'qux'}\NormalTok{, }\StringTok{'quux'}\NormalTok{], }\DataTypeTok{corge}\NormalTok{: }\StringTok{''} \NormalTok{\}}
+
+\CommentTok{// Suppose gbkDecodeURIComponent function already exists,}
+\CommentTok{// it can decode `gbk` encoding string}
+\OtherTok{querystring}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\StringTok{'w=%D6%D0%CE%C4&foo=bar'}\NormalTok{, }\KeywordTok{null}\NormalTok{, }\KeywordTok{null}\NormalTok{,}
+  \NormalTok{\{ }\DataTypeTok{decodeURIComponent}\NormalTok{: gbkDecodeURIComponent \})}
+\CommentTok{// returns}
+\NormalTok{\{ }\DataTypeTok{w}\NormalTok{: }\StringTok{'中文'}\NormalTok{, }\DataTypeTok{foo}\NormalTok{: }\StringTok{'bar'} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 

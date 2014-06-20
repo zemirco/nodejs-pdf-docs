@@ -28,6 +28,10 @@ for the URL
 
   Example: \texttt{'http:'}
 \item
+  \texttt{slashes}: The protocol requires slashes after the colon
+
+  Example: true or false
+\item
   \texttt{host}: The full lowercased host portion of the URL, including
   port information.
 
@@ -103,6 +107,12 @@ Take a parsed URL object, and return a formatted URL string.
   All other protocols \texttt{mailto}, \texttt{xmpp}, \texttt{aim},
   \texttt{sftp}, \texttt{foo}, etc will be postfixed with \texttt{:}
   (colon)
+\item
+  \texttt{slashes} set to \texttt{true} if the protocol requires
+  \texttt{://} (colon-slash-slash)
+\item
+  Only needs to be set for protocols not previously listed as requiring
+  slashes, such as \texttt{mongodb://localhost:8000/}
 \item
   \texttt{auth} will be used if present.
 \item
