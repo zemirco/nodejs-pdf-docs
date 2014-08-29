@@ -478,7 +478,8 @@ pseudocode of what require.resolve does:
 \FunctionTok{LOAD_AS_FILE}\NormalTok{(X)}
 \DecValTok{1}\NormalTok{. }\FunctionTok{If} \FunctionTok{X} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, load X as JavaScript }\OtherTok{text}\NormalTok{.  }\FunctionTok{STOP}
 \DecValTok{2}\NormalTok{. }\FunctionTok{If} \OtherTok{X}\NormalTok{.}\FunctionTok{js} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, load }\OtherTok{X}\NormalTok{.}\FunctionTok{js} \FunctionTok{as} \FunctionTok{JavaScript} \OtherTok{text}\NormalTok{.  }\FunctionTok{STOP}
-\DecValTok{3}\NormalTok{. }\FunctionTok{If} \OtherTok{X}\NormalTok{.}\FunctionTok{node} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, load }\OtherTok{X}\NormalTok{.}\FunctionTok{node} \FunctionTok{as} \FunctionTok{binary} \OtherTok{addon}\NormalTok{.  }\FunctionTok{STOP}
+\DecValTok{3}\NormalTok{. }\FunctionTok{If} \OtherTok{X}\NormalTok{.}\FunctionTok{json} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, parse }\OtherTok{X}\NormalTok{.}\FunctionTok{json} \FunctionTok{to} \FunctionTok{a} \FunctionTok{JavaScript} \OtherTok{Object}\NormalTok{.  }\FunctionTok{STOP}
+\DecValTok{4}\NormalTok{. }\FunctionTok{If} \OtherTok{X}\NormalTok{.}\FunctionTok{node} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, load }\OtherTok{X}\NormalTok{.}\FunctionTok{node} \FunctionTok{as} \FunctionTok{binary} \OtherTok{addon}\NormalTok{.  }\FunctionTok{STOP}
 
 \FunctionTok{LOAD_AS_DIRECTORY}\NormalTok{(X)}
 \DecValTok{1}\NormalTok{. }\FunctionTok{If} \FunctionTok{X}\NormalTok{/}\KeywordTok{package}\NormalTok{.}\FunctionTok{json} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{,}

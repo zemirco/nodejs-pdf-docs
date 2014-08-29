@@ -84,9 +84,15 @@ Use \texttt{nc} to connect to a UNIX domain socket server:
 \subsection{net.createConnection(options,
 {[}connectionListener{]})}\label{net.createconnectionoptions-connectionlistener}
 
-Constructs a new socket object and opens the socket to the given
-location. When the socket is established, the
+A factory method, which returns a new
+\hyperref[netux5fclassux5fnetux5fsocket]{`net.Socket'} and connects to
+the supplied address and port.
+
+When the socket is established, the
 \hyperref[netux5feventux5fconnect]{`connect'} event will be emitted.
+
+Has the same events as
+\hyperref[netux5fclassux5fnetux5fsocket]{`net.Socket'}.
 
 For TCP sockets, \texttt{options} argument should be an object which
 specifies:
@@ -169,6 +175,9 @@ Creates a TCP connection to \texttt{port} on \texttt{host}. If
 \texttt{connectListener} parameter will be added as an listener for the
 \hyperref[netux5feventux5fconnect]{`connect'} event.
 
+Is a factory method which returns a new
+\hyperref[netux5fclassux5fnetux5fsocket]{`net.Socket'}.
+
 \subsection{net.connect(path,
 {[}connectListener{]})}\label{net.connectpath-connectlistener}
 
@@ -178,6 +187,9 @@ Creates a TCP connection to \texttt{port} on \texttt{host}. If
 Creates unix socket connection to \texttt{path}. The
 \texttt{connectListener} parameter will be added as an listener for the
 \hyperref[netux5feventux5fconnect]{`connect'} event.
+
+A factory method which returns a new
+\hyperref[netux5fclassux5fnetux5fsocket]{`net.Socket'}.
 
 \subsection{Class: net.Server}\label{class-net.server}
 
@@ -583,6 +595,11 @@ calling \texttt{ref} again will have no effect.
 
 The string representation of the remote IP address. For example,
 \texttt{'74.125.127.100'} or \texttt{'2001:4860:a005::68'}.
+
+\subsubsection{socket.remoteFamily}\label{socket.remotefamily}
+
+The string representation of the remote IP family. \texttt{'IPv4'} or
+\texttt{'IPv6'}.
 
 \subsubsection{socket.remotePort}\label{socket.remoteport}
 

@@ -154,6 +154,12 @@ are \texttt{"rr"} and \texttt{"none"}.
 \item
   \texttt{silent} \{Boolean\} whether or not to send output to parent's
   stdio. (Default=\texttt{false})
+\item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
 \end{itemize}
 
 After calling \texttt{.setupMaster()} (or \texttt{.fork()}) this
@@ -341,7 +347,19 @@ event: `exit'}.
 
 \subsection{Event: `setup'}\label{event-setup}
 
-Emitted the first time that \texttt{.setupMaster()} is called.
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{settings} \{Object\}
+\end{itemize}
+
+Emitted every time \texttt{.setupMaster()} is called.
+
+The \texttt{settings} object is the \texttt{cluster.settings} object at
+the time \texttt{.setupMaster()} was called and is advisory only, since
+multiple calls to \texttt{.setupMaster()} can be made in a single tick.
+
+If accuracy is important, use \texttt{cluster.settings}.
 
 \subsection{cluster.setupMaster({[}settings{]})}\label{cluster.setupmastersettings}
 
@@ -368,29 +386,32 @@ Note that:
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Only the first call to \texttt{.setupMaster()} has any effect,
-  subsequent calls are ignored
+  any settings changes only affect future calls to \texttt{.fork()} and
+  have no effect on workers that are already running
 \item
-  That because of the above, the \emph{only} attribute of a worker that
-  may be customized per-worker is the \texttt{env} passed to
-  \texttt{.fork()}
+  The \emph{only} attribute of a worker that cannot be set via
+  \texttt{.setupMaster()} is the \texttt{env} passed to \texttt{.fork()}
 \item
-  \texttt{.fork()} calls \texttt{.setupMaster()} internally to establish
-  the defaults, so to have any effect, \texttt{.setupMaster()} must be
-  called \emph{before} any calls to \texttt{.fork()}
+  the defaults above apply to the first call only, the defaults for
+  later calls is the current value at the time of
+  \texttt{cluster.setupMaster()} is called
 \end{itemize}
 
 Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{cluster = }\FunctionTok{require}\NormalTok{(}\StringTok{"cluster"}\NormalTok{);}
+\KeywordTok{var} \NormalTok{cluster = }\FunctionTok{require}\NormalTok{(}\StringTok{'cluster'}\NormalTok{);}
 \OtherTok{cluster}\NormalTok{.}\FunctionTok{setupMaster}\NormalTok{(\{}
-  \DataTypeTok{exec }\NormalTok{: }\StringTok{"worker.js"}\NormalTok{,}
-  \DataTypeTok{args }\NormalTok{: [}\StringTok{"--use"}\NormalTok{, }\StringTok{"https"}\NormalTok{],}
-  \DataTypeTok{silent }\NormalTok{: }\KeywordTok{true}
+  \DataTypeTok{exec}\NormalTok{: }\StringTok{'worker.js'}\NormalTok{,}
+  \DataTypeTok{args}\NormalTok{: [}\StringTok{'--use'}\NormalTok{, }\StringTok{'https'}\NormalTok{],}
+  \DataTypeTok{silent}\NormalTok{: }\KeywordTok{true}
 \NormalTok{\});}
-\OtherTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{();}
+\OtherTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{(); }\CommentTok{// https worker}
+\OtherTok{cluster}\NormalTok{.}\FunctionTok{setupMaster}\NormalTok{(\{}
+  \DataTypeTok{args}\NormalTok{: [}\StringTok{'--use'}\NormalTok{, }\StringTok{'http'}\NormalTok{]}
+\NormalTok{\});}
+\OtherTok{cluster}\NormalTok{.}\FunctionTok{fork}\NormalTok{(); }\CommentTok{// http worker}
 \end{Highlighting}
 \end{Shaded}
 

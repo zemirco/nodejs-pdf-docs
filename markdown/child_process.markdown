@@ -8,11 +8,15 @@ Node provides a tri-directional `popen(3)` facility through the
 It is possible to stream data through a child's `stdin`, `stdout`, and
 `stderr` in a fully non-blocking way.  (Note that some programs use
 line-buffered I/O internally.  That doesn't affect node.js but it means
-data you send to the child process is not immediately consumed.)
+data you send to the child process may not be immediately consumed.)
 
 To create a child process use `require('child_process').spawn()` or
 `require('child_process').fork()`.  The semantics of each are slightly
-different, and explained below.
+different, and explained [below](#child_process_asynchronous_process_creation).
+
+For scripting purposes you may find the
+[synchronous counterparts](#child_process_synchronous_process_creation) more
+convenient.
 
 ## Class: ChildProcess
 
@@ -24,7 +28,8 @@ streams of the parent process, or they may be separate stream objects
 which can be piped to and from.
 
 The ChildProcess class is not intended to be used directly.  Use the
-`spawn()` or `fork()` methods to create a Child Process instance.
+`spawn()`, `exec()`, `execFile()`, or `fork()` methods to create a Child
+Process instance.
 
 ### Event:  'error'
 
@@ -36,7 +41,7 @@ Emitted when:
 2. The process could not be killed, or
 3. Sending a message to the child process failed for whatever reason.
 
-Note that the `exit`-event may or may not fire after an error has occured. If
+Note that the `exit`-event may or may not fire after an error has occurred. If
 you are listening on both events to fire a function, remember to guard against
 calling your function twice.
 
@@ -293,15 +298,18 @@ of being received, most likely immediately.
 Note that you can also call `process.disconnect()` in the child process when the
 child process has any open IPC channels with the parent (i.e `fork()`).
 
-## child_process.spawn(command, [args], [options])
+## Asynchronous Process Creation
+
+These methods follow the common async programming patterns (accepting a
+callback or returning an EventEmitter).
+
+### child_process.spawn(command, [args], [options])
 
 * `command` {String} The command to run
 * `args` {Array} List of string arguments
 * `options` {Object}
   * `cwd` {String} Current working directory of the child process
   * `stdio` {Array|String} Child's stdio configuration. (See below)
-  * `customFds` {Array} **Deprecated** File descriptors for the child to use
-    for stdio.  (See below)
   * `env` {Object} Environment key-value pairs
   * `detached` {Boolean} The child will be a process group leader.  (See below)
   * `uid` {Number} Sets the user identity of the process. (See setuid(2).)
@@ -311,7 +319,7 @@ child process has any open IPC channels with the parent (i.e `fork()`).
 Launches a new process with the given `command`, with  command line arguments in `args`.
 If omitted, `args` defaults to an empty Array.
 
-The third argument is used to specify additional options, which defaults to:
+The third argument is used to specify additional options, with these defaults:
 
     { cwd: undefined,
       env: process.env
@@ -382,11 +390,6 @@ Example of checking for failed exec:
     child.on('error', function (err) {
       console.log('Failed to start child process.');
     });
-
-Note that if spawn receives an empty options object, it will result in
-spawning the process with an empty environment rather than using
-`process.env`. This due to backwards compatibility issues with a deprecated
-API.
 
 The 'stdio' option to `child_process.spawn()` is an array where each
 index corresponds to a fd in the child.  The value is one of the following:
@@ -468,16 +471,9 @@ will not stay running in the background unless it is provided with a `stdio`
 configuration that is not connected to the parent.  If the parent's `stdio` is
 inherited, the child will remain attached to the controlling terminal.
 
-There is a deprecated option called `customFds` which allows one to specify
-specific file descriptors for the stdio of the child process. This API was
-not portable to all platforms and therefore removed.
-With `customFds` it was possible to hook up the new process' `[stdin, stdout,
-stderr]` to existing streams; `-1` meant that a new stream should be created.
-Use at your own risk.
-
 See also: `child_process.exec()` and `child_process.fork()`
 
-## child_process.exec(command, [options], callback)
+### child_process.exec(command, [options], callback)
 
 * `command` {String} The command to run, with space-separated arguments
 * `options` {Object}
@@ -491,6 +487,8 @@ See also: `child_process.exec()` and `child_process.fork()`
   * `timeout` {Number} (Default: 0)
   * `maxBuffer` {Number} (Default: `200*1024`)
   * `killSignal` {String} (Default: 'SIGTERM')
+  * `uid` {Number} Sets the user identity of the process. (See setuid(2).)
+  * `gid` {Number} Sets the group identity of the process. (See setgid(2).)
 * `callback` {Function} called with the output when process terminates
   * `error` {Error}
   * `stdout` {Buffer}
@@ -533,7 +531,7 @@ amount of data allowed on stdout or stderr - if this value is exceeded then
 the child process is killed.
 
 
-## child_process.execFile(file, [args], [options], [callback])
+### child_process.execFile(file, [args], [options], [callback])
 
 * `file` {String} The filename of the program to run
 * `args` {Array} List of string arguments
@@ -544,6 +542,8 @@ the child process is killed.
   * `timeout` {Number} (Default: 0)
   * `maxBuffer` {Number} (Default: 200\*1024)
   * `killSignal` {String} (Default: 'SIGTERM')
+  * `uid` {Number} Sets the user identity of the process. (See setuid(2).)
+  * `gid` {Number} Sets the group identity of the process. (See setgid(2).)
 * `callback` {Function} called with the output when process terminates
   * `error` {Error}
   * `stdout` {Buffer}
@@ -555,7 +555,7 @@ subshell but rather the specified file directly. This makes it slightly
 leaner than `child_process.exec`. It has the same options.
 
 
-## child_process.fork(modulePath, [args], [options])
+### child_process.fork(modulePath, [args], [options])
 
 * `modulePath` {String} The module to run in the child
 * `args` {Array} List of string arguments
@@ -570,6 +570,8 @@ leaner than `child_process.exec`. It has the same options.
     piped to the parent, otherwise they will be inherited from the parent, see
     the "pipe" and "inherit" options for `spawn()`'s `stdio` for more details
     (default is false)
+  * `uid` {Number} Sets the user identity of the process. (See setuid(2).)
+  * `gid` {Number} Sets the group identity of the process. (See setgid(2).)
 * Return: ChildProcess object
 
 This is a special case of the `spawn()` functionality for spawning Node
@@ -587,7 +589,16 @@ done with care and by default will talk over the fd represented an
 environmental variable `NODE_CHANNEL_FD` on the child process. The input and
 output on this fd is expected to be line delimited JSON objects.
 
-## child_process.spawnSync(command, [args], [options])
+## Synchronous Process Creation
+
+These methods are **synchronous**, meaning they **WILL** block the event loop,
+pausing execution of your code until the spawned process exits.
+
+Blocking calls like these are mostly useful for simplifying general purpose
+scripting tasks and for simplifying the loading/processing of application
+configuration at startup.
+
+### child_process.spawnSync(command, [args], [options])
 
 * `command` {String} The command to run
 * `args` {Array} List of string arguments
@@ -610,7 +621,7 @@ output on this fd is expected to be line delimited JSON objects.
   * `stderr` {Buffer|String} The contents of `output[2]`
   * `status` {Number} The exit code of the child process
   * `signal` {String} The signal used to kill the child process
-  * `error` {Error} The error object if the child process failed or timedout
+  * `error` {Error} The error object if the child process failed or timed out
 
 `spawnSync` will not return until the child process has fully closed. When a
 timeout has been encountered and `killSignal` is sent, the method won't return
@@ -618,7 +629,7 @@ until the process has completely exited. That is to say, if the process handles
 the `SIGTERM` signal and doesn't exit, your process will wait until the child
 process has exited.
 
-## child_process.execFileSync(command, [args], [options])
+### child_process.execFileSync(command, [args], [options])
 
 * `command` {String} The command to run
 * `args` {Array} List of string arguments
@@ -649,7 +660,7 @@ throw.  The `Error` object will contain the entire result from
 [`child_process.spawnSync`](#child_process_child_process_spawnsync_command_args_options)
 
 
-## child_process.execSync(command, [options])
+### child_process.execSync(command, [options])
 
 * `command` {String} The command to run
 * `options` {Object}

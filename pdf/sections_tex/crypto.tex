@@ -85,6 +85,10 @@ Example:
 
 \subsection{crypto.createCredentials(details)}\label{crypto.createcredentialsdetails}
 
+Stability: 0 - Deprecated. Use
+\href{tls.html\#tls_tls_createsecurecontext_details}{tls.createSecureContext}
+instead.
+
 Creates a credentials object, with the optional details being a
 dictionary with keys:
 
@@ -235,9 +239,9 @@ must be a \texttt{'binary'} encoded string or a
 
 It is a \href{stream.html}{stream} that is both readable and writable.
 The written data is used to compute the hash. Once the writable side of
-the stream is ended, use the \texttt{read()} method to get the computed
-hash digest. The legacy \texttt{update} and \texttt{digest} methods are
-also supported.
+the stream is ended, use the \texttt{read()} method to get the
+enciphered contents. The legacy \texttt{update} and \texttt{final}
+methods are also supported.
 
 \subsection{crypto.createCipheriv(algorithm, key,
 iv)}\label{crypto.createcipherivalgorithm-key-iv}

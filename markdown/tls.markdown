@@ -90,7 +90,7 @@ This is achieved by randomly generating a key pair for key-agreement on every
 handshake (in contrary to the same key for all sessions). Methods implementing
 this technique, thus offering Perfect Forward Secrecy, are called "ephemeral".
 
-Currently two methods are commonly used to achieve Perfect Forward Secrecy (note 
+Currently two methods are commonly used to achieve Perfect Forward Secrecy (note
 the character "E" appended to the traditional abbreviations):
 
   * [DHE] - An ephemeral version of the Diffie Hellman key-agreement protocol.
@@ -339,7 +339,7 @@ Here is an example of a client of echo server as described previously:
       // These are necessary only if using the client certificate authentication
       key: fs.readFileSync('client-key.pem'),
       cert: fs.readFileSync('client-cert.pem'),
-    
+
       // This is necessary only if the server uses the self-signed certificate
       ca: [ fs.readFileSync('server-cert.pem') ]
     };
@@ -414,6 +414,36 @@ Construct a new TLSSocket object from existing TCP socket.
   - `requestOCSP`: Optional, if `true` - OCSP status request extension would
     be added to client hello, and `OCSPResponse` event will be emitted on socket
     before establishing secure communication
+
+
+## tls.createSecureContext(details)
+
+Stability: 0 - Deprecated. Use tls.createSecureContext instead.
+
+Creates a credentials object, with the optional details being a
+dictionary with keys:
+
+* `pfx` : A string or buffer holding the PFX or PKCS12 encoded private
+  key, certificate and CA certificates
+* `key` : A string holding the PEM encoded private key
+* `passphrase` : A string of passphrase for the private key or pfx
+* `cert` : A string holding the PEM encoded certificate
+* `ca` : Either a string or list of strings of PEM encoded CA
+  certificates to trust.
+* `crl` : Either a string or list of strings of PEM encoded CRLs
+  (Certificate Revocation List)
+* `ciphers`: A string describing the ciphers to use or exclude.
+  Consult
+  <http://www.openssl.org/docs/apps/ciphers.html#CIPHER_LIST_FORMAT>
+  for details on the format.
+* `honorCipherOrder` : When choosing a cipher, use the server's preferences
+  instead of the client preferences. For further details see `tls` module
+  documentation.
+
+If no 'ca' details are given, then node.js will use the default
+publicly trusted list of CAs as given in
+<http://mxr.mozilla.org/mozilla/source/security/nss/lib/ckfw/builtins/certdata.txt>.
+
 
 ## tls.createSecurePair([context], [isServer], [requestCert], [rejectUnauthorized])
 
@@ -581,7 +611,8 @@ more information.
 
 Add secure context that will be used if client request's SNI hostname is
 matching passed `hostname` (wildcards can be used). `context` can contain
-`key`, `cert` and `ca`.
+`key`, `cert`, `ca` and/or any other properties from `tls.createSecureContext`
+`options` argument.
 
 ### server.maxConnections
 
@@ -740,6 +771,10 @@ object with three properties, e.g.
 
 The string representation of the remote IP address. For example,
 `'74.125.127.100'` or `'2001:4860:a005::68'`.
+
+### tlsSocket.remoteFamily
+
+The string representation of the remote IP family. `'IPv4'` or `'IPv6'`.
 
 ### tlsSocket.remotePort
 

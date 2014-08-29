@@ -532,6 +532,46 @@ Construct a new TLSSocket object from existing TCP socket.
   communication
 \end{itemize}
 
+\subsection{tls.createSecureContext(details)}\label{tls.createsecurecontextdetails}
+
+Stability: 0 - Deprecated. Use tls.createSecureContext instead.
+
+Creates a credentials object, with the optional details being a
+dictionary with keys:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{pfx} : A string or buffer holding the PFX or PKCS12 encoded
+  private key, certificate and CA certificates
+\item
+  \texttt{key} : A string holding the PEM encoded private key
+\item
+  \texttt{passphrase} : A string of passphrase for the private key or
+  pfx
+\item
+  \texttt{cert} : A string holding the PEM encoded certificate
+\item
+  \texttt{ca} : Either a string or list of strings of PEM encoded CA
+  certificates to trust.
+\item
+  \texttt{crl} : Either a string or list of strings of PEM encoded CRLs
+  (Certificate Revocation List)
+\item
+  \texttt{ciphers}: A string describing the ciphers to use or exclude.
+  Consult
+  \url{http://www.openssl.org/docs/apps/ciphers.html\#CIPHER_LIST_FORMAT}
+  for details on the format.
+\item
+  \texttt{honorCipherOrder} : When choosing a cipher, use the server's
+  preferences instead of the client preferences. For further details see
+  \texttt{tls} module documentation.
+\end{itemize}
+
+If no `ca' details are given, then node.js will use the default publicly
+trusted list of CAs as given in
+\url{http://mxr.mozilla.org/mozilla/source/security/nss/lib/ckfw/builtins/certdata.txt}.
+
 \subsection{tls.createSecurePair({[}context{]}, {[}isServer{]},
 {[}requestCert{]},
 {[}rejectUnauthorized{]})}\label{tls.createsecurepaircontext-isserver-requestcert-rejectunauthorized}
@@ -729,8 +769,9 @@ context)}\label{server.addcontexthostname-context}
 
 Add secure context that will be used if client request's SNI hostname is
 matching passed \texttt{hostname} (wildcards can be used).
-\texttt{context} can contain \texttt{key}, \texttt{cert} and
-\texttt{ca}.
+\texttt{context} can contain \texttt{key}, \texttt{cert}, \texttt{ca}
+and/or any other properties from \texttt{tls.createSecureContext}
+\texttt{options} argument.
 
 \subsubsection{server.maxConnections}\label{server.maxconnections}
 
@@ -908,6 +949,11 @@ with three properties, e.g.
 
 The string representation of the remote IP address. For example,
 \texttt{'74.125.127.100'} or \texttt{'2001:4860:a005::68'}.
+
+\subsubsection{tlsSocket.remoteFamily}\label{tlssocket.remotefamily}
+
+The string representation of the remote IP family. \texttt{'IPv4'} or
+\texttt{'IPv6'}.
 
 \subsubsection{tlsSocket.remotePort}\label{tlssocket.remoteport}
 

@@ -41,13 +41,36 @@ resolves the IP addresses which are returned.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{dns.lookup(hostname, {[}family{]},
-callback)}\label{dns.lookuphostname-family-callback}
+\subsection{dns.lookup(hostname, {[}options{]},
+callback)}\label{dns.lookuphostname-options-callback}
 
 Resolves a hostname (e.g. \texttt{'google.com'}) into the first found A
-(IPv4) or AAAA (IPv6) record. The \texttt{family} can be the integer
-\texttt{4} or \texttt{6}. Defaults to \texttt{null} that indicates both
-Ip v4 and v6 address family.
+(IPv4) or AAAA (IPv6) record. \texttt{options} can be an object or
+integer. If \texttt{options} is not provided, then IP v4 and v6
+addresses are both valid. If \texttt{options} is an integer, then it
+must be \texttt{4} or \texttt{6}.
+
+Alternatively, \texttt{options} can be an object containing two
+properties, \texttt{family} and \texttt{hints}. Both properties are
+optional. If \texttt{family} is provided, it must be the integer
+\texttt{4} or \texttt{6}. If \texttt{family} is not provided then IP v4
+and v6 addresses are accepted. The \texttt{hints} field, if present,
+should be one or more of the supported \texttt{getaddrinfo} flags. If
+\texttt{hints} is not provided, then no flags are passed to
+\texttt{getaddrinfo}. Multiple flags can be passed through
+\texttt{hints} by logically \texttt{OR}ing their values. An example
+usage of \texttt{options} is shown below.
+
+\begin{verbatim}
+{
+  family: 4,
+  hints: dns.ADDRCONFIG | dns.V4MAPPED
+}
+\end{verbatim}
+
+See \hyperref[dnsux5fsupportedux5fgetaddrinfoux5fflags]{supported
+\texttt{getaddrinfo} flags} below for more information on supported
+flags.
 
 The callback has arguments \texttt{(err, address, family)}. The
 \texttt{address} argument is a string representation of a IP v4 or v6
@@ -60,6 +83,19 @@ On error, \texttt{err} is an \texttt{Error} object, where
 will be set to \texttt{'ENOENT'} not only when the hostname does not
 exist but also when the lookup fails in other ways such as no available
 file descriptors.
+
+\section{dns.lookupService(address, port,
+callback)}\label{dns.lookupserviceaddress-port-callback}
+
+Resolves the given address and port into a hostname and service using
+\texttt{getnameinfo}.
+
+The callback has arguments \texttt{(err, hostname, service)}. The
+\texttt{hostname} and \texttt{service} arguments are strings (e.g.
+\texttt{'localhost'} and \texttt{'http'} respectively).
+
+On error, \texttt{err} is an \texttt{Error} object, where
+\texttt{err.code} is the error code.
 
 \subsection{dns.resolve(hostname, {[}rrtype{]},
 callback)}\label{dns.resolvehostname-rrtype-callback}
@@ -258,4 +294,21 @@ Each DNS query can return one of the following error codes:
   function.
 \item
   \texttt{dns.CANCELLED}: DNS query cancelled.
+\end{itemize}
+
+\subsection{Supported getaddrinfo
+flags}\label{supported-getaddrinfo-flags}
+
+The following flags can be passed as hints to \texttt{dns.lookup}.
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{dns.ADDRCONFIG}: Returned address types are determined by the
+  types of addresses supported by the current system. For example, IPv4
+  addresses are only returned if the current system has at least one
+  IPv4 address configured. Loopback addresses are not considered.
+\item
+  \texttt{dns.V4MAPPED}: If the IPv6 family was specified, but no IPv6
+  addresses were found, then return IPv4 mapped IPv6 addresses.
 \end{itemize}

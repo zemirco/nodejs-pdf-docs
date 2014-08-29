@@ -12,12 +12,17 @@ Node provides a tri-directional \texttt{popen(3)} facility through the
 It is possible to stream data through a child's \texttt{stdin},
 \texttt{stdout}, and \texttt{stderr} in a fully non-blocking way. (Note
 that some programs use line-buffered I/O internally. That doesn't affect
-node.js but it means data you send to the child process is not
+node.js but it means data you send to the child process may not be
 immediately consumed.)
 
 To create a child process use \texttt{require('child\_process').spawn()}
 or \texttt{require('child\_process').fork()}. The semantics of each are
-slightly different, and explained below.
+slightly different, and explained
+\hyperref[childux5fprocessux5fasynchronousux5fprocessux5fcreation]{below}.
+
+For scripting purposes you may find the
+\hyperref[childux5fprocessux5fsynchronousux5fprocessux5fcreation]{synchronous
+counterparts} more convenient.
 
 \subsection{Class: ChildProcess}\label{class-childprocess}
 
@@ -30,8 +35,8 @@ These may be shared with the stdio streams of the parent process, or
 they may be separate stream objects which can be piped to and from.
 
 The ChildProcess class is not intended to be used directly. Use the
-\texttt{spawn()} or \texttt{fork()} methods to create a Child Process
-instance.
+\texttt{spawn()}, \texttt{exec()}, \texttt{execFile()}, or
+\texttt{fork()} methods to create a Child Process instance.
 
 \subsubsection{Event: `error'}\label{event-error}
 
@@ -55,7 +60,7 @@ Emitted when:
 \end{enumerate}
 
 Note that the \texttt{exit}-event may or may not fire after an error has
-occured. If you are listening on both events to fire a function,
+occurred. If you are listening on both events to fire a function,
 remember to guard against calling your function twice.
 
 See also
@@ -408,7 +413,13 @@ Note that you can also call \texttt{process.disconnect()} in the child
 process when the child process has any open IPC channels with the parent
 (i.e \texttt{fork()}).
 
-\subsection{child\_process.spawn(command, {[}args{]},
+\subsection{Asynchronous Process
+Creation}\label{asynchronous-process-creation}
+
+These methods follow the common async programming patterns (accepting a
+callback or returning an EventEmitter).
+
+\subsubsection{child\_process.spawn(command, {[}args{]},
 {[}options{]})}\label{childux5fprocess.spawncommand-args-options}
 
 \begin{itemize}
@@ -424,9 +435,6 @@ process when the child process has any open IPC channels with the parent
 \item
   \texttt{stdio} \{Array\textbar{}String\} Child's stdio configuration.
   (See below)
-\item
-  \texttt{customFds} \{Array\} \textbf{Deprecated} File descriptors for
-  the child to use for stdio. (See below)
 \item
   \texttt{env} \{Object\} Environment key-value pairs
 \item
@@ -446,8 +454,8 @@ Launches a new process with the given \texttt{command}, with command
 line arguments in \texttt{args}. If omitted, \texttt{args} defaults to
 an empty Array.
 
-The third argument is used to specify additional options, which defaults
-to:
+The third argument is used to specify additional options, with these
+defaults:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -534,11 +542,6 @@ Example of checking for failed exec:
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
-
-Note that if spawn receives an empty options object, it will result in
-spawning the process with an empty environment rather than using
-\texttt{process.env}. This due to backwards compatibility issues with a
-deprecated API.
 
 The `stdio' option to \texttt{child\_process.spawn()} is an array where
 each index corresponds to a fd in the child. The value is one of the
@@ -652,17 +655,10 @@ provided with a \texttt{stdio} configuration that is not connected to
 the parent. If the parent's \texttt{stdio} is inherited, the child will
 remain attached to the controlling terminal.
 
-There is a deprecated option called \texttt{customFds} which allows one
-to specify specific file descriptors for the stdio of the child process.
-This API was not portable to all platforms and therefore removed. With
-\texttt{customFds} it was possible to hook up the new process'
-\texttt{{[}stdin, stdout, stderr{]}} to existing streams; \texttt{-1}
-meant that a new stream should be created. Use at your own risk.
-
 See also: \texttt{child\_process.exec()} and
 \texttt{child\_process.fork()}
 
-\subsection{child\_process.exec(command, {[}options{]},
+\subsubsection{child\_process.exec(command, {[}options{]},
 callback)}\label{childux5fprocess.execcommand-options-callback}
 
 \begin{itemize}
@@ -690,6 +686,12 @@ callback)}\label{childux5fprocess.execcommand-options-callback}
   \texttt{maxBuffer} \{Number\} (Default: \texttt{200*1024})
 \item
   \texttt{killSignal} \{String\} (Default: `SIGTERM')
+\item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
 \item
   \texttt{callback} \{Function\} called with the output when process
   terminates
@@ -748,7 +750,7 @@ process is killed with \texttt{killSignal} (default:
 data allowed on stdout or stderr - if this value is exceeded then the
 child process is killed.
 
-\subsection{child\_process.execFile(file, {[}args{]}, {[}options{]},
+\subsubsection{child\_process.execFile(file, {[}args{]}, {[}options{]},
 {[}callback{]})}\label{childux5fprocess.execfilefile-args-options-callback}
 
 \begin{itemize}
@@ -772,6 +774,12 @@ child process is killed.
 \item
   \texttt{killSignal} \{String\} (Default: `SIGTERM')
 \item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
+\item
   \texttt{callback} \{Function\} called with the output when process
   terminates
 \item
@@ -789,7 +797,7 @@ execute a subshell but rather the specified file directly. This makes it
 slightly leaner than \texttt{child\_process.exec}. It has the same
 options.
 
-\subsection{child\_process.fork(modulePath, {[}args{]},
+\subsubsection{child\_process.fork(modulePath, {[}args{]},
 {[}options{]})}\label{childux5fprocess.forkmodulepath-args-options}
 
 \begin{itemize}
@@ -818,6 +826,12 @@ options.
   from the parent, see the ``pipe'' and ``inherit'' options for
   \texttt{spawn()}'s \texttt{stdio} for more details (default is false)
 \item
+  \texttt{uid} \{Number\} Sets the user identity of the process. (See
+  setuid(2).)
+\item
+  \texttt{gid} \{Number\} Sets the group identity of the process. (See
+  setgid(2).)
+\item
   Return: ChildProcess object
 \end{itemize}
 
@@ -838,7 +852,18 @@ will talk over the fd represented an environmental variable
 \texttt{NODE\_CHANNEL\_FD} on the child process. The input and output on
 this fd is expected to be line delimited JSON objects.
 
-\subsection{child\_process.spawnSync(command, {[}args{]},
+\subsection{Synchronous Process
+Creation}\label{synchronous-process-creation}
+
+These methods are \textbf{synchronous}, meaning they \textbf{WILL} block
+the event loop, pausing execution of your code until the spawned process
+exits.
+
+Blocking calls like these are mostly useful for simplifying general
+purpose scripting tasks and for simplifying the loading/processing of
+application configuration at startup.
+
+\subsubsection{child\_process.spawnSync(command, {[}args{]},
 {[}options{]})}\label{childux5fprocess.spawnsynccommand-args-options}
 
 \begin{itemize}
@@ -899,7 +924,7 @@ this fd is expected to be line delimited JSON objects.
   \texttt{signal} \{String\} The signal used to kill the child process
 \item
   \texttt{error} \{Error\} The error object if the child process failed
-  or timedout
+  or timed out
 \end{itemize}
 
 \texttt{spawnSync} will not return until the child process has fully
@@ -908,7 +933,7 @@ sent, the method won't return until the process has completely exited.
 That is to say, if the process handles the \texttt{SIGTERM} signal and
 doesn't exit, your process will wait until the child process has exited.
 
-\subsection{child\_process.execFileSync(command, {[}args{]},
+\subsubsection{child\_process.execFileSync(command, {[}args{]},
 {[}options{]})}\label{childux5fprocess.execfilesynccommand-args-options}
 
 \begin{itemize}
@@ -974,7 +999,7 @@ If the process times out, or has a non-zero exit code, this method
 entire result from
 \hyperref[childux5fprocessux5fchildux5fprocessux5fspawnsyncux5fcommandux5fargsux5foptions]{\texttt{child\_process.spawnSync}}
 
-\subsection{child\_process.execSync(command,
+\subsubsection{child\_process.execSync(command,
 {[}options{]})}\label{childux5fprocess.execsynccommand-options}
 
 \begin{itemize}

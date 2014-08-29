@@ -107,14 +107,15 @@ Finish timer, record output. Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{console.trace(label)}\label{console.tracelabel}
+\subsection{console.trace(message,
+{[}\ldots{}{]})}\label{console.tracemessage}
 
-Print a stack trace to stderr of the current position.
+Print to stderr \texttt{'Trace :'}, followed by the formatted message
+and stack trace to the current position.
 
-\subsection{console.assert(expression,
-{[}message{]})}\label{console.assertexpression-message}
+\subsection{console.assert(value, {[}message{]},
+{[}\ldots{}{]})}\label{console.assertvalue-message}
 
-Same as
-\href{assert.html\#assert_assert_value_message_assert_ok_value_message}{assert.ok()}
-where if the \texttt{expression} evaluates as \texttt{false} throw an
-AssertionError with \texttt{message}.
+Similar to
+\href{assert.html\#assert_assert_value_message_assert_ok_value_message}{assert.ok()},
+but the error message is formatted as \texttt{util.format(message...)}.

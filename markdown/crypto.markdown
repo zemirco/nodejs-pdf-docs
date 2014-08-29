@@ -58,6 +58,8 @@ Example:
 
 ## crypto.createCredentials(details)
 
+Stability: 0 - Deprecated. Use [tls.createSecureContext][] instead.
+
 Creates a credentials object, with the optional details being a
 dictionary with keys:
 
@@ -186,8 +188,8 @@ which must be a `'binary'` encoded string or a [buffer](buffer.html).
 
 It is a [stream](stream.html) that is both readable and writable.  The
 written data is used to compute the hash.  Once the writable side of
-the stream is ended, use the `read()` method to get the computed hash
-digest.  The legacy `update` and `digest` methods are also supported.
+the stream is ended, use the `read()` method to get the enciphered
+contents.  The legacy `update` and `final` methods are also supported.
 
 ## crypto.createCipheriv(algorithm, key, iv)
 
@@ -636,6 +638,7 @@ temporary measure.
 [createCipher()]: #crypto_crypto_createcipher_algorithm_password
 [createCipheriv()]: #crypto_crypto_createcipheriv_algorithm_key_iv
 [crypto.createDiffieHellman()]: #crypto_crypto_creatediffiehellman_prime_encoding
+[tls.createSecureContext]: tls.html#tls_tls_createsecurecontext_details
 [diffieHellman.setPublicKey()]: #crypto_diffiehellman_setpublickey_public_key_encoding
 [RFC 2412]: http://www.rfc-editor.org/rfc/rfc2412.txt
 [RFC 3526]: http://www.rfc-editor.org/rfc/rfc3526.txt
