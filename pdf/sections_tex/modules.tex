@@ -197,7 +197,7 @@ module, and adds \texttt{/node\_modules}, and attempts to load the
 module from that location.
 
 If it is not found there, then it moves to the parent directory, and so
-on, until the root of the tree is reached.
+on, until the root of the file system is reached.
 
 For example, if the file at \texttt{'/home/ry/projects/foo.js'} called
 \texttt{require('bar.js')}, then node would look in the following
@@ -487,7 +487,8 @@ pseudocode of what require.resolve does:
    \OtherTok{b}\NormalTok{. }\FunctionTok{let} \FunctionTok{M} \NormalTok{= X + (json main field)}
    \OtherTok{c}\NormalTok{. }\FunctionTok{LOAD_AS_FILE}\NormalTok{(M)}
 \DecValTok{2}\NormalTok{. }\FunctionTok{If} \FunctionTok{X}\NormalTok{/}\OtherTok{index}\NormalTok{.}\FunctionTok{js} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, load X/}\OtherTok{index}\NormalTok{.}\FunctionTok{js} \FunctionTok{as} \FunctionTok{JavaScript} \OtherTok{text}\NormalTok{.  }\FunctionTok{STOP}
-\DecValTok{3}\NormalTok{. }\FunctionTok{If} \FunctionTok{X}\NormalTok{/}\OtherTok{index}\NormalTok{.}\FunctionTok{node} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, load X/}\OtherTok{index}\NormalTok{.}\FunctionTok{node} \FunctionTok{as} \FunctionTok{binary} \OtherTok{addon}\NormalTok{.  }\FunctionTok{STOP}
+\DecValTok{3}\NormalTok{. }\FunctionTok{If} \FunctionTok{X}\NormalTok{/}\OtherTok{index}\NormalTok{.}\FunctionTok{json} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, parse X/}\OtherTok{index}\NormalTok{.}\FunctionTok{json} \FunctionTok{to} \FunctionTok{a} \FunctionTok{JavaScript} \OtherTok{object}\NormalTok{. }\FunctionTok{STOP}
+\DecValTok{4}\NormalTok{. }\FunctionTok{If} \FunctionTok{X}\NormalTok{/}\OtherTok{index}\NormalTok{.}\FunctionTok{node} \FunctionTok{is} \FunctionTok{a} \FunctionTok{file}\NormalTok{, load X/}\OtherTok{index}\NormalTok{.}\FunctionTok{node} \FunctionTok{as} \FunctionTok{binary} \OtherTok{addon}\NormalTok{.  }\FunctionTok{STOP}
 
 \FunctionTok{LOAD_NODE_MODULES}\NormalTok{(X, START)}
 \DecValTok{1}\NormalTok{. }\FunctionTok{let} \FunctionTok{DIRS}\NormalTok{=}\FunctionTok{NODE_MODULES_PATHS}\NormalTok{(START)}
@@ -497,15 +498,14 @@ pseudocode of what require.resolve does:
 
 \FunctionTok{NODE_MODULES_PATHS}\NormalTok{(START)}
 \DecValTok{1}\NormalTok{. }\FunctionTok{let} \FunctionTok{PARTS} \NormalTok{= path }\FunctionTok{split}\NormalTok{(START)}
-\DecValTok{2}\NormalTok{. }\FunctionTok{let} \FunctionTok{ROOT} \NormalTok{= index of first instance of }\StringTok{"node_modules"} \KeywordTok{in} \NormalTok{PARTS, or }\DecValTok{0}
-\DecValTok{3}\NormalTok{. }\FunctionTok{let} \FunctionTok{I} \NormalTok{= count of PARTS - }\DecValTok{1}
-\DecValTok{4}\NormalTok{. }\FunctionTok{let} \FunctionTok{DIRS} \NormalTok{= []}
-\DecValTok{5}\NormalTok{. }\FunctionTok{while} \FunctionTok{I} \NormalTok{> ROOT,}
+\DecValTok{2}\NormalTok{. }\FunctionTok{let} \FunctionTok{I} \NormalTok{= count of PARTS - }\DecValTok{1}
+\DecValTok{3}\NormalTok{. }\FunctionTok{let} \FunctionTok{DIRS} \NormalTok{= []}
+\DecValTok{4}\NormalTok{. }\FunctionTok{while} \FunctionTok{I} \NormalTok{>= }\DecValTok{0}\NormalTok{,}
    \OtherTok{a}\NormalTok{. }\FunctionTok{if} \FunctionTok{PARTS}\NormalTok{[I] = }\StringTok{"node_modules"} \NormalTok{CONTINUE}
    \OtherTok{c}\NormalTok{. }\FunctionTok{DIR} \NormalTok{= path }\FunctionTok{join}\NormalTok{(PARTS[}\DecValTok{0} \NormalTok{.. }\FunctionTok{I}\NormalTok{] + }\StringTok{"node_modules"}\NormalTok{)}
    \OtherTok{b}\NormalTok{. }\FunctionTok{DIRS} \NormalTok{= DIRS + DIR}
    \OtherTok{c}\NormalTok{. }\FunctionTok{let} \FunctionTok{I} \NormalTok{= I - }\DecValTok{1}
-\DecValTok{6}\NormalTok{. }\FunctionTok{return} \FunctionTok{DIRS}
+\DecValTok{5}\NormalTok{. }\FunctionTok{return} \FunctionTok{DIRS}
 \end{Highlighting}
 \end{Shaded}
 

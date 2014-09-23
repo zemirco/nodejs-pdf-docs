@@ -620,6 +620,97 @@ Example (obtaining a shared secret):
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{crypto.createECDH(curve\_name)}\label{crypto.createecdhcurveux5fname}
+
+Creates a Elliptic Curve (EC) Diffie-Hellman key exchange object using a
+predefined curve specified by \texttt{curve\_name} string.
+
+\subsection{Class: ECDH}\label{class-ecdh}
+
+The class for creating EC Diffie-Hellman key exchanges.
+
+Returned by \texttt{crypto.createECDH}.
+
+\subsubsection{ECDH.generateKeys({[}encoding{[},
+format{]}{]})}\label{ecdh.generatekeysencoding-format}
+
+Generates private and public EC Diffie-Hellman key values, and returns
+the public key in the specified format and encoding. This key should be
+transferred to the other party.
+
+Format specifies point encoding and can be \texttt{'compressed'},
+\texttt{'uncompressed'}, or \texttt{'hybrid'}. If no format is provided
+- the point will be returned in \texttt{'uncompressed'} format.
+
+Encoding can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}.
+If no encoding is provided, then a buffer is returned.
+
+\subsubsection{ECDH.computeSecret(other\_public\_key,
+{[}input\_encoding{]},
+{[}output\_encoding{]})}\label{ecdh.computesecretotherux5fpublicux5fkey-inputux5fencoding-outputux5fencoding}
+
+Computes the shared secret using \texttt{other\_public\_key} as the
+other party's public key and returns the computed shared secret.
+Supplied key is interpreted using specified \texttt{input\_encoding},
+and secret is encoded using specified \texttt{output\_encoding}.
+Encodings can be \texttt{'binary'}, \texttt{'hex'}, or
+\texttt{'base64'}. If the input encoding is not provided, then a buffer
+is expected.
+
+If no output encoding is given, then a buffer is returned.
+
+\subsubsection{ECDH.getPublicKey({[}encoding{[},
+format{]}{]})}\label{ecdh.getpublickeyencoding-format}
+
+Returns the EC Diffie-Hellman public key in the specified encoding and
+format.
+
+Format specifies point encoding and can be \texttt{'compressed'},
+\texttt{'uncompressed'}, or \texttt{'hybrid'}. If no format is provided
+- the point will be returned in \texttt{'uncompressed'} format.
+
+Encoding can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}.
+If no encoding is provided, then a buffer is returned.
+
+\subsubsection{ECDH.getPrivateKey({[}encoding{]})}\label{ecdh.getprivatekeyencoding}
+
+Returns the EC Diffie-Hellman private key in the specified encoding,
+which can be \texttt{'binary'}, \texttt{'hex'}, or \texttt{'base64'}. If
+no encoding is provided, then a buffer is returned.
+
+\subsubsection{ECDH.setPublicKey(public\_key,
+{[}encoding{]})}\label{ecdh.setpublickeypublicux5fkey-encoding}
+
+Sets the EC Diffie-Hellman public key. Key encoding can be
+\texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
+is provided, then a buffer is expected.
+
+\subsubsection{ECDH.setPrivateKey(private\_key,
+{[}encoding{]})}\label{ecdh.setprivatekeyprivateux5fkey-encoding}
+
+Sets the EC Diffie-Hellman private key. Key encoding can be
+\texttt{'binary'}, \texttt{'hex'} or \texttt{'base64'}. If no encoding
+is provided, then a buffer is expected.
+
+Example (obtaining a shared secret):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{crypto = }\FunctionTok{require}\NormalTok{(}\StringTok{'crypto'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{alice = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{createECDH}\NormalTok{(}\StringTok{'secp256k1'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{bob = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{createECDH}\NormalTok{(}\StringTok{'secp256k1'}\NormalTok{);}
+
+\OtherTok{alice}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
+\OtherTok{bob}\NormalTok{.}\FunctionTok{generateKeys}\NormalTok{();}
+
+\KeywordTok{var} \NormalTok{alice_secret = }\OtherTok{alice}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\OtherTok{bob}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), }\KeywordTok{null}\NormalTok{, }\StringTok{'hex'}\NormalTok{);}
+\KeywordTok{var} \NormalTok{bob_secret = }\OtherTok{bob}\NormalTok{.}\FunctionTok{computeSecret}\NormalTok{(}\OtherTok{alice}\NormalTok{.}\FunctionTok{getPublicKey}\NormalTok{(), }\KeywordTok{null}\NormalTok{, }\StringTok{'hex'}\NormalTok{);}
+
+\CommentTok{/* alice_secret and bob_secret should be the same */}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(alice_secret == bob_secret);}
+\end{Highlighting}
+\end{Shaded}
+
 \subsection{crypto.pbkdf2(password, salt, iterations, keylen,
 {[}digest{]},
 callback)}\label{crypto.pbkdf2password-salt-iterations-keylen-digest-callback}
@@ -709,6 +800,64 @@ Exports the encoded public key from the supplied SPKAC.
 \subsubsection{Certificate.exportPublicKey(spkac)}\label{certificate.exportpublickeyspkac}
 
 Exports the encoded challenge associated with the SPKAC.
+
+\subsection{crypto.publicEncrypt(public\_key,
+buffer)}\label{crypto.publicencryptpublicux5fkey-buffer}
+
+Encrypts \texttt{buffer} with \texttt{public\_key}. Only RSA is
+currently supported.
+
+\texttt{public\_key} can be an object or a string. If
+\texttt{public\_key} is a string, it is treated as the key with no
+passphrase and will use \texttt{RSA\_PKCS1\_OAEP\_PADDING}.
+
+\texttt{public\_key}:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{key} : A string holding the PEM encoded private key
+\item
+  \texttt{padding} : An optional padding value, one of the following:
+\item
+  \texttt{constants.RSA\_NO\_PADDING}
+\item
+  \texttt{constants.RSA\_PKCS1\_PADDING}
+\item
+  \texttt{constants.RSA\_PKCS1\_OAEP\_PADDING}
+\end{itemize}
+
+NOTE: All paddings are defined in \texttt{constants} module.
+
+\subsection{crypto.privateDecrypt(private\_key,
+buffer)}\label{crypto.privatedecryptprivateux5fkey-buffer}
+
+Decrypts \texttt{buffer} with \texttt{private\_key}.
+
+\texttt{private\_key} can be an object or a string. If
+\texttt{private\_key} is a string, it is treated as the key with no
+passphrase and will use \texttt{RSA\_PKCS1\_OAEP\_PADDING}.
+
+\texttt{private\_key}:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{key} : A string holding the PEM encoded private key
+\item
+  \texttt{passphrase} : An optional string of passphrase for the private
+  key
+\item
+  \texttt{padding} : An optional padding value, one of the following:
+\item
+  \texttt{constants.RSA\_NO\_PADDING}
+\item
+  \texttt{constants.RSA\_PKCS1\_PADDING}
+\item
+  \texttt{constants.RSA\_PKCS1\_OAEP\_PADDING}
+\end{itemize}
+
+NOTE: All paddings are defined in \texttt{constants} module.
 
 \subsection{crypto.DEFAULT\_ENCODING}\label{crypto.defaultux5fencoding}
 

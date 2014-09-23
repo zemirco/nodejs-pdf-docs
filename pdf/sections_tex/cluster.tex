@@ -488,7 +488,10 @@ A hash that stores the active worker objects, keyed by \texttt{id}
 field. Makes it easy to loop through all the workers. It is only
 available in the master process.
 
-A worker is removed from cluster.workers just before the
+A worker is removed from cluster.workers after the worker has
+disconnected \emph{and} exited. The order between these two events
+cannot be determined in advance. However, it is guaranteed that the
+removal from the cluster.workers list happens before last
 \texttt{'disconnect'} or \texttt{'exit'} event is emitted.
 
 \begin{Shaded}
@@ -707,6 +710,19 @@ has not been emitted after some time.
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
+
+\subsubsection{worker.isDead()}\label{worker.isdead}
+
+This function returns \texttt{true} if the worker's process has
+terminated (either because of exiting or being signaled). Otherwise, it
+returns \texttt{false}.
+
+\subsubsection{worker.isConnected()}\label{worker.isconnected}
+
+This function returns \texttt{true} if the worker is connected to its
+master via its IPC channel, \texttt{false} otherwise. A worker is
+connected to its master after it's been created. It is disconnected
+after the \texttt{disconnect} event is emitted.
 
 \subsubsection{Event: `message'}\label{event-message}
 

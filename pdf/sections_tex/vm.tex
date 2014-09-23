@@ -165,6 +165,26 @@ Note that running untrusted code is a tricky business requiring great
 care. \texttt{vm.runInNewContext} is quite useful, but safely running
 untrusted code requires a separate process.
 
+\subsection{vm.runInDebugContext(code)}\label{vm.runindebugcontextcode}
+
+\texttt{vm.runInDebugContext} compiles and executes \texttt{code} inside
+the V8 debug context. The primary use case is to get access to the V8
+debug object:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{Debug = }\OtherTok{vm}\NormalTok{.}\FunctionTok{runInDebugContext}\NormalTok{(}\StringTok{'Debug'}\NormalTok{);}
+\OtherTok{Debug}\NormalTok{.}\FunctionTok{scripts}\NormalTok{().}\FunctionTok{forEach}\NormalTok{(}\KeywordTok{function}\NormalTok{(script) \{ }\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{script}\NormalTok{.}\FunctionTok{name}\NormalTok{); \});}
+\end{Highlighting}
+\end{Shaded}
+
+Note that the debug context and object are intrinsically tied to V8's
+debugger implementation and may change (or even get removed) without
+prior warning.
+
+The debug object can also be exposed with the
+\texttt{-{}-expose\_debug\_as=} switch.
+
 \subsection{Class: Script}\label{class-script}
 
 A class for holding precompiled scripts, and running them in specific

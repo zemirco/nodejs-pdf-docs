@@ -263,6 +263,46 @@ Example of a UDP server listening on port 41234:
 \end{Highlighting}
 \end{Shaded}
 
+\subsubsection{socket.bind(options,
+{[}callback{]})}\label{socket.bindoptions-callback}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{options} \{Object\} - Required. Supports the following
+  properties:
+\item
+  \texttt{port} \{Number\} - Required.
+\item
+  \texttt{address} \{String\} - Optional.
+\item
+  \texttt{exclusive} \{Boolean\} - Optional.
+\item
+  \texttt{callback} \{Function\} - Optional.
+\end{itemize}
+
+The \texttt{port} and \texttt{address} properties of \texttt{options},
+as well as the optional callback function, behave as they do on a call
+to
+\hyperref[dgramux5fsocketux5fbindux5fportux5faddressux5fcallback]{socket.bind(port,
+{[}address{]}, {[}callback{]})}.
+
+If \texttt{exclusive} is \texttt{false} (default), then cluster workers
+will use the same underlying handle, allowing connection handling duties
+to be shared. When \texttt{exclusive} is \texttt{true}, the handle is
+not shared, and attempted port sharing results in an error. An example
+which listens on an exclusive port is shown below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{socket}\NormalTok{.}\FunctionTok{bind}\NormalTok{(\{}
+  \DataTypeTok{address}\NormalTok{: }\StringTok{'localhost'}\NormalTok{,}
+  \DataTypeTok{port}\NormalTok{: }\DecValTok{8000}\NormalTok{,}
+  \DataTypeTok{exclusive}\NormalTok{: }\KeywordTok{true}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
 \subsubsection{socket.close()}\label{socket.close}
 
 Close the underlying socket and stop listening for data on it.

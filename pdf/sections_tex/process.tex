@@ -437,6 +437,41 @@ Returns the current working directory of the process.
 
 An object containing the user environment. See environ(7).
 
+An example of this object looks like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{\{ }\DataTypeTok{TERM}\NormalTok{: }\StringTok{'xterm-256color'}\NormalTok{,}
+  \DataTypeTok{SHELL}\NormalTok{: }\StringTok{'/usr/local/bin/bash'}\NormalTok{,}
+  \DataTypeTok{USER}\NormalTok{: }\StringTok{'maciej'}\NormalTok{,}
+  \DataTypeTok{PATH}\NormalTok{: }\StringTok{'~/.bin/:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin'}\NormalTok{,}
+  \DataTypeTok{PWD}\NormalTok{: }\StringTok{'/Users/maciej'}\NormalTok{,}
+  \DataTypeTok{EDITOR}\NormalTok{: }\StringTok{'vim'}\NormalTok{,}
+  \DataTypeTok{SHLVL}\NormalTok{: }\StringTok{'1'}\NormalTok{,}
+  \DataTypeTok{HOME}\NormalTok{: }\StringTok{'/Users/maciej'}\NormalTok{,}
+  \DataTypeTok{LOGNAME}\NormalTok{: }\StringTok{'maciej'}\NormalTok{,}
+  \DataTypeTok{_}\NormalTok{: }\StringTok{'/usr/local/bin/node'} \NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+You can write to this object, but changes won't be reflected outside of
+your process. That means that the following won't work:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{node -e }\StringTok{'process.env.foo = "bar"'} \NormalTok{&& echo $foo}
+\end{Highlighting}
+\end{Shaded}
+
+But this will:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\FunctionTok{foo} \NormalTok{= }\StringTok{'bar'}\NormalTok{;}
+\OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\FunctionTok{foo}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
+
 \subsection{process.exit({[}code{]})}\label{process.exitcode}
 
 Ends the process with the specified \texttt{code}. If omitted, exit uses
