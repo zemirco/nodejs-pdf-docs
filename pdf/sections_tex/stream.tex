@@ -394,6 +394,31 @@ becomes available will remain in the internal buffer.
 \end{Highlighting}
 \end{Shaded}
 
+\paragraph{readable.isPaused()}\label{readable.ispaused}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Return: \texttt{Boolean}
+\end{itemize}
+
+This method returns whether or not the \texttt{readable} has been
+\textbf{explicitly} paused by client code (using
+\texttt{readable.pause()} without a corresponding
+\texttt{readable.resume()}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{readable = }\KeywordTok{new} \OtherTok{stream}\NormalTok{.}\FunctionTok{Readable}
+
+\OtherTok{readable}\NormalTok{.}\FunctionTok{isPaused}\NormalTok{() }\CommentTok{// === false}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{pause}\NormalTok{()}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{isPaused}\NormalTok{() }\CommentTok{// === true}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{resume}\NormalTok{()}
+\OtherTok{readable}\NormalTok{.}\FunctionTok{isPaused}\NormalTok{() }\CommentTok{// === false}
+\end{Highlighting}
+\end{Shaded}
+
 \paragraph{readable.pipe(destination,
 {[}options{]})}\label{readable.pipedestination-options}
 
@@ -1189,7 +1214,7 @@ low-level source object by doing something like this:
       \OtherTok{self}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{readStop}\NormalTok{();}
   \NormalTok{\};}
 
-  \CommentTok{// When the source ends, we push the EOF-signalling `null` chunk}
+  \CommentTok{// When the source ends, we push the EOF-signaling `null` chunk}
   \KeywordTok{this}\NormalTok{.}\OtherTok{_source}\NormalTok{.}\FunctionTok{onend} \NormalTok{= }\KeywordTok{function}\NormalTok{() \{}
     \OtherTok{self}\NormalTok{.}\FunctionTok{push}\NormalTok{(}\KeywordTok{null}\NormalTok{);}
   \NormalTok{\};}

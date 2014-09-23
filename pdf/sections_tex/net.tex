@@ -303,6 +303,51 @@ This function is asynchronous. When the server has been bound,
 the last parameter \texttt{callback} will be added as an listener for
 the \hyperref[netux5feventux5flistening]{`listening'} event.
 
+\subsubsection{server.listen(options,
+{[}callback{]})}\label{server.listenoptions-callback}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{options} \{Object\} - Required. Supports the following
+  properties:
+\item
+  \texttt{port} \{Number\} - Optional.
+\item
+  \texttt{host} \{String\} - Optional.
+\item
+  \texttt{backlog} \{Number\} - Optional.
+\item
+  \texttt{path} \{String\} - Optional.
+\item
+  \texttt{exclusive} \{Boolean\} - Optional.
+\item
+  \texttt{callback} \{Function\} - Optional.
+\end{itemize}
+
+The \texttt{port}, \texttt{host}, and \texttt{backlog} properties of
+\texttt{options}, as well as the optional callback function, behave as
+they do on a call to
+\hyperref[netux5fserverux5flistenux5fportux5fhostux5fbacklogux5fcallback]{server.listen(port,
+{[}host{]}, {[}backlog{]}, {[}callback{]})}. Alternatively, the
+\texttt{path} option can be used to specify a UNIX socket.
+
+If \texttt{exclusive} is \texttt{false} (default), then cluster workers
+will use the same underlying handle, allowing connection handling duties
+to be shared. When \texttt{exclusive} is \texttt{true}, the handle is
+not shared, and attempted port sharing results in an error. An example
+which listens on an exclusive port is shown below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(\{}
+  \DataTypeTok{host}\NormalTok{: }\StringTok{'localhost'}\NormalTok{,}
+  \DataTypeTok{port}\NormalTok{: }\DecValTok{80}\NormalTok{,}
+  \DataTypeTok{exclusive}\NormalTok{: }\KeywordTok{true}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
 \subsubsection{server.close({[}callback{]})}\label{server.closecallback}
 
 Stops the server from accepting new connections and keeps existing

@@ -81,7 +81,10 @@ It can be constructed in a variety of ways.
   \texttt{size} Number
 \end{itemize}
 
-Allocates a new buffer of \texttt{size} octets.
+Allocates a new buffer of \texttt{size} octets. Note, \texttt{size} must
+be no more than
+\href{smalloc.html\#smalloc_smalloc_kmaxlength}{kMaxLength}. Otherwise,
+a \texttt{RangeError} will be thrown here.
 
 \subsubsection{new Buffer(array)}\label{new-bufferarray}
 
