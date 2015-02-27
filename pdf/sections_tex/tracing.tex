@@ -21,7 +21,8 @@ normal operation of Node, so be wary of doing CPU bound or synchronous
 workloads in these functions. Consider a ring buffer and a timer to
 defer processing.
 
-\texttt{require('tracing')} to use this module.
+\texttt{require(\textquotesingle{}tracing\textquotesingle{})} to use
+this module.
 
 \subsection{v8}\label{v8}
 
@@ -31,9 +32,9 @@ exposes events and interfaces specific to the version of \texttt{v8}
 built with node. These interfaces are subject to change by upstream and
 are therefore not covered under the stability index.
 
-\subsubsection{Event: `gc'}\label{event-gc}
+\subsubsection{\texorpdfstring{Event: `gc'}{Event: gc}}\label{event-gc}
 
-\texttt{function (before, after) \{ \}}
+\texttt{function\ (before,\ after)\ \{\ \}}
 
 Emitted each time a GC run is completed.
 
@@ -119,18 +120,18 @@ optional fields:
   when created, then \texttt{create()} will receive that as a function
   argument.
 \item
-  \texttt{before(context, userData)}: A \texttt{Function} that is called
-  immediately before the asynchronous callback is about to run. It will
-  be passed both the \texttt{context} (i.e. \texttt{this}) of the
-  calling function and the \texttt{userData} either returned from
+  \texttt{before(context,\ userData)}: A \texttt{Function} that is
+  called immediately before the asynchronous callback is about to run.
+  It will be passed both the \texttt{context} (i.e. \texttt{this}) of
+  the calling function and the \texttt{userData} either returned from
   \texttt{create()} or passed during construction (if either occurred).
 \item
-  \texttt{after(context, userData)}: A \texttt{Function} called
+  \texttt{after(context,\ userData)}: A \texttt{Function} called
   immediately after the asynchronous event's callback has run. Note this
   will not be called if the callback throws and the error is not
   handled.
 \item
-  \texttt{error(userData, error)}: A \texttt{Function} called if the
+  \texttt{error(userData,\ error)}: A \texttt{Function} called if the
   event's callback threw. If this registered callback returns
   \texttt{true} then Node will assume the error has been properly
   handled and resume execution normally. When multiple \texttt{error()}

@@ -6,8 +6,10 @@
 \end{Highlighting}
 \end{Shaded}
 
-These functions are in the module \texttt{'util'}. Use
-\texttt{require('util')} to access them.
+These functions are in the module
+\texttt{\textquotesingle{}util\textquotesingle{}}. Use
+\texttt{require(\textquotesingle{}util\textquotesingle{})} to access
+them.
 
 The \texttt{util} module is primarily designed to support the needs of
 Node's internal APIs. Many of these utilities are useful for your own
@@ -58,8 +60,8 @@ environment variable set, then it will not print anything.
 You may separate multiple \texttt{NODE\_DEBUG} environment variables
 with a comma. For example, \texttt{NODE\_DEBUG=fs,net,tls}.
 
-\subsection{util.format(format,
-{[}\ldots{}{]})}\label{util.formatformat}
+\subsection{util.format(format{[},
+\ldots{}{]})}\label{util.formatformat}
 
 Returns a formatted string using the first argument as a
 \texttt{printf}-like format.
@@ -76,10 +78,11 @@ value from its corresponding argument. Supported placeholders are:
   \texttt{\%d} - Number (both integer and float).
 \item
   \texttt{\%j} - JSON. Replaced with the string
-  \texttt{'{[}Circular{]}'} if the argument contains circular
-  references.
+  \texttt{\textquotesingle{}{[}Circular{]}\textquotesingle{}} if the
+  argument contains circular references.
 \item
-  \texttt{\%\%} - single percent sign (\texttt{'\%'}). This does not
+  \texttt{\%\%} - single percent sign
+  (\texttt{\textquotesingle{}\%\textquotesingle{}}). This does not
   consume an argument.
 \end{itemize}
 
@@ -123,8 +126,8 @@ Output with timestamp on \texttt{stdout}.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{util.inspect(object,
-{[}options{]})}\label{util.inspectobject-options}
+\subsection{util.inspect(object{[},
+options{]})}\label{util.inspectobject-options}
 
 Return a string representation of \texttt{object}, which is useful for
 debugging.
@@ -148,7 +151,7 @@ aspects of the formatted string:
   customizable, see below.
 \item
   \texttt{customInspect} - if \texttt{false}, then custom
-  \texttt{inspect(depth, opts)} functions defined on the objects being
+  \texttt{inspect(depth,\ opts)} functions defined on the objects being
   inspected won't be called. Defaults to \texttt{true}.
 \end{itemize}
 
@@ -162,13 +165,13 @@ Example of inspecting all properties of the \texttt{util} object:
 \end{Highlighting}
 \end{Shaded}
 
-Values may supply their own custom \texttt{inspect(depth, opts)}
+Values may supply their own custom \texttt{inspect(depth,\ opts)}
 functions, when called they receive the current depth in the recursive
 inspection, as well as the options object passed to
 \texttt{util.inspect()}.
 
-\subsubsection{Customizing \texttt{util.inspect}
-colors}\label{customizing-util.inspect-colors}
+\subsubsection{\texorpdfstring{Customizing \texttt{util.inspect}
+colors}{Customizing util.inspect colors}}\label{customizing-util.inspect-colors}
 
 Color output (if enabled) of \texttt{util.inspect} is customizable
 globally via \texttt{util.inspect.styles} and
@@ -188,8 +191,8 @@ Predefined color codes are: \texttt{white}, \texttt{grey},
 \texttt{bold}, \texttt{italic}, \texttt{underline} and \texttt{inverse}
 codes.
 
-\subsubsection{Custom \texttt{inspect()} function on
-Objects}\label{custom-inspect-function-on-objects}
+\subsubsection{\texorpdfstring{Custom \texttt{inspect()} function on
+Objects}{Custom inspect() function on Objects}}\label{custom-inspect-function-on-objects}
 
 Objects also may define their own \texttt{inspect(depth)} function which
 \texttt{util.inspect()} will invoke and use the result of when
@@ -353,8 +356,8 @@ Marks that a method should not be used any more.
 \end{Shaded}
 
 It returns a modified function which warns once by default. If
-\texttt{-{}-no-deprecation} is set then this function is a NO-OP. If
-\texttt{-{}-throw-deprecation} is set then the application will throw an
+\texttt{-\/-no-deprecation} is set then this function is a NO-OP. If
+\texttt{-\/-throw-deprecation} is set then the application will throw an
 exception if the deprecated API is used.
 
 \subsection{util.debug(string)}\label{util.debugstring}
@@ -397,8 +400,8 @@ Deprecated predecessor of \texttt{console.log}.
 
 Deprecated predecessor of \texttt{console.log}.
 
-\subsection{util.pump(readableStream, writableStream,
-{[}callback{]})}\label{util.pumpreadablestream-writablestream-callback}
+\subsection{util.pump(readableStream, writableStream{[},
+callback{]})}\label{util.pumpreadablestream-writablestream-callback}
 
 \begin{Shaded}
 \begin{Highlighting}[]

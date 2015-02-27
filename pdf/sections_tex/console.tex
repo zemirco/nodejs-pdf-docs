@@ -33,15 +33,17 @@ is blocking:
 In daily use, the blocking/non-blocking dichotomy is not something you
 should worry about unless you log huge amounts of data.
 
-\subsection{console.log({[}data{]},
-{[}\ldots{}{]})}\label{console.logdata}
+\subsection{console.log({[}data{]}{[},
+\ldots{}{]})}\label{console.logdata}
 
 Prints to stdout with newline. This function can take multiple arguments
 in a \texttt{printf()}-like way. Example:
 
 \begin{Shaded}
 \begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{count = }\DecValTok{5}\NormalTok{;}
 \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'count: %d'}\NormalTok{, count);}
+\CommentTok{// prints 'count: 5'}
 \end{Highlighting}
 \end{Shaded}
 
@@ -50,23 +52,23 @@ If formatting elements are not found in the first string then
 \href{util.html\#util_util_format_format}{util.format()} for more
 information.
 
-\subsection{console.info({[}data{]},
-{[}\ldots{}{]})}\label{console.infodata}
+\subsection{console.info({[}data{]}{[},
+\ldots{}{]})}\label{console.infodata}
 
 Same as \texttt{console.log}.
 
-\subsection{console.error({[}data{]},
-{[}\ldots{}{]})}\label{console.errordata}
+\subsection{console.error({[}data{]}{[},
+\ldots{}{]})}\label{console.errordata}
 
 Same as \texttt{console.log} but prints to stderr.
 
-\subsection{console.warn({[}data{]},
-{[}\ldots{}{]})}\label{console.warndata}
+\subsection{console.warn({[}data{]}{[},
+\ldots{}{]})}\label{console.warndata}
 
 Same as \texttt{console.error}.
 
-\subsection{console.dir(obj,
-{[}options{]})}\label{console.dirobj-options}
+\subsection{console.dir(obj{[},
+options{]})}\label{console.dirobj-options}
 
 Uses \texttt{util.inspect} on \texttt{obj} and prints resulting string
 to stdout. This function bypasses any custom \texttt{inspect()} function
@@ -104,17 +106,19 @@ Finish timer, record output. Example:
   \NormalTok{;}
 \NormalTok{\}}
 \OtherTok{console}\NormalTok{.}\FunctionTok{timeEnd}\NormalTok{(}\StringTok{'100-elements'}\NormalTok{);}
+\CommentTok{// prints 100-elements: 262ms}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{console.trace(message,
-{[}\ldots{}{]})}\label{console.tracemessage}
+\subsection{console.trace(message{[},
+\ldots{}{]})}\label{console.tracemessage}
 
-Print to stderr \texttt{'Trace :'}, followed by the formatted message
-and stack trace to the current position.
+Print to stderr \texttt{\textquotesingle{}Trace\ :\textquotesingle{}},
+followed by the formatted message and stack trace to the current
+position.
 
-\subsection{console.assert(value, {[}message{]},
-{[}\ldots{}{]})}\label{console.assertvalue-message}
+\subsection{console.assert(value{[}, message{]}{[},
+\ldots{}{]})}\label{console.assertvalue-message}
 
 Similar to
 \href{assert.html\#assert_assert_value_message_assert_ok_value_message}{assert.ok()},

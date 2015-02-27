@@ -6,7 +6,8 @@
 \end{Highlighting}
 \end{Shaded}
 
-Use \texttt{require('tls')} to access this module.
+Use \texttt{require(\textquotesingle{}tls\textquotesingle{})} to access
+this module.
 
 The \texttt{tls} module uses OpenSSL to provide Transport Layer Security
 and/or Secure Socket Layer: encrypted stream communication.
@@ -16,7 +17,7 @@ server must have a private key. A private key is created like this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{openssl genrsa -out ryans-}\OtherTok{key}\NormalTok{.}\FunctionTok{pem} \DecValTok{1024}
+\NormalTok{openssl genrsa -out ryans-}\OtherTok{key}\NormalTok{.}\FunctionTok{pem} \DecValTok{2048}
 \end{Highlighting}
 \end{Shaded}
 
@@ -27,7 +28,7 @@ Request'' (CSR) file. This is done with:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{openssl req -}\KeywordTok{new} \NormalTok{-key ryans-}\OtherTok{key}\NormalTok{.}\FunctionTok{pem} \NormalTok{-out ryans-}\OtherTok{csr}\NormalTok{.}\FunctionTok{pem}
+\NormalTok{openssl req -}\KeywordTok{new} \NormalTok{-sha256 -key ryans-}\OtherTok{key}\NormalTok{.}\FunctionTok{pem} \NormalTok{-out ryans-}\OtherTok{csr}\NormalTok{.}\FunctionTok{pem}
 \end{Highlighting}
 \end{Shaded}
 
@@ -62,7 +63,56 @@ To create .pfx or .p12, do this:
   \texttt{inkey}: private key
 \item
   \texttt{certfile}: all CA certs concatenated in one file like
-  \texttt{cat ca1-cert.pem ca2-cert.pem \textgreater{} ca-cert.pem}
+  \texttt{cat\ ca1-cert.pem\ ca2-cert.pem\ \textgreater{}\ ca-cert.pem}
+\end{itemize}
+
+\subsection{Protocol support}\label{protocol-support}
+
+Node.js is compiled with SSLv2 and SSLv3 protocol support by default,
+but these protocols are \textbf{disabled}. They are considered insecure
+and could be easily compromised as was shown by
+\href{https://access.redhat.com/articles/1232123}{CVE-2014-3566}.
+However, in some situations, it may cause problems with legacy
+clients/servers (such as Internet Explorer 6). If you wish to enable
+SSLv2 or SSLv3, run node with the \texttt{-\/-enable-ssl2} or
+\texttt{-\/-enable-ssl3} flag respectively. In future versions of
+Node.js SSLv2 and SSLv3 will not be compiled in by default.
+
+There is a way to force node into using SSLv3 or SSLv2 only mode by
+explicitly specifying \texttt{secureProtocol} to
+\texttt{\textquotesingle{}SSLv3\_method\textquotesingle{}} or
+\texttt{\textquotesingle{}SSLv2\_method\textquotesingle{}}.
+
+The default protocol method Node.js uses is \texttt{SSLv23\_method}
+which would be more accurately named \texttt{AutoNegotiate\_method}.
+This method will try and negotiate from the highest level down to
+whatever the client supports. To provide a secure default, Node.js
+(since v0.10.33) explicitly disables the use of SSLv3 and SSLv2 by
+setting the \texttt{secureOptions} to be
+\texttt{SSL\_OP\_NO\_SSLv3\textbar{}SSL\_OP\_NO\_SSLv2} (again, unless
+you have passed \texttt{-\/-enable-ssl3}, or \texttt{-\/-enable-ssl2},
+or \texttt{SSLv3\_method} as \texttt{secureProtocol}).
+
+If you have set \texttt{secureOptions} to anything, we will not override
+your options.
+
+The ramifications of this behavior change:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  If your application is behaving as a secure server, clients who are
+  \texttt{SSLv3} only will now not be able to appropriately negotiate a
+  connection and will be refused. In this case your server will emit a
+  \texttt{clientError} event. The error message will include
+  \texttt{\textquotesingle{}wrong\ version\ number\textquotesingle{}}.
+\item
+  If your application is behaving as a secure client and communicating
+  with a server that doesn't support methods more secure than SSLv3 then
+  your connection won't be able to negotiate and will fail. In this case
+  your client will emit a an \texttt{error} event. The error message
+  will include
+  \texttt{\textquotesingle{}wrong\ version\ number\textquotesingle{}}.
 \end{itemize}
 
 \subsection{Client-initiated renegotiation attack
@@ -89,7 +139,7 @@ the threshold is exceeded. The limits are configurable:
 Don't change the defaults unless you know what you are doing.
 
 To test your server, connect to it with
-\texttt{openssl s\_client -connect address:port} and tap
+\texttt{openssl\ s\_client\ -connect\ address:port} and tap
 \texttt{R\textless{}CR\textgreater{}} (that's the letter \texttt{R}
 followed by a carriage return) a few times.
 
@@ -153,8 +203,8 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{tls.createServer(options,
-{[}secureConnectionListener{]})}\label{tls.createserveroptions-secureconnectionlistener}
+\subsection{tls.createServer(options{[},
+secureConnectionListener{]})}\label{tls.createserveroptions-secureconnectionlistener}
 
 Creates a new \hyperref[tlsux5fclassux5ftlsux5fserver]{tls.Server}. The
 \texttt{connectionListener} argument is automatically set as a listener
@@ -226,15 +276,15 @@ event. The \texttt{options} object has these possibilities:
   details.
 \item
   \texttt{dhparam}: DH parameter file to use for DHE key agreement. Use
-  \texttt{openssl dhparam} command to create it. If the file is invalid
+  \texttt{openssl\ dhparam} command to create it. If the file is invalid
   to load, it is silently discarded.
 \item
   \texttt{handshakeTimeout}: Abort the connection if the SSL/TLS
   handshake does not finish in this many milliseconds. The default is
   120 seconds.
 
-  A \texttt{'clientError'} is emitted on the \texttt{tls.Server} object
-  whenever a handshake times out.
+  A \texttt{\textquotesingle{}clientError\textquotesingle{}} is emitted
+  on the \texttt{tls.Server} object whenever a handshake times out.
 \item
   \texttt{honorCipherOrder} : When choosing a cipher, use the server's
   preferences instead of the client preferences.
@@ -246,7 +296,7 @@ event. The \texttt{options} object has these possibilities:
   Note: If SSLv2 is used, the server will send its list of preferences
   to the client, and the client chooses the cipher. Support for SSLv2 is
   disabled unless node.js was configured with
-  \texttt{./configure -{}-with-sslv2}.
+  \texttt{./configure\ -\/-with-sslv2}.
 \item
   \texttt{requestCert}: If \texttt{true} the server will request a
   certificate from clients that connect and attempt to verify that
@@ -257,17 +307,17 @@ event. The \texttt{options} object has these possibilities:
   This option only has an effect if \texttt{requestCert} is
   \texttt{true}. Default: \texttt{false}.
 \item
-  \texttt{checkServerIdentity(servername, cert)}: Provide an override
+  \texttt{checkServerIdentity(servername,\ cert)}: Provide an override
   for checking server's hostname against the certificate. Should return
   an error if verification fails. Return \texttt{undefined} if passing.
 \item
   \texttt{NPNProtocols}: An array or \texttt{Buffer} of possible NPN
   protocols. (Protocols should be ordered by their priority).
 \item
-  \texttt{SNICallback(servername, cb)}: A function that will be called
+  \texttt{SNICallback(servername,\ cb)}: A function that will be called
   if client supports SNI TLS extension. Two argument will be passed to
   it: \texttt{servername}, and \texttt{cb}. \texttt{SNICallback} should
-  invoke \texttt{cb(null, ctx)}, where \texttt{ctx} is a SecureContext
+  invoke \texttt{cb(null,\ ctx)}, where \texttt{ctx} is a SecureContext
   instance. (You can use \texttt{tls.createSecureContext(...)} to get
   proper SecureContext). If \texttt{SNICallback} wasn't provided -
   default callback with high-level API will be used (see below).
@@ -284,8 +334,8 @@ event. The \texttt{options} object has these possibilities:
 
   NOTE: Automatically shared between \texttt{cluster} module workers.
 \item
-  \texttt{sessionIdContext}: A string containing a opaque identifier for
-  session resumption. If \texttt{requestCert} is \texttt{true}, the
+  \texttt{sessionIdContext}: A string containing an opaque identifier
+  for session resumption. If \texttt{requestCert} is \texttt{true}, the
   default is MD5 hash value generated from command-line. Otherwise, the
   default is not provided.
 \item
@@ -293,6 +343,11 @@ event. The \texttt{options} object has these possibilities:
   \texttt{SSLv3\_method} to force SSL version 3. The possible values
   depend on your installation of OpenSSL and are defined in the constant
   \href{http://www.openssl.org/docs/ssl/ssl.html\#DEALING_WITH_PROTOCOL_METHODS}{SSL\_METHODS}.
+\item
+  \texttt{secureOptions}: Set server options. For example, to disable
+  the SSLv3 protocol set the \texttt{SSL\_OP\_NO\_SSLv3} flag. See
+  \href{https://www.openssl.org/docs/ssl/SSL_CTX_set_options.html}{SSL\_CTX\_set\_options}
+  for all available options.
 \end{itemize}
 
 Here is a simple example echo server:
@@ -355,7 +410,7 @@ Or
 \end{Shaded}
 
 You can test this server by connecting to it with
-\texttt{openssl s\_client}:
+\texttt{openssl\ s\_client}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -363,11 +418,11 @@ You can test this server by connecting to it with
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{tls.connect(options,
-{[}callback{]})}\label{tls.connectoptions-callback}
+\subsection{tls.connect(options{[},
+callback{]})}\label{tls.connectoptions-callback}
 
-\subsection{tls.connect(port, {[}host{]}, {[}options{]},
-{[}callback{]})}\label{tls.connectport-host-options-callback}
+\subsection{tls.connect(port{[}, host{]}{[}, options{]}{[},
+callback{]})}\label{tls.connectport-host-options-callback}
 
 Creates a new client connection to the given \texttt{port} and
 \texttt{host} (old API) or \texttt{options.port} and
@@ -406,15 +461,17 @@ specifies:
   connections.
 \item
   \texttt{rejectUnauthorized}: If \texttt{true}, the server certificate
-  is verified against the list of supplied CAs. An \texttt{'error'}
-  event is emitted if verification fails; \texttt{err.code} contains the
-  OpenSSL error code. Default: \texttt{true}.
+  is verified against the list of supplied CAs. An
+  \texttt{\textquotesingle{}error\textquotesingle{}} event is emitted if
+  verification fails; \texttt{err.code} contains the OpenSSL error code.
+  Default: \texttt{true}.
 \item
   \texttt{NPNProtocols}: An array of strings or \texttt{Buffer}s
   containing supported NPN protocols. \texttt{Buffer}s should have
   following format: \texttt{0x05hello0x05world}, where first byte is
   next protocol name's length. (Passing array should usually be much
-  simpler: \texttt{{[}'hello', 'world'{]}}.)
+  simpler:
+  \texttt{{[}\textquotesingle{}hello\textquotesingle{},\ \textquotesingle{}world\textquotesingle{}{]}}.)
 \item
   \texttt{servername}: Servername for SNI (Server Name Indication) TLS
   extension.
@@ -512,7 +569,7 @@ Construct a new TLSSocket object from existing TCP socket.
 \begin{itemize}
 \item
   \texttt{secureContext}: An optional TLS context object from
-  \texttt{tls.createSecureContext( ... )}
+  \texttt{tls.createSecureContext(\ ...\ )}
 \item
   \texttt{isServer}: If true - TLS socket will be instantiated in
   server-mode
@@ -542,8 +599,6 @@ Construct a new TLSSocket object from existing TCP socket.
 \end{itemize}
 
 \subsection{tls.createSecureContext(details)}\label{tls.createsecurecontextdetails}
-
-Stability: 0 - Deprecated. Use tls.createSecureContext instead.
 
 Creates a credentials object, with the optional details being a
 dictionary with keys:
@@ -581,15 +636,9 @@ If no `ca' details are given, then node.js will use the default publicly
 trusted list of CAs as given in
 \url{http://mxr.mozilla.org/mozilla/source/security/nss/lib/ckfw/builtins/certdata.txt}.
 
-\subsection{tls.createSecurePair({[}context{]}, {[}isServer{]},
-{[}requestCert{]},
-{[}rejectUnauthorized{]})}\label{tls.createsecurepaircontext-isserver-requestcert-rejectunauthorized}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{Stability: }\DecValTok{0} \NormalTok{- }\OtherTok{Deprecated}\NormalTok{. }\FunctionTok{Use} \OtherTok{tls}\NormalTok{.}\FunctionTok{TLSSocket} \OtherTok{instead}\NormalTok{.}
-\end{Highlighting}
-\end{Shaded}
+\subsection{tls.createSecurePair({[}context{]}{[}, isServer{]}{[},
+requestCert{]}{[},
+rejectUnauthorized{]})}\label{tls.createsecurepaircontext-isserver-requestcert-rejectunauthorized}
 
 Creates a new secure pair object with two streams, one of which
 reads/writes encrypted data, and one reads/writes cleartext data.
@@ -624,7 +673,8 @@ NOTE: \texttt{cleartext} has the same APIs as
 
 Returned by tls.createSecurePair.
 
-\subsubsection{Event: `secure'}\label{event-secure}
+\subsubsection{\texorpdfstring{Event:
+`secure'}{Event: secure}}\label{event-secure}
 
 The event is emitted from the SecurePair once the pair has successfully
 established a secure connection.
@@ -639,12 +689,13 @@ This class is a subclass of \texttt{net.Server} and has the same methods
 on it. Instead of accepting just raw TCP connections, this accepts
 encrypted connections using TLS or SSL.
 
-\subsubsection{Event: `secureConnection'}\label{event-secureconnection}
+\subsubsection{\texorpdfstring{Event:
+`secureConnection'}{Event: secureConnection}}\label{event-secureconnection}
 
-\texttt{function (tlsSocket) \{\}}
+\texttt{function\ (tlsSocket)\ \{\}}
 
 This event is emitted after a new connection has been successfully
-handshaked. The argument is a instance of
+handshaked. The argument is an instance of
 \hyperref[tlsux5fclassux5ftlsux5ftlssocket]{tls.TLSSocket}. It has all
 the common stream methods and events.
 
@@ -658,9 +709,10 @@ TLS server, you unauthorized connections may be accepted.
 protocol. \texttt{socket.servername} is a string containing servername
 requested with SNI.
 
-\subsubsection{Event: `clientError'}\label{event-clienterror}
+\subsubsection{\texorpdfstring{Event:
+`clientError'}{Event: clientError}}\label{event-clienterror}
 
-\texttt{function (exception, tlsSocket) \{ \}}
+\texttt{function\ (exception,\ tlsSocket)\ \{\ \}}
 
 When a client connection emits an `error' event before secure connection
 is established - it will be forwarded here.
@@ -669,9 +721,10 @@ is established - it will be forwarded here.
 \hyperref[tlsux5fclassux5ftlsux5ftlssocket]{tls.TLSSocket} that the
 error originated from.
 
-\subsubsection{Event: `newSession'}\label{event-newsession}
+\subsubsection{\texorpdfstring{Event:
+`newSession'}{Event: newSession}}\label{event-newsession}
 
-\texttt{function (sessionId, sessionData, callback) \{ \}}
+\texttt{function\ (sessionId,\ sessionData,\ callback)\ \{\ \}}
 
 Emitted on creation of TLS session. May be used to store sessions in
 external storage. \texttt{callback} must be invoked eventually,
@@ -680,34 +733,36 @@ otherwise no data will be sent or received from secure connection.
 NOTE: adding this event listener will have an effect only on connections
 established after addition of event listener.
 
-\subsubsection{Event: `resumeSession'}\label{event-resumesession}
+\subsubsection{\texorpdfstring{Event:
+`resumeSession'}{Event: resumeSession}}\label{event-resumesession}
 
-\texttt{function (sessionId, callback) \{ \}}
+\texttt{function\ (sessionId,\ callback)\ \{\ \}}
 
 Emitted when client wants to resume previous TLS session. Event listener
 may perform lookup in external storage using given \texttt{sessionId},
-and invoke \texttt{callback(null, sessionData)} once finished. If
+and invoke \texttt{callback(null,\ sessionData)} once finished. If
 session can't be resumed (i.e.~doesn't exist in storage) one may call
-\texttt{callback(null, null)}. Calling \texttt{callback(err)} will
+\texttt{callback(null,\ null)}. Calling \texttt{callback(err)} will
 terminate incoming connection and destroy socket.
 
 NOTE: adding this event listener will have an effect only on connections
 established after addition of event listener.
 
-\subsubsection{Event: `OCSPRequest'}\label{event-ocsprequest}
+\subsubsection{\texorpdfstring{Event:
+`OCSPRequest'}{Event: OCSPRequest}}\label{event-ocsprequest}
 
-\texttt{function (certificate, issuer, callback) \{ \}}
+\texttt{function\ (certificate,\ issuer,\ callback)\ \{\ \}}
 
 Emitted when the client sends a certificate status request. You could
 parse server's current certificate to obtain OCSP url and certificate
 id, and after obtaining OCSP response invoke
-\texttt{callback(null, resp)}, where \texttt{resp} is a \texttt{Buffer}
+\texttt{callback(null,\ resp)}, where \texttt{resp} is a \texttt{Buffer}
 instance. Both \texttt{certificate} and \texttt{issuer} are a
 \texttt{Buffer} DER-representations of the primary and issuer's
 certificates. They could be used to obtain OCSP certificate id and OCSP
 endpoint url.
 
-Alternatively, \texttt{callback(null, null)} could be called, meaning
+Alternatively, \texttt{callback(null,\ null)} could be called, meaning
 that there is no OCSP response.
 
 Calling \texttt{callback(err)} will result in a
@@ -748,8 +803,8 @@ NOTE: you may want to use some npm module like
 \href{http://npmjs.org/package/asn1.js}{asn1.js} to parse the
 certificates.
 
-\subsubsection{server.listen(port, {[}host{]},
-{[}callback{]})}\label{server.listenport-host-callback}
+\subsubsection{server.listen(port{[}, host{]}{[},
+callback{]})}\label{server.listenport-host-callback}
 
 Begin accepting connections on the specified \texttt{port} and
 \texttt{host}. If the \texttt{host} is omitted, the server will accept
@@ -764,7 +819,7 @@ See \texttt{net.Server} for more information.
 
 Stops the server from accepting new connections. This function is
 asynchronous, the server is finally closed when the server emits a
-\texttt{'close'} event.
+\texttt{\textquotesingle{}close\textquotesingle{}} event.
 
 \subsubsection{server.address()}\label{server.address}
 
@@ -817,20 +872,22 @@ This instance implements a duplex
 \href{stream.html\#stream_stream}{Stream} interfaces. It has all the
 common stream methods and events.
 
-\subsubsection{Event: `secureConnect'}\label{event-secureconnect}
+\subsubsection{\texorpdfstring{Event:
+`secureConnect'}{Event: secureConnect}}\label{event-secureconnect}
 
 This event is emitted after a new connection has been successfully
 handshaked. The listener will be called no matter if the server's
 certificate was authorized or not. It is up to the user to test
 \texttt{tlsSocket.authorized} to see if the server certificate was
 signed by one of the specified CAs. If
-\texttt{tlsSocket.authorized === false} then the error can be found in
+\texttt{tlsSocket.authorized\ ===\ false} then the error can be found in
 \texttt{tlsSocket.authorizationError}. Also if NPN was used - you can
 check \texttt{tlsSocket.npnProtocol} for negotiated protocol.
 
-\subsubsection{Event: `OCSPResponse'}\label{event-ocspresponse}
+\subsubsection{\texorpdfstring{Event:
+`OCSPResponse'}{Event: OCSPResponse}}\label{event-ocspresponse}
 
-\texttt{function (response) \{ \}}
+\texttt{function\ (response)\ \{\ \}}
 
 This event will be emitted if \texttt{requestOCSP} option was set.
 \texttt{response} is a buffer object, containing server's OCSP response.
@@ -853,7 +910,7 @@ one of the specified CAs, otherwise \texttt{false}
 
 The reason why the peer's certificate has not been verified. This
 property becomes available only when
-\texttt{tlsSocket.authorized === false}.
+\texttt{tlsSocket.authorized\ ===\ false}.
 
 \subsubsection{tlsSocket.getPeerCertificate({[} detailed
 {]})}\label{tlssocket.getpeercertificate-detailed}
@@ -952,17 +1009,19 @@ Return TLS session ticket or \texttt{undefined} if none was negotiated.
 Returns the bound address, the address family name and port of the
 underlying socket as reported by the operating system. Returns an object
 with three properties, e.g.
-\texttt{\{ port: 12346, family: 'IPv4', address: '127.0.0.1' \}}
+\texttt{\{\ port:\ 12346,\ family:\ \textquotesingle{}IPv4\textquotesingle{},\ address:\ \textquotesingle{}127.0.0.1\textquotesingle{}\ \}}
 
 \subsubsection{tlsSocket.remoteAddress}\label{tlssocket.remoteaddress}
 
 The string representation of the remote IP address. For example,
-\texttt{'74.125.127.100'} or \texttt{'2001:4860:a005::68'}.
+\texttt{\textquotesingle{}74.125.127.100\textquotesingle{}} or
+\texttt{\textquotesingle{}2001:4860:a005::68\textquotesingle{}}.
 
 \subsubsection{tlsSocket.remoteFamily}\label{tlssocket.remotefamily}
 
-The string representation of the remote IP family. \texttt{'IPv4'} or
-\texttt{'IPv6'}.
+The string representation of the remote IP family.
+\texttt{\textquotesingle{}IPv4\textquotesingle{}} or
+\texttt{\textquotesingle{}IPv6\textquotesingle{}}.
 
 \subsubsection{tlsSocket.remotePort}\label{tlssocket.remoteport}
 

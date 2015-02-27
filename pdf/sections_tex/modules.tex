@@ -80,8 +80,8 @@ module.
 
 \subsection{Cycles}\label{cycles}
 
-When there are circular \texttt{require()} calls, a module might not be
-done being executed when it is returned.
+When there are circular \texttt{require()} calls, a module might not
+have finished executing when it is returned.
 
 Consider this situation:
 
@@ -124,7 +124,7 @@ Consider this situation:
 
 When \texttt{main.js} loads \texttt{a.js}, then \texttt{a.js} in turn
 loads \texttt{b.js}. At that point, \texttt{b.js} tries to load
-\texttt{a.js}. In order to prevent an infinite loop an
+\texttt{a.js}. In order to prevent an infinite loop, an
 \textbf{unfinished copy} of the \texttt{a.js} exports object is returned
 to the \texttt{b.js} module. \texttt{b.js} then finishes loading, and
 its \texttt{exports} object is provided to the \texttt{a.js} module.
@@ -158,9 +158,9 @@ The core modules are defined in node's source in the \texttt{lib/}
 folder.
 
 Core modules are always preferentially loaded if their identifier is
-passed to \texttt{require()}. For instance, \texttt{require('http')}
-will always return the built in HTTP module, even if there is a file by
-that name.
+passed to \texttt{require()}. For instance,
+\texttt{require(\textquotesingle{}http\textquotesingle{})} will always
+return the built in HTTP module, even if there is a file by that name.
 
 \subsection{File Modules}\label{file-modules}
 
@@ -172,36 +172,43 @@ required filename with the added extension of \texttt{.js},
 \texttt{.json} files are parsed as JSON text files. \texttt{.node} files
 are interpreted as compiled addon modules loaded with \texttt{dlopen}.
 
-A module prefixed with \texttt{'/'} is an absolute path to the file. For
-example, \texttt{require('/home/marco/foo.js')} will load the file at
-\texttt{/home/marco/foo.js}.
+A module prefixed with \texttt{\textquotesingle{}/\textquotesingle{}} is
+an absolute path to the file. For example,
+\texttt{require(\textquotesingle{}/home/marco/foo.js\textquotesingle{})}
+will load the file at \texttt{/home/marco/foo.js}.
 
-A module prefixed with \texttt{'./'} is relative to the file calling
-\texttt{require()}. That is, \texttt{circle.js} must be in the same
-directory as \texttt{foo.js} for \texttt{require('./circle')} to find
+A module prefixed with \texttt{\textquotesingle{}./\textquotesingle{}}
+is relative to the file calling \texttt{require()}. That is,
+\texttt{circle.js} must be in the same directory as \texttt{foo.js} for
+\texttt{require(\textquotesingle{}./circle\textquotesingle{})} to find
 it.
 
 Without a leading `/' or `./' to indicate a file, the module is either a
 ``core module'' or is loaded from a \texttt{node\_modules} folder.
 
 If the given path does not exist, \texttt{require()} will throw an Error
-with its \texttt{code} property set to \texttt{'MODULE\_NOT\_FOUND'}.
+with its \texttt{code} property set to
+\texttt{\textquotesingle{}MODULE\_NOT\_FOUND\textquotesingle{}}.
 
-\subsection{Loading from \texttt{node\_modules}
-Folders}\label{loading-from-nodeux5fmodules-folders}
+\subsection{\texorpdfstring{Loading from \texttt{node\_modules}
+Folders}{Loading from node\_modules Folders}}\label{loading-from-nodeux5fmodules-folders}
 
 If the module identifier passed to \texttt{require()} is not a native
-module, and does not begin with \texttt{'/'}, \texttt{'../'}, or
-\texttt{'./'}, then node starts at the parent directory of the current
-module, and adds \texttt{/node\_modules}, and attempts to load the
-module from that location.
+module, and does not begin with
+\texttt{\textquotesingle{}/\textquotesingle{}},
+\texttt{\textquotesingle{}../\textquotesingle{}}, or
+\texttt{\textquotesingle{}./\textquotesingle{}}, then node starts at the
+parent directory of the current module, and adds
+\texttt{/node\_modules}, and attempts to load the module from that
+location.
 
 If it is not found there, then it moves to the parent directory, and so
 on, until the root of the file system is reached.
 
-For example, if the file at \texttt{'/home/ry/projects/foo.js'} called
-\texttt{require('bar.js')}, then node would look in the following
-locations, in this order:
+For example, if the file at
+\texttt{\textquotesingle{}/home/ry/projects/foo.js\textquotesingle{}}
+called \texttt{require(\textquotesingle{}bar.js\textquotesingle{})},
+then node would look in the following locations, in this order:
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -217,6 +224,13 @@ locations, in this order:
 
 This allows programs to localize their dependencies, so that they do not
 clash.
+
+You can require specific files or sub modules distributed with a module
+by including a path suffix after the module name. For instance
+\texttt{require(\textquotesingle{}example-module/path/to/file\textquotesingle{})}
+would resolve \texttt{path/to/file} relative to where
+\texttt{example-module} is located. The suffixed path follows the same
+module resolution semantics.
 
 \subsection{Folders as Modules}\label{folders-as-modules}
 
@@ -237,16 +251,17 @@ file might look like this:
 \end{Shaded}
 
 If this was in a folder at \texttt{./some-library}, then
-\texttt{require('./some-library')} would attempt to load
-\texttt{./some-library/lib/some-library.js}.
+\texttt{require(\textquotesingle{}./some-library\textquotesingle{})}
+would attempt to load \texttt{./some-library/lib/some-library.js}.
 
 This is the extent of Node's awareness of package.json files.
 
 If there is no package.json file present in the directory, then node
 will attempt to load an \texttt{index.js} or \texttt{index.node} file
 out of that directory. For example, if there was no package.json file in
-the above example, then \texttt{require('./some-library')} would attempt
-to load:
+the above example, then
+\texttt{require(\textquotesingle{}./some-library\textquotesingle{})}
+would attempt to load:
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -259,13 +274,16 @@ to load:
 \subsection{Caching}\label{caching}
 
 Modules are cached after the first time they are loaded. This means
-(among other things) that every call to \texttt{require('foo')} will get
+(among other things) that every call to
+\texttt{require(\textquotesingle{}foo\textquotesingle{})} will get
 exactly the same object returned, if it would resolve to the same file.
 
-Multiple calls to \texttt{require('foo')} may not cause the module code
-to be executed multiple times. This is an important feature. With it,
-``partially done'' objects can be returned, thus allowing transitive
-dependencies to be loaded even when they would cause cycles.
+Multiple calls to
+\texttt{require(\textquotesingle{}foo\textquotesingle{})} may not cause
+the module code to be executed multiple times. This is an important
+feature. With it, ``partially done'' objects can be returned, thus
+allowing transitive dependencies to be loaded even when they would cause
+cycles.
 
 If you want to have a module execute code multiple times, then export a
 function, and call that function.
@@ -275,10 +293,12 @@ function, and call that function.
 Modules are cached based on their resolved filename. Since modules may
 resolve to a different filename based on the location of the calling
 module (loading from \texttt{node\_modules} folders), it is not a
-\emph{guarantee} that \texttt{require('foo')} will always return the
-exact same object, if it would resolve to different files.
+\emph{guarantee} that
+\texttt{require(\textquotesingle{}foo\textquotesingle{})} will always
+return the exact same object, if it would resolve to different files.
 
-\subsection{The \texttt{module} Object}\label{the-module-object}
+\subsection{\texorpdfstring{The \texttt{module}
+Object}{The module Object}}\label{the-module-object}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -302,7 +322,7 @@ to each module.
 
 The \texttt{module.exports} object is created by the Module system.
 Sometimes this is not acceptable; many want their module to be an
-instance of some class. To do this assign the desired export object to
+instance of some class. To do this, assign the desired export object to
 \texttt{module.exports}. Note that assigning the desired object to
 \texttt{exports} will simply rebind the local \texttt{exports} variable,
 which is probably not what you want to do.
@@ -549,8 +569,8 @@ has been run directly by testing
 \end{Shaded}
 
 For a file \texttt{foo.js}, this will be \texttt{true} if run via
-\texttt{node foo.js}, but \texttt{false} if run by
-\texttt{require('./foo')}.
+\texttt{node\ foo.js}, but \texttt{false} if run by
+\texttt{require(\textquotesingle{}./foo\textquotesingle{})}.
 
 Because \texttt{module} provides a \texttt{filename} property (normally
 equivalent to \texttt{\_\_filename}), the entry point of the current
@@ -601,10 +621,12 @@ Thus, even if a cycle is encountered, or if there are dependency
 conflicts, every module will be able to get a version of its dependency
 that it can use.
 
-When the code in the \texttt{foo} package does \texttt{require('bar')},
-it will get the version that is symlinked into
+When the code in the \texttt{foo} package does
+\texttt{require(\textquotesingle{}bar\textquotesingle{})}, it will get
+the version that is symlinked into
 \texttt{/usr/lib/node/foo/1.2.3/node\_modules/bar}. Then, when the code
-in the \texttt{bar} package calls \texttt{require('quux')}, it'll get
+in the \texttt{bar} package calls
+\texttt{require(\textquotesingle{}quux\textquotesingle{})}, it'll get
 the version that is symlinked into
 \texttt{/usr/lib/node/bar/4.3.2/node\_modules/quux}.
 

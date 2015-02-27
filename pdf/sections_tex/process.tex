@@ -31,7 +31,7 @@ cases:
 \item
   \texttt{5} \textbf{Fatal Error} - There was a fatal unrecoverable
   error in V8. Typically a message will be printed to stderr with the
-  prefix \texttt{FATAL   ERROR}.
+  prefix \texttt{FATAL\ \ \ ERROR}.
 \item
   \texttt{6} \textbf{Non-function Internal Exception Handler} - There
   was an uncaught exception, but the internal fatal exception handler
@@ -41,8 +41,9 @@ cases:
   There was an uncaught exception, and the internal fatal exception
   handler function itself threw an error while attempting to handle it.
   This can happen, for example, if a
-  \texttt{process.on('uncaughtException')} or
-  \texttt{domain.on('error')} handler throws an error.
+  \texttt{process.on(\textquotesingle{}uncaughtException\textquotesingle{})}
+  or \texttt{domain.on(\textquotesingle{}error\textquotesingle{})}
+  handler throws an error.
 \item
   \texttt{8} - Unused. In previous versions of Node, exit code 8
   sometimes indicated an uncaught exception.
@@ -56,8 +57,8 @@ cases:
   an error when the bootstrapping function was called. This is extremely
   rare, and generally can only happen during development of Node itself.
 \item
-  \texttt{12} \textbf{Invalid Debug Argument} - The \texttt{-{}-debug}
-  and/or \texttt{-{}-debug-brk} options were set, but an invalid port
+  \texttt{12} \textbf{Invalid Debug Argument} - The \texttt{-\/-debug}
+  and/or \texttt{-\/-debug-brk} options were set, but an invalid port
   number was chosen.
 \item
   \texttt{\textgreater{}128} \textbf{Signal Exits} - If Node receives a
@@ -68,7 +69,8 @@ cases:
   the value of the signal code.
 \end{itemize}
 
-\subsection{Event: `exit'}\label{event-exit}
+\subsection{\texorpdfstring{Event:
+`exit'}{Event: exit}}\label{event-exit}
 
 Emitted when the process is about to exit. There is no way to prevent
 the exiting of the event loop at this point, and once all \texttt{exit}
@@ -92,7 +94,8 @@ Example of listening for \texttt{exit}:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Event: `beforeExit'}\label{event-beforeexit}
+\subsection{\texorpdfstring{Event:
+`beforeExit'}{Event: beforeExit}}\label{event-beforeexit}
 
 This event is emitted when node empties it's event loop and has nothing
 else to schedule. Normally, node exits when there is no work scheduled,
@@ -104,7 +107,8 @@ such as \texttt{process.exit()} or uncaught exceptions, and should not
 be used as an alternative to the `exit' event unless the intention is to
 schedule more work.
 
-\subsection{Event: `uncaughtException'}\label{event-uncaughtexception}
+\subsection{\texorpdfstring{Event:
+`uncaughtException'}{Event: uncaughtException}}\label{event-uncaughtexception}
 
 Emitted when an exception bubbles all the way back to the event loop. If
 a listener is added for this exception, the default action (which is to
@@ -135,7 +139,7 @@ Don't use it, use \href{domain.html}{domains} instead. If you do use it,
 restart your application after every unhandled exception!
 
 Do \emph{not} use it as the node.js equivalent of
-\texttt{On Error Resume Next}. An unhandled exception means your
+\texttt{On\ Error\ Resume\ Next}. An unhandled exception means your
 application - and by extension node.js itself - is in an undefined
 state. Blindly resuming means \emph{anything} could happen.
 
@@ -177,8 +181,8 @@ Note:
 \item
   \texttt{SIGTERM} and \texttt{SIGINT} have default handlers on
   non-Windows platforms that resets the terminal mode before exiting
-  with code \texttt{128 + signal number}. If one of these signals has a
-  listener installed, its default behaviour will be removed (node will
+  with code \texttt{128\ +\ signal\ number}. If one of these signals has
+  a listener installed, its default behaviour will be removed (node will
   no longer exit).
 \item
   \texttt{SIGPIPE} is ignored by default, it can have a listener
@@ -221,7 +225,7 @@ the target process.
 
 \subsection{process.stdout}\label{process.stdout}
 
-A \texttt{Writable Stream} to \texttt{stdout}.
+A \texttt{Writable\ Stream} to \texttt{stdout} (on fd \texttt{1}).
 
 Example: the definition of \texttt{console.log}
 
@@ -234,7 +238,9 @@ Example: the definition of \texttt{console.log}
 \end{Shaded}
 
 \texttt{process.stderr} and \texttt{process.stdout} are unlike other
-streams in Node in that writes to them are usually blocking.
+streams in Node in that they cannot be closed (\texttt{end()} will
+throw), they never emit the \texttt{finish} event and that writes are
+usually blocking.
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -271,10 +277,12 @@ See \href{tty.html\#tty_tty}{the tty docs} for more information.
 
 \subsection{process.stderr}\label{process.stderr}
 
-A writable stream to stderr.
+A writable stream to stderr (on fd \texttt{2}).
 
 \texttt{process.stderr} and \texttt{process.stdout} are unlike other
-streams in Node in that writes to them are usually blocking.
+streams in Node in that they cannot be closed (\texttt{end()} will
+throw), they never emit the \texttt{finish} event and that writes are
+usually blocking.
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -291,7 +299,7 @@ streams in Node in that writes to them are usually blocking.
 
 \subsection{process.stdin}\label{process.stdin}
 
-A \texttt{Readable Stream} for stdin.
+A \texttt{Readable\ Stream} for stdin (on fd \texttt{0}).
 
 Example of opening standard input and listening for both events:
 
@@ -690,8 +698,8 @@ An example of the possible output looks like:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{process.kill(pid,
-{[}signal{]})}\label{process.killpid-signal}
+\subsection{process.kill(pid{[},
+signal{]})}\label{process.killpid-signal}
 
 Send a signal to a process. \texttt{pid} is the process id and
 \texttt{signal} is the string describing the signal to send. Signal
@@ -754,8 +762,10 @@ environ memory but that was potentially insecure/confusing in some
 
 \subsection{process.arch}\label{process.arch}
 
-What processor architecture you're running on: \texttt{'arm'},
-\texttt{'ia32'}, or \texttt{'x64'}.
+What processor architecture you're running on:
+\texttt{\textquotesingle{}arm\textquotesingle{}},
+\texttt{\textquotesingle{}ia32\textquotesingle{}}, or
+\texttt{\textquotesingle{}x64\textquotesingle{}}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -765,8 +775,12 @@ What processor architecture you're running on: \texttt{'arm'},
 
 \subsection{process.platform}\label{process.platform}
 
-What platform you're running on: \texttt{'darwin'}, \texttt{'freebsd'},
-\texttt{'linux'}, \texttt{'sunos'} or \texttt{'win32'}
+What platform you're running on:
+\texttt{\textquotesingle{}darwin\textquotesingle{}},
+\texttt{\textquotesingle{}freebsd\textquotesingle{}},
+\texttt{\textquotesingle{}linux\textquotesingle{}},
+\texttt{\textquotesingle{}sunos\textquotesingle{}} or
+\texttt{\textquotesingle{}win32\textquotesingle{}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -810,7 +824,7 @@ This will generate:
 Once the current event loop turn runs to completion, call the callback
 function.
 
-This is \emph{not} a simple alias to \texttt{setTimeout(fn, 0)}, it's
+This is \emph{not} a simple alias to \texttt{setTimeout(fn,\ 0)}, it's
 much more efficient. It runs before any additional I/O events (including
 timers) fire in subsequent ticks of the event loop.
 
@@ -908,7 +922,7 @@ inherit the mask from the parent process. Returns the old mask if
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{oldmask, newmask = }\DecValTok{0644}\NormalTok{;}
+\KeywordTok{var} \NormalTok{oldmask, newmask = }\DecValTok{0022}\NormalTok{;}
 
 \NormalTok{oldmask = }\OtherTok{process}\NormalTok{.}\FunctionTok{umask}\NormalTok{(newmask);}
 \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Changed umask from: '} \NormalTok{+ }\OtherTok{oldmask}\NormalTok{.}\FunctionTok{toString}\NormalTok{(}\DecValTok{8}\NormalTok{) +}
@@ -923,7 +937,7 @@ Number of seconds Node has been running.
 \subsection{process.hrtime()}\label{process.hrtime}
 
 Returns the current high-resolution real time in a
-\texttt{{[}seconds, nanoseconds{]}} tuple Array. It is relative to an
+\texttt{{[}seconds,\ nanoseconds{]}} tuple Array. It is relative to an
 arbitrary time in the past. It is not related to the time of day and
 therefore not subject to clock drift. The primary use is for measuring
 performance between intervals.

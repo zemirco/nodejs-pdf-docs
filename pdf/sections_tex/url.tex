@@ -7,14 +7,14 @@
 \end{Shaded}
 
 This module has utilities for URL resolution and parsing. Call
-\texttt{require('url')} to use it.
+\texttt{require(\textquotesingle{}url\textquotesingle{})} to use it.
 
 Parsed URL objects have some or all of the following fields, depending
 on whether or not they exist in the URL string. Any parts that are not
 in the URL string will not be in the parsed object. Examples are shown
 for the URL
 
-\texttt{'http://user:pass@host.com:8080/p/a/t/h?query=string\#hash'}
+\texttt{\textquotesingle{}http://user:pass@host.com:8080/p/a/t/h?query=string\#hash\textquotesingle{}}
 
 \begin{itemize}
 \item
@@ -22,11 +22,11 @@ for the URL
   protocol and host are lowercased.
 
   Example:
-  \texttt{'http://user:pass@host.com:8080/p/a/t/h?query=string\#hash'}
+  \texttt{\textquotesingle{}http://user:pass@host.com:8080/p/a/t/h?query=string\#hash\textquotesingle{}}
 \item
   \texttt{protocol}: The request protocol, lowercased.
 
-  Example: \texttt{'http:'}
+  Example: \texttt{\textquotesingle{}http:\textquotesingle{}}
 \item
   \texttt{slashes}: The protocol requires slashes after the colon
 
@@ -35,62 +35,71 @@ for the URL
   \texttt{host}: The full lowercased host portion of the URL, including
   port information.
 
-  Example: \texttt{'host.com:8080'}
+  Example: \texttt{\textquotesingle{}host.com:8080\textquotesingle{}}
 \item
   \texttt{auth}: The authentication information portion of a URL.
 
-  Example: \texttt{'user:pass'}
+  Example: \texttt{\textquotesingle{}user:pass\textquotesingle{}}
 \item
   \texttt{hostname}: Just the lowercased hostname portion of the host.
 
-  Example: \texttt{'host.com'}
+  Example: \texttt{\textquotesingle{}host.com\textquotesingle{}}
 \item
   \texttt{port}: The port number portion of the host.
 
-  Example: \texttt{'8080'}
+  Example: \texttt{\textquotesingle{}8080\textquotesingle{}}
 \item
   \texttt{pathname}: The path section of the URL, that comes after the
   host and before the query, including the initial slash if present.
 
-  Example: \texttt{'/p/a/t/h'}
+  Example: \texttt{\textquotesingle{}/p/a/t/h\textquotesingle{}}
 \item
   \texttt{search}: The `query string' portion of the URL, including the
   leading question mark.
 
-  Example: \texttt{'?query=string'}
+  Example: \texttt{\textquotesingle{}?query=string\textquotesingle{}}
 \item
   \texttt{path}: Concatenation of \texttt{pathname} and \texttt{search}.
 
-  Example: \texttt{'/p/a/t/h?query=string'}
+  Example:
+  \texttt{\textquotesingle{}/p/a/t/h?query=string\textquotesingle{}}
 \item
   \texttt{query}: Either the `params' portion of the query string, or a
   querystring-parsed object.
 
-  Example: \texttt{'query=string'} or \texttt{\{'query':'string'\}}
+  Example: \texttt{\textquotesingle{}query=string\textquotesingle{}} or
+  \texttt{\{\textquotesingle{}query\textquotesingle{}:\textquotesingle{}string\textquotesingle{}\}}
 \item
   \texttt{hash}: The `fragment' portion of the URL including the
   pound-sign.
 
-  Example: \texttt{'\#hash'}
+  Example: \texttt{\textquotesingle{}\#hash\textquotesingle{}}
 \end{itemize}
 
 The following methods are provided by the URL module:
 
-\subsection{url.parse(urlStr, {[}parseQueryString{]},
-{[}slashesDenoteHost{]})}\label{url.parseurlstr-parsequerystring-slashesdenotehost}
+\subsection{url.parse(urlStr{[}, parseQueryString{]}{[},
+slashesDenoteHost{]})}\label{url.parseurlstr-parsequerystring-slashesdenotehost}
 
 Take a URL string, and return an object.
 
 Pass \texttt{true} as the second argument to also parse the query string
-using the \texttt{querystring} module. Defaults to \texttt{false}.
+using the \texttt{querystring} module. If \texttt{true} then the
+\texttt{query} property will always be assigned an object, and the
+\texttt{search} property will always be a (possibly empty) string.
+Defaults to \texttt{false}.
 
 Pass \texttt{true} as the third argument to treat \texttt{//foo/bar} as
-\texttt{\{ host: 'foo', pathname: '/bar' \}} rather than
-\texttt{\{ pathname: '//foo/bar' \}}. Defaults to \texttt{false}.
+\texttt{\{\ host:\ \textquotesingle{}foo\textquotesingle{},\ pathname:\ \textquotesingle{}/bar\textquotesingle{}\ \}}
+rather than
+\texttt{\{\ pathname:\ \textquotesingle{}//foo/bar\textquotesingle{}\ \}}.
+Defaults to \texttt{false}.
 
 \subsection{url.format(urlObj)}\label{url.formaturlobj}
 
 Take a parsed URL object, and return a formatted URL string.
+
+Here's how the formatting process works:
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -124,18 +133,18 @@ Take a parsed URL object, and return a formatted URL string.
   \texttt{port}
 \item
   \texttt{pathname} is treated the same with or without the leading
-  \texttt{/} (slash)
+  \texttt{/} (slash).
 \item
-  \texttt{search} will be used in place of \texttt{query}
+  \texttt{search} will be used in place of \texttt{query}.
+\item
+  It is treated the same with or without the leading \texttt{?}
+  (question mark)
 \item
   \texttt{query} (object; see \texttt{querystring}) will only be used if
   \texttt{search} is absent.
 \item
-  \texttt{search} is treated the same with or without the leading
-  \texttt{?} (question mark)
-\item
   \texttt{hash} is treated the same with or without the leading
-  \texttt{\#} (pound sign, anchor)
+  \texttt{\#} (pound sign, anchor).
 \end{itemize}
 
 \subsection{url.resolve(from, to)}\label{url.resolvefrom-to}

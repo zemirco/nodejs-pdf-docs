@@ -14,7 +14,8 @@ readable, writable, or both. All streams are instances of
 \href{events.html\#events_class_events_eventemitter}{EventEmitter}
 
 You can load the Stream base classes by doing
-\texttt{require('stream')}. There are base classes provided for
+\texttt{require(\textquotesingle{}stream\textquotesingle{})}. There are
+base classes provided for
 \hyperref[streamux5fclassux5fstreamux5freadable]{Readable} streams,
 \hyperref[streamux5fclassux5fstreamux5fwritable]{Writable} streams,
 \hyperref[streamux5fclassux5fstreamux5fduplex]{Duplex} streams, and
@@ -75,7 +76,7 @@ Here is an example of using Streams in a Node program:
   \CommentTok{// Readable streams emit 'data' events once a listener is added}
   \OtherTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(chunk) \{}
     \NormalTok{body += chunk;}
-  \NormalTok{\})}
+  \NormalTok{\});}
 
   \CommentTok{// the end event tells you that you have entire body}
   \OtherTok{req}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function} \NormalTok{() \{}
@@ -90,8 +91,8 @@ Here is an example of using Streams in a Node program:
     \CommentTok{// write back something interesting to the user:}
     \OtherTok{res}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\KeywordTok{typeof} \NormalTok{data);}
     \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
-  \NormalTok{\})}
-\NormalTok{\})}
+  \NormalTok{\});}
+\NormalTok{\});}
 
 \OtherTok{server}\NormalTok{.}\FunctionTok{listen}\NormalTok{(}\DecValTok{1337}\NormalTok{);}
 
@@ -129,8 +130,9 @@ You can switch to flowing mode by doing any of the following:
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  Adding a \hyperref[streamux5feventux5fdata]{\texttt{'data'} event}
-  handler to listen for data.
+  Adding a
+  \hyperref[streamux5feventux5fdata]{\texttt{\textquotesingle{}data\textquotesingle{}}
+  event} handler to listen for data.
 \item
   Calling the \hyperref[streamux5freadableux5fresume]{\texttt{resume()}}
   method to explicitly open the flow.
@@ -150,17 +152,18 @@ You can switch back to paused mode by doing either of the following:
   \hyperref[streamux5freadableux5fpause]{\texttt{pause()}} method.
 \item
   If there are pipe destinations, by removing any
-  \hyperref[streamux5feventux5fdata]{\texttt{'data'} event} handlers,
-  and removing all pipe destinations by calling the
+  \hyperref[streamux5feventux5fdata]{\texttt{\textquotesingle{}data\textquotesingle{}}
+  event} handlers, and removing all pipe destinations by calling the
   \hyperref[streamux5freadableux5funpipeux5fdestination]{\texttt{unpipe()}}
   method.
 \end{itemize}
 
-Note that, for backwards compatibility reasons, removing \texttt{'data'}
-event handlers will \textbf{not} automatically pause the stream. Also,
-if there are piped destinations, then calling \texttt{pause()} will not
-guarantee that the stream will \emph{remain} paused once those
-destinations drain and ask for more data.
+Note that, for backwards compatibility reasons, removing
+\texttt{\textquotesingle{}data\textquotesingle{}} event handlers will
+\textbf{not} automatically pause the stream. Also, if there are piped
+destinations, then calling \texttt{pause()} will not guarantee that the
+stream will \emph{remain} paused once those destinations drain and ask
+for more data.
 
 Examples of readable streams include:
 
@@ -187,28 +190,31 @@ Examples of readable streams include:
   \href{process.html\#process_process_stdin}{process.stdin}
 \end{itemize}
 
-\paragraph{Event: `readable'}\label{event-readable}
+\paragraph{\texorpdfstring{Event:
+`readable'}{Event: readable}}\label{event-readable}
 
 When a chunk of data can be read from the stream, it will emit a
-\texttt{'readable'} event.
+\texttt{\textquotesingle{}readable\textquotesingle{}} event.
 
-In some cases, listening for a \texttt{'readable'} event will cause some
-data to be read into the internal buffer from the underlying system, if
-it hadn't already.
+In some cases, listening for a
+\texttt{\textquotesingle{}readable\textquotesingle{}} event will cause
+some data to be read into the internal buffer from the underlying
+system, if it hadn't already.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
 \OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'readable'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \CommentTok{// there is some data to read now}
-\NormalTok{\})}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
 Once the internal buffer is drained, a \texttt{readable} event will fire
 again when more data is available.
 
-\paragraph{Event: `data'}\label{event-data}
+\paragraph{\texorpdfstring{Event:
+`data'}{Event: data}}\label{event-data}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -228,11 +234,11 @@ possible, this is the best way to do so.
 \KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
 \OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d bytes of data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
-\NormalTok{\})}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `end'}\label{event-end}
+\paragraph{\texorpdfstring{Event: `end'}{Event: end}}\label{event-end}
 
 This event fires when there will be no more data to read.
 
@@ -245,19 +251,21 @@ or by calling \texttt{read()} repeatedly until you get to the end.
 \KeywordTok{var} \NormalTok{readable = }\FunctionTok{getReadableStreamSomehow}\NormalTok{();}
 \OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d bytes of data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
-\NormalTok{\})}
+\NormalTok{\});}
 \OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'there will be no more data.'}\NormalTok{);}
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `close'}\label{event-close}
+\paragraph{\texorpdfstring{Event:
+`close'}{Event: close}}\label{event-close}
 
 Emitted when the underlying resource (for example, the backing file
 descriptor) has been closed. Not all streams will emit this.
 
-\paragraph{Event: `error'}\label{event-error}
+\paragraph{\texorpdfstring{Event:
+`error'}{Event: error}}\label{event-error}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -305,7 +313,9 @@ method is called automatically until the internal buffer is drained.
 \end{Shaded}
 
 If this method returns a data chunk, then it will also trigger the
-emission of a \hyperref[streamux5feventux5fdata]{\texttt{'data'} event}.
+emission of a
+\hyperref[streamux5feventux5fdata]{\texttt{\textquotesingle{}data\textquotesingle{}}
+event}.
 
 \paragraph{readable.setEncoding(encoding)}\label{readable.setencodingencoding}
 
@@ -319,10 +329,11 @@ emission of a \hyperref[streamux5feventux5fdata]{\texttt{'data'} event}.
 
 Call this function to cause the stream to return strings of the
 specified encoding instead of Buffer objects. For example, if you do
-\texttt{readable.setEncoding('utf8')}, then the output data will be
-interpreted as UTF-8 data, and returned as strings. If you do
-\texttt{readable.setEncoding('hex')}, then the data will be encoded in
-hexadecimal string format.
+\texttt{readable.setEncoding(\textquotesingle{}utf8\textquotesingle{})},
+then the output data will be interpreted as UTF-8 data, and returned as
+strings. If you do
+\texttt{readable.setEncoding(\textquotesingle{}hex\textquotesingle{})},
+then the data will be encoded in hexadecimal string format.
 
 This properly handles multi-byte characters that would otherwise be
 potentially mangled if you simply pulled the Buffers directly and called
@@ -336,7 +347,7 @@ strings, always use this method.
 \OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
   \OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\KeywordTok{typeof} \NormalTok{chunk, }\StringTok{'string'}\NormalTok{);}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got %d characters of string data'}\NormalTok{, }\OtherTok{chunk}\NormalTok{.}\FunctionTok{length}\NormalTok{);}
-\NormalTok{\})}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -363,7 +374,7 @@ open the flow of data.
 \OtherTok{readable}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 \OtherTok{readable}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{(chunk) \{}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'got to the end, but did not read anything'}\NormalTok{);}
-\NormalTok{\})}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -390,7 +401,7 @@ becomes available will remain in the internal buffer.
     \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'now data will start flowing again'}\NormalTok{);}
     \OtherTok{readable}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
   \NormalTok{\}, }\DecValTok{1000}\NormalTok{);}
-\NormalTok{\})}
+\NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
 
@@ -419,8 +430,8 @@ This method returns whether or not the \texttt{readable} has been
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{readable.pipe(destination,
-{[}options{]})}\label{readable.pipedestination-options}
+\paragraph{readable.pipe(destination{[},
+options{]})}\label{readable.pipedestination-options}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -474,7 +485,7 @@ By default
 \hyperref[streamux5fwritableux5fendux5fchunkux5fencodingux5fcallback]{\texttt{end()}}
 is called on the destination when the source stream emits \texttt{end},
 so that \texttt{destination} is no longer writable. Pass
-\texttt{\{ end: false \}} as \texttt{options} to keep the destination
+\texttt{\{\ end:\ false\ \}} as \texttt{options} to keep the destination
 stream open.
 
 This keeps \texttt{writer} open so that ``Goodbye'' can be written at
@@ -594,10 +605,10 @@ Versions of Node prior to v0.10 had streams that did not implement the
 entire Streams API as it is today. (See ``Compatibility'' below for more
 information.)
 
-If you are using an older Node library that emits \texttt{'data'} events
-and has a \hyperref[streamux5freadableux5fpause]{\texttt{pause()}}
-method that is advisory only, then you can use the \texttt{wrap()}
-method to create a
+If you are using an older Node library that emits
+\texttt{\textquotesingle{}data\textquotesingle{}} events and has a
+\hyperref[streamux5freadableux5fpause]{\texttt{pause()}} method that is
+advisory only, then you can use the \texttt{wrap()} method to create a
 \hyperref[streamux5fclassux5fstreamux5freadable]{Readable} stream that
 uses the old stream as its data source.
 
@@ -650,8 +661,8 @@ Examples of writable streams include:
   \href{process.html\#process_process_stderr}{process.stderr}
 \end{itemize}
 
-\paragraph{writable.write(chunk, {[}encoding{]},
-{[}callback{]})}\label{writable.writechunk-encoding-callback}
+\paragraph{writable.write(chunk{[}, encoding{]}{[},
+callback{]})}\label{writable.writechunk-encoding-callback}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -679,7 +690,8 @@ if it returns \texttt{false}. However, writes will be buffered in
 memory, so it is best not to do this excessively. Instead, wait for the
 \texttt{drain} event before writing more data.
 
-\paragraph{Event: `drain'}\label{event-drain}
+\paragraph{\texorpdfstring{Event:
+`drain'}{Event: drain}}\label{event-drain}
 
 If a
 \hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallback]{\texttt{writable.write(chunk)}}
@@ -727,8 +739,21 @@ Buffered data will be flushed either at \texttt{.uncork()} or at
 
 Flush all data, buffered since \texttt{.cork()} call.
 
-\paragraph{writable.end({[}chunk{]}, {[}encoding{]},
-{[}callback{]})}\label{writable.endchunk-encoding-callback}
+\paragraph{writable.setDefaultEncoding(encoding)}\label{writable.setdefaultencodingencoding}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{encoding} \{String\} The new default encoding
+\item
+  Return: \texttt{Boolean}
+\end{itemize}
+
+Sets the default encoding for a writable stream. Returns \texttt{true}
+if the encoding is valid and is set. Otherwise returns \texttt{false}.
+
+\paragraph{writable.end({[}chunk{]}{[}, encoding{]}{[},
+callback{]})}\label{writable.endchunk-encoding-callback}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -755,15 +780,15 @@ will raise an error.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// write 'hello, ' and then end with 'world!'}
-\OtherTok{http}\NormalTok{.}\FunctionTok{createServer}\NormalTok{(}\KeywordTok{function} \NormalTok{(req, res) \{}
-  \OtherTok{res}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'hello, '}\NormalTok{);}
-  \OtherTok{res}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'world!'}\NormalTok{);}
-  \CommentTok{// writing more now is not allowed!}
-\NormalTok{\});}
+\KeywordTok{var} \NormalTok{file = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\StringTok{'example.txt'}\NormalTok{);}
+\OtherTok{file}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'hello, '}\NormalTok{);}
+\OtherTok{file}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'world!'}\NormalTok{);}
+\CommentTok{// writing more now is not allowed!}
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `finish'}\label{event-finish}
+\paragraph{\texorpdfstring{Event:
+`finish'}{Event: finish}}\label{event-finish}
 
 When the
 \hyperref[streamux5fwritableux5fendux5fchunkux5fencodingux5fcallback]{\texttt{end()}}
@@ -783,7 +808,8 @@ system, this event is emitted.
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `pipe'}\label{event-pipe}
+\paragraph{\texorpdfstring{Event:
+`pipe'}{Event: pipe}}\label{event-pipe}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -808,7 +834,8 @@ readable stream, adding this writable to its set of destinations.
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `unpipe'}\label{event-unpipe}
+\paragraph{\texorpdfstring{Event:
+`unpipe'}{Event: unpipe}}\label{event-unpipe}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -838,7 +865,8 @@ set of destinations.
 \end{Highlighting}
 \end{Shaded}
 
-\paragraph{Event: `error'}\label{event-error-1}
+\paragraph{\texorpdfstring{Event:
+`error'}{Event: error}}\label{event-error-1}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -908,36 +936,77 @@ To implement any sort of stream, the pattern is the same:
 The class to extend and the method(s) to implement depend on the sort of
 stream class you are writing:
 
-Use-case
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{<tr>}
+  \NormalTok{<th>}
+    \NormalTok{<p>Use-}\KeywordTok{case}\NormalTok{<}\OtherTok{/p>}
+\OtherTok{  </th}\NormalTok{>}
+  \NormalTok{<th>}
+    \NormalTok{<p>Class<}\OtherTok{/p>}
+\OtherTok{  </th}\NormalTok{>}
+  \NormalTok{<th>}
+    \NormalTok{<p>}\FunctionTok{Method}\NormalTok{(s) to implement<}\OtherTok{/p>}
+\OtherTok{  </th}\NormalTok{>}
+\NormalTok{<}\OtherTok{/tr>}
+\end{Highlighting}
+\end{Shaded}
 
-Class
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{<td>}
+  \NormalTok{<p>Reading only<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p>[Readable](#stream_class_stream_readable_1)<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p><code>[_read][]<}\OtherTok{/code></p}\NormalTok{>}
+\NormalTok{<}\OtherTok{/td>}
+\end{Highlighting}
+\end{Shaded}
 
-Method(s) to implement
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{<td>}
+  \NormalTok{<p>Writing only<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p>[Writable](#stream_class_stream_writable_1)<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p><code>[_write][]<}\OtherTok{/code></p}\NormalTok{>}
+\NormalTok{<}\OtherTok{/td>}
+\end{Highlighting}
+\end{Shaded}
 
-Reading only
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{<td>}
+  \NormalTok{<p>Reading and writing<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p>[Duplex](#stream_class_stream_duplex_1)<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p><code>[_read][]<}\OtherTok{/code>, <code>}\BaseNTok{[_write][]}\OtherTok{</code}\NormalTok{><}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\end{Highlighting}
+\end{Shaded}
 
-\hyperref[streamux5fclassux5fstreamux5freadableux5f1]{Readable}
-
-\hyperref[streamux5freadableux5freadux5fsizeux5f1]{\_read}
-
-Writing only
-
-\hyperref[streamux5fclassux5fstreamux5fwritableux5f1]{Writable}
-
-\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\_write}
-
-Reading and writing
-
-\hyperref[streamux5fclassux5fstreamux5fduplexux5f1]{Duplex}
-
-\hyperref[streamux5freadableux5freadux5fsizeux5f1]{\_read},
-\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\_write}
-
-Operate on written data, then read the result
-
-\hyperref[streamux5fclassux5fstreamux5ftransformux5f1]{Transform}
-
-\emph{transform, }flush
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{<td>}
+  \NormalTok{<p>Operate on written data, then read the result<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p>[Transform](#stream_class_stream_transform_1)<}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\NormalTok{<td>}
+  \NormalTok{<p><code>_transform<}\OtherTok{/code>, <code>_flush</code}\NormalTok{><}\OtherTok{/p>}
+\OtherTok{</td}\NormalTok{>}
+\end{Highlighting}
+\end{Shaded}
 
 In your implementation code, it is very important to never call the
 methods described in
@@ -1159,8 +1228,8 @@ available. There is no need, for example to ``wait'' until \texttt{size}
 bytes are available before calling
 \hyperref[streamux5freadableux5fpushux5fchunkux5fencoding]{\texttt{stream.push(chunk)}}.
 
-\paragraph{readable.push(chunk,
-{[}encoding{]})}\label{readable.pushchunk-encoding}
+\paragraph{readable.push(chunk{[},
+encoding{]})}\label{readable.pushchunk-encoding}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -1169,7 +1238,9 @@ bytes are available before calling
   data to push into the read queue
 \item
   \texttt{encoding} \{String\} Encoding of String chunks. Must be a
-  valid Buffer encoding, such as \texttt{'utf8'} or \texttt{'ascii'}
+  valid Buffer encoding, such as
+  \texttt{\textquotesingle{}utf8\textquotesingle{}} or
+  \texttt{\textquotesingle{}ascii\textquotesingle{}}
 \item
   return \{Boolean\} Whether or not more pushes should be performed
 \end{itemize}
@@ -1182,7 +1253,7 @@ one \texttt{push(chunk)} call is made.
 
 The \texttt{Readable} class works by putting data into a read queue to
 be pulled out later by calling the \texttt{read()} method when the
-\texttt{'readable'} event fires.
+\texttt{\textquotesingle{}readable\textquotesingle{}} event fires.
 
 The \texttt{push()} method will explicitly insert some data into the
 read queue. If it is called with \texttt{null} then it will signal the
@@ -1232,7 +1303,7 @@ low-level source object by doing something like this:
 
 \texttt{stream.Writable} is an abstract class designed to be extended
 with an underlying implementation of the
-\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk, encoding, callback)}}
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk,\ encoding,\ callback)}}
 method.
 
 Please see above under
@@ -1319,7 +1390,7 @@ callback)}\label{writable.ux5fwritevchunks-callback}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{chunks} \{Array\} The chunks to be written. Each chunk has
-  following format: \texttt{\{ chunk: ..., encoding: ... \}}.
+  following format: \texttt{\{\ chunk:\ ...,\ encoding:\ ...\ \}}.
 \item
   \texttt{callback} \{Function\} Call this function (optionally with an
   error argument) when you are done processing the supplied chunks.
@@ -1341,14 +1412,14 @@ TCP socket connection.
 Note that \texttt{stream.Duplex} is an abstract class designed to be
 extended with an underlying implementation of the \texttt{\_read(size)}
 and
-\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk, encoding, callback)}}
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk,\ encoding,\ callback)}}
 methods as you would with a Readable or Writable stream class.
 
 Since JavaScript doesn't have multiple prototypal inheritance, this
 class prototypally inherits from Readable, and then parasitically from
 Writable. It is thus up to the user to implement both the lowlevel
 \texttt{\_read(n)} method as well as the lowlevel
-\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk, encoding, callback)}}
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallbackux5f1]{\texttt{\_write(chunk,\ encoding,\ callback)}}
 method on extension duplex classes.
 
 \paragraph{new stream.Duplex(options)}\label{new-stream.duplexoptions}
@@ -1423,7 +1494,8 @@ callback)}\label{transform.ux5ftransformchunk-encoding-callback}
   buffer.)
 \item
   \texttt{callback} \{Function\} Call this function (optionally with an
-  error argument) when you are done processing the supplied chunk.
+  error argument and data) when you are done processing the supplied
+  chunk.
 \end{itemize}
 
 Note: \textbf{This function MUST NOT be called directly.} It should be
@@ -1444,7 +1516,22 @@ output as a result of this chunk.
 
 Call the callback function only when the current chunk is completely
 consumed. Note that there may or may not be output as a result of any
-particular input chunk.
+particular input chunk. If you supply as the second argument to the it
+will be passed to push method, in other words the following are
+equivalent:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{transform}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_transform} \NormalTok{= }\KeywordTok{function} \NormalTok{(data, encoding, callback) \{}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{push}\NormalTok{(data);}
+  \FunctionTok{callback}\NormalTok{();}
+\NormalTok{\}}
+
+\OtherTok{transform}\NormalTok{.}\OtherTok{prototype}\NormalTok{.}\FunctionTok{_transform} \NormalTok{= }\KeywordTok{function} \NormalTok{(data, encoding, callback) \{}
+  \FunctionTok{callback}\NormalTok{(}\KeywordTok{null}\NormalTok{, data);}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 This method is prefixed with an underscore because it is internal to the
 class that defines it, and should not be called directly by user
@@ -1482,7 +1569,8 @@ class that defines it, and should not be called directly by user
 programs. However, you \textbf{are} expected to override this method in
 your own extension classes.
 
-\paragraph{Events: `finish' and `end'}\label{events-finish-and-end}
+\paragraph{\texorpdfstring{Events: `finish' and
+`end'}{Events: finish and end}}\label{events-finish-and-end}
 
 The \hyperref[streamux5feventux5ffinish]{\texttt{finish}} and
 \hyperref[streamux5feventux5fend]{\texttt{end}} events are from the
@@ -1492,14 +1580,14 @@ processed by \texttt{\_transform}, \texttt{end} is fired after all data
 has been output which is after the callback in \texttt{\_flush} has been
 called.
 
-\paragraph{Example: \texttt{SimpleProtocol} parser
-v2}\label{example-simpleprotocol-parser-v2}
+\paragraph{\texorpdfstring{Example: \texttt{SimpleProtocol} parser
+v2}{Example: SimpleProtocol parser v2}}\label{example-simpleprotocol-parser-v2}
 
 The example above of a simple protocol parser can be implemented simply
 by using the higher level
 \hyperref[streamux5fclassux5fstreamux5ftransform]{Transform} stream
 class, similar to the \texttt{parseHeader} and
-\texttt{SimpleProtocol v1} examples above.
+\texttt{SimpleProtocol\ v1} examples above.
 
 In this example, rather than providing the input as an argument, it
 would be piped into the parser, which is a more idiomatic Node stream
@@ -1609,7 +1697,7 @@ The purpose of streams, especially with the \texttt{pipe()} method, is
 to limit the buffering of data to acceptable levels, so that sources and
 destinations of varying speed will not overwhelm the available memory.
 
-\subsubsection{\texttt{stream.read(0)}}\label{stream.read0}
+\subsubsection{\texorpdfstring{\texttt{stream.read(0)}}{stream.read(0)}}\label{stream.read0}
 
 There are some cases where you want to trigger a refresh of the
 underlying readable stream mechanisms, without actually consuming any
@@ -1624,7 +1712,7 @@ There is almost never a need to do this. However, you will see some
 cases in Node's internals where this is done, particularly in the
 Readable stream class internals.
 
-\subsubsection{\texttt{stream.push('')}}\label{stream.push}
+\subsubsection{\texorpdfstring{\texttt{stream.push(\textquotesingle{}\textquotesingle{})}}{stream.push('')}}\label{stream.push}
 
 Pushing a zero-byte string or Buffer (when not in
 \hyperref[streamux5fobjectux5fmode]{Object mode}) has an interesting
@@ -1637,13 +1725,15 @@ consume.
 Very rarely, there are cases where you have no data to provide now, but
 the consumer of your stream (or, perhaps, another bit of your own code)
 will know when to check again, by calling \texttt{stream.read(0)}. In
-those cases, you \emph{may} call \texttt{stream.push('')}.
+those cases, you \emph{may} call
+\texttt{stream.push(\textquotesingle{}\textquotesingle{})}.
 
 So far, the only use case for this functionality is in the
 \href{tls.html\#tls_class_cryptostream}{tls.CryptoStream} class, which
 is deprecated in Node v0.12. If you find that you have to use
-\texttt{stream.push('')}, please consider another approach, because it
-almost certainly indicates that something is horribly wrong.
+\texttt{stream.push(\textquotesingle{}\textquotesingle{})}, please
+consider another approach, because it almost certainly indicates that
+something is horribly wrong.
 
 \subsubsection{Compatibility with Older Node
 Versions}\label{compatibility-with-older-node-versions}
@@ -1655,24 +1745,29 @@ simpler, but also less powerful and less useful.
 \itemsep1pt\parskip0pt\parsep0pt
 \item
   Rather than waiting for you to call the \texttt{read()} method,
-  \texttt{'data'} events would start emitting immediately. If you needed
-  to do some I/O to decide how to handle data, then you had to store the
-  chunks in some kind of buffer so that they would not be lost.
+  \texttt{\textquotesingle{}data\textquotesingle{}} events would start
+  emitting immediately. If you needed to do some I/O to decide how to
+  handle data, then you had to store the chunks in some kind of buffer
+  so that they would not be lost.
 \item
   The \hyperref[streamux5freadableux5fpause]{\texttt{pause()}} method
   was advisory, rather than guaranteed. This meant that you still had to
-  be prepared to receive \texttt{'data'} events even when the stream was
-  in a paused state.
+  be prepared to receive
+  \texttt{\textquotesingle{}data\textquotesingle{}} events even when the
+  stream was in a paused state.
 \end{itemize}
 
 In Node v0.10, the Readable class described below was added. For
 backwards compatibility with older Node programs, Readable streams
-switch into ``flowing mode'' when a \texttt{'data'} event handler is
+switch into ``flowing mode'' when a
+\texttt{\textquotesingle{}data\textquotesingle{}} event handler is
 added, or when the
 \hyperref[streamux5freadableux5fresume]{\texttt{resume()}} method is
 called. The effect is that, even if you are not using the new
-\texttt{read()} method and \texttt{'readable'} event, you no longer have
-to worry about losing \texttt{'data'} chunks.
+\texttt{read()} method and
+\texttt{\textquotesingle{}readable\textquotesingle{}} event, you no
+longer have to worry about losing
+\texttt{\textquotesingle{}data\textquotesingle{}} chunks.
 
 Most programs will continue to function normally. However, this
 introduces an edge case in the following conditions:
@@ -1680,8 +1775,9 @@ introduces an edge case in the following conditions:
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  No \hyperref[streamux5feventux5fdata]{\texttt{'data'} event} handler
-  is added.
+  No
+  \hyperref[streamux5feventux5fdata]{\texttt{\textquotesingle{}data\textquotesingle{}}
+  event} handler is added.
 \item
   The \hyperref[streamux5freadableux5fresume]{\texttt{resume()}} method
   is never called.
@@ -1745,7 +1841,7 @@ call to \texttt{stream.read(size)}, regardless of what the size argument
 is.
 
 A Writable stream in object mode will always ignore the
-\texttt{encoding} argument to \texttt{stream.write(data, encoding)}.
+\texttt{encoding} argument to \texttt{stream.write(data,\ encoding)}.
 
 The special value \texttt{null} still retains its special value for
 object mode streams. That is, for object mode readable streams,

@@ -13,9 +13,9 @@ noted.
 \end{itemize}
 
 In browsers, the top-level scope is the global scope. That means that in
-browsers if you're in the global scope \texttt{var something} will
+browsers if you're in the global scope \texttt{var\ something} will
 define a global variable. In Node this is different. The top-level scope
-is not the global scope; \texttt{var something} inside a Node module
+is not the global scope; \texttt{var\ something} inside a Node module
 will be local to that module.
 
 \subsection{process}\label{process}
@@ -127,7 +127,7 @@ path of this code file. For a main program this is not necessarily the
 same filename used in the command line. The value inside a module is the
 path to that module file.
 
-Example: running \texttt{node example.js} from \texttt{/Users/mjr}
+Example: running \texttt{node\ example.js} from \texttt{/Users/mjr}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -150,7 +150,7 @@ module.
 The name of the directory that the currently executing script resides
 in.
 
-Example: running \texttt{node example.js} from \texttt{/Users/mjr}
+Example: running \texttt{node\ example.js} from \texttt{/Users/mjr}
 
 \begin{Shaded}
 \begin{Highlighting}[]

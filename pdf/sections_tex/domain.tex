@@ -10,8 +10,9 @@ Domains provide a way to handle multiple different IO operations as a
 single group. If any of the event emitters or callbacks registered to a
 domain emit an \texttt{error} event, or throw an error, then the domain
 object will be notified, rather than losing the context of the error in
-the \texttt{process.on('uncaughtException')} handler, or causing the
-program to exit immediately with an error code.
+the
+\texttt{process.on(\textquotesingle{}uncaughtException\textquotesingle{})}
+handler, or causing the program to exit immediately with an error code.
 
 \subsection{Warning: Don't Ignore
 Errors!}\label{warning-dont-ignore-errors}
@@ -211,11 +212,12 @@ being properly garbage collected.
 If you \emph{want} to nest Domain objects as children of a parent
 Domain, then you must explicitly add them.
 
-Implicit binding routes thrown errors and \texttt{'error'} events to the
+Implicit binding routes thrown errors and
+\texttt{\textquotesingle{}error\textquotesingle{}} events to the
 Domain's \texttt{error} event, but does not register the EventEmitter on
 the Domain, so \texttt{domain.dispose()} will not shut down the
 EventEmitter. Implicit binding only takes care of thrown errors and
-\texttt{'error'} events.
+\texttt{\textquotesingle{}error\textquotesingle{}} events.
 
 \subsection{Explicit Binding}\label{explicit-binding}
 
@@ -309,8 +311,9 @@ d.run(function() {
 });
 \end{verbatim}
 
-In this example, the \texttt{d.on('error')} handler will be triggered,
-rather than crashing the program.
+In this example, the
+\texttt{d.on(\textquotesingle{}error\textquotesingle{})} handler will be
+triggered, rather than crashing the program.
 
 \subsubsection{domain.members}\label{domain.members}
 
@@ -405,7 +408,7 @@ This method is almost identical to \texttt{domain.bind(callback)}.
 However, in addition to catching thrown errors, it will also intercept
 \texttt{Error} objects sent as the first argument to the function.
 
-In this way, the common \texttt{if (er) return callback(er);} pattern
+In this way, the common \texttt{if\ (er)\ return\ callback(er);} pattern
 can be replaced with a single error handler in a single place.
 
 \paragraph{Example}\label{example-1}

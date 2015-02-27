@@ -6,7 +6,8 @@
 \end{Highlighting}
 \end{Shaded}
 
-Datagram sockets are available through \texttt{require('dgram')}.
+Datagram sockets are available through
+\texttt{require(\textquotesingle{}dgram\textquotesingle{})}.
 
 Important note: the behavior of \texttt{dgram.Socket\#bind()} has
 changed in v0.10 and is always asynchronous now. If you have code that
@@ -31,22 +32,13 @@ You have to change it to this:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{dgram.createSocket(type,
-{[}callback{]})}\label{dgram.createsockettype-callback}
-
-\subsection{dgram.createSocket(options,
-{[}callback{]})}\label{dgram.createsocketoptions-callback}
+\subsection{dgram.createSocket(type{[},
+callback{]})}\label{dgram.createsockettype-callback}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
   \texttt{type} String. Either `udp4' or `udp6'
-\item
-  \texttt{options} Object. Should contain a \texttt{type} property and
-  could contain \texttt{reuseAddr} property. \texttt{false} by default.
-  When \texttt{reuseAddr} is \texttt{true} - \texttt{socket.bind()} will
-  reuse address, even if the other process has already bound a socket on
-  it.
 \item
   \texttt{callback} Function. Attached as a listener to \texttt{message}
   events. Optional
@@ -60,7 +52,38 @@ Creates a datagram Socket of the specified types. Valid types are
 Takes an optional callback which is added as a listener for
 \texttt{message} events.
 
-Call \texttt{socket.bind} if you want to receive datagrams.
+Call \texttt{socket.bind()} if you want to receive datagrams.
+\texttt{socket.bind()} will bind to the ``all interfaces'' address on a
+random port (it does the right thing for both \texttt{udp4} and
+\texttt{udp6} sockets). You can then retrieve the address and port with
+\texttt{socket.address().address} and \texttt{socket.address().port}.
+
+\subsection{dgram.createSocket(options{[},
+callback{]})}\label{dgram.createsocketoptions-callback}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{options} Object
+\item
+  \texttt{callback} Function. Attached as a listener to \texttt{message}
+  events.
+\item
+  Returns: Socket object
+\end{itemize}
+
+The \texttt{options} object should contain a \texttt{type} field of
+either \texttt{udp4} or \texttt{udp6} and an optional boolean
+\texttt{reuseAddr} field.
+
+When \texttt{reuseAddr} is true \texttt{socket.bind()} will reuse the
+address, even if another process has already bound a socket on it.
+\texttt{reuseAddr} defaults to \texttt{false}.
+
+Takes an optional callback which is added as a listener for
+\texttt{message} events.
+
+Call \texttt{socket.bind()} if you want to receive datagrams.
 \texttt{socket.bind()} will bind to the ``all interfaces'' address on a
 random port (it does the right thing for both \texttt{udp4} and
 \texttt{udp6} sockets). You can then retrieve the address and port with
@@ -71,7 +94,8 @@ random port (it does the right thing for both \texttt{udp4} and
 The dgram Socket class encapsulates the datagram functionality. It
 should be created via \texttt{dgram.createSocket(...)}
 
-\subsubsection{Event: `message'}\label{event-message}
+\subsubsection{\texorpdfstring{Event:
+`message'}{Event: message}}\label{event-message}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -94,17 +118,20 @@ address information:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `listening'}\label{event-listening}
+\subsubsection{\texorpdfstring{Event:
+`listening'}{Event: listening}}\label{event-listening}
 
 Emitted when a socket starts listening for datagrams. This happens as
 soon as UDP sockets are created.
 
-\subsubsection{Event: `close'}\label{event-close}
+\subsubsection{\texorpdfstring{Event:
+`close'}{Event: close}}\label{event-close}
 
 Emitted when a socket is closed with \texttt{close()}. No new
 \texttt{message} events will be emitted on this socket.
 
-\subsubsection{Event: `error'}\label{event-error}
+\subsubsection{\texorpdfstring{Event:
+`error'}{Event: error}}\label{event-error}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -114,8 +141,8 @@ Emitted when a socket is closed with \texttt{close()}. No new
 
 Emitted when an error occurs.
 
-\subsubsection{socket.send(buf, offset, length, port, address,
-{[}callback{]})}\label{socket.sendbuf-offset-length-port-address-callback}
+\subsubsection{socket.send(buf, offset, length, port, address{[},
+callback{]})}\label{socket.sendbuf-offset-length-port-address-callback}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -139,15 +166,18 @@ For UDP sockets, the destination port and address must be specified. A
 string may be supplied for the \texttt{address} parameter, and it will
 be resolved with DNS.
 
-If the address is omitted or is an empty string, \texttt{'0.0.0.0'} or
-\texttt{'::0'} is used instead. Depending on the network configuration,
-those defaults may or may not work; it's best to be explicit about the
-destination address.
+If the address is omitted or is an empty string,
+\texttt{\textquotesingle{}0.0.0.0\textquotesingle{}} or
+\texttt{\textquotesingle{}::0\textquotesingle{}} is used instead.
+Depending on the network configuration, those defaults may or may not
+work; it's best to be explicit about the destination address.
 
 If the socket has not been previously bound with a call to
 \texttt{bind}, it gets assigned a random port number and is bound to the
-``all interfaces'' address (\texttt{'0.0.0.0'} for \texttt{udp4}
-sockets, \texttt{'::0'} for \texttt{udp6} sockets.)
+``all interfaces'' address
+(\texttt{\textquotesingle{}0.0.0.0\textquotesingle{}} for \texttt{udp4}
+sockets, \texttt{\textquotesingle{}::0\textquotesingle{}} for
+\texttt{udp6} sockets.)
 
 An optional callback may be specified to detect DNS errors or for
 determining when it's safe to reuse the \texttt{buf} object. Note that
@@ -176,11 +206,11 @@ Example of sending a UDP packet to a random port on \texttt{localhost};
 
 The maximum size of an \texttt{IPv4/v6} datagram depends on the
 \texttt{MTU} (\emph{Maximum Transmission Unit}) and on the
-\texttt{Payload Length} field size.
+\texttt{Payload\ Length} field size.
 
 \begin{itemize}
 \item
-  The \texttt{Payload Length} field is \texttt{16 bits} wide, which
+  The \texttt{Payload\ Length} field is \texttt{16\ bits} wide, which
   means that a normal payload cannot be larger than 64K octets including
   internet header and data (65,507 bytes = 65,535 − 8 bytes UDP header −
   20 bytes IP header); this is generally true for loopback interfaces,
@@ -206,8 +236,8 @@ datagram greater than the (receiver) \texttt{MTU} won't work (the packet
 gets silently dropped, without informing the source that the data did
 not reach its intended recipient).
 
-\subsubsection{socket.bind(port, {[}address{]},
-{[}callback{]})}\label{socket.bindport-address-callback}
+\subsubsection{socket.bind(port{[}, address{]}{[},
+callback{]})}\label{socket.bindport-address-callback}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -263,8 +293,8 @@ Example of a UDP server listening on port 41234:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{socket.bind(options,
-{[}callback{]})}\label{socket.bindoptions-callback}
+\subsubsection{socket.bind(options{[},
+callback{]})}\label{socket.bindoptions-callback}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -373,8 +403,8 @@ Sets or clears the \texttt{IP\_MULTICAST\_LOOP} socket option. When this
 option is set, multicast packets will also be received on the local
 interface.
 
-\subsubsection{socket.addMembership(multicastAddress,
-{[}multicastInterface{]})}\label{socket.addmembershipmulticastaddress-multicastinterface}
+\subsubsection{socket.addMembership(multicastAddress{[},
+multicastInterface{]})}\label{socket.addmembershipmulticastaddress-multicastinterface}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -390,8 +420,8 @@ Tells the kernel to join a multicast group with
 If \texttt{multicastInterface} is not specified, the OS will try to add
 membership to all valid interfaces.
 
-\subsubsection{socket.dropMembership(multicastAddress,
-{[}multicastInterface{]})}\label{socket.dropmembershipmulticastaddress-multicastinterface}
+\subsubsection{socket.dropMembership(multicastAddress{[},
+multicastInterface{]})}\label{socket.dropmembershipmulticastaddress-multicastinterface}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt

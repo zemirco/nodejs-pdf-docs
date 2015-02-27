@@ -134,11 +134,12 @@ To start watching an expression, type \texttt{watch("my\_expression")}.
   \texttt{setBreakpoint(line)}, \texttt{sb(line)} - Set breakpoint on
   specific line
 \item
-  \texttt{setBreakpoint('fn()')}, \texttt{sb(...)} - Set breakpoint on a
-  first statement in functions body
+  \texttt{setBreakpoint(\textquotesingle{}fn()\textquotesingle{})},
+  \texttt{sb(...)} - Set breakpoint on a first statement in functions
+  body
 \item
-  \texttt{setBreakpoint('script.js', 1)}, \texttt{sb(...)} - Set
-  breakpoint on first line of script.js
+  \texttt{setBreakpoint(\textquotesingle{}script.js\textquotesingle{},\ 1)},
+  \texttt{sb(...)} - Set breakpoint on first line of script.js
 \item
   \texttt{clearBreakpoint}, \texttt{cb(...)} - Clear breakpoint
 \end{itemize}
@@ -218,7 +219,7 @@ loaded yet:
 \subsection{Advanced Usage}\label{advanced-usage}
 
 The V8 debugger can be enabled and accessed either by starting Node with
-the \texttt{-{}-debug} command-line flag or by signaling an existing
+the \texttt{-\/-debug} command-line flag or by signaling an existing
 Node process with \texttt{SIGUSR1}.
 
 Once a process has been set in debug mode with this it can be connected
@@ -228,9 +229,9 @@ to the debugger. The syntax is:
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  \texttt{node debug -p \textless{}pid\textgreater{}} - Connects to the
-  process via the \texttt{pid}
+  \texttt{node\ debug\ -p\ \textless{}pid\textgreater{}} - Connects to
+  the process via the \texttt{pid}
 \item
-  \texttt{node debug \textless{}URI\textgreater{}} - Connects to the
+  \texttt{node\ debug\ \textless{}URI\textgreater{}} - Connects to the
   process via the URI such as localhost:5858
 \end{itemize}

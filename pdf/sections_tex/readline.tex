@@ -6,9 +6,10 @@
 \end{Highlighting}
 \end{Shaded}
 
-To use this module, do \texttt{require('readline')}. Readline allows
-reading of a stream (such as \texttt{process.stdin}) on a line-by-line
-basis.
+To use this module, do
+\texttt{require(\textquotesingle{}readline\textquotesingle{})}. Readline
+allows reading of a stream (such as \texttt{process.stdin}) on a
+line-by-line basis.
 
 Note that once you've invoked this module, your node program will not
 terminate until you've closed the interface. Here's how to allow your
@@ -42,7 +43,7 @@ Object that takes the following values:
   \texttt{input} - the readable stream to listen to (Required).
 \item
   \texttt{output} - the writable stream to write readline data to
-  (Required).
+  (Optional).
 \item
   \texttt{completer} - an optional function that is used for Tab
   autocompletion. See below for an example of using this.
@@ -65,7 +66,7 @@ user, and is supposed to return an Array with 2 entries:
 \end{enumerate}
 
 Which ends up looking something like:
-\texttt{{[}{[}substr1, substr2, ...{]}, originalsubstring{]}}.
+\texttt{{[}{[}substr1,\ substr2,\ ...{]},\ originalsubstring{]}}.
 
 Example:
 
@@ -133,6 +134,9 @@ cursor placement being reset to \texttt{0}.
 This will also resume the \texttt{input} stream used with
 \texttt{createInterface} if it has been paused.
 
+If \texttt{output} is set to \texttt{null} or \texttt{undefined} when
+calling \texttt{createInterface}, the prompt is not written.
+
 \subsubsection{rl.question(query,
 callback)}\label{rl.questionquery-callback}
 
@@ -143,6 +147,9 @@ typed.
 
 This will also resume the \texttt{input} stream used with
 \texttt{createInterface} if it has been paused.
+
+If \texttt{output} is set to \texttt{null} or \texttt{undefined} when
+calling \texttt{createInterface}, nothing is displayed.
 
 Example usage:
 
@@ -159,6 +166,10 @@ Example usage:
 Pauses the readline \texttt{input} stream, allowing it to be resumed
 later if needed.
 
+Note that this doesn't immediately pause the stream of events. Several
+events may be emitted after calling \texttt{pause}, including
+\texttt{line}.
+
 \subsubsection{rl.resume()}\label{rl.resume}
 
 Resumes the readline \texttt{input} stream.
@@ -169,11 +180,12 @@ Closes the \texttt{Interface} instance, relinquishing control on the
 \texttt{input} and \texttt{output} streams. The ``close'' event will
 also be emitted.
 
-\subsubsection{rl.write(data, {[}key{]})}\label{rl.writedata-key}
+\subsubsection{rl.write(data{[}, key{]})}\label{rl.writedata-key}
 
-Writes \texttt{data} to \texttt{output} stream. \texttt{key} is an
-object literal to represent a key sequence; available if the terminal is
-a TTY.
+Writes \texttt{data} to \texttt{output} stream, unless \texttt{output}
+is set to \texttt{null} or \texttt{undefined} when calling
+\texttt{createInterface}. \texttt{key} is an object literal to represent
+a key sequence; available if the terminal is a TTY.
 
 This will also resume the \texttt{input} stream if it has been paused.
 
@@ -189,9 +201,10 @@ Example:
 
 \subsection{Events}\label{events}
 
-\subsubsection{Event: `line'}\label{event-line}
+\subsubsection{\texorpdfstring{Event:
+`line'}{Event: line}}\label{event-line}
 
-\texttt{function (line) \{\}}
+\texttt{function\ (line)\ \{\}}
 
 Emitted whenever the \texttt{input} stream receives a
 \texttt{\textbackslash{}n}, usually received when the user hits enter,
@@ -207,9 +220,10 @@ Example of listening for \texttt{line}:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `pause'}\label{event-pause}
+\subsubsection{\texorpdfstring{Event:
+`pause'}{Event: pause}}\label{event-pause}
 
-\texttt{function () \{\}}
+\texttt{function\ ()\ \{\}}
 
 Emitted whenever the \texttt{input} stream is paused.
 
@@ -227,9 +241,10 @@ Example of listening for \texttt{pause}:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `resume'}\label{event-resume}
+\subsubsection{\texorpdfstring{Event:
+`resume'}{Event: resume}}\label{event-resume}
 
-\texttt{function () \{\}}
+\texttt{function\ ()\ \{\}}
 
 Emitted whenever the \texttt{input} stream is resumed.
 
@@ -243,9 +258,10 @@ Example of listening for \texttt{resume}:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `close'}\label{event-close}
+\subsubsection{\texorpdfstring{Event:
+`close'}{Event: close}}\label{event-close}
 
-\texttt{function () \{\}}
+\texttt{function\ ()\ \{\}}
 
 Emitted when \texttt{close()} is called.
 
@@ -258,9 +274,10 @@ This event is also called if there is no \texttt{SIGINT} event listener
 present when the \texttt{input} stream receives a \texttt{\^{}C},
 respectively known as \texttt{SIGINT}.
 
-\subsubsection{Event: `SIGINT'}\label{event-sigint}
+\subsubsection{\texorpdfstring{Event:
+`SIGINT'}{Event: SIGINT}}\label{event-sigint}
 
-\texttt{function () \{\}}
+\texttt{function\ ()\ \{\}}
 
 Emitted whenever the \texttt{input} stream receives a \texttt{\^{}C},
 respectively known as \texttt{SIGINT}. If there is no \texttt{SIGINT}
@@ -279,9 +296,10 @@ Example of listening for \texttt{SIGINT}:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `SIGTSTP'}\label{event-sigtstp}
+\subsubsection{\texorpdfstring{Event:
+`SIGTSTP'}{Event: SIGTSTP}}\label{event-sigtstp}
 
-\texttt{function () \{\}}
+\texttt{function\ ()\ \{\}}
 
 \textbf{This does not work on Windows.}
 
@@ -309,9 +327,10 @@ Example of listening for \texttt{SIGTSTP}:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `SIGCONT'}\label{event-sigcont}
+\subsubsection{\texorpdfstring{Event:
+`SIGCONT'}{Event: SIGCONT}}\label{event-sigcont}
 
-\texttt{function () \{\}}
+\texttt{function\ ()\ \{\}}
 
 \textbf{This does not work on Windows.}
 

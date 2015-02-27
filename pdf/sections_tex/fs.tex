@@ -7,8 +7,9 @@
 \end{Shaded}
 
 File I/O is provided by simple wrappers around standard POSIX functions.
-To use this module do \texttt{require('fs')}. All the methods have
-asynchronous and synchronous forms.
+To use this module do
+\texttt{require(\textquotesingle{}fs\textquotesingle{})}. All the
+methods have asynchronous and synchronous forms.
 
 The asynchronous form always take a completion callback as its last
 argument. The arguments passed to the completion callback depend on the
@@ -38,7 +39,7 @@ Here is the synchronous version:
 \begin{Highlighting}[]
 \KeywordTok{var} \NormalTok{fs = }\FunctionTok{require}\NormalTok{(}\StringTok{'fs'}\NormalTok{);}
 
-\OtherTok{fs}\NormalTok{.}\FunctionTok{unlinkSync}\NormalTok{(}\StringTok{'/tmp/hello'}\NormalTok{)}
+\OtherTok{fs}\NormalTok{.}\FunctionTok{unlinkSync}\NormalTok{(}\StringTok{'/tmp/hello'}\NormalTok{);}
 \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'successfully deleted /tmp/hello'}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
@@ -132,7 +133,9 @@ Synchronous ftruncate(2).
 callback)}\label{fs.truncatepath-len-callback}
 
 Asynchronous truncate(2). No arguments other than a possible exception
-are given to the completion callback.
+are given to the completion callback. A file descriptor can also be
+passed as the first argument. In this case, \texttt{fs.ftruncate()} is
+called.
 
 \subsection{fs.truncateSync(path, len)}\label{fs.truncatesyncpath-len}
 
@@ -205,7 +208,7 @@ Synchronous lchmod(2).
 \subsection{fs.stat(path, callback)}\label{fs.statpath-callback}
 
 Asynchronous stat(2). The callback gets two arguments
-\texttt{(err, stats)} where \texttt{stats} is a
+\texttt{(err,\ stats)} where \texttt{stats} is a
 \hyperref[fsux5fclassux5ffsux5fstats]{fs.Stats} object. See the
 \hyperref[fsux5fclassux5ffsux5fstats]{fs.Stats} section below for more
 information.
@@ -213,7 +216,7 @@ information.
 \subsection{fs.lstat(path, callback)}\label{fs.lstatpath-callback}
 
 Asynchronous lstat(2). The callback gets two arguments
-\texttt{(err, stats)} where \texttt{stats} is a \texttt{fs.Stats}
+\texttt{(err,\ stats)} where \texttt{stats} is a \texttt{fs.Stats}
 object. \texttt{lstat()} is identical to \texttt{stat()}, except that if
 \texttt{path} is a symbolic link, then the link itself is stat-ed, not
 the file that it refers to.
@@ -221,7 +224,7 @@ the file that it refers to.
 \subsection{fs.fstat(fd, callback)}\label{fs.fstatfd-callback}
 
 Asynchronous fstat(2). The callback gets two arguments
-\texttt{(err, stats)} where \texttt{stats} is a \texttt{fs.Stats}
+\texttt{(err,\ stats)} where \texttt{stats} is a \texttt{fs.Stats}
 object. \texttt{fstat()} is identical to \texttt{stat()}, except that
 the file to be stat-ed is specified by the file descriptor \texttt{fd}.
 
@@ -248,37 +251,40 @@ dstpath)}\label{fs.linksyncsrcpath-dstpath}
 
 Synchronous link(2).
 
-\subsection{fs.symlink(srcpath, dstpath, {[}type{]},
+\subsection{fs.symlink(srcpath, dstpath{[}, type{]},
 callback)}\label{fs.symlinksrcpath-dstpath-type-callback}
 
 Asynchronous symlink(2). No arguments other than a possible exception
 are given to the completion callback. The \texttt{type} argument can be
-set to \texttt{'dir'}, \texttt{'file'}, or \texttt{'junction'} (default
-is \texttt{'file'}) and is only available on Windows (ignored on other
-platforms). Note that Windows junction points require the destination
-path to be absolute. When using \texttt{'junction'}, the
+set to \texttt{\textquotesingle{}dir\textquotesingle{}},
+\texttt{\textquotesingle{}file\textquotesingle{}}, or
+\texttt{\textquotesingle{}junction\textquotesingle{}} (default is
+\texttt{\textquotesingle{}file\textquotesingle{}}) and is only available
+on Windows (ignored on other platforms). Note that Windows junction
+points require the destination path to be absolute. When using
+\texttt{\textquotesingle{}junction\textquotesingle{}}, the
 \texttt{destination} argument will automatically be normalized to
 absolute path.
 
-\subsection{fs.symlinkSync(srcpath, dstpath,
-{[}type{]})}\label{fs.symlinksyncsrcpath-dstpath-type}
+\subsection{fs.symlinkSync(srcpath, dstpath{[},
+type{]})}\label{fs.symlinksyncsrcpath-dstpath-type}
 
 Synchronous symlink(2).
 
 \subsection{fs.readlink(path, callback)}\label{fs.readlinkpath-callback}
 
 Asynchronous readlink(2). The callback gets two arguments
-\texttt{(err, linkString)}.
+\texttt{(err,\ linkString)}.
 
 \subsection{fs.readlinkSync(path)}\label{fs.readlinksyncpath}
 
 Synchronous readlink(2). Returns the symbolic link's string value.
 
-\subsection{fs.realpath(path, {[}cache{]},
+\subsection{fs.realpath(path{[}, cache{]},
 callback)}\label{fs.realpathpath-cache-callback}
 
 Asynchronous realpath(2). The \texttt{callback} gets two arguments
-\texttt{(err, resolvedPath)}. May use \texttt{process.cwd} to resolve
+\texttt{(err,\ resolvedPath)}. May use \texttt{process.cwd} to resolve
 relative paths. \texttt{cache} is an object literal of mapped paths that
 can be used to force a specific path resolution or avoid additional
 \texttt{fs.stat} calls for known real paths.
@@ -295,8 +301,8 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{fs.realpathSync(path,
-{[}cache{]})}\label{fs.realpathsyncpath-cache}
+\subsection{fs.realpathSync(path{[},
+cache{]})}\label{fs.realpathsyncpath-cache}
 
 Synchronous realpath(2). Returns the resolved path.
 
@@ -318,28 +324,30 @@ given to the completion callback.
 
 Synchronous rmdir(2).
 
-\subsection{fs.mkdir(path, {[}mode{]},
+\subsection{fs.mkdir(path{[}, mode{]},
 callback)}\label{fs.mkdirpath-mode-callback}
 
 Asynchronous mkdir(2). No arguments other than a possible exception are
 given to the completion callback. \texttt{mode} defaults to
 \texttt{0777}.
 
-\subsection{fs.mkdirSync(path, {[}mode{]})}\label{fs.mkdirsyncpath-mode}
+\subsection{fs.mkdirSync(path{[}, mode{]})}\label{fs.mkdirsyncpath-mode}
 
 Synchronous mkdir(2).
 
 \subsection{fs.readdir(path, callback)}\label{fs.readdirpath-callback}
 
 Asynchronous readdir(3). Reads the contents of a directory. The callback
-gets two arguments \texttt{(err, files)} where \texttt{files} is an
-array of the names of the files in the directory excluding \texttt{'.'}
-and \texttt{'..'}.
+gets two arguments \texttt{(err,\ files)} where \texttt{files} is an
+array of the names of the files in the directory excluding
+\texttt{\textquotesingle{}.\textquotesingle{}} and
+\texttt{\textquotesingle{}..\textquotesingle{}}.
 
 \subsection{fs.readdirSync(path)}\label{fs.readdirsyncpath}
 
 Synchronous readdir(3). Returns an array of filenames excluding
-\texttt{'.'} and \texttt{'..'}.
+\texttt{\textquotesingle{}.\textquotesingle{}} and
+\texttt{\textquotesingle{}..\textquotesingle{}}.
 
 \subsection{fs.close(fd, callback)}\label{fs.closefd-callback}
 
@@ -350,21 +358,22 @@ given to the completion callback.
 
 Synchronous close(2).
 
-\subsection{fs.open(path, flags, {[}mode{]},
+\subsection{fs.open(path, flags{[}, mode{]},
 callback)}\label{fs.openpath-flags-mode-callback}
 
 Asynchronous file open. See open(2). \texttt{flags} can be:
 
 \begin{itemize}
 \item
-  \texttt{'r'} - Open file for reading. An exception occurs if the file
-  does not exist.
+  \texttt{\textquotesingle{}r\textquotesingle{}} - Open file for
+  reading. An exception occurs if the file does not exist.
 \item
-  \texttt{'r+'} - Open file for reading and writing. An exception occurs
-  if the file does not exist.
+  \texttt{\textquotesingle{}r+\textquotesingle{}} - Open file for
+  reading and writing. An exception occurs if the file does not exist.
 \item
-  \texttt{'rs'} - Open file for reading in synchronous mode. Instructs
-  the operating system to bypass the local file system cache.
+  \texttt{\textquotesingle{}rs\textquotesingle{}} - Open file for
+  reading in synchronous mode. Instructs the operating system to bypass
+  the local file system cache.
 \end{itemize}
 
 This is primarily useful for opening files on NFS mounts as it allows
@@ -377,49 +386,60 @@ blocking call. If that's what you want then you should be using
 
 \begin{itemize}
 \item
-  \texttt{'rs+'} - Open file for reading and writing, telling the OS to
-  open it synchronously. See notes for \texttt{'rs'} about using this
-  with caution.
+  \texttt{\textquotesingle{}rs+\textquotesingle{}} - Open file for
+  reading and writing, telling the OS to open it synchronously. See
+  notes for \texttt{\textquotesingle{}rs\textquotesingle{}} about using
+  this with caution.
 \item
-  \texttt{'w'} - Open file for writing. The file is created (if it does
-  not exist) or truncated (if it exists).
+  \texttt{\textquotesingle{}w\textquotesingle{}} - Open file for
+  writing. The file is created (if it does not exist) or truncated (if
+  it exists).
 \item
-  \texttt{'wx'} - Like \texttt{'w'} but fails if \texttt{path} exists.
+  \texttt{\textquotesingle{}wx\textquotesingle{}} - Like
+  \texttt{\textquotesingle{}w\textquotesingle{}} but fails if
+  \texttt{path} exists.
 \item
-  \texttt{'w+'} - Open file for reading and writing. The file is created
-  (if it does not exist) or truncated (if it exists).
+  \texttt{\textquotesingle{}w+\textquotesingle{}} - Open file for
+  reading and writing. The file is created (if it does not exist) or
+  truncated (if it exists).
 \item
-  \texttt{'wx+'} - Like \texttt{'w+'} but fails if \texttt{path} exists.
+  \texttt{\textquotesingle{}wx+\textquotesingle{}} - Like
+  \texttt{\textquotesingle{}w+\textquotesingle{}} but fails if
+  \texttt{path} exists.
 \item
-  \texttt{'a'} - Open file for appending. The file is created if it does
-  not exist.
+  \texttt{\textquotesingle{}a\textquotesingle{}} - Open file for
+  appending. The file is created if it does not exist.
 \item
-  \texttt{'ax'} - Like \texttt{'a'} but fails if \texttt{path} exists.
+  \texttt{\textquotesingle{}ax\textquotesingle{}} - Like
+  \texttt{\textquotesingle{}a\textquotesingle{}} but fails if
+  \texttt{path} exists.
 \item
-  \texttt{'a+'} - Open file for reading and appending. The file is
-  created if it does not exist.
+  \texttt{\textquotesingle{}a+\textquotesingle{}} - Open file for
+  reading and appending. The file is created if it does not exist.
 \item
-  \texttt{'ax+'} - Like \texttt{'a+'} but fails if \texttt{path} exists.
+  \texttt{\textquotesingle{}ax+\textquotesingle{}} - Like
+  \texttt{\textquotesingle{}a+\textquotesingle{}} but fails if
+  \texttt{path} exists.
 \end{itemize}
 
 \texttt{mode} sets the file mode (permission and sticky bits), but only
 if the file was created. It defaults to \texttt{0666}, readable and
 writeable.
 
-The callback gets two arguments \texttt{(err, fd)}.
+The callback gets two arguments \texttt{(err,\ fd)}.
 
-The exclusive flag \texttt{'x'} (\texttt{O\_EXCL} flag in open(2))
-ensures that \texttt{path} is newly created. On POSIX systems,
-\texttt{path} is considered to exist even if it is a symlink to a
-non-existent file. The exclusive flag may or may not work with network
-file systems.
+The exclusive flag \texttt{\textquotesingle{}x\textquotesingle{}}
+(\texttt{O\_EXCL} flag in open(2)) ensures that \texttt{path} is newly
+created. On POSIX systems, \texttt{path} is considered to exist even if
+it is a symlink to a non-existent file. The exclusive flag may or may
+not work with network file systems.
 
 On Linux, positional writes don't work when the file is opened in append
 mode. The kernel ignores the position argument and always appends the
 data to the end of the file.
 
-\subsection{fs.openSync(path, flags,
-{[}mode{]})}\label{fs.opensyncpath-flags-mode}
+\subsection{fs.openSync(path, flags{[},
+mode{]})}\label{fs.opensyncpath-flags-mode}
 
 Synchronous version of \texttt{fs.open()}.
 
@@ -459,11 +479,11 @@ be written.
 
 \texttt{position} refers to the offset from the beginning of the file
 where this data should be written. If
-\texttt{typeof position !== 'number'}, the data will be written at the
-current position. See pwrite(2).
+\texttt{typeof\ position\ !==\ \textquotesingle{}number\textquotesingle{}},
+the data will be written at the current position. See pwrite(2).
 
 The callback will be given three arguments
-\texttt{(err, written, buffer)} where \texttt{written} specifies how
+\texttt{(err,\ written,\ buffer)} where \texttt{written} specifies how
 many \emph{bytes} were written from \texttt{buffer}.
 
 Note that it is unsafe to use \texttt{fs.write} multiple times on the
@@ -483,15 +503,15 @@ a string.
 
 \texttt{position} refers to the offset from the beginning of the file
 where this data should be written. If
-\texttt{typeof position !== 'number'} the data will be written at the
-current position. See pwrite(2).
+\texttt{typeof\ position\ !==\ \textquotesingle{}number\textquotesingle{}}
+the data will be written at the current position. See pwrite(2).
 
 \texttt{encoding} is the expected string encoding.
 
-The callback will receive the arguments \texttt{(err, written, string)}
-where \texttt{written} specifies how many \emph{bytes} the passed string
-required to be written. Note that bytes written is not the same as
-string characters. See
+The callback will receive the arguments
+\texttt{(err,\ written,\ string)} where \texttt{written} specifies how
+many \emph{bytes} the passed string required to be written. Note that
+bytes written is not the same as string characters. See
 \href{buffer.html\#buffer_class_method_buffer_bytelength_string_encoding}{Buffer.byteLength}.
 
 Unlike when writing \texttt{buffer}, the entire string must be written.
@@ -531,7 +551,7 @@ in the file. If \texttt{position} is \texttt{null}, data will be read
 from the current file position.
 
 The callback is given the three arguments,
-\texttt{(err, bytesRead, buffer)}.
+\texttt{(err,\ bytesRead,\ buffer)}.
 
 \subsection{fs.readSync(fd, buffer, offset, length,
 position)}\label{fs.readsyncfd-buffer-offset-length-position}
@@ -539,7 +559,7 @@ position)}\label{fs.readsyncfd-buffer-offset-length-position}
 Synchronous version of \texttt{fs.read}. Returns the number of
 \texttt{bytesRead}.
 
-\subsection{fs.readFile(filename, {[}options{]},
+\subsection{fs.readFile(filename{[}, options{]},
 callback)}\label{fs.readfilefilename-options-callback}
 
 \begin{itemize}
@@ -551,7 +571,8 @@ callback)}\label{fs.readfilefilename-options-callback}
 \item
   \texttt{encoding} \{String \textbar{} Null\} default = \texttt{null}
 \item
-  \texttt{flag} \{String\} default = \texttt{'r'}
+  \texttt{flag} \{String\} default =
+  \texttt{\textquotesingle{}r\textquotesingle{}}
 \item
   \texttt{callback} \{Function\}
 \end{itemize}
@@ -567,13 +588,13 @@ Asynchronously reads the entire contents of a file. Example:
 \end{Highlighting}
 \end{Shaded}
 
-The callback is passed two arguments \texttt{(err, data)}, where
+The callback is passed two arguments \texttt{(err,\ data)}, where
 \texttt{data} is the contents of the file.
 
 If no encoding is specified, then the raw buffer is returned.
 
-\subsection{fs.readFileSync(filename,
-{[}options{]})}\label{fs.readfilesyncfilename-options}
+\subsection{fs.readFileSync(filename{[},
+options{]})}\label{fs.readfilesyncfilename-options}
 
 Synchronous version of \texttt{fs.readFile}. Returns the contents of the
 \texttt{filename}.
@@ -581,7 +602,7 @@ Synchronous version of \texttt{fs.readFile}. Returns the contents of the
 If the \texttt{encoding} option is specified then this function returns
 a string. Otherwise it returns a buffer.
 
-\subsection{fs.writeFile(filename, data, {[}options{]},
+\subsection{fs.writeFile(filename, data{[}, options{]},
 callback)}\label{fs.writefilefilename-data-options-callback}
 
 \begin{itemize}
@@ -593,12 +614,14 @@ callback)}\label{fs.writefilefilename-data-options-callback}
 \item
   \texttt{options} \{Object\}
 \item
-  \texttt{encoding} \{String \textbar{} Null\} default = \texttt{'utf8'}
+  \texttt{encoding} \{String \textbar{} Null\} default =
+  \texttt{\textquotesingle{}utf8\textquotesingle{}}
 \item
   \texttt{mode} \{Number\} default = \texttt{438} (aka \texttt{0666} in
   Octal)
 \item
-  \texttt{flag} \{String\} default = \texttt{'w'}
+  \texttt{flag} \{String\} default =
+  \texttt{\textquotesingle{}w\textquotesingle{}}
 \item
   \texttt{callback} \{Function\}
 \end{itemize}
@@ -607,7 +630,7 @@ Asynchronously writes data to a file, replacing the file if it already
 exists. \texttt{data} can be a string or a buffer.
 
 The \texttt{encoding} option is ignored if \texttt{data} is a buffer. It
-defaults to \texttt{'utf8'}.
+defaults to \texttt{\textquotesingle{}utf8\textquotesingle{}}.
 
 Example:
 
@@ -620,12 +643,12 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{fs.writeFileSync(filename, data,
-{[}options{]})}\label{fs.writefilesyncfilename-data-options}
+\subsection{fs.writeFileSync(filename, data{[},
+options{]})}\label{fs.writefilesyncfilename-data-options}
 
 The synchronous version of \texttt{fs.writeFile}.
 
-\subsection{fs.appendFile(filename, data, {[}options{]},
+\subsection{fs.appendFile(filename, data{[}, options{]},
 callback)}\label{fs.appendfilefilename-data-options-callback}
 
 \begin{itemize}
@@ -637,12 +660,14 @@ callback)}\label{fs.appendfilefilename-data-options-callback}
 \item
   \texttt{options} \{Object\}
 \item
-  \texttt{encoding} \{String \textbar{} Null\} default = \texttt{'utf8'}
+  \texttt{encoding} \{String \textbar{} Null\} default =
+  \texttt{\textquotesingle{}utf8\textquotesingle{}}
 \item
   \texttt{mode} \{Number\} default = \texttt{438} (aka \texttt{0666} in
   Octal)
 \item
-  \texttt{flag} \{String\} default = \texttt{'a'}
+  \texttt{flag} \{String\} default =
+  \texttt{\textquotesingle{}a\textquotesingle{}}
 \item
   \texttt{callback} \{Function\}
 \end{itemize}
@@ -661,12 +686,12 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{fs.appendFileSync(filename, data,
-{[}options{]})}\label{fs.appendfilesyncfilename-data-options}
+\subsection{fs.appendFileSync(filename, data{[},
+options{]})}\label{fs.appendfilesyncfilename-data-options}
 
 The synchronous version of \texttt{fs.appendFile}.
 
-\subsection{fs.watchFile(filename, {[}options{]},
+\subsection{fs.watchFile(filename{[}, options{]},
 listener)}\label{fs.watchfilefilename-options-listener}
 
 \begin{Shaded}
@@ -684,7 +709,7 @@ be an object containing two members a boolean, \texttt{persistent}, and
 should continue to run as long as files are being watched.
 \texttt{interval} indicates how often the target should be polled, in
 milliseconds. The default is
-\texttt{\{ persistent: true, interval: 5007 \}}.
+\texttt{\{\ persistent:\ true,\ interval:\ 5007\ \}}.
 
 The \texttt{listener} gets two arguments the current stat object and the
 previous stat object:
@@ -703,8 +728,8 @@ These stat objects are instances of \texttt{fs.Stat}.
 If you want to be notified when the file was modified, not just accessed
 you need to compare \texttt{curr.mtime} and \texttt{prev.mtime}.
 
-\subsection{fs.unwatchFile(filename,
-{[}listener{]})}\label{fs.unwatchfilefilename-listener}
+\subsection{fs.unwatchFile(filename{[},
+listener{]})}\label{fs.unwatchfilefilename-listener}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -720,8 +745,8 @@ watching \texttt{filename}.
 Calling \texttt{fs.unwatchFile()} with a filename that is not being
 watched is a no-op, not an error.
 
-\subsection{fs.watch(filename, {[}options{]},
-{[}listener{]})}\label{fs.watchfilename-options-listener}
+\subsection{fs.watch(filename{[}, options{]}{[},
+listener{]})}\label{fs.watchfilename-options-listener}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -741,9 +766,9 @@ should continue to run as long as files are being watched.
 watched, or only the current directory. This applies when a directory is
 specified, and only on supported platforms (See Caveats below).
 
-The default is \texttt{\{ persistent: true, recursive: false \}}.
+The default is \texttt{\{\ persistent:\ true,\ recursive:\ false\ \}}.
 
-The listener callback gets two arguments \texttt{(event, filename)}.
+The listener callback gets two arguments \texttt{(event,\ filename)}.
 \texttt{event} is either `rename' or `change', and \texttt{filename} is
 the name of the file which triggered the event.
 
@@ -772,7 +797,7 @@ to be notified of filesystem changes.
   directories.
 \item
   On SunOS systems (including Solaris and SmartOS), this uses
-  \texttt{event ports}.
+  \texttt{event\ ports}.
 \item
   On Windows systems, this feature depends on
   \texttt{ReadDirectoryChangesW}.
@@ -832,9 +857,57 @@ process may remove the file between the calls to \texttt{fs.exists()}
 and \texttt{fs.open()}. Just open the file and handle the error when
 it's not there.
 
+\texttt{fs.exists()} will be deprecated.
+
 \subsection{fs.existsSync(path)}\label{fs.existssyncpath}
 
 Synchronous version of \texttt{fs.exists}.
+
+\texttt{fs.existsSync()} will be deprecated.
+
+\subsection{fs.access(path{[}, mode{]},
+callback)}\label{fs.accesspath-mode-callback}
+
+Tests a user's permissions for the file specified by \texttt{path}.
+\texttt{mode} is an optional integer that specifies the accessibility
+checks to be performed. The following constants define the possible
+values of \texttt{mode}. It is possible to create a mask consisting of
+the bitwise OR of two or more values.
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{fs.F\_OK} - File is visible to the calling process. This is
+  useful for determining if a file exists, but says nothing about
+  \texttt{rwx} permissions. Default if no \texttt{mode} is specified.
+\item
+  \texttt{fs.R\_OK} - File can be read by the calling process.
+\item
+  \texttt{fs.W\_OK} - File can be written by the calling process.
+\item
+  \texttt{fs.X\_OK} - File can be executed by the calling process. This
+  has no effect on Windows (will behave like \texttt{fs.F\_OK}).
+\end{itemize}
+
+The final argument, \texttt{callback}, is a callback function that is
+invoked with a possible error argument. If any of the accessibility
+checks fail, the error argument will be populated. The following example
+checks if the file \texttt{/etc/passwd} can be read and written by the
+current process.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{fs}\NormalTok{.}\FunctionTok{access}\NormalTok{(}\StringTok{'/etc/passwd'}\NormalTok{, }\OtherTok{fs}\NormalTok{.}\FunctionTok{R_OK} \NormalTok{| }\OtherTok{fs}\NormalTok{.}\FunctionTok{W_OK}\NormalTok{, }\KeywordTok{function}\NormalTok{(err) \{}
+  \OtherTok{util}\NormalTok{.}\FunctionTok{debug}\NormalTok{(err ? }\StringTok{'no access!'} \NormalTok{: }\StringTok{'can read/write'}\NormalTok{);}
+\NormalTok{\});}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{fs.accessSync(path{[},
+mode{]})}\label{fs.accesssyncpath-mode}
+
+Synchronous version of \texttt{fs.access}. This throws if any
+accessibility checks fail, and does nothing otherwise.
 
 \subsection{Class: fs.Stats}\label{class-fs.stats}
 
@@ -928,10 +1001,10 @@ Prior to Node v0.12, the \texttt{ctime} held the \texttt{birthtime} on
 Windows systems. Note that as of v0.12, \texttt{ctime} is not ``creation
 time'', and on Unix systems, it never was.
 
-\subsection{fs.createReadStream(path,
-{[}options{]})}\label{fs.createreadstreampath-options}
+\subsection{fs.createReadStream(path{[},
+options{]})}\label{fs.createreadstreampath-options}
 
-Returns a new ReadStream object (See \texttt{Readable Stream}).
+Returns a new ReadStream object (See \texttt{Readable\ Stream}).
 
 \texttt{options} is an object with the following defaults:
 
@@ -949,8 +1022,14 @@ Returns a new ReadStream object (See \texttt{Readable Stream}).
 \texttt{options} can include \texttt{start} and \texttt{end} values to
 read a range of bytes from the file instead of the entire file. Both
 \texttt{start} and \texttt{end} are inclusive and start at 0. The
-\texttt{encoding} can be \texttt{'utf8'}, \texttt{'ascii'}, or
-\texttt{'base64'}.
+\texttt{encoding} can be
+\texttt{\textquotesingle{}utf8\textquotesingle{}},
+\texttt{\textquotesingle{}ascii\textquotesingle{}}, or
+\texttt{\textquotesingle{}base64\textquotesingle{}}.
+
+If \texttt{fd} is specified, \texttt{ReadStream} will ignore the
+\texttt{path} argument and will use the specified file descriptor. This
+means that no \texttt{open} event will be emitted.
 
 If \texttt{autoClose} is false, then the file descriptor won't be
 closed, even if there's an error. It is your responsibility to close it
@@ -971,7 +1050,8 @@ An example to read the last 10 bytes of a file which is 100 bytes long:
 \texttt{ReadStream} is a
 \href{stream.html\#stream_class_stream_readable}{Readable Stream}.
 
-\subsubsection{Event: `open'}\label{event-open}
+\subsubsection{\texorpdfstring{Event:
+`open'}{Event: open}}\label{event-open}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -981,10 +1061,10 @@ An example to read the last 10 bytes of a file which is 100 bytes long:
 
 Emitted when the ReadStream's file is opened.
 
-\subsection{fs.createWriteStream(path,
-{[}options{]})}\label{fs.createwritestreampath-options}
+\subsection{fs.createWriteStream(path{[},
+options{]})}\label{fs.createwritestreampath-options}
 
-Returns a new WriteStream object (See \texttt{Writable Stream}).
+Returns a new WriteStream object (See \texttt{Writable\ Stream}).
 
 \texttt{options} is an object with the following defaults:
 
@@ -992,6 +1072,7 @@ Returns a new WriteStream object (See \texttt{Writable Stream}).
 \begin{Highlighting}[]
 \NormalTok{\{ }\DataTypeTok{flags}\NormalTok{: }\StringTok{'w'}\NormalTok{,}
   \DataTypeTok{encoding}\NormalTok{: }\KeywordTok{null}\NormalTok{,}
+  \DataTypeTok{fd}\NormalTok{: }\KeywordTok{null}\NormalTok{,}
   \DataTypeTok{mode}\NormalTok{: }\DecValTok{0666} \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
@@ -1001,12 +1082,18 @@ writing data at some position past the beginning of the file. Modifying
 a file rather than replacing it may require a \texttt{flags} mode of
 \texttt{r+} rather than the default mode \texttt{w}.
 
+Like \texttt{ReadStream} above, if \texttt{fd} is specified,
+\texttt{WriteStream} will ignore the \texttt{path} argument and will use
+the specified file descriptor. This means that no \texttt{open} event
+will be emitted.
+
 \subsection{Class: fs.WriteStream}\label{class-fs.writestream}
 
 \texttt{WriteStream} is a
 \href{stream.html\#stream_class_stream_writable}{Writable Stream}.
 
-\subsubsection{Event: `open'}\label{event-open-1}
+\subsubsection{\texorpdfstring{Event:
+`open'}{Event: open}}\label{event-open-1}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -1029,7 +1116,8 @@ Objects returned from \texttt{fs.watch()} are of this type.
 
 Stop watching for changes on the given \texttt{fs.FSWatcher}.
 
-\subsubsection{Event: `change'}\label{event-change}
+\subsubsection{\texorpdfstring{Event:
+`change'}{Event: change}}\label{event-change}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -1044,7 +1132,8 @@ Emitted when something changes in a watched directory or file. See more
 details in
 \hyperref[fsux5ffsux5fwatchux5ffilenameux5foptionsux5flistener]{fs.watch}.
 
-\subsubsection{Event: `error'}\label{event-error}
+\subsubsection{\texorpdfstring{Event:
+`error'}{Event: error}}\label{event-error}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt

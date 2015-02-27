@@ -10,13 +10,14 @@ This module contains utilities for handling and transforming file paths.
 Almost all these methods perform only string transformations. The file
 system is not consulted to check whether paths are valid.
 
-Use \texttt{require('path')} to use this module. The following methods
-are provided:
+Use \texttt{require(\textquotesingle{}path\textquotesingle{})} to use
+this module. The following methods are provided:
 
 \subsection{path.normalize(p)}\label{path.normalizep}
 
-Normalize a string path, taking care of \texttt{'..'} and \texttt{'.'}
-parts.
+Normalize a string path, taking care of
+\texttt{\textquotesingle{}..\textquotesingle{}} and
+\texttt{\textquotesingle{}.\textquotesingle{}} parts.
 
 When multiple slashes are found, they're replaced by a single one; when
 the path contains a trailing slash, it is preserved. On Windows
@@ -32,8 +33,8 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.join({[}path1{]}, {[}path2{]},
-{[}\ldots{}{]})}\label{path.joinpath1-path2}
+\subsection{path.join({[}path1{]}{[}, path2{]}{[},
+\ldots{}{]})}\label{path.joinpath1-path2}
 
 Join all arguments together and normalize the resulting path.
 
@@ -180,7 +181,7 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{path.basename(p, {[}ext{]})}\label{path.basenamep-ext}
+\subsection{path.basename(p{[}, ext{]})}\label{path.basenamep-ext}
 
 Return the last portion of a path. Similar to the Unix \texttt{basename}
 command.
@@ -229,7 +230,8 @@ string. Examples:
 \subsection{path.sep}\label{path.sep}
 
 The platform-specific file separator.
-\texttt{'\textbackslash{}\textbackslash{}'} or \texttt{'/'}.
+\texttt{\textquotesingle{}\textbackslash{}\textbackslash{}\textquotesingle{}}
+or \texttt{\textquotesingle{}/\textquotesingle{}}.
 
 An example on *nix:
 
@@ -253,7 +255,8 @@ An example on Windows:
 
 \subsection{path.delimiter}\label{path.delimiter}
 
-The platform-specific path delimiter, \texttt{;} or \texttt{':'}.
+The platform-specific path delimiter, \texttt{;} or
+\texttt{\textquotesingle{}:\textquotesingle{}}.
 
 An example on *nix:
 
@@ -281,3 +284,67 @@ An example on Windows:
 \end{Highlighting}
 \end{Shaded}
 
+\subsection{path.parse(pathString)}\label{path.parsepathstring}
+
+Returns an object from a path string.
+
+An example on *nix:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{path}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\StringTok{'/home/user/dir/file.txt'}\NormalTok{)}
+\CommentTok{// returns}
+\NormalTok{\{}
+    \DataTypeTok{root }\NormalTok{: }\StringTok{"/"}\NormalTok{,}
+    \DataTypeTok{dir }\NormalTok{: }\StringTok{"/home/user/dir"}\NormalTok{,}
+    \DataTypeTok{base }\NormalTok{: }\StringTok{"file.txt"}\NormalTok{,}
+    \DataTypeTok{ext }\NormalTok{: }\StringTok{".txt"}\NormalTok{,}
+    \DataTypeTok{name }\NormalTok{: }\StringTok{"file"}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+An example on Windows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{path}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\StringTok{'C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{path}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{dir}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{index.html'}\NormalTok{)}
+\CommentTok{// returns}
+\NormalTok{\{}
+    \DataTypeTok{root }\NormalTok{: }\StringTok{"C:}\CharTok{\textbackslash{}"}\StringTok{,}
+    \DataTypeTok{dir }\NormalTok{: }\StringTok{"C:\textbackslash{}path\textbackslash{}dir"}\NormalTok{,}
+    \DataTypeTok{base }\NormalTok{: }\StringTok{"index.html"}\NormalTok{,}
+    \DataTypeTok{ext }\NormalTok{: }\StringTok{".html"}\NormalTok{,}
+    \DataTypeTok{name }\NormalTok{: }\StringTok{"index"}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.format(pathObject)}\label{path.formatpathobject}
+
+Returns a path string from an object, the opposite of
+\texttt{path.parse} above.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\OtherTok{path}\NormalTok{.}\FunctionTok{format}\NormalTok{(\{}
+    \DataTypeTok{root }\NormalTok{: }\StringTok{"/"}\NormalTok{,}
+    \DataTypeTok{dir }\NormalTok{: }\StringTok{"/home/user/dir"}\NormalTok{,}
+    \DataTypeTok{base }\NormalTok{: }\StringTok{"file.txt"}\NormalTok{,}
+    \DataTypeTok{ext }\NormalTok{: }\StringTok{".txt"}\NormalTok{,}
+    \DataTypeTok{name }\NormalTok{: }\StringTok{"file"}
+\NormalTok{\})}
+\CommentTok{// returns}
+\StringTok{'/home/user/dir/file.txt'}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{path.posix}\label{path.posix}
+
+Provide access to aforementioned \texttt{path} methods but always
+interact in a posix compatible way.
+
+\subsection{path.win32}\label{path.win32}
+
+Provide access to aforementioned \texttt{path} methods but always
+interact in a win32 compatible way.

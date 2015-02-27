@@ -155,9 +155,10 @@ https://gist.github.com/2209310
 For an example of running a REPL instance over \texttt{curl(1)}, see:
 https://gist.github.com/2053342
 
-\subsubsection{Event: `exit'}\label{event-exit}
+\subsubsection{\texorpdfstring{Event:
+`exit'}{Event: exit}}\label{event-exit}
 
-\texttt{function () \{\}}
+\texttt{function\ ()\ \{\}}
 
 Emitted when the user exits the REPL in any of the defined ways. Namely,
 typing \texttt{.exit} at the repl, pressing Ctrl+C twice to signal
@@ -175,13 +176,14 @@ Example of listening for \texttt{exit}:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `reset'}\label{event-reset}
+\subsubsection{\texorpdfstring{Event:
+`reset'}{Event: reset}}\label{event-reset}
 
-\texttt{function (context) \{\}}
+\texttt{function\ (context)\ \{\}}
 
 Emitted when the REPL's context is reset. This happens when you type
 \texttt{.clear}. If you start the repl with
-\texttt{\{ useGlobal: true \}} then this event will never be emitted.
+\texttt{\{\ useGlobal:\ true\ \}} then this event will never be emitted.
 
 Example of listening for \texttt{reset}:
 

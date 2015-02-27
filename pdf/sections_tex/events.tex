@@ -24,16 +24,19 @@ that the listener was attached to.
 \subsection{Class: events.EventEmitter}\label{class-events.eventemitter}
 
 To access the EventEmitter class,
-\texttt{require('events').EventEmitter}.
+\texttt{require(\textquotesingle{}events\textquotesingle{}).EventEmitter}.
 
 When an \texttt{EventEmitter} instance experiences an error, the typical
-action is to emit an \texttt{'error'} event. Error events are treated as
-a special case in node. If there is no listener for it, then the default
-action is to print a stack trace and exit the program.
+action is to emit an \texttt{\textquotesingle{}error\textquotesingle{}}
+event. Error events are treated as a special case in node. If there is
+no listener for it, then the default action is to print a stack trace
+and exit the program.
 
-All EventEmitters emit the event \texttt{'newListener'} when new
-listeners are added and \texttt{'removeListener'} when a listener is
-removed.
+All EventEmitters emit the event
+\texttt{\textquotesingle{}newListener\textquotesingle{}} when new
+listeners are added and
+\texttt{\textquotesingle{}removeListener\textquotesingle{}} when a
+listener is removed.
 
 \subsubsection{emitter.addListener(event,
 listener)}\label{emitter.addlistenerevent-listener}
@@ -42,7 +45,10 @@ listener)}\label{emitter.addlistenerevent-listener}
 listener)}\label{emitter.onevent-listener}
 
 Adds a listener to the end of the listeners array for the specified
-event.
+\texttt{event}. No checks are made to see if the \texttt{listener} has
+already been added. Multiple calls passing the same combination of
+\texttt{event} and \texttt{listener} will result in the
+\texttt{listener} being added multiple times.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -89,6 +95,12 @@ listener.
 \end{Highlighting}
 \end{Shaded}
 
+\texttt{removeListener} will remove, at most, one instance of a listener
+from the listener array. If any single listener has been added multiple
+times to the listener array for the specified \texttt{event}, then
+\texttt{removeListener} must be called multiple times to remove each
+instance.
+
 Returns emitter, so calls can be chained.
 
 \subsubsection{emitter.removeAllListeners({[}event{]})}\label{emitter.removealllistenersevent}
@@ -133,8 +145,8 @@ Returns an array of listeners for the specified event.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{emitter.emit(event, {[}arg1{]}, {[}arg2{]},
-{[}\ldots{}{]})}\label{emitter.emitevent-arg1-arg2}
+\subsubsection{emitter.emit(event{[}, arg1{]}{[}, arg2{]}{[},
+\ldots{}{]})}\label{emitter.emitevent-arg1-arg2}
 
 Execute each of the listeners in order with the supplied arguments.
 
@@ -145,7 +157,8 @@ event)}\label{class-method-eventemitter.listenercountemitter-event}
 
 Return the number of listeners for a given event.
 
-\subsubsection{Event: `newListener'}\label{event-newlistener}
+\subsubsection{\texorpdfstring{Event:
+`newListener'}{Event: newListener}}\label{event-newlistener}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -155,11 +168,12 @@ Return the number of listeners for a given event.
   \texttt{listener} \{Function\} The event handler function
 \end{itemize}
 
-This event is emitted any time someone adds a new listener. It is
-unspecified if \texttt{listener} is in the list returned by
-\texttt{emitter.listeners(event)}.
+This event is emitted any time a listener is added. When this event is
+triggered, the listener may not yet have been added to the array of
+listeners for the \texttt{event}.
 
-\subsubsection{Event: `removeListener'}\label{event-removelistener}
+\subsubsection{\texorpdfstring{Event:
+`removeListener'}{Event: removeListener}}\label{event-removelistener}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -169,6 +183,6 @@ unspecified if \texttt{listener} is in the list returned by
   \texttt{listener} \{Function\} The event handler function
 \end{itemize}
 
-This event is emitted any time someone removes a listener. It is
-unspecified if \texttt{listener} is in the list returned by
-\texttt{emitter.listeners(event)}.
+This event is emitted any time someone removes a listener. When this
+event is triggered, the listener may not yet have been removed from the
+array of listeners for the \texttt{event}.

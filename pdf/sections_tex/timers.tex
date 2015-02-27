@@ -9,8 +9,8 @@
 All of the timer functions are globals. You do not need to
 \texttt{require()} this module in order to use them.
 
-\subsection{setTimeout(callback, delay, {[}arg{]},
-{[}\ldots{}{]})}\label{settimeoutcallback-delay-arg}
+\subsection{setTimeout(callback, delay{[}, arg{]}{[},
+\ldots{}{]})}\label{settimeoutcallback-delay-arg}
 
 To schedule execution of a one-time \texttt{callback} after
 \texttt{delay} milliseconds. Returns a \texttt{timeoutObject} for
@@ -27,8 +27,8 @@ possible to the time specified.
 
 Prevents a timeout from triggering.
 
-\subsection{setInterval(callback, delay, {[}arg{]},
-{[}\ldots{}{]})}\label{setintervalcallback-delay-arg}
+\subsection{setInterval(callback, delay{[}, arg{]}{[},
+\ldots{}{]})}\label{setintervalcallback-delay-arg}
 
 To schedule the repeated execution of \texttt{callback} every
 \texttt{delay} milliseconds. Returns a \texttt{intervalObject} for
@@ -37,7 +37,7 @@ arguments to the callback.
 
 \subsection{clearInterval(intervalObject)}\label{clearintervalintervalobject}
 
-Stops a interval from triggering.
+Stops an interval from triggering.
 
 \subsection{unref()}\label{unref}
 
@@ -59,8 +59,8 @@ If you had previously \texttt{unref()}d a timer you can call
 the timer is already \texttt{ref}d calling \texttt{ref} again will have
 no effect.
 
-\subsection{setImmediate(callback, {[}arg{]},
-{[}\ldots{}{]})}\label{setimmediatecallback-arg}
+\subsection{setImmediate(callback{[}, arg{]}{[},
+\ldots{}{]})}\label{setimmediatecallback-arg}
 
 To schedule the ``immediate'' execution of \texttt{callback} after I/O
 events callbacks and before \texttt{setTimeout} and \texttt{setInterval}
@@ -70,7 +70,7 @@ callback.
 
 Callbacks for immediates are queued in the order in which they were
 created. The entire callback queue is processed every event loop
-iteration. If you queue an immediate from a inside an executing callback
+iteration. If you queue an immediate from inside an executing callback,
 that immediate won't fire until the next event loop iteration.
 
 \subsection{clearImmediate(immediateObject)}\label{clearimmediateimmediateobject}

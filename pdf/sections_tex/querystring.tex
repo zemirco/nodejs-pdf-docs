@@ -9,11 +9,12 @@
 This module provides utilities for dealing with query strings. It
 provides the following methods:
 
-\subsection{querystring.stringify(obj, {[}sep{]}, {[}eq{]},
-{[}options{]})}\label{querystring.stringifyobj-sep-eq-options}
+\subsection{querystring.stringify(obj{[}, sep{]}{[}, eq{]}{[},
+options{]})}\label{querystring.stringifyobj-sep-eq-options}
 
 Serialize an object to a query string. Optionally override the default
-separator (\texttt{'\&'}) and assignment (\texttt{'='}) characters.
+separator (\texttt{\textquotesingle{}\&\textquotesingle{}}) and
+assignment (\texttt{\textquotesingle{}=\textquotesingle{}}) characters.
 
 Options object may contain \texttt{encodeURIComponent} property
 (\texttt{querystring.escape} by default), it can be used to encode
@@ -40,11 +41,12 @@ Example:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{querystring.parse(str, {[}sep{]}, {[}eq{]},
-{[}options{]})}\label{querystring.parsestr-sep-eq-options}
+\subsection{querystring.parse(str{[}, sep{]}{[}, eq{]}{[},
+options{]})}\label{querystring.parsestr-sep-eq-options}
 
 Deserialize a query string to an object. Optionally override the default
-separator (\texttt{'\&'}) and assignment (\texttt{'='}) characters.
+separator (\texttt{\textquotesingle{}\&\textquotesingle{}}) and
+assignment (\texttt{\textquotesingle{}=\textquotesingle{}}) characters.
 
 Options object may contain \texttt{maxKeys} property (equal to 1000 by
 default), it'll be used to limit processed keys. Set it to 0 to remove

@@ -215,64 +215,64 @@ the header.
 
 All of these take a string or buffer as the first argument, an optional
 second argument to supply options to the zlib classes and will call the
-supplied callback with \texttt{callback(error, result)}.
+supplied callback with \texttt{callback(error,\ result)}.
 
 Every method has a \texttt{*Sync} counterpart, which accept the same
 arguments, but without a callback.
 
-\subsection{zlib.deflate(buf, {[}options{]},
+\subsection{zlib.deflate(buf{[}, options{]},
 callback)}\label{zlib.deflatebuf-options-callback}
 
-\subsection{zlib.deflateSync(buf,
-{[}options{]})}\label{zlib.deflatesyncbuf-options}
+\subsection{zlib.deflateSync(buf{[},
+options{]})}\label{zlib.deflatesyncbuf-options}
 
 Compress a string with Deflate.
 
-\subsection{zlib.deflateRaw(buf, {[}options{]},
+\subsection{zlib.deflateRaw(buf{[}, options{]},
 callback)}\label{zlib.deflaterawbuf-options-callback}
 
-\subsection{zlib.deflateRawSync(buf,
-{[}options{]})}\label{zlib.deflaterawsyncbuf-options}
+\subsection{zlib.deflateRawSync(buf{[},
+options{]})}\label{zlib.deflaterawsyncbuf-options}
 
 Compress a string with DeflateRaw.
 
-\subsection{zlib.gzip(buf, {[}options{]},
+\subsection{zlib.gzip(buf{[}, options{]},
 callback)}\label{zlib.gzipbuf-options-callback}
 
-\subsection{zlib.gzipSync(buf,
-{[}options{]})}\label{zlib.gzipsyncbuf-options}
+\subsection{zlib.gzipSync(buf{[},
+options{]})}\label{zlib.gzipsyncbuf-options}
 
 Compress a string with Gzip.
 
-\subsection{zlib.gunzip(buf, {[}options{]},
+\subsection{zlib.gunzip(buf{[}, options{]},
 callback)}\label{zlib.gunzipbuf-options-callback}
 
-\subsection{zlib.gunzipSync(buf,
-{[}options{]})}\label{zlib.gunzipsyncbuf-options}
+\subsection{zlib.gunzipSync(buf{[},
+options{]})}\label{zlib.gunzipsyncbuf-options}
 
 Decompress a raw Buffer with Gunzip.
 
-\subsection{zlib.inflate(buf, {[}options{]},
+\subsection{zlib.inflate(buf{[}, options{]},
 callback)}\label{zlib.inflatebuf-options-callback}
 
-\subsection{zlib.inflateSync(buf,
-{[}options{]})}\label{zlib.inflatesyncbuf-options}
+\subsection{zlib.inflateSync(buf{[},
+options{]})}\label{zlib.inflatesyncbuf-options}
 
 Decompress a raw Buffer with Inflate.
 
-\subsection{zlib.inflateRaw(buf, {[}options{]},
+\subsection{zlib.inflateRaw(buf{[}, options{]},
 callback)}\label{zlib.inflaterawbuf-options-callback}
 
-\subsection{zlib.inflateRawSync(buf,
-{[}options{]})}\label{zlib.inflaterawsyncbuf-options}
+\subsection{zlib.inflateRawSync(buf{[},
+options{]})}\label{zlib.inflaterawsyncbuf-options}
 
 Decompress a raw Buffer with InflateRaw.
 
-\subsection{zlib.unzip(buf, {[}options{]},
+\subsection{zlib.unzip(buf{[}, options{]},
 callback)}\label{zlib.unzipbuf-options-callback}
 
-\subsection{zlib.unzipSync(buf,
-{[}options{]})}\label{zlib.unzipsyncbuf-options}
+\subsection{zlib.unzipSync(buf{[},
+options{]})}\label{zlib.unzipsyncbuf-options}
 
 Decompress a raw Buffer with Unzip.
 
@@ -359,12 +359,12 @@ the speed, at the cost of memory usage.
 \subsection{Constants}\label{constants}
 
 All of the constants defined in zlib.h are also defined on
-\texttt{require('zlib')}. In the normal course of operations, you will
-not need to ever set any of these. They are documented here so that
-their presence is not surprising. This section is taken almost directly
-from the \href{http://zlib.net/manual.html\#Constants}{zlib
-documentation}. See \url{http://zlib.net/manual.html\#Constants} for
-more details.
+\texttt{require(\textquotesingle{}zlib\textquotesingle{})}. In the
+normal course of operations, you will not need to ever set any of these.
+They are documented here so that their presence is not surprising. This
+section is taken almost directly from the
+\href{http://zlib.net/manual.html\#Constants}{zlib documentation}. See
+\url{http://zlib.net/manual.html\#Constants} for more details.
 
 Allowed flush values.
 

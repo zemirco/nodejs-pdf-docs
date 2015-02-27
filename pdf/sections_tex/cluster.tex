@@ -90,9 +90,9 @@ normal node.js process and a cluster worker differs:
 \def\labelenumi{\arabic{enumi}.}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  \texttt{server.listen(\{fd: 7\})} Because the message is passed to the
-  master, file descriptor 7 \textbf{in the parent} will be listened on,
-  and the handle passed to the worker, rather than listening to the
+  \texttt{server.listen(\{fd:\ 7\})} Because the message is passed to
+  the master, file descriptor 7 \textbf{in the parent} will be listened
+  on, and the handle passed to the worker, rather than listening to the
   worker's idea of what the number 7 file descriptor references.
 \item
   \texttt{server.listen(handle)} Listening on handles explicitly will
@@ -194,7 +194,8 @@ True if the process is a master. This is determined by the
 True if the process is not a master (it is the negation of
 \texttt{cluster.isMaster}).
 
-\subsection{Event: `fork'}\label{event-fork}
+\subsection{\texorpdfstring{Event:
+`fork'}{Event: fork}}\label{event-fork}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -225,7 +226,8 @@ This can be used to log worker activity, and create your own timeout.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Event: `online'}\label{event-online}
+\subsection{\texorpdfstring{Event:
+`online'}{Event: online}}\label{event-online}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -247,7 +249,8 @@ worker is running.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Event: `listening'}\label{event-listening}
+\subsection{\texorpdfstring{Event:
+`listening'}{Event: listening}}\label{event-listening}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -289,7 +292,8 @@ The \texttt{addressType} is one of:
   \texttt{"udp4"} or \texttt{"udp6"} (UDP v4 or v6)
 \end{itemize}
 
-\subsection{Event: `disconnect'}\label{event-disconnect}
+\subsection{\texorpdfstring{Event:
+`disconnect'}{Event: disconnect}}\label{event-disconnect}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -313,7 +317,8 @@ cleanup or if there are long-living connections.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{Event: `exit'}\label{event-exit}
+\subsection{\texorpdfstring{Event:
+`exit'}{Event: exit}}\label{event-exit}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -323,7 +328,8 @@ cleanup or if there are long-living connections.
   \texttt{code} \{Number\} the exit code, if it exited normally.
 \item
   \texttt{signal} \{String\} the name of the signal (eg.
-  \texttt{'SIGHUP'}) that caused the process to be killed.
+  \texttt{\textquotesingle{}SIGHUP\textquotesingle{}}) that caused the
+  process to be killed.
 \end{itemize}
 
 When any of the workers die the cluster module will emit the `exit'
@@ -345,7 +351,8 @@ again.
 See \href{child_process.html\#child_process_event_exit}{child\_process
 event: `exit'}.
 
-\subsection{Event: `setup'}\label{event-setup}
+\subsection{\texorpdfstring{Event:
+`setup'}{Event: setup}}\label{event-setup}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -492,7 +499,8 @@ A worker is removed from cluster.workers after the worker has
 disconnected \emph{and} exited. The order between these two events
 cannot be determined in advance. However, it is guaranteed that the
 removal from the cluster.workers list happens before last
-\texttt{'disconnect'} or \texttt{'exit'} event is emitted.
+\texttt{\textquotesingle{}disconnect\textquotesingle{}} or
+\texttt{\textquotesingle{}exit\textquotesingle{}} event is emitted.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -556,9 +564,9 @@ See:
 Process module}
 
 Note that workers will call \texttt{process.exit(0)} if the
-\texttt{'disconnect'} event occurs on \texttt{process} and
-\texttt{.suicide} is not \texttt{true}. This protects against accidental
-disconnection.
+\texttt{\textquotesingle{}disconnect\textquotesingle{}} event occurs on
+\texttt{process} and \texttt{.suicide} is not \texttt{true}. This
+protects against accidental disconnection.
 
 \subsubsection{worker.suicide}\label{worker.suicide}
 
@@ -588,8 +596,8 @@ worker based on this value.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{worker.send(message,
-{[}sendHandle{]})}\label{worker.sendmessage-sendhandle}
+\subsubsection{worker.send(message{[},
+sendHandle{]})}\label{worker.sendmessage-sendhandle}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -622,7 +630,7 @@ This example will echo back all messages from the master:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{worker.kill({[}signal=`SIGTERM'{]})}\label{worker.killsignalsigterm}
+\subsubsection{\texorpdfstring{worker.kill({[}signal=`SIGTERM'{]})}{worker.kill({[}signal=SIGTERM{]})}}\label{worker.killsignalsigterm}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -724,7 +732,8 @@ master via its IPC channel, \texttt{false} otherwise. A worker is
 connected to its master after it's been created. It is disconnected
 after the \texttt{disconnect} event is emitted.
 
-\subsubsection{Event: `message'}\label{event-message}
+\subsubsection{\texorpdfstring{Event:
+`message'}{Event: message}}\label{event-message}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -735,7 +744,8 @@ after the \texttt{disconnect} event is emitted.
 This event is the same as the one provided by
 \texttt{child\_process.fork()}.
 
-In a worker you can also use \texttt{process.on('message')}.
+In a worker you can also use
+\texttt{process.on(\textquotesingle{}message\textquotesingle{})}.
 
 As an example, here is a cluster that keeps count of the number of
 requests in the master process using the message system:
@@ -784,10 +794,12 @@ requests in the master process using the message system:
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `online'}\label{event-online-1}
+\subsubsection{\texorpdfstring{Event:
+`online'}{Event: online}}\label{event-online-1}
 
-Similar to the \texttt{cluster.on('online')} event, but specific to this
-worker.
+Similar to the
+\texttt{cluster.on(\textquotesingle{}online\textquotesingle{})} event,
+but specific to this worker.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -799,7 +811,8 @@ worker.
 
 It is not emitted in the worker.
 
-\subsubsection{Event: `listening'}\label{event-listening-1}
+\subsubsection{\texorpdfstring{Event:
+`listening'}{Event: listening}}\label{event-listening-1}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -807,8 +820,9 @@ It is not emitted in the worker.
   \texttt{address} \{Object\}
 \end{itemize}
 
-Similar to the \texttt{cluster.on('listening')} event, but specific to
-this worker.
+Similar to the
+\texttt{cluster.on(\textquotesingle{}listening\textquotesingle{})}
+event, but specific to this worker.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -820,10 +834,12 @@ this worker.
 
 It is not emitted in the worker.
 
-\subsubsection{Event: `disconnect'}\label{event-disconnect-1}
+\subsubsection{\texorpdfstring{Event:
+`disconnect'}{Event: disconnect}}\label{event-disconnect-1}
 
-Similar to the \texttt{cluster.on('disconnect')} event, but specfic to
-this worker.
+Similar to the
+\texttt{cluster.on(\textquotesingle{}disconnect\textquotesingle{})}
+event, but specfic to this worker.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -833,7 +849,8 @@ this worker.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `exit'}\label{event-exit-1}
+\subsubsection{\texorpdfstring{Event:
+`exit'}{Event: exit}}\label{event-exit-1}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -841,11 +858,13 @@ this worker.
   \texttt{code} \{Number\} the exit code, if it exited normally.
 \item
   \texttt{signal} \{String\} the name of the signal (eg.
-  \texttt{'SIGHUP'}) that caused the process to be killed.
+  \texttt{\textquotesingle{}SIGHUP\textquotesingle{}}) that caused the
+  process to be killed.
 \end{itemize}
 
-Similar to the \texttt{cluster.on('exit')} event, but specific to this
-worker.
+Similar to the
+\texttt{cluster.on(\textquotesingle{}exit\textquotesingle{})} event, but
+specific to this worker.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -862,9 +881,11 @@ worker.
 \end{Highlighting}
 \end{Shaded}
 
-\subsubsection{Event: `error'}\label{event-error}
+\subsubsection{\texorpdfstring{Event:
+`error'}{Event: error}}\label{event-error}
 
 This event is the same as the one provided by
 \texttt{child\_process.fork()}.
 
-In a worker you can also use \texttt{process.on('error')}.
+In a worker you can also use
+\texttt{process.on(\textquotesingle{}error\textquotesingle{})}.

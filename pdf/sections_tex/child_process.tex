@@ -15,9 +15,11 @@ that some programs use line-buffered I/O internally. That doesn't affect
 node.js but it means data you send to the child process may not be
 immediately consumed.)
 
-To create a child process use \texttt{require('child\_process').spawn()}
-or \texttt{require('child\_process').fork()}. The semantics of each are
-slightly different, and explained
+To create a child process use
+\texttt{require(\textquotesingle{}child\_process\textquotesingle{}).spawn()}
+or
+\texttt{require(\textquotesingle{}child\_process\textquotesingle{}).fork()}.
+The semantics of each are slightly different, and explained
 \hyperref[childux5fprocessux5fasynchronousux5fprocessux5fcreation]{below}.
 
 For scripting purposes you may find the
@@ -38,7 +40,8 @@ The ChildProcess class is not intended to be used directly. Use the
 \texttt{spawn()}, \texttt{exec()}, \texttt{execFile()}, or
 \texttt{fork()} methods to create a Child Process instance.
 
-\subsubsection{Event: `error'}\label{event-error}
+\subsubsection{\texorpdfstring{Event:
+`error'}{Event: error}}\label{event-error}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -68,7 +71,8 @@ See also
 and
 \hyperref[childux5fprocessux5fchildux5fsendux5fmessageux5fsendhandle]{\texttt{ChildProcess\#send()}}.
 
-\subsubsection{Event: `exit'}\label{event-exit}
+\subsubsection{\texorpdfstring{Event:
+`exit'}{Event: exit}}\label{event-exit}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -87,13 +91,15 @@ otherwise \texttt{null}.
 
 Note that the child process stdio streams might still be open.
 
-Also, note that node establishes signal handlers for \texttt{'SIGINT'}
-and \texttt{'SIGTERM}', so it will not terminate due to receipt of those
-signals, it will exit.
+Also, note that node establishes signal handlers for
+\texttt{\textquotesingle{}SIGINT\textquotesingle{}} and
+\texttt{\textquotesingle{}SIGTERM}', so it will not terminate due to
+receipt of those signals, it will exit.
 
 See \texttt{waitpid(2)}.
 
-\subsubsection{Event: `close'}\label{event-close}
+\subsubsection{\texorpdfstring{Event:
+`close'}{Event: close}}\label{event-close}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -108,13 +114,15 @@ This event is emitted when the stdio streams of a child process have all
 terminated. This is distinct from `exit', since multiple processes might
 share the same stdio streams.
 
-\subsubsection{Event: `disconnect'}\label{event-disconnect}
+\subsubsection{\texorpdfstring{Event:
+`disconnect'}{Event: disconnect}}\label{event-disconnect}
 
 This event is emitted after calling the \texttt{.disconnect()} method in
 the parent or in the child. After disconnecting it is no longer possible
 to send messages, and the \texttt{.connected} property is false.
 
-\subsubsection{Event: `message'}\label{event-message}
+\subsubsection{\texorpdfstring{Event:
+`message'}{Event: message}}\label{event-message}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -124,7 +132,7 @@ to send messages, and the \texttt{.connected} property is false.
   \texttt{sendHandle} \{Handle object\} a Socket or Server object
 \end{itemize}
 
-Messages send by \texttt{.send(message, {[}sendHandle{]})} are obtained
+Messages send by \texttt{.send(message,\ {[}sendHandle{]})} are obtained
 using the \texttt{message} event.
 
 \subsubsection{child.stdin}\label{child.stdin}
@@ -135,12 +143,16 @@ using the \texttt{message} event.
   \{Stream object\}
 \end{itemize}
 
-A \texttt{Writable Stream} that represents the child process's
-\texttt{stdin}. Closing this stream via \texttt{end()} often causes the
-child process to terminate.
+A \texttt{Writable\ Stream} that represents the child process's
+\texttt{stdin}. If the child is waiting to read all its input, it will
+not continue until this stream has been closed via \texttt{end()}.
 
-If the child stdio streams are shared with the parent, then this will
-not be set.
+If the child was not spawned with \texttt{stdio{[}0{]}} set to
+\texttt{\textquotesingle{}pipe\textquotesingle{}}, then this will not be
+set.
+
+\texttt{child.stdin} is shorthand for \texttt{child.stdio{[}0{]}}. Both
+properties will refer to the same object, or null.
 
 \subsubsection{child.stdout}\label{child.stdout}
 
@@ -150,11 +162,15 @@ not be set.
   \{Stream object\}
 \end{itemize}
 
-A \texttt{Readable Stream} that represents the child process's
+A \texttt{Readable\ Stream} that represents the child process's
 \texttt{stdout}.
 
-If the child stdio streams are shared with the parent, then this will
-not be set.
+If the child was not spawned with \texttt{stdio{[}1{]}} set to
+\texttt{\textquotesingle{}pipe\textquotesingle{}}, then this will not be
+set.
+
+\texttt{child.stdout} is shorthand for \texttt{child.stdio{[}1{]}}. Both
+properties will refer to the same object, or null.
 
 \subsubsection{child.stderr}\label{child.stderr}
 
@@ -164,11 +180,56 @@ not be set.
   \{Stream object\}
 \end{itemize}
 
-A \texttt{Readable Stream} that represents the child process's
+A \texttt{Readable\ Stream} that represents the child process's
 \texttt{stderr}.
 
-If the child stdio streams are shared with the parent, then this will
-not be set.
+If the child was not spawned with \texttt{stdio{[}2{]}} set to
+\texttt{\textquotesingle{}pipe\textquotesingle{}}, then this will not be
+set.
+
+\texttt{child.stderr} is shorthand for \texttt{child.stdio{[}2{]}}. Both
+properties will refer to the same object, or null.
+
+\subsubsection{child.stdio}\label{child.stdio}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \{Array\}
+\end{itemize}
+
+A sparse array of pipes to the child process, corresponding with
+positions in the \hyperref[childux5fprocessux5foptionsux5fstdio]{stdio}
+option to
+\hyperref[childux5fprocessux5fchildux5fprocessux5fspawnux5fcommandux5fargsux5foptions]{spawn}
+that have been set to \texttt{\textquotesingle{}pipe\textquotesingle{}}.
+Note that streams 0-2 are also available as ChildProcess.stdin,
+ChildProcess.stdout, and ChildProcess.stderr, respectively.
+
+In the following example, only the child's fd \texttt{1} is setup as a
+pipe, so only the parent's \texttt{child.stdio{[}1{]}} is a stream, all
+other values in the array are \texttt{null}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{child = }\OtherTok{child_process}\NormalTok{.}\FunctionTok{spawn}\NormalTok{(}\StringTok{"ls"}\NormalTok{, \{}
+    \DataTypeTok{stdio}\NormalTok{: [}
+      \DecValTok{0}\NormalTok{, }\CommentTok{// use parents stdin for child}
+      \StringTok{'pipe'}\NormalTok{, }\CommentTok{// pipe child's stdout to parent}
+      \OtherTok{fs}\NormalTok{.}\FunctionTok{openSync}\NormalTok{(}\StringTok{"err.out"}\NormalTok{, }\StringTok{"w"}\NormalTok{) }\CommentTok{// direct child's stderr to a file}
+    \NormalTok{]}
+\NormalTok{\});}
+
+\OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\OtherTok{child}\NormalTok{.}\FunctionTok{stdio}\NormalTok{[}\DecValTok{0}\NormalTok{], }\KeywordTok{null}\NormalTok{);}
+\OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\OtherTok{child}\NormalTok{.}\FunctionTok{stdio}\NormalTok{[}\DecValTok{0}\NormalTok{], }\OtherTok{child}\NormalTok{.}\FunctionTok{stdin}\NormalTok{);}
+
+\FunctionTok{assert}\NormalTok{(}\OtherTok{child}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
+\OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\OtherTok{child}\NormalTok{.}\FunctionTok{stdio}\NormalTok{[}\DecValTok{1}\NormalTok{], }\OtherTok{child}\NormalTok{.}\FunctionTok{stdout}\NormalTok{);}
+
+\OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\OtherTok{child}\NormalTok{.}\FunctionTok{stdio}\NormalTok{[}\DecValTok{2}\NormalTok{], }\KeywordTok{null}\NormalTok{);}
+\OtherTok{assert}\NormalTok{.}\FunctionTok{equal}\NormalTok{(}\OtherTok{child}\NormalTok{.}\FunctionTok{stdio}\NormalTok{[}\DecValTok{2}\NormalTok{], }\OtherTok{child}\NormalTok{.}\FunctionTok{stderr}\NormalTok{);}
+\end{Highlighting}
+\end{Shaded}
 
 \subsubsection{child.pid}\label{child.pid}
 
@@ -212,8 +273,8 @@ messages.
 \end{itemize}
 
 Send a signal to the child process. If no argument is given, the process
-will be sent \texttt{'SIGTERM'}. See \texttt{signal(7)} for a list of
-available signals.
+will be sent \texttt{\textquotesingle{}SIGTERM\textquotesingle{}}. See
+\texttt{signal(7)} for a list of available signals.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -229,11 +290,12 @@ available signals.
 \end{Highlighting}
 \end{Shaded}
 
-May emit an \texttt{'error'} event when the signal cannot be delivered.
-Sending a signal to a child process that has already exited is not an
-error but may have unforeseen consequences: if the PID (the process ID)
-has been reassigned to another process, the signal will be delivered to
-that process instead. What happens next is anyone's guess.
+May emit an \texttt{\textquotesingle{}error\textquotesingle{}} event
+when the signal cannot be delivered. Sending a signal to a child process
+that has already exited is not an error but may have unforeseen
+consequences: if the PID (the process ID) has been reassigned to another
+process, the signal will be delivered to that process instead. What
+happens next is anyone's guess.
 
 Note that while the function is called \texttt{kill}, the signal
 delivered to the child process may not actually kill it. \texttt{kill}
@@ -241,8 +303,8 @@ really just sends a signal to a process.
 
 See \texttt{kill(2)}
 
-\subsubsection{child.send(message,
-{[}sendHandle{]})}\label{child.sendmessage-sendhandle}
+\subsubsection{child.send(message{[},
+sendHandle{]})}\label{child.sendmessage-sendhandle}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -253,8 +315,9 @@ See \texttt{kill(2)}
 \end{itemize}
 
 When using \texttt{child\_process.fork()} you can write to the child
-using \texttt{child.send(message, {[}sendHandle{]})} and messages are
-received by a \texttt{'message'} event on the child.
+using \texttt{child.send(message,\ {[}sendHandle{]})} and messages are
+received by a \texttt{\textquotesingle{}message\textquotesingle{}} event
+on the child.
 
 For example:
 
@@ -272,7 +335,9 @@ For example:
 \end{Highlighting}
 \end{Shaded}
 
-And then the child script, \texttt{'sub.js'} might look like this:
+And then the child script,
+\texttt{\textquotesingle{}sub.js\textquotesingle{}} might look like
+this:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -293,7 +358,8 @@ are synchronous - sending large chunks of data is not advised (pipes can
 be used instead, see
 \hyperref[childux5fprocessux5fchildux5fprocessux5fspawnux5fcommandux5fargsux5foptions]{\texttt{child\_process.spawn}}).
 
-There is a special case when sending a \texttt{\{cmd: 'NODE\_foo'\}}
+There is a special case when sending a
+\texttt{\{cmd:\ \textquotesingle{}NODE\_foo\textquotesingle{}\}}
 message. All messages containing a \texttt{NODE\_} prefix in its
 \texttt{cmd} property will not be emitted in the \texttt{message} event,
 since they are internal messages used by node core. Messages containing
@@ -305,8 +371,9 @@ The \texttt{sendHandle} option to \texttt{child.send()} is for sending a
 TCP server or socket object to another process. The child will receive
 the object as its second argument to the \texttt{message} event.
 
-Emits an \texttt{'error'} event if the message cannot be sent, for
-example because the child process has already exited.
+Emits an \texttt{\textquotesingle{}error\textquotesingle{}} event if the
+message cannot be sent, for example because the child process has
+already exited.
 
 \paragraph{Example: sending server
 object}\label{example-sending-server-object}
@@ -419,8 +486,8 @@ Creation}\label{asynchronous-process-creation}
 These methods follow the common async programming patterns (accepting a
 callback or returning an EventEmitter).
 
-\subsubsection{child\_process.spawn(command, {[}args{]},
-{[}options{]})}\label{childux5fprocess.spawncommand-args-options}
+\subsubsection{child\_process.spawn(command{[}, args{]}{[},
+options{]})}\label{childux5fprocess.spawncommand-args-options}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -433,13 +500,18 @@ callback or returning an EventEmitter).
 \item
   \texttt{cwd} \{String\} Current working directory of the child process
 \item
-  \texttt{stdio} \{Array\textbar{}String\} Child's stdio configuration.
-  (See below)
-\item
   \texttt{env} \{Object\} Environment key-value pairs
 \item
+  \texttt{stdio} \{Array\textbar{}String\} Child's stdio configuration.
+  (See \hyperref[childux5fprocessux5foptionsux5fstdio]{below})
+\item
+  \texttt{customFds} \{Array\} \textbf{Deprecated} File descriptors for
+  the child to use for stdio. (See
+  \hyperref[childux5fprocessux5foptionsux5fcustomFds]{below})
+\item
   \texttt{detached} \{Boolean\} The child will be a process group
-  leader. (See below)
+  leader. (See
+  \hyperref[childux5fprocessux5foptionsux5fdetached]{below})
 \item
   \texttt{uid} \{Number\} Sets the user identity of the process. (See
   setuid(2).)
@@ -465,11 +537,14 @@ defaults:
 \end{Highlighting}
 \end{Shaded}
 
-\texttt{cwd} allows you to specify the working directory from which the
-process is spawned. Use \texttt{env} to specify environment variables
-that will be visible to the new process.
+Use \texttt{cwd} to specify the working directory from which the process
+is spawned. If not given, the default is to inherit the current working
+directory.
 
-Example of running \texttt{ls -lh /usr}, capturing \texttt{stdout},
+Use \texttt{env} to specify environment variables that will be visible
+to the new process, the default is \texttt{process.env}.
+
+Example of running \texttt{ls\ -lh\ /usr}, capturing \texttt{stdout},
 \texttt{stderr}, and the exit code:
 
 \begin{Shaded}
@@ -530,53 +605,62 @@ Example: A very elaborate way to run `ps ax \textbar{} grep ssh'
 \end{Highlighting}
 \end{Shaded}
 
-Example of checking for failed exec:
+\subsubsection{options.stdio}\label{options.stdio}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{var} \NormalTok{spawn = }\FunctionTok{require}\NormalTok{(}\StringTok{'child_process'}\NormalTok{).}\FunctionTok{spawn}\NormalTok{,}
-    \NormalTok{child = }\FunctionTok{spawn}\NormalTok{(}\StringTok{'bad_command'}\NormalTok{);}
+As a shorthand, the \texttt{stdio} argument may also be one of the
+following strings:
 
-\OtherTok{child}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function} \NormalTok{(err) \{}
-  \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'Failed to start child process.'}\NormalTok{);}
-\NormalTok{\});}
-\end{Highlighting}
-\end{Shaded}
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{\textquotesingle{}pipe\textquotesingle{}} -
+  \texttt{{[}\textquotesingle{}pipe\textquotesingle{},\ \textquotesingle{}pipe\textquotesingle{},\ \textquotesingle{}pipe\textquotesingle{}{]}},
+  this is the default value
+\item
+  \texttt{\textquotesingle{}ignore\textquotesingle{}} -
+  \texttt{{[}\textquotesingle{}ignore\textquotesingle{},\ \textquotesingle{}ignore\textquotesingle{},\ \textquotesingle{}ignore\textquotesingle{}{]}}
+\item
+  \texttt{\textquotesingle{}inherit\textquotesingle{}} -
+  \texttt{{[}process.stdin,\ process.stdout,\ process.stderr{]}} or
+  \texttt{{[}0,1,2{]}}
+\end{itemize}
 
-The `stdio' option to \texttt{child\_process.spawn()} is an array where
-each index corresponds to a fd in the child. The value is one of the
-following:
+Otherwise, the `stdio' option to \texttt{child\_process.spawn()} is an
+array where each index corresponds to a fd in the child. The value is
+one of the following:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \itemsep1pt\parskip0pt\parsep0pt
 \item
-  \texttt{'pipe'} - Create a pipe between the child process and the
-  parent process. The parent end of the pipe is exposed to the parent as
-  a property on the \texttt{child\_process} object as
-  \texttt{ChildProcess.stdio{[}fd{]}}. Pipes created for fds 0 - 2 are
-  also available as ChildProcess.stdin, ChildProcess.stdout and
-  ChildProcess.stderr, respectively.
+  \texttt{\textquotesingle{}pipe\textquotesingle{}} - Create a pipe
+  between the child process and the parent process. The parent end of
+  the pipe is exposed to the parent as a property on the
+  \texttt{child\_process} object as \texttt{ChildProcess.stdio{[}fd{]}}.
+  Pipes created for fds 0 - 2 are also available as ChildProcess.stdin,
+  ChildProcess.stdout and ChildProcess.stderr, respectively.
 \item
-  \texttt{'ipc'} - Create an IPC channel for passing messages/file
-  descriptors between parent and child. A ChildProcess may have at most
-  \emph{one} IPC stdio file descriptor. Setting this option enables the
-  ChildProcess.send() method. If the child writes JSON messages to this
-  file descriptor, then this will trigger ChildProcess.on(`message'). If
-  the child is a Node.js program, then the presence of an IPC channel
-  will enable process.send() and process.on(`message').
+  \texttt{\textquotesingle{}ipc\textquotesingle{}} - Create an IPC
+  channel for passing messages/file descriptors between parent and
+  child. A ChildProcess may have at most \emph{one} IPC stdio file
+  descriptor. Setting this option enables the ChildProcess.send()
+  method. If the child writes JSON messages to this file descriptor,
+  then this will trigger ChildProcess.on(`message'). If the child is a
+  Node.js program, then the presence of an IPC channel will enable
+  process.send() and process.on(`message').
 \item
-  \texttt{'ignore'} - Do not set this file descriptor in the child. Note
-  that Node will always open fd 0 - 2 for the processes it spawns. When
-  any of these is ignored node will open \texttt{/dev/null} and attach
-  it to the child's fd.
+  \texttt{\textquotesingle{}ignore\textquotesingle{}} - Do not set this
+  file descriptor in the child. Note that Node will always open fd 0 - 2
+  for the processes it spawns. When any of these is ignored node will
+  open \texttt{/dev/null} and attach it to the child's fd.
 \item
   \texttt{Stream} object - Share a readable or writable stream that
   refers to a tty, file, socket, or a pipe with the child process. The
   stream's underlying file descriptor is duplicated in the child process
   to the fd that corresponds to the index in the \texttt{stdio} array.
   Note that the stream must have an underlying descriptor (file streams
-  do not until the \texttt{'open'} event has occurred).
+  do not until the \texttt{\textquotesingle{}open\textquotesingle{}}
+  event has occurred).
 \item
   Positive integer - The integer value is interpreted as a file
   descriptor that is is currently open in the parent process. It is
@@ -585,23 +669,9 @@ following:
 \item
   \texttt{null}, \texttt{undefined} - Use default value. For stdio fds
   0, 1 and 2 (in other words, stdin, stdout, and stderr) a pipe is
-  created. For fd 3 and up, the default is \texttt{'ignore'}.
+  created. For fd 3 and up, the default is
+  \texttt{\textquotesingle{}ignore\textquotesingle{}}.
 \end{enumerate}
-
-As a shorthand, the \texttt{stdio} argument may also be one of the
-following strings, rather than an array:
-
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  \texttt{ignore} - \texttt{{[}'ignore', 'ignore', 'ignore'{]}}
-\item
-  \texttt{pipe} - \texttt{{[}'pipe', 'pipe', 'pipe'{]}}
-\item
-  \texttt{inherit} -
-  \texttt{{[}process.stdin, process.stdout, process.stderr{]}} or
-  \texttt{{[}0,1,2{]}}
-\end{itemize}
 
 Example:
 
@@ -620,6 +690,8 @@ Example:
 \FunctionTok{spawn}\NormalTok{(}\StringTok{'prg'}\NormalTok{, [], \{ }\DataTypeTok{stdio}\NormalTok{: [}\StringTok{'pipe'}\NormalTok{, }\KeywordTok{null}\NormalTok{, }\KeywordTok{null}\NormalTok{, }\KeywordTok{null}\NormalTok{, }\StringTok{'pipe'}\NormalTok{] \});}
 \end{Highlighting}
 \end{Shaded}
+
+\subsubsection{options.detached}\label{options.detached}
 
 If the \texttt{detached} option is set, the child process will be made
 the leader of a new process group. This makes it possible for the child
@@ -655,10 +727,19 @@ provided with a \texttt{stdio} configuration that is not connected to
 the parent. If the parent's \texttt{stdio} is inherited, the child will
 remain attached to the controlling terminal.
 
+\subsubsection{options.customFds}\label{options.customfds}
+
+There is a deprecated option called \texttt{customFds} which allows one
+to specify specific file descriptors for the stdio of the child process.
+This API was not portable to all platforms and therefore removed. With
+\texttt{customFds} it was possible to hook up the new process'
+\texttt{{[}stdin,\ stdout,\ stderr{]}} to existing streams; \texttt{-1}
+meant that a new stream should be created. Use at your own risk.
+
 See also: \texttt{child\_process.exec()} and
 \texttt{child\_process.fork()}
 
-\subsubsection{child\_process.exec(command, {[}options{]},
+\subsubsection{child\_process.exec(command{[}, options{]},
 callback)}\label{childux5fprocess.execcommand-options-callback}
 
 \begin{itemize}
@@ -677,7 +758,7 @@ callback)}\label{childux5fprocess.execcommand-options-callback}
 \item
   \texttt{shell} \{String\} Shell to execute the command with (Default:
   `/bin/sh' on UNIX, `cmd.exe' on Windows, The shell should understand
-  the \texttt{-c} switch on UNIX or \texttt{/s /c} on Windows. On
+  the \texttt{-c} switch on UNIX or \texttt{/s\ /c} on Windows. On
   Windows, command line parsing should be compatible with
   \texttt{cmd.exe}.)
 \item
@@ -723,7 +804,7 @@ Runs a command in a shell and buffers the output.
 \end{Highlighting}
 \end{Shaded}
 
-The callback gets the arguments \texttt{(error, stdout, stderr)}. On
+The callback gets the arguments \texttt{(error,\ stdout,\ stderr)}. On
 success, \texttt{error} will be \texttt{null}. On error, \texttt{error}
 will be an instance of \texttt{Error} and \texttt{error.code} will be
 the exit code of the child process, and \texttt{error.signal} will be
@@ -746,12 +827,14 @@ default options are
 If \texttt{timeout} is greater than 0, then it will kill the child
 process if it runs longer than \texttt{timeout} milliseconds. The child
 process is killed with \texttt{killSignal} (default:
-\texttt{'SIGTERM'}). \texttt{maxBuffer} specifies the largest amount of
-data allowed on stdout or stderr - if this value is exceeded then the
-child process is killed.
+\texttt{\textquotesingle{}SIGTERM\textquotesingle{}}).
+\texttt{maxBuffer} specifies the largest amount of data allowed on
+stdout or stderr - if this value is exceeded then the child process is
+killed.
 
-\subsubsection{child\_process.execFile(file, {[}args{]}, {[}options{]},
-{[}callback{]})}\label{childux5fprocess.execfilefile-args-options-callback}
+\subsubsection{child\_process.execFile(file{[}, args{]}{[},
+options{]}{[},
+callback{]})}\label{childux5fprocess.execfilefile-args-options-callback}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -797,8 +880,8 @@ execute a subshell but rather the specified file directly. This makes it
 slightly leaner than \texttt{child\_process.exec}. It has the same
 options.
 
-\subsubsection{child\_process.fork(modulePath, {[}args{]},
-{[}options{]})}\label{childux5fprocess.forkmodulepath-args-options}
+\subsubsection{child\_process.fork(modulePath{[}, args{]}{[},
+options{]})}\label{childux5fprocess.forkmodulepath-args-options}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -812,8 +895,6 @@ options.
   \texttt{cwd} \{String\} Current working directory of the child process
 \item
   \texttt{env} \{Object\} Environment key-value pairs
-\item
-  \texttt{encoding} \{String\} (Default: `utf8')
 \item
   \texttt{execPath} \{String\} Executable used to create the child
   process
@@ -838,8 +919,8 @@ options.
 This is a special case of the \texttt{spawn()} functionality for
 spawning Node processes. In addition to having all the methods in a
 normal ChildProcess instance, the returned object has a communication
-channel built-in. See \texttt{child.send(message, {[}sendHandle{]})} for
-details.
+channel built-in. See \texttt{child.send(message,\ {[}sendHandle{]})}
+for details.
 
 These child Nodes are still whole new instances of V8. Assume at least
 30ms startup and 10mb memory for each new Node. That is, you cannot
@@ -863,8 +944,8 @@ Blocking calls like these are mostly useful for simplifying general
 purpose scripting tasks and for simplifying the loading/processing of
 application configuration at startup.
 
-\subsubsection{child\_process.spawnSync(command, {[}args{]},
-{[}options{]})}\label{childux5fprocess.spawnsynccommand-args-options}
+\subsubsection{child\_process.spawnSync(command{[}, args{]}{[},
+options{]})}\label{childux5fprocess.spawnsynccommand-args-options}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -933,8 +1014,8 @@ sent, the method won't return until the process has completely exited.
 That is to say, if the process handles the \texttt{SIGTERM} signal and
 doesn't exit, your process will wait until the child process has exited.
 
-\subsubsection{child\_process.execFileSync(command, {[}args{]},
-{[}options{]})}\label{childux5fprocess.execfilesynccommand-args-options}
+\subsubsection{child\_process.execFileSync(command{[}, args{]}{[},
+options{]})}\label{childux5fprocess.execfilesynccommand-args-options}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt
@@ -999,8 +1080,8 @@ If the process times out, or has a non-zero exit code, this method
 entire result from
 \hyperref[childux5fprocessux5fchildux5fprocessux5fspawnsyncux5fcommandux5fargsux5foptions]{\texttt{child\_process.spawnSync}}
 
-\subsubsection{child\_process.execSync(command,
-{[}options{]})}\label{childux5fprocess.execsynccommand-options}
+\subsubsection{child\_process.execSync(command{[},
+options{]})}\label{childux5fprocess.execsynccommand-options}
 
 \begin{itemize}
 \itemsep1pt\parskip0pt\parsep0pt

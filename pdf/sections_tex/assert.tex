@@ -7,7 +7,8 @@
 \end{Shaded}
 
 This module is used for writing unit tests for your applications, you
-can access it with \texttt{require('assert')}.
+can access it with
+\texttt{require(\textquotesingle{}assert\textquotesingle{})}.
 
 \subsection{assert.fail(actual, expected, message,
 operator)}\label{assert.failactual-expected-message-operator}
@@ -15,48 +16,48 @@ operator)}\label{assert.failactual-expected-message-operator}
 Throws an exception that displays the values for \texttt{actual} and
 \texttt{expected} separated by the provided operator.
 
-\subsection{assert(value, message), assert.ok(value,
-{[}message{]})}\label{assertvalue-message-assert.okvalue-message}
+\subsection{assert(value{[}, message{]}), assert.ok(value{[},
+message{]})}\label{assertvalue-message-assert.okvalue-message}
 
 Tests if value is truthy, it is equivalent to
-\texttt{assert.equal(true, !!value, message);}
+\texttt{assert.equal(true,\ !!value,\ message);}
 
-\subsection{assert.equal(actual, expected,
-{[}message{]})}\label{assert.equalactual-expected-message}
+\subsection{assert.equal(actual, expected{[},
+message{]})}\label{assert.equalactual-expected-message}
 
 Tests shallow, coercive equality with the equal comparison operator (
 \texttt{==} ).
 
-\subsection{assert.notEqual(actual, expected,
-{[}message{]})}\label{assert.notequalactual-expected-message}
+\subsection{assert.notEqual(actual, expected{[},
+message{]})}\label{assert.notequalactual-expected-message}
 
 Tests shallow, coercive non-equality with the not equal comparison
 operator ( \texttt{!=} ).
 
-\subsection{assert.deepEqual(actual, expected,
-{[}message{]})}\label{assert.deepequalactual-expected-message}
+\subsection{assert.deepEqual(actual, expected{[},
+message{]})}\label{assert.deepequalactual-expected-message}
 
 Tests for deep equality.
 
-\subsection{assert.notDeepEqual(actual, expected,
-{[}message{]})}\label{assert.notdeepequalactual-expected-message}
+\subsection{assert.notDeepEqual(actual, expected{[},
+message{]})}\label{assert.notdeepequalactual-expected-message}
 
 Tests for any deep inequality.
 
-\subsection{assert.strictEqual(actual, expected,
-{[}message{]})}\label{assert.strictequalactual-expected-message}
+\subsection{assert.strictEqual(actual, expected{[},
+message{]})}\label{assert.strictequalactual-expected-message}
 
 Tests strict equality, as determined by the strict equality operator (
 \texttt{===} )
 
-\subsection{assert.notStrictEqual(actual, expected,
-{[}message{]})}\label{assert.notstrictequalactual-expected-message}
+\subsection{assert.notStrictEqual(actual, expected{[},
+message{]})}\label{assert.notstrictequalactual-expected-message}
 
 Tests strict non-equality, as determined by the strict not equal
 operator ( \texttt{!==} )
 
-\subsection{assert.throws(block, {[}error{]},
-{[}message{]})}\label{assert.throwsblock-error-message}
+\subsection{assert.throws(block{[}, error{]}{[},
+message{]})}\label{assert.throwsblock-error-message}
 
 Expects \texttt{block} to throw an error. \texttt{error} can be
 constructor, \texttt{RegExp} or validation function.
@@ -105,8 +106,8 @@ Custom error validation:
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{assert.doesNotThrow(block,
-{[}message{]})}\label{assert.doesnotthrowblock-message}
+\subsection{assert.doesNotThrow(block{[},
+message{]})}\label{assert.doesnotthrowblock-message}
 
 Expects \texttt{block} not to throw an error, see \texttt{assert.throws}
 for details.
