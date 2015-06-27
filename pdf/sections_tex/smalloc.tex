@@ -1,0 +1,212 @@
+\section{Smalloc}\label{smalloc}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Stability: }\DecValTok{1} \NormalTok{- Experimental}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Class: smalloc}\label{class-smalloc}
+
+Buffers are backed by a simple allocator that only handles the
+assignation of external raw memory. Smalloc exposes that functionality.
+
+\subsubsection{smalloc.alloc(length{[}, receiver{]}{[},
+type{]})}\label{smalloc.alloclength-receiver-type}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{length} \{Number\} \texttt{\textless{}=\ smalloc.kMaxLength}
+\item
+  \texttt{receiver} \{Object\} Default: \texttt{new\ Object}
+\item
+  \texttt{type} \{Enum\} Default: \texttt{Uint8}
+\end{itemize}
+
+Returns \texttt{receiver} with allocated external array data. If no
+\texttt{receiver} is passed then a new Object will be created and
+returned.
+
+This can be used to create your own Buffer-like classes. No other
+properties are set, so the user will need to keep track of other
+necessary information (e.g. \texttt{length} of the allocation).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \FunctionTok{SimpleData}\NormalTok{(n) \{}
+  \KeywordTok{this}\NormalTok{.}\FunctionTok{length} \NormalTok{= n;}
+  \OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\KeywordTok{this}\NormalTok{.}\FunctionTok{length}\NormalTok{, }\KeywordTok{this}\NormalTok{);}
+\NormalTok{\}}
+
+\OtherTok{SimpleData}\NormalTok{.}\FunctionTok{prototype} \NormalTok{= \{ }\CommentTok{/* ... */} \NormalTok{\};}
+\end{Highlighting}
+\end{Shaded}
+
+It only checks if the \texttt{receiver} is an Object, and also not an
+Array. Because of this it is possible to allocate external array data to
+more than a plain Object.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{function} \FunctionTok{allocMe}\NormalTok{() \{ \}}
+\OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\DecValTok{3}\NormalTok{, allocMe);}
+
+\CommentTok{// \{ [Function allocMe] '0': 0, '1': 0, '2': 0 \}}
+\end{Highlighting}
+\end{Shaded}
+
+v8 does not support allocating external array data to an Array, and if
+passed will throw.
+
+It's possible to specify the type of external array data you would like.
+All possible options are listed in \texttt{smalloc.Types}. Example
+usage:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{doubleArr = }\OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\DecValTok{3}\NormalTok{, }\OtherTok{smalloc}\NormalTok{.}\OtherTok{Types}\NormalTok{.}\FunctionTok{Double}\NormalTok{);}
+
+\KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{3}\NormalTok{; i++)}
+  \NormalTok{doubleArr = i / }\DecValTok{10}\NormalTok{;}
+
+\CommentTok{// \{ '0': 0, '1': 0.1, '2': 0.2 \}}
+\end{Highlighting}
+\end{Shaded}
+
+It is not possible to freeze, seal and prevent extensions of objects
+with external data using \texttt{Object.freeze}, \texttt{Object.seal}
+and \texttt{Object.preventExtensions} respectively.
+
+\subsubsection{smalloc.copyOnto(source, sourceStart, dest, destStart,
+copyLength);}\label{smalloc.copyontosource-sourcestart-dest-deststart-copylength}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{source} \{Object\} with external array allocation
+\item
+  \texttt{sourceStart} \{Number\} Position to begin copying from
+\item
+  \texttt{dest} \{Object\} with external array allocation
+\item
+  \texttt{destStart} \{Number\} Position to begin copying onto
+\item
+  \texttt{copyLength} \{Number\} Length of copy
+\end{itemize}
+
+Copy memory from one external array allocation to another. No arguments
+are optional, and any violation will throw.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{a = }\OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+\KeywordTok{var} \NormalTok{b = }\OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+
+\KeywordTok{for} \NormalTok{(}\KeywordTok{var} \NormalTok{i = }\DecValTok{0}\NormalTok{; i < }\DecValTok{4}\NormalTok{; i++) \{}
+  \NormalTok{a[i] = i;}
+  \NormalTok{b[i] = i * }\DecValTok{2}\NormalTok{;}
+\NormalTok{\}}
+
+\CommentTok{// \{ '0': 0, '1': 1, '2': 2, '3': 3 \}}
+\CommentTok{// \{ '0': 0, '1': 2, '2': 4, '3': 6 \}}
+
+\OtherTok{smalloc}\NormalTok{.}\FunctionTok{copyOnto}\NormalTok{(b, }\DecValTok{2}\NormalTok{, a, }\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{);}
+
+\CommentTok{// \{ '0': 4, '1': 6, '2': 2, '3': 3 \}}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{copyOnto} automatically detects the length of the allocation
+internally, so no need to set any additional properties for this to
+work.
+
+\subsubsection{smalloc.dispose(obj)}\label{smalloc.disposeobj}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{obj} Object
+\end{itemize}
+
+Free memory that has been allocated to an object via
+\texttt{smalloc.alloc}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{a = \{\};}
+\OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\DecValTok{3}\NormalTok{, a);}
+
+\CommentTok{// \{ '0': 0, '1': 0, '2': 0 \}}
+
+\OtherTok{smalloc}\NormalTok{.}\FunctionTok{dispose}\NormalTok{(a);}
+
+\CommentTok{// \{\}}
+\end{Highlighting}
+\end{Shaded}
+
+This is useful to reduce strain on the garbage collector, but developers
+must be careful. Cryptic errors may arise in applications that are
+difficult to trace.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var} \NormalTok{a = }\OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+\KeywordTok{var} \NormalTok{b = }\OtherTok{smalloc}\NormalTok{.}\FunctionTok{alloc}\NormalTok{(}\DecValTok{4}\NormalTok{);}
+
+\CommentTok{// perform this somewhere along the line}
+\OtherTok{smalloc}\NormalTok{.}\FunctionTok{dispose}\NormalTok{(b);}
+
+\CommentTok{// now trying to copy some data out}
+\OtherTok{smalloc}\NormalTok{.}\FunctionTok{copyOnto}\NormalTok{(b, }\DecValTok{2}\NormalTok{, a, }\DecValTok{0}\NormalTok{, }\DecValTok{2}\NormalTok{);}
+
+\CommentTok{// now results in:}
+\CommentTok{// RangeError: copy_length > source_length}
+\end{Highlighting}
+\end{Shaded}
+
+After \texttt{dispose()} is called object still behaves as one with
+external data, for example \texttt{smalloc.hasExternalData()} returns
+\texttt{true}. \texttt{dispose()} does not support Buffers, and will
+throw if passed.
+
+\subsubsection{smalloc.hasExternalData(obj)}\label{smalloc.hasexternaldataobj}
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{obj} \{Object\}
+\end{itemize}
+
+Returns \texttt{true} if the \texttt{obj} has externally allocated
+memory.
+
+\subsubsection{smalloc.kMaxLength}\label{smalloc.kmaxlength}
+
+Size of maximum allocation. This is also applicable to Buffer creation.
+
+\subsubsection{smalloc.Types}\label{smalloc.types}
+
+Enum of possible external array types. Contains:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \texttt{Int8}
+\item
+  \texttt{Uint8}
+\item
+  \texttt{Int16}
+\item
+  \texttt{Uint16}
+\item
+  \texttt{Int32}
+\item
+  \texttt{Uint32}
+\item
+  \texttt{Float}
+\item
+  \texttt{Double}
+\item
+  \texttt{Uint8Clamped}
+\end{itemize}
