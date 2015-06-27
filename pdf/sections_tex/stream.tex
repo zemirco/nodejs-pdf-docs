@@ -213,6 +213,9 @@ system, if it hadn't already.
 Once the internal buffer is drained, a \texttt{readable} event will fire
 again when more data is available.
 
+The \texttt{readable} event is not emitted in the ``flowing'' mode with
+the sole exception of the last one, on end-of-stream.
+
 \paragraph{\texorpdfstring{Event:
 `data'}{Event: data}}\label{event-data}
 
@@ -237,6 +240,10 @@ possible, this is the best way to do so.
 \NormalTok{\});}
 \end{Highlighting}
 \end{Shaded}
+
+Note that the \texttt{readable} event should not be used together with
+\texttt{data} because the assigning the latter switches the stream into
+``flowing'' mode, so the \texttt{readable} event will not be emitted.
 
 \paragraph{\texorpdfstring{Event: `end'}{Event: end}}\label{event-end}
 
@@ -771,19 +778,27 @@ Call this method when no more data will be written to the stream. If
 supplied, the callback is attached as a listener on the \texttt{finish}
 event.
 
-Calling
-\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallback]{\texttt{write()}}
-after calling
-\hyperref[streamux5fwritableux5fendux5fchunkux5fencodingux5fcallback]{\texttt{end()}}
-will raise an error.
-
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{// write 'hello, ' and then end with 'world!'}
 \KeywordTok{var} \NormalTok{file = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\StringTok{'example.txt'}\NormalTok{);}
 \OtherTok{file}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'hello, '}\NormalTok{);}
 \OtherTok{file}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'world!'}\NormalTok{);}
-\CommentTok{// writing more now is not allowed!}
+\end{Highlighting}
+\end{Shaded}
+
+Calling
+\hyperref[streamux5fwritableux5fwriteux5fchunkux5fencodingux5fcallback]{\texttt{write()}}
+after calling
+\hyperref[streamux5fwritableux5fendux5fchunkux5fencodingux5fcallback]{\texttt{end()}}
+will raise an error:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// end with 'world!' and then write with 'hello, ' will raise an error}
+\KeywordTok{var} \NormalTok{file = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createWriteStream}\NormalTok{(}\StringTok{'example.txt'}\NormalTok{);}
+\OtherTok{file}\NormalTok{.}\FunctionTok{end}\NormalTok{(}\StringTok{'world!'}\NormalTok{);}
+\OtherTok{file}\NormalTok{.}\FunctionTok{write}\NormalTok{(}\StringTok{'hello, '}\NormalTok{);}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1516,9 +1531,9 @@ output as a result of this chunk.
 
 Call the callback function only when the current chunk is completely
 consumed. Note that there may or may not be output as a result of any
-particular input chunk. If you supply as the second argument to the it
-will be passed to push method, in other words the following are
-equivalent:
+particular input chunk. If you supply a data chunk as the second
+argument to the callback function it will be passed to push method, in
+other words the following are equivalent:
 
 \begin{Shaded}
 \begin{Highlighting}[]

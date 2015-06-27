@@ -280,7 +280,7 @@ An example on Windows:
 
 \OtherTok{process}\NormalTok{.}\OtherTok{env}\NormalTok{.}\OtherTok{PATH}\NormalTok{.}\FunctionTok{split}\NormalTok{(}\OtherTok{path}\NormalTok{.}\FunctionTok{delimiter}\NormalTok{)}
 \CommentTok{// returns}
-\NormalTok{[}\StringTok{'C:\textbackslash{}Windows\textbackslash{}system32'}\NormalTok{, }\StringTok{'C:\textbackslash{}Windows'}\NormalTok{, }\StringTok{'C:\textbackslash{}Program Files}\CharTok{\textbackslash{}n}\StringTok{odejs}\CharTok{\textbackslash{}'}\StringTok{]}
+\NormalTok{[}\StringTok{'C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{Windows}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{system32'}\NormalTok{, }\StringTok{'C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{Windows'}\NormalTok{, }\StringTok{'C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{Program Files}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{nodejs}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{'}\NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
 
@@ -311,8 +311,8 @@ An example on Windows:
 \OtherTok{path}\NormalTok{.}\FunctionTok{parse}\NormalTok{(}\StringTok{'C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{path}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{dir}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{index.html'}\NormalTok{)}
 \CommentTok{// returns}
 \NormalTok{\{}
-    \DataTypeTok{root }\NormalTok{: }\StringTok{"C:}\CharTok{\textbackslash{}"}\StringTok{,}
-    \DataTypeTok{dir }\NormalTok{: }\StringTok{"C:\textbackslash{}path\textbackslash{}dir"}\NormalTok{,}
+    \DataTypeTok{root }\NormalTok{: }\StringTok{"C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{"}\NormalTok{,}
+    \DataTypeTok{dir }\NormalTok{: }\StringTok{"C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{path}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{dir"}\NormalTok{,}
     \DataTypeTok{base }\NormalTok{: }\StringTok{"index.html"}\NormalTok{,}
     \DataTypeTok{ext }\NormalTok{: }\StringTok{".html"}\NormalTok{,}
     \DataTypeTok{name }\NormalTok{: }\StringTok{"index"}

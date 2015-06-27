@@ -117,7 +117,7 @@ given to the completion callback.
 \subsection{fs.renameSync(oldPath,
 newPath)}\label{fs.renamesyncoldpath-newpath}
 
-Synchronous rename(2).
+Synchronous rename(2). Returns \texttt{undefined}.
 
 \subsection{fs.ftruncate(fd, len,
 callback)}\label{fs.ftruncatefd-len-callback}
@@ -127,7 +127,7 @@ are given to the completion callback.
 
 \subsection{fs.ftruncateSync(fd, len)}\label{fs.ftruncatesyncfd-len}
 
-Synchronous ftruncate(2).
+Synchronous ftruncate(2). Returns \texttt{undefined}.
 
 \subsection{fs.truncate(path, len,
 callback)}\label{fs.truncatepath-len-callback}
@@ -139,7 +139,7 @@ called.
 
 \subsection{fs.truncateSync(path, len)}\label{fs.truncatesyncpath-len}
 
-Synchronous truncate(2).
+Synchronous truncate(2). Returns \texttt{undefined}.
 
 \subsection{fs.chown(path, uid, gid,
 callback)}\label{fs.chownpath-uid-gid-callback}
@@ -150,7 +150,7 @@ given to the completion callback.
 \subsection{fs.chownSync(path, uid,
 gid)}\label{fs.chownsyncpath-uid-gid}
 
-Synchronous chown(2).
+Synchronous chown(2). Returns \texttt{undefined}.
 
 \subsection{fs.fchown(fd, uid, gid,
 callback)}\label{fs.fchownfd-uid-gid-callback}
@@ -160,7 +160,7 @@ given to the completion callback.
 
 \subsection{fs.fchownSync(fd, uid, gid)}\label{fs.fchownsyncfd-uid-gid}
 
-Synchronous fchown(2).
+Synchronous fchown(2). Returns \texttt{undefined}.
 
 \subsection{fs.lchown(path, uid, gid,
 callback)}\label{fs.lchownpath-uid-gid-callback}
@@ -171,7 +171,7 @@ given to the completion callback.
 \subsection{fs.lchownSync(path, uid,
 gid)}\label{fs.lchownsyncpath-uid-gid}
 
-Synchronous lchown(2).
+Synchronous lchown(2). Returns \texttt{undefined}.
 
 \subsection{fs.chmod(path, mode,
 callback)}\label{fs.chmodpath-mode-callback}
@@ -181,7 +181,7 @@ given to the completion callback.
 
 \subsection{fs.chmodSync(path, mode)}\label{fs.chmodsyncpath-mode}
 
-Synchronous chmod(2).
+Synchronous chmod(2). Returns \texttt{undefined}.
 
 \subsection{fs.fchmod(fd, mode,
 callback)}\label{fs.fchmodfd-mode-callback}
@@ -191,7 +191,7 @@ given to the completion callback.
 
 \subsection{fs.fchmodSync(fd, mode)}\label{fs.fchmodsyncfd-mode}
 
-Synchronous fchmod(2).
+Synchronous fchmod(2). Returns \texttt{undefined}.
 
 \subsection{fs.lchmod(path, mode,
 callback)}\label{fs.lchmodpath-mode-callback}
@@ -203,7 +203,7 @@ Only available on Mac OS X.
 
 \subsection{fs.lchmodSync(path, mode)}\label{fs.lchmodsyncpath-mode}
 
-Synchronous lchmod(2).
+Synchronous lchmod(2). Returns \texttt{undefined}.
 
 \subsection{fs.stat(path, callback)}\label{fs.statpath-callback}
 
@@ -249,7 +249,7 @@ given to the completion callback.
 \subsection{fs.linkSync(srcpath,
 dstpath)}\label{fs.linksyncsrcpath-dstpath}
 
-Synchronous link(2).
+Synchronous link(2). Returns \texttt{undefined}.
 
 \subsection{fs.symlink(srcpath, dstpath{[}, type{]},
 callback)}\label{fs.symlinksrcpath-dstpath-type-callback}
@@ -269,7 +269,7 @@ absolute path.
 \subsection{fs.symlinkSync(srcpath, dstpath{[},
 type{]})}\label{fs.symlinksyncsrcpath-dstpath-type}
 
-Synchronous symlink(2).
+Synchronous symlink(2). Returns \texttt{undefined}.
 
 \subsection{fs.readlink(path, callback)}\label{fs.readlinkpath-callback}
 
@@ -313,7 +313,7 @@ given to the completion callback.
 
 \subsection{fs.unlinkSync(path)}\label{fs.unlinksyncpath}
 
-Synchronous unlink(2).
+Synchronous unlink(2). Returns \texttt{undefined}.
 
 \subsection{fs.rmdir(path, callback)}\label{fs.rmdirpath-callback}
 
@@ -322,7 +322,7 @@ given to the completion callback.
 
 \subsection{fs.rmdirSync(path)}\label{fs.rmdirsyncpath}
 
-Synchronous rmdir(2).
+Synchronous rmdir(2). Returns \texttt{undefined}.
 
 \subsection{fs.mkdir(path{[}, mode{]},
 callback)}\label{fs.mkdirpath-mode-callback}
@@ -333,7 +333,7 @@ given to the completion callback. \texttt{mode} defaults to
 
 \subsection{fs.mkdirSync(path{[}, mode{]})}\label{fs.mkdirsyncpath-mode}
 
-Synchronous mkdir(2).
+Synchronous mkdir(2). Returns \texttt{undefined}.
 
 \subsection{fs.readdir(path, callback)}\label{fs.readdirpath-callback}
 
@@ -356,7 +356,7 @@ given to the completion callback.
 
 \subsection{fs.closeSync(fd)}\label{fs.closesyncfd}
 
-Synchronous close(2).
+Synchronous close(2). Returns \texttt{undefined}.
 
 \subsection{fs.open(path, flags{[}, mode{]},
 callback)}\label{fs.openpath-flags-mode-callback}
@@ -441,24 +441,30 @@ data to the end of the file.
 \subsection{fs.openSync(path, flags{[},
 mode{]})}\label{fs.opensyncpath-flags-mode}
 
-Synchronous version of \texttt{fs.open()}.
+Synchronous version of \texttt{fs.open()}. Returns an integer
+representing the file descriptor.
 
 \subsection{fs.utimes(path, atime, mtime,
 callback)}\label{fs.utimespath-atime-mtime-callback}
 
+Change file timestamps of the file referenced by the supplied path.
+
 \subsection{fs.utimesSync(path, atime,
 mtime)}\label{fs.utimessyncpath-atime-mtime}
 
-Change file timestamps of the file referenced by the supplied path.
+Synchronous version of \texttt{fs.utimes()}. Returns \texttt{undefined}.
 
 \subsection{fs.futimes(fd, atime, mtime,
 callback)}\label{fs.futimesfd-atime-mtime-callback}
 
+Change the file timestamps of a file referenced by the supplied file
+descriptor.
+
 \subsection{fs.futimesSync(fd, atime,
 mtime)}\label{fs.futimessyncfd-atime-mtime}
 
-Change the file timestamps of a file referenced by the supplied file
-descriptor.
+Synchronous version of \texttt{fs.futimes()}. Returns
+\texttt{undefined}.
 
 \subsection{fs.fsync(fd, callback)}\label{fs.fsyncfd-callback}
 
@@ -467,7 +473,7 @@ given to the completion callback.
 
 \subsection{fs.fsyncSync(fd)}\label{fs.fsyncsyncfd}
 
-Synchronous fsync(2).
+Synchronous fsync(2). Returns \texttt{undefined}.
 
 \subsection{fs.write(fd, buffer, offset, length{[}, position{]},
 callback)}\label{fs.writefd-buffer-offset-length-position-callback}
@@ -646,7 +652,8 @@ Example:
 \subsection{fs.writeFileSync(filename, data{[},
 options{]})}\label{fs.writefilesyncfilename-data-options}
 
-The synchronous version of \texttt{fs.writeFile}.
+The synchronous version of \texttt{fs.writeFile}. Returns
+\texttt{undefined}.
 
 \subsection{fs.appendFile(filename, data{[}, options{]},
 callback)}\label{fs.appendfilefilename-data-options-callback}
@@ -689,7 +696,8 @@ Example:
 \subsection{fs.appendFileSync(filename, data{[},
 options{]})}\label{fs.appendfilesyncfilename-data-options}
 
-The synchronous version of \texttt{fs.appendFile}.
+The synchronous version of \texttt{fs.appendFile}. Returns
+\texttt{undefined}.
 
 \subsection{fs.watchFile(filename{[}, options{]},
 listener)}\label{fs.watchfilefilename-options-listener}
@@ -861,7 +869,8 @@ it's not there.
 
 \subsection{fs.existsSync(path)}\label{fs.existssyncpath}
 
-Synchronous version of \texttt{fs.exists}.
+Synchronous version of \texttt{fs.exists()}. Returns \texttt{true} if
+the file exists, \texttt{false} otherwise.
 
 \texttt{fs.existsSync()} will be deprecated.
 
@@ -1037,6 +1046,9 @@ and make sure there's no file descriptor leak. If \texttt{autoClose} is
 set to true (default behavior), on \texttt{error} or \texttt{end} the
 file descriptor will be closed automatically.
 
+\texttt{mode} sets the file mode (permission and sticky bits), but only
+if the file was created.
+
 An example to read the last 10 bytes of a file which is 100 bytes long:
 
 \begin{Shaded}
@@ -1071,7 +1083,7 @@ Returns a new WriteStream object (See \texttt{Writable\ Stream}).
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{\{ }\DataTypeTok{flags}\NormalTok{: }\StringTok{'w'}\NormalTok{,}
-  \DataTypeTok{encoding}\NormalTok{: }\KeywordTok{null}\NormalTok{,}
+  \DataTypeTok{defaultEncoding}\NormalTok{: }\StringTok{'utf8'}\NormalTok{,}
   \DataTypeTok{fd}\NormalTok{: }\KeywordTok{null}\NormalTok{,}
   \DataTypeTok{mode}\NormalTok{: }\DecValTok{0666} \NormalTok{\}}
 \end{Highlighting}

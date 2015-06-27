@@ -694,8 +694,13 @@ Example:
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'STATUS: '} \NormalTok{+ }\OtherTok{res}\NormalTok{.}\FunctionTok{statusCode}\NormalTok{);}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'HEADERS: '} \NormalTok{+ }\OtherTok{JSON}\NormalTok{.}\FunctionTok{stringify}\NormalTok{(}\OtherTok{res}\NormalTok{.}\FunctionTok{headers}\NormalTok{));}
   \OtherTok{res}\NormalTok{.}\FunctionTok{setEncoding}\NormalTok{(}\StringTok{'utf8'}\NormalTok{);}
+  \KeywordTok{var} \NormalTok{data = }\StringTok{''}\NormalTok{;}
   \OtherTok{res}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function} \NormalTok{(chunk) \{}
-    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'BODY: '} \NormalTok{+ chunk);}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'PARTIAL BODY: '} \NormalTok{+ chunk);}
+    \NormalTok{data += chunk;}
+  \NormalTok{\});}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'end'}\NormalTok{, }\KeywordTok{function}\NormalTok{() \{}
+    \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{'COMPLETE BODY: '} \NormalTok{+ data);  }
   \NormalTok{\});}
 \NormalTok{\});}
 
@@ -708,6 +713,13 @@ Example:
 \OtherTok{req}\NormalTok{.}\FunctionTok{end}\NormalTok{();}
 \end{Highlighting}
 \end{Shaded}
+
+The \texttt{res} object handed off to the callback function passed into
+to \texttt{http.request} is an instance of
+\hyperref[httpux5fhttpux5fincomingmessage]{http.IncomingMessage}, which
+is an instance of a Readable Stream. The content of a successful
+response will be delivered using zero or more \texttt{data} events
+followed by a closing \texttt{end} event.
 
 Note that in the example \texttt{req.end()} was called. With
 \texttt{http.request()} one must always call \texttt{req.end()} to
@@ -752,6 +764,8 @@ Example:
 \begin{Highlighting}[]
 \OtherTok{http}\NormalTok{.}\FunctionTok{get}\NormalTok{(}\StringTok{"http://www.google.com/index.html"}\NormalTok{, }\KeywordTok{function}\NormalTok{(res) \{}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Got response: "} \NormalTok{+ }\OtherTok{res}\NormalTok{.}\FunctionTok{statusCode}\NormalTok{);}
+  \CommentTok{// consume response body}
+  \OtherTok{res}\NormalTok{.}\FunctionTok{resume}\NormalTok{();}
 \NormalTok{\}).}\FunctionTok{on}\NormalTok{(}\StringTok{'error'}\NormalTok{, }\KeywordTok{function}\NormalTok{(e) \{}
   \OtherTok{console}\NormalTok{.}\FunctionTok{log}\NormalTok{(}\StringTok{"Got error: "} \NormalTok{+ }\OtherTok{e}\NormalTok{.}\FunctionTok{message}\NormalTok{);}
 \NormalTok{\});}
@@ -1152,7 +1166,8 @@ stream is finished.
 
 \subsubsection{request.abort()}\label{request.abort}
 
-Aborts a request. (New since v0.3.8.)
+Marks the request as aborting. Calling this will cause remaining data in
+the response to be dropped and the socket to be destroyed.
 
 \subsubsection{request.setTimeout(timeout{[},
 callback{]})}\label{request.settimeouttimeout-callback}

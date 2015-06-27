@@ -148,7 +148,7 @@ Example: this program that takes the sha1 sum of a file
 
 \KeywordTok{var} \NormalTok{shasum = }\OtherTok{crypto}\NormalTok{.}\FunctionTok{createHash}\NormalTok{(}\StringTok{'sha1'}\NormalTok{);}
 
-\KeywordTok{var} \NormalTok{s = }\OtherTok{fs}\NormalTok{.}\FunctionTok{ReadStream}\NormalTok{(filename);}
+\KeywordTok{var} \NormalTok{s = }\OtherTok{fs}\NormalTok{.}\FunctionTok{createReadStream}\NormalTok{(filename);}
 \OtherTok{s}\NormalTok{.}\FunctionTok{on}\NormalTok{(}\StringTok{'data'}\NormalTok{, }\KeywordTok{function}\NormalTok{(d) \{}
   \OtherTok{shasum}\NormalTok{.}\FunctionTok{update}\NormalTok{(d);}
 \NormalTok{\});}
