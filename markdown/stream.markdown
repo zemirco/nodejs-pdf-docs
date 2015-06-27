@@ -164,6 +164,9 @@ readable.on('readable', function() {
 Once the internal buffer is drained, a `readable` event will fire
 again when more data is available.
 
+The `readable` event is not emitted in the "flowing" mode with the
+sole exception of the last one, on end-of-stream.
+
 #### Event: 'data'
 
 * `chunk` {Buffer | String} The chunk of data.
@@ -181,6 +184,9 @@ readable.on('data', function(chunk) {
   console.log('got %d bytes of data', chunk.length);
 });
 ```
+Note that the `readable` event should not be used together with `data`
+because the assigning the latter switches the stream into "flowing" mode,
+so the `readable` event will not be emitted.
 
 #### Event: 'end'
 
@@ -581,14 +587,20 @@ is valid and is set. Otherwise returns `false`.
 Call this method when no more data will be written to the stream.  If
 supplied, the callback is attached as a listener on the `finish` event.
 
-Calling [`write()`][] after calling [`end()`][] will raise an error.
-
 ```javascript
 // write 'hello, ' and then end with 'world!'
 var file = fs.createWriteStream('example.txt');
 file.write('hello, ');
 file.end('world!');
-// writing more now is not allowed!
+```
+
+Calling [`write()`][] after calling [`end()`][] will raise an error:
+
+```javascript
+// end with 'world!' and then write with 'hello, ' will raise an error
+var file = fs.createWriteStream('example.txt');
+file.end('world!');
+file.write('hello, ');
 ```
 
 #### Event: 'finish'
@@ -1175,9 +1187,9 @@ as a result of this chunk.
 
 Call the callback function only when the current chunk is completely
 consumed.  Note that there may or may not be output as a result of any
-particular input chunk. If you supply as the second argument to the
-it will be passed to push method, in other words the following are
-equivalent:
+particular input chunk. If you supply a data chunk as the second argument
+to the callback function it will be passed to push method, in other words
+the following are equivalent:
 
 ```javascript
 transform.prototype._transform = function (data, encoding, callback) {
